@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dee83d03214c0044b5921c901aee4ae, type: 3}
+  m_Name: CounterAttack
+  m_EditorClassIdentifier: Assembly-CSharp::PerkData
+  <Image>k__BackingField: {fileID: 21300000, guid: 5bc66dc30a0928341beffbb3d0cc8fda, type: 3}
+  <PerkCondition>k__BackingField:
+    rid: 7337470283160223836
+  <AutoTargetEffect>k__BackingField:
+    rid: 7337470283160223842
+  <UseAutoTarget>k__BackingField: 0
+  <UseActionCasterAsTarget>k__BackingField: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 7337470283160223836
+      type: {class: OnEnemyAttackCondition, ns: , asm: Assembly-CSharp}
+      data:
+        reactionTiming: 0
+    - rid: 7337470283160223842
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 7337470283160223843
+        <Effect>k__BackingField:
+          rid: 7337470283160223844
+    - rid: 7337470283160223843
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7337470283160223844
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 4

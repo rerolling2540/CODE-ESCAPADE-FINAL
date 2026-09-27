@@ -1,0 +1,14 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class DrawCardsEffect : Effect
+{
+    [SerializeField] private int drawAmount;
+
+    public override GameAction GetGameAction(List<CombatantView> targets, CombatantView caster, CardData cardSource = null)
+    {
+        DrawCardsGA drawCardsGA = new(drawAmount);
+        return drawCardsGA;
+    }
+}

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: FireBall
+  m_Name: Fireball
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: Aplly Burn Damage
   <Mana>k__BackingField: 1
@@ -22,8 +22,6 @@ MonoBehaviour:
       rid: 7337470308311105617
     <Effect>k__BackingField:
       rid: 7337470308311105620
-  baseDamage: 10
-  damageMultiplier: 1
   references:
     version: 2
     RefIds:

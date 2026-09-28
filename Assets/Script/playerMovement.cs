@@ -10,10 +10,6 @@ public class playerMovement : MonoBehaviour
 
     [Header("Jump")]
     public float jumpForce = 10f;
-    public int maxJumps = 2;
-
-    private int jumpCount = 0;
-    private bool isGrounded = false;
 
     [Header("Dash")]
     public float dashSpeed = 18f;
@@ -21,6 +17,7 @@ public class playerMovement : MonoBehaviour
     public float dashCooldown = 0.5f;
 
     private float movement;
+    private bool isGrounded = false;
     private bool facingRight = true;
 
     private bool isDashing = false;
@@ -67,18 +64,19 @@ public class playerMovement : MonoBehaviour
 
         // RUNNING ANIMATION
         if (Mathf.Abs(movement) > 0.1f)
-            animator.SetFloat("Running", 1f);
-        else
-            animator.SetFloat("Running", 0f);
-
-        // DOUBLE JUMP
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space))
-            && !isDashing)
         {
-            if (jumpCount < maxJumps)
-            {
-                Jump();
-            }
+            animator.SetFloat("Running", 1f);
+        }
+        else
+        {
+            animator.SetFloat("Running", 0f);
+        }
+
+        // JUMP
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space))
+            && isGrounded && !isDashing)
+        {
+            Jump();
         }
 
         // DASH
@@ -95,12 +93,16 @@ public class playerMovement : MonoBehaviour
             dashTimer -= Time.deltaTime;
 
             if (dashTimer <= 0f)
+            {
                 isDashing = false;
+            }
         }
 
         // DASH COOLDOWN
         if (dashCooldownTimer > 0f)
+        {
             dashCooldownTimer -= Time.deltaTime;
+        }
 
         // JUMP / FALL ANIMATION
         if (!isGrounded)
@@ -147,21 +149,12 @@ public class playerMovement : MonoBehaviour
 
     void Jump()
     {
-        // Reset vertical velocity para consistent ang jump
-        rb.linearVelocity = new Vector2(
-            rb.linearVelocity.x,
-            0f
-        );
+        isGrounded = false;
 
-        // Jump
         rb.linearVelocity = new Vector2(
             rb.linearVelocity.x,
             jumpForce
         );
-
-        jumpCount++;
-
-        isGrounded = false;
 
         animator.SetBool("Jumping", true);
     }
@@ -183,6 +176,7 @@ public class playerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Kapag tumama sa ground
         if (collision.gameObject.CompareTag("Ground"))
         {
             foreach (ContactPoint2D contact in collision.contacts)
@@ -190,10 +184,6 @@ public class playerMovement : MonoBehaviour
                 if (contact.normal.y > 0.5f)
                 {
                     isGrounded = true;
-
-                    // Reset jumps kapag nasa ground
-                    jumpCount = 0;
-
                     break;
                 }
             }
@@ -209,10 +199,6 @@ public class playerMovement : MonoBehaviour
                 if (contact.normal.y > 0.5f)
                 {
                     isGrounded = true;
-
-                    // Reset jumps kapag nasa ground
-                    jumpCount = 0;
-
                     return;
                 }
             }

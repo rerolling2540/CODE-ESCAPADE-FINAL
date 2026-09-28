@@ -3,14 +3,11 @@ using UnityEngine;
 
 public class PerformEffectGA : GameAction
 {
-    public Effect Effect { get; private set; }
-    public List<CombatantView> Targets { get; private set; }
-    public CardData CardSource { get; private set; }
-
-    public PerformEffectGA(Effect effect, List<CombatantView> targets, CardData cardSource = null)
+    public Effect Effect {get; set;}
+    public List<CombatantView> Targets {get; set;}
+   public PerformEffectGA(Effect effect, List<CombatantView> targets)
     {
         Effect = effect;
-        Targets = targets;
-        CardSource = cardSource;
+        Targets = targets == null ? null: new(targets);
     }
 }

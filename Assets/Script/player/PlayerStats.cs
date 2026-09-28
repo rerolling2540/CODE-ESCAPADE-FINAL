@@ -50,4 +50,5 @@ public class PlayerStats : MonoBehaviour
             InitializePlayer();
         }
     }
+    
 }

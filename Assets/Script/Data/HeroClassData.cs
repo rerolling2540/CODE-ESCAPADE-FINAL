@@ -8,6 +8,7 @@ public class HeroClassData : ScriptableObject
     [field: SerializeField] public HeroLanguageClass LanguageClass { get; private set; }
     [field: SerializeField] public int BaseMaxHP { get; private set; } = 100;
     [field: SerializeField] public int HPGainPerLevel { get; private set; } = 15;
+    [field: SerializeField] public Sprite Icon { get; private set; }
 
     public int GetHealthForLevel(int level)
     {

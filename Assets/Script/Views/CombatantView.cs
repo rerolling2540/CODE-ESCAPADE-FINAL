@@ -19,6 +19,7 @@ public class CombatantView : MonoBehaviour
         spriteRenderer.sprite = image;
         UpdateHealthText();
     }
+    
     private void UpdateHealthText()
     {
         healthText.text = "HP: " + CurrentHealth;
@@ -81,4 +82,14 @@ public class CombatantView : MonoBehaviour
         if (statusEffects.ContainsKey(type)) return statusEffects[type];
         else return 0;
     }
+
+    public void InitializeClass(HeroClassData classData, int level)
+{
+    if (classData == null) return;
+
+    int calculatedHealth = classData.GetHealthForLevel(level);
+    Sprite classSprite = classData.Icon != null ? classData.Icon : (spriteRenderer != null ? spriteRenderer.sprite : null);
+
+    SetUpBase(calculatedHealth, classSprite);
+}
 }

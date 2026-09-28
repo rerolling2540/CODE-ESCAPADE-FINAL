@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "CODE-ESCAPADE-main-7-map.slnx",
+    "dotnet.defaultSolution": "CODE-ESCAPADE-FINAL.slnx",
     "python-envs.defaultEnvManager": "ms-python.python:system"
 }

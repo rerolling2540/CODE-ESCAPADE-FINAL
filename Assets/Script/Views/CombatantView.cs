@@ -13,10 +13,30 @@ public class CombatantView : MonoBehaviour
    public int CurrentHealth {get; private set;}
    private Dictionary<StatusEffectType, int> statusEffects = new(); 
 
+   public virtual void InitializeClass(HeroClassData heroClassData, int level)
+   {
+       if (heroClassData == null)
+       {
+           return;
+       }
+
+       int health = heroClassData.GetHealthForLevel(level);
+       if (spriteRenderer != null)
+       {
+           SetUpBase(health, spriteRenderer.sprite);
+           return;
+       }
+
+       SetUpBase(health, null);
+   }
+
    protected void SetUpBase(int  health, Sprite image)
     {
         MaxHealth = CurrentHealth = health;
-        spriteRenderer.sprite = image;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sprite = image;
+        }
         UpdateHealthText();
     }
     private void UpdateHealthText()

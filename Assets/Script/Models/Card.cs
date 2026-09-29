@@ -6,21 +6,18 @@ using UnityEngine;
 
 public class Card
 {
-    // Ensure Data is public getter
-    public CardData Data { get; private set; }
-
-    // Helper property to satisfy CardData references
-    public CardData CardData => Data;
-
-    public Card(CardData cardData)
+    public string Title => data.name;
+    public string Description => data.Description;
+    public Sprite Image => data.Image;
+    public Effect ManualTargetEffect => data.ManualTargetEffect;
+    public List<AutoTargetEffect> OtherEffects => data.OtherEffects;
+    public int Mana {get; private set;}
+   private readonly CardData data;
+   public Card(CardData cardData)
     {
-        Data = cardData;
+        data = cardData;
+        Mana = cardData.Mana;
+        
     }
-
-    public string Title => Data.name;
-    public string Description => Data.Description;
-    public int Mana => Data.Mana;
-    public Sprite Image => Data.Image;
-    public Effect ManualTargetEffect => Data.ManualTargetEffect;
-    public List<AutoTargetEffect> OtherEffects => Data.OtherEffects;
+   
 }

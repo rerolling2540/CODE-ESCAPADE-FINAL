@@ -22,10 +22,6 @@ MonoBehaviour:
       rid: 7337470236345761877
     <Effect>k__BackingField:
       rid: 7337470236345761878
-  damageType: 1
-  baseDamage: 10
-  percentDamage: 50
-  damageMultiplier: 1
   references:
     version: 2
     RefIds:
@@ -36,4 +32,5 @@ MonoBehaviour:
       data: 
     - rid: 7337470236345761878
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        damageAmount: 10

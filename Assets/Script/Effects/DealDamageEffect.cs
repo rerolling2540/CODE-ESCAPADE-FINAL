@@ -1,10 +1,15 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class DealDamageEffect : Effect
 {
-    public override GameAction GetGameAction(List<CombatantView> targets, CombatantView caster, CardData cardSource = null)
+   [SerializeField] private int damageAmount;
+    public override GameAction GetGameAction(List<CombatantView> targets, CombatantView caster)
     {
-        return new DealDamageGA(cardSource, targets, caster);
+        
+       DealDamageGA dealDamageGA = new(damageAmount, targets, caster);
+        return dealDamageGA;
     }
 }

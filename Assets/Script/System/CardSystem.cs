@@ -13,20 +13,25 @@ public class CardSystem : Singleton<CardSystem>
     private readonly List<Card> discardPile = new();
     private readonly List<Card> hand = new();
 
+
     void OnEnable()
     {
         ActionSystem.AttachPerformer<DrawCardsGA>(DrawCardsPerformer);
         ActionSystem.AttachPerformer<DiscardAllCardsGA>(DiscardAllCardsPerformer);
         ActionSystem.AttachPerformer<PlayCardGA>(PlayCardPerformer);
-    }
 
+    }
     void OnDisable()
     {
         ActionSystem.DetachPerformer<DrawCardsGA>();
         ActionSystem.DetachPerformer<DiscardAllCardsGA>();
         ActionSystem.DetachPerformer<PlayCardGA>();
-    }
 
+    }
+    // Reactions
+
+
+    // Publics
     public void Setup(List<CardData> deckData)
     {
         foreach (var cardData in deckData)
@@ -35,6 +40,8 @@ public class CardSystem : Singleton<CardSystem>
             drawPile.Add(card);
         }
     }
+
+    // Performers
 
     private IEnumerator DrawCardsPerformer(DrawCardsGA drawCardsGA)
     {
@@ -58,6 +65,7 @@ public class CardSystem : Singleton<CardSystem>
     {
         foreach (var card in hand)
         {
+
             CardView cardView = handView.RemoveCard(card);
             yield return DiscardCard(cardView);
         }
@@ -75,32 +83,30 @@ public class CardSystem : Singleton<CardSystem>
 
         if (playCardGA.QuestionAnsweredCorrectly)
         {
+            // Manual Target Effect
             if (playCardGA.Card.ManualTargetEffect != null)
             {
                 PerformEffectGA performEffectGA = new(
                     playCardGA.Card.ManualTargetEffect,
-                    new() { playCardGA.ManualTarget },
-                    playCardGA.Card.CardData);
+                    new() { playCardGA.ManualTarget });
 
                 ActionSystem.Instance.AddReaction(performEffectGA);
             }
 
+            // Other Effects
             foreach (var effectWrapper in playCardGA.Card.OtherEffects)
             {
                 List<CombatantView> targets = effectWrapper.TargetMode.GetTargets();
 
-                PerformEffectGA performEffectGA = new(
-                    effectWrapper.Effect, 
-                    targets, 
-                    playCardGA.Card.CardData);
+                PerformEffectGA performEffectGA = new(effectWrapper.Effect, targets);
 
                 ActionSystem.Instance.AddReaction(performEffectGA);
             }
         }
         else
         {
-            AttackHeroGA attackHeroGA = new(EnemySystem.Instance.CurrentEnemy);
-            ActionSystem.Instance.AddReaction(attackHeroGA);
+                AttackHeroGA attackHeroGA = new(EnemySystem.Instance.CurrentEnemy);
+                ActionSystem.Instance.AddReaction(attackHeroGA);
         }
     }
 

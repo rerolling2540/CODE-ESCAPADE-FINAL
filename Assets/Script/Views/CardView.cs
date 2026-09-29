@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class CardView : MonoBehaviour
 {
@@ -12,7 +13,6 @@ public class CardView : MonoBehaviour
     public Card Card { get; private set; }
     private Vector3 draStartPosition;
     private Quaternion dragStartRotation;
-
     public void Setup(Card card)
     {
         Card = card;
@@ -21,7 +21,6 @@ public class CardView : MonoBehaviour
         mana.text = card.Mana.ToString();
         imageSR.sprite = card.Image;
     }
-
     void OnMouseEnter()
     {
         if (!Interactions.Instance.PlayerCanHover()) return;
@@ -29,14 +28,12 @@ public class CardView : MonoBehaviour
         Vector3 pos = new(transform.position.x, -2, 0);
         CardViewHoverSystem.Instance.Show(Card, pos);
     }
-
     void OnMouseExit()
     {
         if (!Interactions.Instance.PlayerCanHover()) return;
         CardViewHoverSystem.Instance.Hide();
         wrapper.SetActive(true);
     }
-
     void OnMouseDown()
     {
         if (!Interactions.Instance.PlayerCanInteract()) return;
@@ -54,14 +51,13 @@ public class CardView : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, 0, 0);
             transform.position = MouseUtil.GetMousePositionInWorldSpace(-1);
         }
-    }
 
+    }
     void OnMouseDrag()
     {
         if (!Interactions.Instance.PlayerCanInteract()) return;
         transform.position = MouseUtil.GetMousePositionInWorldSpace(-1);
     }
-
     void OnMouseUp()
     {
         if (!Interactions.Instance.PlayerCanInteract()) return;
@@ -83,8 +79,15 @@ public class CardView : MonoBehaviour
 
                 QuestionSystem.Instance.AskRandomQuestion(correct =>
                 {
+                    Debug.Log("Question answered: " + correct);
+
                     playCardGA.QuestionAnsweredCorrectly = correct;
+
+                    Debug.Log("Calling Perform()");
+
                     ActionSystem.Instance.Perform(playCardGA);
+
+                    Debug.Log("Perform() Finished");
                 });
             }
             else
@@ -94,5 +97,7 @@ public class CardView : MonoBehaviour
             }
             Interactions.Instance.PlayerIsDragging = false;
         }
+
     }
+
 }

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-
-[System.Serializable]
+using UnityEngine;
 
 public abstract class Effect
 {
-   public abstract GameAction GetGameAction(List<CombatantView> targets, CombatantView caster);
+    // Added 'CardData cardSource = null' to support percentage calculations
+    public abstract GameAction GetGameAction(List<CombatantView> targets, CombatantView caster, CardData cardSource = null);
 }

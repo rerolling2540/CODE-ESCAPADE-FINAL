@@ -30,6 +30,9 @@ public class Npc_Talk : MonoBehaviour
     private void Update()
     {
         bool interactPressed = Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame;
+        
+        interactPressed |= Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        
         interactPressed |= Gamepad.current != null &&
                            (Gamepad.current.buttonNorth.wasPressedThisFrame ||
                             Gamepad.current.buttonEast.wasPressedThisFrame);

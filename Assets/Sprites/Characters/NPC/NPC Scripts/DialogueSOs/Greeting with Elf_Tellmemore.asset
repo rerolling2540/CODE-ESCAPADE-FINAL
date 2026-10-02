@@ -10,17 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3390dd414cb2cec469891521d6a60aa8, type: 3}
-  m_Name: Greeting with Elf
+  m_Name: Greeting with Elf_Tellmemore
   m_EditorClassIdentifier: Assembly-CSharp::DialogueSO
   lines:
   - speaker: {fileID: 11400000, guid: 8467be0c8c312cb469fa7f3a95b95ab4, type: 2}
-    text: hello burat
-  - speaker: {fileID: 11400000, guid: 8467be0c8c312cb469fa7f3a95b95ab4, type: 2}
-    text: burat mo malaki ba
+    text: Malaki nga legit totoo
   - speaker: {fileID: 11400000, guid: 6e4cc273946fc2e478dded86a840810f, type: 2}
-    text: opoh
-  options:
-  - optionText: Tell me more!
-    nextDialogue: {fileID: 11400000, guid: c0307f0e1badb084c967dd0f4fca494a, type: 2}
-  - optionText: Not Interested.
-    nextDialogue: {fileID: 11400000, guid: 55f2868d8237a2a4a9a21f081c10dc34, type: 2}
+    text: 'Sige sabi mo e
+
+'
+  options: []

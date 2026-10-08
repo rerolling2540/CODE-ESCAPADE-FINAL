@@ -35,7 +35,6 @@ public class playerMovement : MonoBehaviour
 
     void Update()
     {
-        // MOVEMENT
         movement = Input.GetAxisRaw("Horizontal");
 
         // FLIP LEFT
@@ -176,7 +175,6 @@ public class playerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Kapag tumama sa ground
         if (collision.gameObject.CompareTag("Ground"))
         {
             foreach (ContactPoint2D contact in collision.contacts)

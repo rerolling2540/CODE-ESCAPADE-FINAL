@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueSO
   lines:
   - speaker: {fileID: 11400000, guid: 8467be0c8c312cb469fa7f3a95b95ab4, type: 2}
-    text: hello burat
+    text: Hello Warrior!
   - speaker: {fileID: 11400000, guid: 8467be0c8c312cb469fa7f3a95b95ab4, type: 2}
-    text: burat mo malaki ba
+    text: This is the start of your adventure!
   - speaker: {fileID: 11400000, guid: 6e4cc273946fc2e478dded86a840810f, type: 2}
-    text: opoh
+    text: sige busseng
   options:
   - optionText: Tell me more!
     nextDialogue: {fileID: 11400000, guid: c0307f0e1badb084c967dd0f4fca494a, type: 2}

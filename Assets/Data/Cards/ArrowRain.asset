@@ -18,8 +18,8 @@ MonoBehaviour:
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField: []
-  damageType: 0
-  baseDamage: 10
+  damageType: 1
+  baseDamage: 100
   percentDamage: 10
   damageMultiplier: 1
   references:

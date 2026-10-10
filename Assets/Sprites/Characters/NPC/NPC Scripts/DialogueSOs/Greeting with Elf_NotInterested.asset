@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueSO
   lines:
   - speaker: {fileID: 11400000, guid: 8467be0c8c312cb469fa7f3a95b95ab4, type: 2}
-    text: sge sayang
+    text: Alright bye!
   - speaker: {fileID: 11400000, guid: 6e4cc273946fc2e478dded86a840810f, type: 2}
-    text: bye tol
+    text: Bye too!
   options: []

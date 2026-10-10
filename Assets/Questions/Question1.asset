@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c3c10ebce04fba429f4ea914c123951, type: 3}
   m_Name: Question1
   m_EditorClassIdentifier: Assembly-CSharp::MultipleChoiceQuestionData
-  questionType: 0
+  questionType: 1
   questionText: "Question: What data type would you use to store a hero\u2019s whole
     HP value (e.g., 100)?"
   hintText: 

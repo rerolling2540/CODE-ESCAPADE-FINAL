@@ -5,6 +5,9 @@ public class SettingsUI : MonoBehaviour
 {
     [SerializeField] private GameObject settingsPanel;
 
+    [Header("Game Save")]
+    [SerializeField] private Transform player;
+
     public void OpenSettings()
     {
         settingsPanel.SetActive(true);
@@ -19,6 +22,9 @@ public class SettingsUI : MonoBehaviour
 
     public void OpenMainMenu()
     {
+        // Save current player position
+        GameSave.Instance.SaveGame(player);
+
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }

@@ -587,11 +587,11 @@ TilemapCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_CompositeOperation: 0
+  m_CompositeOperation: 1
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
-  m_ExtrusionFactor: 0
+  m_ExtrusionFactor: 0.005
   m_UseDelaunayMesh: 0
 --- !u!483693784 &101925628
 TilemapRenderer:
@@ -257506,7 +257506,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5539649632114855133, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: jumpForce
-      value: 11
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5539649632114855133, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: moveSpeed

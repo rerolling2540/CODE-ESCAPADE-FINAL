@@ -1,11 +1,17 @@
+
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CharacterSelector : MonoBehaviour
 {
     public Image characterImage;
     public TMP_Text characterName;
+
+    // LOGO NG BAWAT CHARACTER
+    public Image logoImage;
+    public Sprite[] characterLogos;
 
     public Sprite[] characters;
     public string[] characterNames;
@@ -45,5 +51,17 @@ public class CharacterSelector : MonoBehaviour
     {
         characterImage.sprite = characters[currentCharacter];
         characterName.text = characterNames[currentCharacter];
+
+        // I-UPDATE DIN ANG LOGO
+        logoImage.sprite = characterLogos[currentCharacter];
+    }
+
+    // PLAY BUTTON
+    public void PlayGame()
+    {
+        PlayerPrefs.SetInt("SelectedCharacter", currentCharacter);
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene("Scene 2");
     }
 }

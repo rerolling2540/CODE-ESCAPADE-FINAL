@@ -23,7 +23,9 @@ public class SettingsUI : MonoBehaviour
     public void OpenMainMenu()
     {
         // Save current player position
-        GameSave.Instance.SaveGame(player);
+        var save = GameSave.EnsureInstance();
+        if (player != null) save.SaveGame(player);
+        else save.SaveCurrentPlayer();
 
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");

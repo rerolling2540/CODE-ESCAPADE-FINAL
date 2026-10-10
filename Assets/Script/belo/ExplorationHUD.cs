@@ -19,6 +19,7 @@ public class ExplorationHUD : MonoBehaviour
 
     void Start()
     {
+        GameSave.EnsureInstance();
         player = FindFirstObjectByType<playerMovement>();
         signs = FindObjectsByType<TutorialSignboard>(FindObjectsSortMode.None);
         if (inventory == null) inventory = GetComponent<CharacterInventory>();

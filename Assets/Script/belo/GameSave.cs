@@ -5,123 +5,108 @@ using System.Collections;
 public class GameSave : MonoBehaviour
 {
     public static GameSave Instance;
+    private SaveSlots.Record pendingRestore;
+    private float nextAutoSave;
 
-    void Awake()
+    public static GameSave EnsureInstance()
     {
         if (Instance == null)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            Instance = FindFirstObjectByType<GameSave>();
+            if (Instance == null) Instance = new GameObject("Game Save Manager").AddComponent<GameSave>();
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        return Instance;
+    }
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SaveSlots.MigrateLegacy();
+    }
+
+    void Update()
+    {
+        if (Time.timeScale <= 0f || pendingRestore != null || Time.unscaledTime < nextAutoSave) return;
+        nextAutoSave = Time.unscaledTime + 15f;
+        SaveCurrentPlayer();
+    }
+
+    public void SaveCurrentPlayer()
+    {
+        var player = FindFirstObjectByType<playerMovement>();
+        if (player != null) SaveGame(player.transform);
     }
 
     public void SaveGame(Transform player)
     {
-        if (player == null)
-        {
-            Debug.LogError("PLAYER IS NOT ASSIGNED!");
-            return;
-        }
-
-        string sceneName = SceneManager.GetActiveScene().name;
-
-        PlayerPrefs.SetString("SavedScene", sceneName);
-
-        PlayerPrefs.SetFloat("PlayerX", player.position.x);
-        PlayerPrefs.SetFloat("PlayerY", player.position.y);
-        PlayerPrefs.SetFloat("PlayerZ", player.position.z);
-
-        PlayerPrefs.SetInt("HasGame", 1);
-
-        PlayerPrefs.Save();
-
-        Debug.Log("========== GAME SAVED ==========");
-        Debug.Log("Scene: " + sceneName);
-        Debug.Log("Player Position: " + player.position);
-        Debug.Log("================================");
+        string scene = SceneManager.GetActiveScene().name;
+        if (player == null || (scene != "Scene 2" && scene != "Scene3") || pendingRestore != null) return;
+        SaveSlots.Write(new SaveSlots.Record { scene = scene, hasPosition = true,
+            position = player.position, character = PlayerPrefs.GetInt("SelectedCharacter", 0) });
     }
 
     public void ContinueGame()
     {
-        if (PlayerPrefs.GetInt("HasGame", 0) == 1)
+        var saved = SaveSlots.Read(SaveSlots.Active);
+        if (saved == null || !Application.CanStreamedLevelBeLoaded(saved.scene))
         {
-            string savedScene = PlayerPrefs.GetString(
-                "SavedScene",
-                "GameScene"
-            );
-
-            Debug.Log("========== CONTINUE GAME ==========");
-            Debug.Log("Loading Scene: " + savedScene);
-
-            SceneManager.sceneLoaded += OnSceneLoaded;
-
-            SceneManager.LoadScene(savedScene);
+            Debug.LogWarning("The selected save slot is empty or its scene is unavailable.");
+            return;
         }
-        else
-        {
-            Debug.LogWarning("NO SAVED GAME FOUND!");
-        }
+        pendingRestore = saved;
+        PlayerPrefs.SetInt("SelectedCharacter", saved.character);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(saved.scene);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-
-        StartCoroutine(RestorePlayer());
+        if (pendingRestore != null && scene.name == pendingRestore.scene)
+            StartCoroutine(RestorePlayer());
+        nextAutoSave = Time.unscaledTime + 15f;
     }
 
     IEnumerator RestorePlayer()
     {
-        // Wait for player to spawn
-        yield return new WaitForSeconds(1f);
-
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-        if (player == null)
+        // Let scene Start methods spawn the selected character before restoring.
+        yield return null;
+        var saved = pendingRestore;
+        if (saved == null) yield break;
+        if (saved.hasPosition)
         {
-            Debug.LogError(
-                "PLAYER NOT FOUND! Make sure the character Tag is Player."
-            );
-
-            yield break;
+            playerMovement player = null;
+            float deadline = Time.realtimeSinceStartup + 5f;
+            while (player == null && Time.realtimeSinceStartup < deadline)
+            {
+                player = FindFirstObjectByType<playerMovement>();
+                if (player == null) yield return null;
+            }
+            if (player != null)
+            {
+                player.transform.position = saved.position;
+                var body = player.GetComponent<Rigidbody2D>();
+                if (body != null) { body.position = saved.position; body.linearVelocity = Vector2.zero; }
+                Physics2D.SyncTransforms();
+            }
+            else Debug.LogError("Could not find a player to restore the save position.");
         }
-
-        float x = PlayerPrefs.GetFloat("PlayerX", 0f);
-        float y = PlayerPrefs.GetFloat("PlayerY", 0f);
-        float z = PlayerPrefs.GetFloat("PlayerZ", 0f);
-
-        Vector3 savedPosition = new Vector3(x, y, z);
-
-        Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
-
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero;
-            rb.position = new Vector2(x, y);
-        }
-
-        player.transform.position = savedPosition;
-
-        Debug.Log("========== PLAYER RESTORED ==========");
-        Debug.Log("Restored Position: " + savedPosition);
-        Debug.Log("=====================================");
+        pendingRestore = null;
     }
 
     public void NewGame()
     {
-        CharacterInventory.ResetSavedInventory();
-        PlayerPrefs.DeleteKey("SavedScene");
-        PlayerPrefs.DeleteKey("PlayerX");
-        PlayerPrefs.DeleteKey("PlayerY");
-        PlayerPrefs.DeleteKey("PlayerZ");
-        PlayerPrefs.DeleteKey("HasGame");
+        pendingRestore = null;
+        SaveSlots.BeginNew(PlayerPrefs.GetInt("SelectedCharacter", 0));
+    }
 
-        PlayerPrefs.Save();
-
-        Debug.Log("NEW GAME SAVE DELETED!");
+    void OnApplicationPause(bool paused) { if (paused) SaveCurrentPlayer(); }
+    void OnApplicationQuit() { SaveCurrentPlayer(); }
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        if (Instance == this) Instance = null;
     }
 }

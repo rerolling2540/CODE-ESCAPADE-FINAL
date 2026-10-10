@@ -15,7 +15,7 @@ public class CharacterInventory : MonoBehaviour
 
     public List<CatalogEntry> catalog = new List<CatalogEntry>();
     public HeroData starterHero;
-    public const string SaveKey = "CodeEscapade.Inventory.v1";
+    public static string SaveKey => SaveSlots.InventoryKey;
     private SaveData data = new SaveData();
     public IReadOnlyList<Stack> Cards => data.cards;
     public int Coins => data.coins;
@@ -23,6 +23,7 @@ public class CharacterInventory : MonoBehaviour
 
     void Awake()
     {
+        SaveSlots.MigrateLegacy();
         bool loaded = false;
         if (PlayerPrefs.HasKey(SaveKey))
         {

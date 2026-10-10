@@ -1,43 +1,19 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using TMPro;
 
 public class PlayContinueButton : MonoBehaviour
 {
     public TMP_Text buttonText;
-    public string gameScene = "GameScene";
-
+    public string gameScene = "Scene 2";
     void Start()
     {
-        UpdateButtonText();
+        SaveSlots.MigrateLegacy();
+        if (buttonText != null) buttonText.text = SaveSlots.Read(SaveSlots.Active) != null ? "CONTINUE" : "PLAY";
     }
-
-    void UpdateButtonText()
-    {
-        if (PlayerPrefs.GetInt("HasGame", 0) == 1)
-        {
-            buttonText.text = "CONTINUE";
-        }
-        else
-        {
-            buttonText.text = "PLAY";
-        }
-    }
-
     public void PlayOrContinue()
     {
-        if (PlayerPrefs.GetInt("HasGame", 0) == 1)
-        {
-            // Continue
-            SceneManager.LoadScene(gameScene);
-        }
-        else
-        {
-            // First time Play
-            PlayerPrefs.SetInt("HasGame", 1);
-            PlayerPrefs.Save();
-
-            SceneManager.LoadScene(gameScene);
-        }
+        var menu = FindFirstObjectByType<MainMenuSaveSlots>();
+        if (menu != null) menu.ShowSlots();
+        else GameSave.EnsureInstance().ContinueGame();
     }
 }

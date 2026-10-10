@@ -17,6 +17,7 @@ public class CharacterSelector : MonoBehaviour
     public string[] characterNames;
 
     private int currentCharacter = 0;
+    public int SelectedCharacter => currentCharacter;
 
     void Start()
     {
@@ -61,7 +62,7 @@ public class CharacterSelector : MonoBehaviour
     {
         PlayerPrefs.SetInt("SelectedCharacter", currentCharacter);
         PlayerPrefs.Save();
-
+        GameSave.EnsureInstance().NewGame();
         SceneManager.LoadScene("Scene 2");
     }
 }

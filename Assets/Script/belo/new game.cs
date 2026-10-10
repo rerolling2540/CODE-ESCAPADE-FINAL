@@ -1,28 +1,14 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class NewGameButton : MonoBehaviour
 {
-    public string gameScene = "GameScene";
-
+    public string gameScene = "Scene 2";
     public void StartNewGame()
     {
-        CharacterInventory.ResetSavedInventory();
-        // Delete old save
-        PlayerPrefs.DeleteKey("HasGame");
-        PlayerPrefs.DeleteKey("SavedScene");
-        PlayerPrefs.DeleteKey("PlayerX");
-        PlayerPrefs.DeleteKey("PlayerY");
-        PlayerPrefs.DeleteKey("PlayerZ");
-
-        PlayerPrefs.Save();
-
-        Debug.Log("NEW GAME - OLD SAVE DELETED");
-
-        // Start fresh game
-        PlayerPrefs.SetInt("HasGame", 1);
-        PlayerPrefs.Save();
-
-        SceneManager.LoadScene(gameScene);
+        var menu = FindFirstObjectByType<MainMenuSaveSlots>();
+        if (menu != null) { menu.ShowNewGame(); return; }
+        var save = GameSave.EnsureInstance();
+        save.NewGame();
+        save.ContinueGame();
     }
 }

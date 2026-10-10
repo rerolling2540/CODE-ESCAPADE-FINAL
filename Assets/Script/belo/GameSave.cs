@@ -113,6 +113,7 @@ public class GameSave : MonoBehaviour
 
     public void NewGame()
     {
+        CharacterInventory.ResetSavedInventory();
         PlayerPrefs.DeleteKey("SavedScene");
         PlayerPrefs.DeleteKey("PlayerX");
         PlayerPrefs.DeleteKey("PlayerY");

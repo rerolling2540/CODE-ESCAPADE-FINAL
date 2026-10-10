@@ -7,6 +7,7 @@ public class NewGameButton : MonoBehaviour
 
     public void StartNewGame()
     {
+        CharacterInventory.ResetSavedInventory();
         // Delete old save
         PlayerPrefs.DeleteKey("HasGame");
         PlayerPrefs.DeleteKey("SavedScene");

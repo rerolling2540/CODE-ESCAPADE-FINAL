@@ -205901,6 +205901,72 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &887740000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 887740001}
+  - component: {fileID: 887740002}
+  - component: {fileID: 887740003}
+  m_Layer: 0
+  m_Name: Exploration HUD and Inventory
+  m_TagString: Untagged
+  m_IsActive: 1
+--- !u!4 &887740001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887740000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!114 &887740002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887740000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56310ef3bb3642d68788e2c812282d7d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterInventory
+  catalog:
+  - id: 1725032973d00d54e9f4a9bdd0aab211
+    card: {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
+  - id: 831451ed55fb384468dd7c7b07521312
+    card: {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
+  - id: 168c58146a32b25448627cb38164f1f3
+    card: {fileID: 11400000, guid: 168c58146a32b25448627cb38164f1f3, type: 2}
+  - id: a49b409c12903a740a4dfb32f653356a
+    card: {fileID: 11400000, guid: a49b409c12903a740a4dfb32f653356a, type: 2}
+  - id: 980c18db59e9cf946920510c6e295487
+    card: {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
+  starterHero: {fileID: 11400000, guid: afccaf16a67bb1a49945154d3c1a298c, type: 2}
+--- !u!114 &887740003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887740000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0c09fcb7914438ab003c0a7d44ac6df, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ExplorationHUD
+  inventory: {fileID: 887740002}
+  minimapWorldSize: {x: 64, y: 38}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -205927,3 +205993,4 @@ SceneRoots:
   - {fileID: 887720000}
   - {fileID: 887720010}
   - {fileID: 887720020}
+  - {fileID: 887740001}

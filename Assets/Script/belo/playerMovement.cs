@@ -14,8 +14,9 @@ public class playerMovement : MonoBehaviour
 
     [Header("Dash")]
     public float dashSpeed = 18f;
-    public float dashDuration = 0.15f;
+    public float dashDuration = 0.35f;
     public float dashCooldown = 0.5f;
+    public AnimationClip dashAnimation;
 
     [Header("Animation")]
     [Min(0.1f)] public float runAnimationSpeed = 1.35f;
@@ -62,10 +63,10 @@ public class playerMovement : MonoBehaviour
         }
 
         if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space))
-            && (isGrounded || airJumpsRemaining > 0) && !isDashing)
+            && (isGrounded || airJumpsRemaining > 0))
             Jump();
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing && dashCooldownTimer <= 0f)
+        else if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing && dashCooldownTimer <= 0f)
             Dash();
 
         UpdateAnimation();
@@ -95,13 +96,26 @@ public class playerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        float horizontalSpeed = movement * moveSpeed;
+        if (isDashing)
+        {
+            // Keep the initial burst, then ease into normal movement over the last quarter.
+            float recovery = 1f - Mathf.Clamp01(dashTimer / Mathf.Max(dashDuration * 0.25f, 0.01f));
+            float exitSpeed = Mathf.Max(0f, movement * dashDirection) * moveSpeed;
+            horizontalSpeed = dashDirection * Mathf.Lerp(dashSpeed, exitSpeed,
+                Mathf.SmoothStep(0f, 1f, recovery));
+        }
         rb.linearVelocity = new Vector2(
-            isDashing ? dashDirection * dashSpeed : movement * moveSpeed,
+            horizontalSpeed,
             rb.linearVelocity.y);
     }
 
     void Jump()
     {
+        // Jump cancels the dash immediately, without restoring spent air jumps.
+        isDashing = false;
+        dashTimer = 0f;
+        animator.SetBool("Dashing", false);
         if (!isGrounded) airJumpsRemaining--;
         isGrounded = false;
         groundContacts.Clear();
@@ -123,7 +137,8 @@ public class playerMovement : MonoBehaviour
         animator.SetBool("Dashing", true);
         animator.SetBool("Jumping", false);
         animator.SetBool("Falling", false);
-        animator.SetFloat("DashAnimationSpeed", 0.7f / Mathf.Max(dashDuration, 0.01f));
+        float clipLength = dashAnimation != null ? dashAnimation.length : 0.35f;
+        animator.SetFloat("DashAnimationSpeed", clipLength / Mathf.Max(dashDuration, 0.01f));
         animator.Play("Dash", 0, 0f);
         rb.linearVelocity = new Vector2(dashDirection * dashSpeed, rb.linearVelocity.y);
     }

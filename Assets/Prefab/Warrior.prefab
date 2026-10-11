@@ -197,3 +197,5 @@ MonoBehaviour:
   rb: {fileID: 1184856703942511860}
   jumpForce: 15
   moveSpeed: 6
+  dashDuration: 0.35
+  dashAnimation: {fileID: 7400000, guid: 17cab0cdf5544abdb2c2a787b7e59d27, type: 2}

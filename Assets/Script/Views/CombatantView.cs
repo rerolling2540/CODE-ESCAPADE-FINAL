@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
@@ -22,8 +23,118 @@ public class CombatantView : MonoBehaviour
     [Header("Health System Properties")]
     public int MaxHealth { get; private set; } = 100;
     public int CurrentHealth { get; private set; } = 100;
+    public Vector3 VisualCenter => spriteRenderer != null ? spriteRenderer.bounds.center : transform.position;
+    public Bounds VisualBounds => spriteRenderer != null ? spriteRenderer.bounds : new Bounds(transform.position, Vector3.one);
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
+    private bool deathQueued;
+    private Sprite[] idleFrames, attackFrames;
+    private float battleFrameRate = 12f;
+    private bool attacking, battleAnimationReady, hovering;
+    private float idleClock;
+    private Vector3 visualScale, visualPosition;
+    private float footY;
+    private Sprite restingSprite;
+    private CombatantView facingTarget;
+    private float hitTime;
+    private float hitDirection;
+    private Color restingColor = Color.white;
+    private Vector3 FacingAnchor => battleAnimationReady && spriteRenderer != null
+        ? spriteRenderer.transform.parent.TransformPoint(visualPosition) : transform.position;
+
+    public void FaceTowards(CombatantView target)
+    {
+        facingTarget = target;
+        UpdateFacing();
+    }
+
+    void LateUpdate() { UpdateFacing(); }
+
+    void UpdateFacing()
+    {
+        if (spriteRenderer == null || facingTarget == null) return;
+        float delta = facingTarget.FacingAnchor.x - FacingAnchor.x;
+        if (Mathf.Abs(delta) > 0.35f)
+        {
+            // The enemy prefab rotates its visual parent 180 degrees around Y.
+            // Compare against the transformed sprite axis to avoid flipping twice.
+            float spriteAxis = spriteRenderer.transform.TransformVector(Vector3.right).x;
+            spriteRenderer.flipX = delta * spriteAxis < 0f;
+        }
+    }
+
+    protected void ConfigureBattleAnimation(Sprite[] idle, Sprite[] attack, float fps, bool faceLeft, bool hover = false)
+    {
+        if (spriteRenderer == null) return;
+        idleFrames = idle;
+        attackFrames = attack;
+        battleFrameRate = Mathf.Max(1f, fps);
+        hovering = hover;
+        spriteRenderer.flipX = faceLeft;
+        visualScale = spriteRenderer.transform.localScale;
+        visualPosition = spriteRenderer.transform.localPosition;
+        restingColor = spriteRenderer.color;
+        restingSprite = idle != null && idle.Length > 0 && idle[0] != null ? idle[0] : spriteRenderer.sprite;
+        footY = visualPosition.y + (spriteRenderer.sprite != null ? spriteRenderer.sprite.bounds.min.y * visualScale.y : 0);
+        battleAnimationReady = true;
+        SetBattleFrame(restingSprite, 1f, 0f);
+    }
+
+    void Update()
+    {
+        if (spriteRenderer != null && battleAnimationReady)
+            spriteRenderer.color = Time.time < hitTime ? Color.Lerp(restingColor, Color.white, 0.7f) : restingColor;
+        if (!battleAnimationReady || attacking || CurrentHealth <= 0) return;
+        idleClock += Time.deltaTime;
+        Sprite frame = restingSprite;
+        if (idleFrames != null && idleFrames.Length > 0)
+            frame = idleFrames[Mathf.FloorToInt(idleClock * 8f) % idleFrames.Length];
+        float breath = 1f + Mathf.Sin(idleClock * 2.5f) * 0.012f;
+        SetBattleFrame(frame, breath, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
+    }
+
+    void SetBattleFrame(Sprite frame, float breath, float lift)
+    {
+        if (spriteRenderer == null || frame == null) return;
+        spriteRenderer.sprite = frame;
+        spriteRenderer.transform.localScale = new Vector3(visualScale.x, visualScale.y * breath, visualScale.z);
+        // Keep the feet planted despite tightly-cropped attack frames.
+        float recoil = Mathf.Max(0f, (hitTime - Time.time) / 0.18f);
+        float axis = spriteRenderer.transform.parent.TransformVector(Vector3.right).x;
+        spriteRenderer.transform.localPosition = new Vector3(visualPosition.x + hitDirection * Mathf.Sign(axis) * Mathf.Sin(recoil * Mathf.PI) * 0.12f,
+            footY - frame.bounds.min.y * visualScale.y * breath + lift, visualPosition.z);
+    }
+
+    public IEnumerator PlayAttackAnimation()
+    {
+        if (!battleAnimationReady || CurrentHealth <= 0 || attacking) yield break;
+        attacking = true;
+        try
+        {
+            if (attackFrames != null && attackFrames.Length > 0)
+            {
+                for (int i = 0; i < attackFrames.Length; i++)
+                {
+                    if (CurrentHealth <= 0) yield break;
+                    SetBattleFrame(attackFrames[i], 1f, 0f);
+                    // Hold anticipation and follow-through; accelerate the weapon swing.
+                    float timing = i == 0 ? 1.4f : i == attackFrames.Length - 1 ? 1.5f : 0.8f;
+                    yield return new WaitForSeconds(timing / battleFrameRate);
+                }
+            }
+            else
+            {
+                // Existing combatants without a sheet still have an attack pose.
+                spriteRenderer.transform.localScale = new Vector3(visualScale.x * 1.08f, visualScale.y * 0.96f, visualScale.z);
+                yield return new WaitForSeconds(0.25f);
+            }
+        }
+        finally
+        {
+            attacking = false;
+            if (spriteRenderer != null) SetBattleFrame(restingSprite, 1f, 0f);
+        }
+    }
 
     private void Start()
     {
@@ -44,11 +155,101 @@ public class CombatantView : MonoBehaviour
     protected void SetUpBase(int health, Sprite image)
     {
         MaxHealth = CurrentHealth = health;
+        deathQueued = false;
         if (spriteRenderer != null)
         {
             spriteRenderer.sprite = image;
         }
         UpdateHealthUI();
+    }
+
+    protected void EnsureEnemyHealthBar()
+    {
+        if (healthSlider != null) return;
+        if (healthText != null) healthText.gameObject.SetActive(false);
+        var root = new GameObject("Enemy Health Bar", typeof(RectTransform), typeof(Canvas));
+        root.transform.SetParent(transform, false);
+        float top = spriteRenderer != null ? spriteRenderer.bounds.max.y - transform.position.y : 2f;
+        root.transform.localPosition = new Vector3(0f, top + 0.6f, -0.1f);
+        root.transform.localScale = Vector3.one * 0.013f;
+        var canvas = root.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = 50;
+        root.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 65);
+
+        var bar = new GameObject("HP Slider", typeof(RectTransform), typeof(Image), typeof(Slider));
+        bar.transform.SetParent(root.transform, false);
+        var barRect = bar.GetComponent<RectTransform>();
+        barRect.sizeDelta = new Vector2(300, 30);
+        barRect.anchoredPosition = new Vector2(0, -12);
+        bar.GetComponent<Image>().color = new Color(0.65f, 0.45f, 0.18f);
+        bar.GetComponent<Image>().raycastTarget = false;
+        var background = new GameObject("Dark Backing", typeof(RectTransform), typeof(Image));
+        background.transform.SetParent(bar.transform, false);
+        var backingRect = background.GetComponent<RectTransform>();
+        backingRect.anchorMin = Vector2.zero;
+        backingRect.anchorMax = Vector2.one;
+        backingRect.offsetMin = new Vector2(3, 3);
+        backingRect.offsetMax = new Vector2(-3, -3);
+        background.GetComponent<Image>().color = new Color(0.16f, 0.055f, 0.035f);
+        background.GetComponent<Image>().raycastTarget = false;
+        var fill = new GameObject("Blood Red Fill", typeof(RectTransform), typeof(Image));
+        fill.transform.SetParent(background.transform, false);
+        var fillRect = fill.GetComponent<RectTransform>();
+        fillRect.anchorMin = Vector2.zero;
+        fillRect.anchorMax = Vector2.one;
+        fillRect.offsetMin = fillRect.offsetMax = Vector2.zero;
+        fill.GetComponent<Image>().color = new Color(0.73f, 0.12f, 0.09f);
+        fill.GetComponent<Image>().raycastTarget = false;
+        healthSlider = bar.GetComponent<Slider>();
+        healthSlider.interactable = false;
+        healthSlider.transition = Selectable.Transition.None;
+        healthSlider.navigation = new Navigation { mode = Navigation.Mode.None };
+        healthSlider.fillRect = fillRect;
+        healthSlider.direction = Slider.Direction.LeftToRight;
+        healthSlider.minValue = 0;
+        healthSlider.wholeNumbers = true;
+
+        var label = new GameObject("HP Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        label.transform.SetParent(root.transform, false);
+        label.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 32);
+        label.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 18);
+        healthText = label.GetComponent<TextMeshProUGUI>();
+        healthText.fontSize = 29;
+        healthText.alignment = TextAlignmentOptions.Center;
+        healthText.color = new Color(1f, 0.9f, 0.67f);
+        healthText.raycastTarget = false;
+        healthBarRect = null; // All enemy bars retain a readable, fixed width.
+        UpdateHealthUI();
+    }
+
+    protected void EnlargeEnemyVisual()
+    {
+        if (spriteRenderer == null || spriteRenderer.sprite == null) return;
+        float height = spriteRenderer.bounds.size.y;
+        if (height > 0.01f) spriteRenderer.transform.localScale *= 2.8f / height;
+        // Keep the target collider aligned with the enlarged figure.
+        Bounds bounds = spriteRenderer.bounds;
+        Vector3 min = transform.InverseTransformPoint(bounds.min);
+        Vector3 max = transform.InverseTransformPoint(bounds.max);
+        var box2D = GetComponent<BoxCollider2D>();
+        if (box2D != null)
+        {
+            box2D.offset = (min + max) * 0.5f;
+            box2D.size = max - min;
+        }
+        var box3D = GetComponent<BoxCollider>();
+        if (box3D != null)
+        {
+            box3D.center = (min + max) * 0.5f;
+            box3D.size = new Vector3(max.x - min.x, max.y - min.y, 0.2f);
+        }
+    }
+
+    protected void SetBattleMaterial(Material material)
+    {
+        if (spriteRenderer != null && material != null) spriteRenderer.sharedMaterial = material;
     }
 
     public void UpdateHealthUI()
@@ -104,8 +305,18 @@ public class CombatantView : MonoBehaviour
             }
         }
 
-        transform.DOShakePosition(0.2f, 0.5f);
+        // Recoil only the artwork: moving the combatant root can flip its facing
+        // when a melee enemy stands close to the player.
+        hitTime = Time.time + 0.18f;
+        hitDirection = spriteRenderer != null && spriteRenderer.transform.TransformVector(Vector3.right).x * (spriteRenderer.flipX ? -1f : 1f) > 0f ? -1f : 1f;
         UpdateHealthUI();
+        if (CurrentHealth <= 0 && !deathQueued && this is EnemyView enemy && ActionSystem.Instance != null)
+        {
+            deathQueued = true;
+            var kill = new KillEnemyGA(enemy);
+            if (ActionSystem.Instance.IsPerforming) ActionSystem.Instance.AddReaction(kill);
+            else ActionSystem.Instance.Perform(kill);
+        }
     }
 
     public void Heal(int amount)

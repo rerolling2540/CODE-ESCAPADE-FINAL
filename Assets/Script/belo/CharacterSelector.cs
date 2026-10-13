@@ -63,6 +63,6 @@ public class CharacterSelector : MonoBehaviour
         PlayerPrefs.SetInt("SelectedCharacter", currentCharacter);
         PlayerPrefs.Save();
         GameSave.EnsureInstance().NewGame();
-        SceneManager.LoadScene("Scene 2");
+        SceneManager.LoadScene("StoryScene");
     }
 }

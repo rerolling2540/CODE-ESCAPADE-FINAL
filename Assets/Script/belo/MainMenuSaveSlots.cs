@@ -354,8 +354,9 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         Close();
 
-        SaveSlots.BeginNew(character);
-        GameSave.EnsureInstance().ContinueGame();
+        PlayerPrefs.SetInt("SelectedCharacter", character);
+        GameSave.EnsureInstance().NewGame();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("StoryScene");
     }
 
     void DrawSlot(int index)

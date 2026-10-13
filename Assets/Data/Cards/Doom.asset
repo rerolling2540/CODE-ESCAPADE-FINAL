@@ -23,8 +23,8 @@ MonoBehaviour:
     <Effect>k__BackingField:
       rid: 7337470236345761878
   damageType: 1
-  baseDamage: 10
-  percentDamage: 50
+  baseDamage: 100000
+  percentDamage: 100
   damageMultiplier: 1
   references:
     version: 2

@@ -41,6 +41,7 @@ public class EnemySystem : Singleton<EnemySystem>
     {
         foreach (var enemy in enemyBoardView.EnemyViews)
         {
+            if (enemy == null || enemy.CurrentHealth <= 0) continue;
             int burnStacks = enemy.GetStatusEffectStacks(StatusEffectType.BURN);
             if (burnStacks > 0)
             {
@@ -56,23 +57,53 @@ public class EnemySystem : Singleton<EnemySystem>
     {
         EnemyView attacker = attackHeroGA.Attacker;
 
-        if (attacker == null)
+        if (attacker == null || attacker.CurrentHealth <= 0)
             yield break;
 
-        Tween tween = attacker.transform.DOMoveX(
-            attacker.transform.position.x - 1f,
-            0.15f);
+        CombatantView hero = HeroSystem.Instance.HeroView;
+        if (hero == null || hero.CurrentHealth <= 0) yield break;
+        Vector3 startPosition = attacker.transform.position;
+        bool melee = !attacker.IsRanged;
+        Tween movement = null;
+        attacker.FaceTowards(hero);
+        hero.FaceTowards(attacker);
+        try
+        {
+            if (melee)
+            {
+                // Approach the player's front, accounting for sprite offsets and size.
+                float side = attacker.VisualCenter.x >= hero.VisualCenter.x ? 1f : -1f;
+                float spacing = hero.VisualBounds.extents.x + attacker.VisualBounds.extents.x * 0.55f + 0.15f;
+                Vector3 destination = startPosition;
+                destination.x += hero.VisualCenter.x + side * spacing - attacker.VisualCenter.x;
+                destination.y += hero.VisualBounds.min.y - attacker.VisualBounds.min.y;
+                float approachDuration = Mathf.Clamp(Vector3.Distance(startPosition, destination) / 14f, 0.22f, 0.45f);
+                movement = attacker.transform.DOMove(destination, approachDuration).SetEase(Ease.InOutSine);
+                yield return movement.WaitForCompletion();
+                yield return new WaitForSeconds(0.08f);
+            }
 
-        yield return tween.WaitForCompletion();
+            if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
+            // Melee attack frames contain the weapon slash; ranged frames launch the projectile.
+            yield return attacker.PlayAttackAnimation();
+            if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
 
-        // Enemy may have died during the attack animation
-        if (attacker == null)
-            yield break;
+            if (!melee)
+                yield return attacker.PlayProjectile(hero);
+            else
+            {
+                yield return new WaitForSeconds(0.08f);
+                movement = attacker.transform.DOMove(startPosition, 0.3f).SetEase(Ease.InOutQuad);
+                yield return movement.WaitForCompletion();
+            }
+        }
+        finally
+        {
+            if (movement != null && movement.IsActive()) movement.Kill();
+            if (melee && attacker != null) attacker.transform.position = startPosition;
+        }
 
-        attacker.transform.DOMoveX(
-            attacker.transform.position.x + 1f,
-            0.25f);
-
+        if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
         DealDamageGA dealDamageGA = new(
             attacker.AttackPower,
             new() { HeroSystem.Instance.HeroView },

@@ -8,8 +8,8 @@ public class ActionSystem : Singleton<ActionSystem>
 {
     private List<GameAction> reactions = null;
     public bool IsPerforming { get; private set; } = false;
-    private static Dictionary<Type, List<Action<GameAction>>> preSubs = new();
-    private static Dictionary<Type, List<Action<GameAction>>> postSubs = new();
+    private static Dictionary<Type, Dictionary<Delegate, Action<GameAction>>> preSubs = new();
+    private static Dictionary<Type, Dictionary<Delegate, Action<GameAction>>> postSubs = new();
     private static Dictionary<Type, Func<GameAction, IEnumerator>> performers = new();
     public void Perform(GameAction action, Action OnPerformFinished = null)
     {
@@ -57,12 +57,12 @@ public class ActionSystem : Singleton<ActionSystem>
             yield return performers[type](action);
         }
     }
-    private void PerformSubscribers(GameAction action, Dictionary<Type, List<Action<GameAction>>> subs)
+    private void PerformSubscribers(GameAction action, Dictionary<Type, Dictionary<Delegate, Action<GameAction>>> subs)
     {
         Type type = action.GetType();
         if (subs.ContainsKey(type))
         {
-            foreach (var sub in subs[type])
+            foreach (var sub in subs[type].Values.ToArray())
             {
                 sub(action);
             }
@@ -89,25 +89,33 @@ public class ActionSystem : Singleton<ActionSystem>
     }
     public static void SubscribedReaction<T>(Action<T> reaction, ReactionTiming timing) where T : GameAction
     {
-        Dictionary<Type, List<Action<GameAction>>> subs = timing == ReactionTiming.PRE ? preSubs : postSubs;
-        void wrappedReaction(GameAction action) => reaction((T)action);
-        if (subs.ContainsKey(typeof(T)))
+        if (reaction == null) return;
+        var subs = timing == ReactionTiming.PRE ? preSubs : postSubs;
+        if (!subs.TryGetValue(typeof(T), out var callbacks))
         {
-            subs[typeof(T)].Add(wrappedReaction);
+            callbacks = new Dictionary<Delegate, Action<GameAction>>();
+            subs.Add(typeof(T), callbacks);
         }
-        else
-        {
-            subs.Add(typeof(T), new());
-            subs[typeof(T)].Add(wrappedReaction);
-        }
+        // Retain the original delegate as the key, not a newly-created wrapper.
+        if (!callbacks.ContainsKey(reaction))
+            callbacks.Add(reaction, action => reaction((T)action));
     }
+
     public static void UnSubscribedReaction<T>(Action<T> reaction, ReactionTiming timing) where T : GameAction
     {
-        Dictionary<Type, List<Action<GameAction>>> subs = timing == ReactionTiming.PRE ? preSubs : postSubs;
-        if (subs.ContainsKey(typeof(T)))
+        var subs = timing == ReactionTiming.PRE ? preSubs : postSubs;
+        if (reaction != null && subs.TryGetValue(typeof(T), out var callbacks))
         {
-            void wrappedReaction(GameAction action) => reaction((T)action);
-            subs[typeof(T)].Remove(wrappedReaction);
+            callbacks.Remove(reaction);
+            if (callbacks.Count == 0) subs.Remove(typeof(T));
         }
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetRegistrations()
+    {
+        preSubs.Clear();
+        postSubs.Clear();
+        performers.Clear();
     }
 }

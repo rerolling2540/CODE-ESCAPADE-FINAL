@@ -26,6 +26,10 @@ public class BattleMessageUI : MonoBehaviour
         }
 
         Instance = this;
+        BattleUITheme.DecoratePanel(panel.GetComponent<UnityEngine.UI.Image>());
+        titleText.color = new Color(1f, 0.87f, 0.57f);
+        titleText.fontStyle = FontStyles.Bold;
+        descriptionText.color = new Color(0.95f, 0.87f, 0.7f);
 
         // Hide panel on start
         panel.SetActive(false);

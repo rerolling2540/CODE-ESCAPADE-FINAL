@@ -1,0 +1,1365 @@
+fileFormatVersion: 2
+guid: f9cdb68927184f6b989fc8d559b14e65
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: Skeleton_Idle_0
+  - first:
+      213: 21300002
+    second: Skeleton_Idle_1
+  - first:
+      213: 21300004
+    second: Skeleton_Idle_2
+  - first:
+      213: 21300006
+    second: Skeleton_Idle_3
+  - first:
+      213: 21300008
+    second: Skeleton_Idle_4
+  - first:
+      213: 21300010
+    second: Skeleton_Idle_5
+  - first:
+      213: 21300012
+    second: Skeleton_Attack_0
+  - first:
+      213: 21300014
+    second: Skeleton_Attack_1
+  - first:
+      213: 21300016
+    second: Skeleton_Attack_2
+  - first:
+      213: 21300018
+    second: Skeleton_Attack_3
+  - first:
+      213: 21300020
+    second: Skeleton_Attack_4
+  - first:
+      213: 21300022
+    second: Skeleton_Attack_5
+  - first:
+      213: 21300024
+    second: Goblin_Idle_0
+  - first:
+      213: 21300026
+    second: Goblin_Idle_1
+  - first:
+      213: 21300028
+    second: Goblin_Idle_2
+  - first:
+      213: 21300030
+    second: Goblin_Idle_3
+  - first:
+      213: 21300032
+    second: Goblin_Idle_4
+  - first:
+      213: 21300034
+    second: Goblin_Idle_5
+  - first:
+      213: 21300036
+    second: Goblin_Attack_0
+  - first:
+      213: 21300038
+    second: Goblin_Attack_1
+  - first:
+      213: 21300040
+    second: Goblin_Attack_2
+  - first:
+      213: 21300042
+    second: Goblin_Attack_3
+  - first:
+      213: 21300044
+    second: Goblin_Attack_4
+  - first:
+      213: 21300046
+    second: Goblin_Attack_5
+  - first:
+      213: 21300048
+    second: Mushroom_Idle_0
+  - first:
+      213: 21300050
+    second: Mushroom_Idle_1
+  - first:
+      213: 21300052
+    second: Mushroom_Idle_2
+  - first:
+      213: 21300054
+    second: Mushroom_Idle_3
+  - first:
+      213: 21300056
+    second: Mushroom_Idle_4
+  - first:
+      213: 21300058
+    second: Mushroom_Idle_5
+  - first:
+      213: 21300060
+    second: Mushroom_Attack_0
+  - first:
+      213: 21300062
+    second: Mushroom_Attack_1
+  - first:
+      213: 21300064
+    second: Mushroom_Attack_2
+  - first:
+      213: 21300066
+    second: Mushroom_Attack_3
+  - first:
+      213: 21300068
+    second: Mushroom_Attack_4
+  - first:
+      213: 21300070
+    second: Mushroom_Attack_5
+  - first:
+      213: 21300072
+    second: FlyingEye_Idle_0
+  - first:
+      213: 21300074
+    second: FlyingEye_Idle_1
+  - first:
+      213: 21300076
+    second: FlyingEye_Idle_2
+  - first:
+      213: 21300078
+    second: FlyingEye_Idle_3
+  - first:
+      213: 21300080
+    second: FlyingEye_Idle_4
+  - first:
+      213: 21300082
+    second: FlyingEye_Idle_5
+  - first:
+      213: 21300084
+    second: FlyingEye_Attack_0
+  - first:
+      213: 21300086
+    second: FlyingEye_Attack_1
+  - first:
+      213: 21300088
+    second: FlyingEye_Attack_2
+  - first:
+      213: 21300090
+    second: FlyingEye_Attack_3
+  - first:
+      213: 21300092
+    second: FlyingEye_Attack_4
+  - first:
+      213: 21300094
+    second: FlyingEye_Attack_5
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 4096
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Skeleton_Idle_0
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 1239
+        width: 140
+        height: 122
+      alignment: 9
+      pivot: {x: 0.44642857, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc5adb312db246b7baa877d02195980c
+      internalID: 21300000
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Idle_1
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 1238
+        width: 141
+        height: 123
+      alignment: 9
+      pivot: {x: 0.45744681, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ff9cd604add47fb8ef212ac7a573511
+      internalID: 21300002
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Idle_2
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 1238
+        width: 126
+        height: 122
+      alignment: 9
+      pivot: {x: 0.46428571, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c516666733b24eb9bdd289f351f725f3
+      internalID: 21300004
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Idle_3
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 1238
+        width: 127
+        height: 128
+      alignment: 9
+      pivot: {x: 0.45275591, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca99a3bc2794b43aeb51f1019f87e1d
+      internalID: 21300006
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Idle_4
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 1238
+        width: 153
+        height: 123
+      alignment: 9
+      pivot: {x: 0.52614379, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddca71caaf8e49b3b78b3c8aa7764061
+      internalID: 21300008
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Idle_5
+      rect:
+        serializedVersion: 2
+        x: 914
+        y: 1239
+        width: 150
+        height: 123
+      alignment: 9
+      pivot: {x: 0.54333333, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 934d4f2370fc42f2b21aadb7402c1a4e
+      internalID: 21300010
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Attack_0
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 1042
+        width: 120
+        height: 173
+      alignment: 9
+      pivot: {x: 0.37083333, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdd949392bee4601b77afcbe23871ad0
+      internalID: 21300012
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Attack_1
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 1042
+        width: 131
+        height: 118
+      alignment: 9
+      pivot: {x: 0.30916031, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 085e63a3f7b24bbaad026ebaf957a54e
+      internalID: 21300014
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Attack_2
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 1042
+        width: 181
+        height: 146
+      alignment: 9
+      pivot: {x: 0.50000000, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16de7261b3c94b1090c3358f3d0fc75d
+      internalID: 21300016
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Attack_3
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 1042
+        width: 171
+        height: 145
+      alignment: 9
+      pivot: {x: 0.52923977, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c93b246b3a54456b93ef8f131c8614a4
+      internalID: 21300018
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Attack_4
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 1042
+        width: 120
+        height: 149
+      alignment: 9
+      pivot: {x: 0.46250000, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a0f60c272ca4adf84f8ae339e9e1424
+      internalID: 21300020
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Skeleton_Attack_5
+      rect:
+        serializedVersion: 2
+        x: 929
+        y: 1042
+        width: 135
+        height: 122
+      alignment: 9
+      pivot: {x: 0.49259259, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad11dcc4e56f49f29c17b78b2a4d665b
+      internalID: 21300022
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Idle_0
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 859
+        width: 110
+        height: 113
+      alignment: 9
+      pivot: {x: 0.34090909, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf11d84638914196beee73e4e611ed2d
+      internalID: 21300024
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Idle_1
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 859
+        width: 103
+        height: 116
+      alignment: 9
+      pivot: {x: 0.37378641, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 211ce427d3b345678e3135cdfb7f29c0
+      internalID: 21300026
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Idle_2
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 859
+        width: 102
+        height: 116
+      alignment: 9
+      pivot: {x: 0.41666667, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 539c0bc1a2e847479d4bd0d830fe2a2d
+      internalID: 21300028
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Idle_3
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 859
+        width: 106
+        height: 116
+      alignment: 9
+      pivot: {x: 0.46698113, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8f4e09dd241452daf2253a8d5206af5
+      internalID: 21300030
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Idle_4
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 859
+        width: 101
+        height: 113
+      alignment: 9
+      pivot: {x: 0.50000000, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7f87d8ed2bc4693bbecbea04e17a913
+      internalID: 21300032
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Idle_5
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 859
+        width: 109
+        height: 116
+      alignment: 9
+      pivot: {x: 0.50000000, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d73b7258d9f4f61972ce90311a2be26
+      internalID: 21300034
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Attack_0
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 674
+        width: 124
+        height: 114
+      alignment: 9
+      pivot: {x: 0.32661290, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 545286df64ff4eec84221ac12cc43806
+      internalID: 21300036
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Attack_1
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 674
+        width: 116
+        height: 140
+      alignment: 9
+      pivot: {x: 0.35775862, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1691e94d6ee645a892efa30dbee825f9
+      internalID: 21300038
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Attack_2
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 674
+        width: 152
+        height: 128
+      alignment: 9
+      pivot: {x: 0.40460526, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa45f6f141e644469756c020680cc558
+      internalID: 21300040
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Attack_3
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 674
+        width: 180
+        height: 114
+      alignment: 9
+      pivot: {x: 0.50277778, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c62c4a36c324152be4a300bfd9c03dc
+      internalID: 21300042
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Attack_4
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 674
+        width: 127
+        height: 113
+      alignment: 9
+      pivot: {x: 0.42913386, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97e75a5bc17a48ccb196fc503075b31b
+      internalID: 21300044
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goblin_Attack_5
+      rect:
+        serializedVersion: 2
+        x: 944
+        y: 674
+        width: 109
+        height: 114
+      alignment: 9
+      pivot: {x: 0.47247706, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d5ac328ab8b410390a8de34f05d75c4
+      internalID: 21300046
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Idle_0
+      rect:
+        serializedVersion: 2
+        x: 58
+        y: 514
+        width: 87
+        height: 100
+      alignment: 9
+      pivot: {x: 0.37356322, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b323508c97cf4e2a8ac10c5606eca541
+      internalID: 21300048
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Idle_1
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 514
+        width: 86
+        height: 99
+      alignment: 9
+      pivot: {x: 0.35465116, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a143c1a981624d0489f603d86fe4e97c
+      internalID: 21300050
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Idle_2
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 514
+        width: 87
+        height: 99
+      alignment: 9
+      pivot: {x: 0.41954023, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6637d17e6de4545baf38de05557a6af
+      internalID: 21300052
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Idle_3
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 514
+        width: 87
+        height: 97
+      alignment: 9
+      pivot: {x: 0.46551724, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e75e0018316c4d84a1a755f5c516ca31
+      internalID: 21300054
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Idle_4
+      rect:
+        serializedVersion: 2
+        x: 773
+        y: 514
+        width: 88
+        height: 97
+      alignment: 9
+      pivot: {x: 0.47159091, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01268d4977b747bd954aabd45827488a
+      internalID: 21300056
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Idle_5
+      rect:
+        serializedVersion: 2
+        x: 946
+        y: 514
+        width: 89
+        height: 97
+      alignment: 9
+      pivot: {x: 0.55617978, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 803c6d1f63714edbb0912fd1dd486224
+      internalID: 21300058
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Attack_0
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 339
+        width: 86
+        height: 93
+      alignment: 9
+      pivot: {x: 0.51744186, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7e01352fe1c472dae1180f04a6d7db6
+      internalID: 21300060
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Attack_1
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 339
+        width: 91
+        height: 99
+      alignment: 9
+      pivot: {x: 0.42307692, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53f7cdc5e6a545368b7f368a73f7008c
+      internalID: 21300062
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Attack_2
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 339
+        width: 137
+        height: 118
+      alignment: 9
+      pivot: {x: 0.47080292, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd287100d2d44c7eba6125f84c6b8a23
+      internalID: 21300064
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Attack_3
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 339
+        width: 121
+        height: 112
+      alignment: 9
+      pivot: {x: 0.50826446, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 371476ee8a2f4adea0d461ddb1bbcdda
+      internalID: 21300066
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Attack_4
+      rect:
+        serializedVersion: 2
+        x: 772
+        y: 339
+        width: 118
+        height: 107
+      alignment: 9
+      pivot: {x: 0.36016949, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d7aa6133de04b74ba0d46c7a3b34635
+      internalID: 21300068
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mushroom_Attack_5
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 339
+        width: 86
+        height: 91
+      alignment: 9
+      pivot: {x: 0.41279070, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21cab6f66c2a4d858ed8927575da7fdf
+      internalID: 21300070
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Idle_0
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 201
+        width: 121
+        height: 85
+      alignment: 9
+      pivot: {x: 0.43388430, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea11f5327dcc4a0f891244e370306df1
+      internalID: 21300072
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Idle_1
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 196
+        width: 137
+        height: 79
+      alignment: 9
+      pivot: {x: 0.44890511, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 412b53c39dd645e8a2db7fb448edaa5a
+      internalID: 21300074
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Idle_2
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 190
+        width: 136
+        height: 66
+      alignment: 9
+      pivot: {x: 0.48897059, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37b4991e5a3f48519159aadaea69a791
+      internalID: 21300076
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Idle_3
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 191
+        width: 120
+        height: 81
+      alignment: 9
+      pivot: {x: 0.52916667, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6aed93ae1fa45c582c91f0cc0b83371
+      internalID: 21300078
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Idle_4
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 192
+        width: 145
+        height: 75
+      alignment: 9
+      pivot: {x: 0.52758621, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d344c96069e64a148caa5f791fc2c314
+      internalID: 21300080
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Idle_5
+      rect:
+        serializedVersion: 2
+        x: 925
+        y: 193
+        width: 133
+        height: 81
+      alignment: 9
+      pivot: {x: 0.53007519, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee88bb886622444da758962f5cd83bb6
+      internalID: 21300082
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Attack_0
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 50
+        width: 138
+        height: 81
+      alignment: 9
+      pivot: {x: 0.46014493, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44df83198143438a8cdd9ac214a4763b
+      internalID: 21300084
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Attack_1
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 48
+        width: 117
+        height: 80
+      alignment: 9
+      pivot: {x: 0.48290598, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab53d8ab4aa84bc3b4036037d3fe5c5a
+      internalID: 21300086
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Attack_2
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 34
+        width: 147
+        height: 102
+      alignment: 9
+      pivot: {x: 0.38435374, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20f22004d74a41a898d0080164c4f46f
+      internalID: 21300088
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Attack_3
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 38
+        width: 149
+        height: 102
+      alignment: 9
+      pivot: {x: 0.44630872, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1f2dc5ce3bc4eabbdd6a3e5830f2b28
+      internalID: 21300090
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Attack_4
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 41
+        width: 153
+        height: 93
+      alignment: 9
+      pivot: {x: 0.48692810, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 551b4372018448639650a0279f37e81b
+      internalID: 21300092
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FlyingEye_Attack_5
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 53
+        width: 130
+        height: 77
+      alignment: 9
+      pivot: {x: 0.55000000, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06268850d9b64b49a09e6241011a2cdd
+      internalID: 21300094
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    customData:
+    physicsShape: []
+    bones: []
+    spriteID:
+    internalID: 0
+    vertices: []
+    indices:
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Skeleton_Idle_0: 21300000
+      Skeleton_Idle_1: 21300002
+      Skeleton_Idle_2: 21300004
+      Skeleton_Idle_3: 21300006
+      Skeleton_Idle_4: 21300008
+      Skeleton_Idle_5: 21300010
+      Skeleton_Attack_0: 21300012
+      Skeleton_Attack_1: 21300014
+      Skeleton_Attack_2: 21300016
+      Skeleton_Attack_3: 21300018
+      Skeleton_Attack_4: 21300020
+      Skeleton_Attack_5: 21300022
+      Goblin_Idle_0: 21300024
+      Goblin_Idle_1: 21300026
+      Goblin_Idle_2: 21300028
+      Goblin_Idle_3: 21300030
+      Goblin_Idle_4: 21300032
+      Goblin_Idle_5: 21300034
+      Goblin_Attack_0: 21300036
+      Goblin_Attack_1: 21300038
+      Goblin_Attack_2: 21300040
+      Goblin_Attack_3: 21300042
+      Goblin_Attack_4: 21300044
+      Goblin_Attack_5: 21300046
+      Mushroom_Idle_0: 21300048
+      Mushroom_Idle_1: 21300050
+      Mushroom_Idle_2: 21300052
+      Mushroom_Idle_3: 21300054
+      Mushroom_Idle_4: 21300056
+      Mushroom_Idle_5: 21300058
+      Mushroom_Attack_0: 21300060
+      Mushroom_Attack_1: 21300062
+      Mushroom_Attack_2: 21300064
+      Mushroom_Attack_3: 21300066
+      Mushroom_Attack_4: 21300068
+      Mushroom_Attack_5: 21300070
+      FlyingEye_Idle_0: 21300072
+      FlyingEye_Idle_1: 21300074
+      FlyingEye_Idle_2: 21300076
+      FlyingEye_Idle_3: 21300078
+      FlyingEye_Idle_4: 21300080
+      FlyingEye_Idle_5: 21300082
+      FlyingEye_Attack_0: 21300084
+      FlyingEye_Attack_1: 21300086
+      FlyingEye_Attack_2: 21300088
+      FlyingEye_Attack_3: 21300090
+      FlyingEye_Attack_4: 21300092
+      FlyingEye_Attack_5: 21300094
+  mipmapLimitGroupName:
+  pSDRemoveMatte: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:

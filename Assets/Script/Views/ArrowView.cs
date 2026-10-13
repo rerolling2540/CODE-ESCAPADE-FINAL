@@ -8,7 +8,7 @@ public class ArrowView : MonoBehaviour
     private Vector3 startPosition;
     private void Update()
     {
-        Vector3 endPosition = MouseUtil.GetMousePositionInWorldSpace();
+        if (!MouseUtil.TryGetMousePositionInWorldSpace(out Vector3 endPosition)) return;
         Vector3 direction = -(startPosition - arrowHead.transform.position).normalized;
         lineRenderer.SetPosition(1, endPosition - direction * 0.5f);
         arrowHead.transform.position = endPosition;
@@ -19,6 +19,7 @@ public class ArrowView : MonoBehaviour
     {
         this.startPosition = startPosition;
         lineRenderer.SetPosition(0, startPosition);
-        lineRenderer.SetPosition(1, MouseUtil.GetMousePositionInWorldSpace());
+        if (MouseUtil.TryGetMousePositionInWorldSpace(out Vector3 endPosition))
+            lineRenderer.SetPosition(1, endPosition);
     }
 }

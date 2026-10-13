@@ -75,6 +75,9 @@ public class CardSystem : Singleton<CardSystem>
 
         if (playCardGA.QuestionAnsweredCorrectly)
         {
+            if (playCardGA.ManualTarget != null)
+                HeroSystem.Instance.HeroView.FaceTowards(playCardGA.ManualTarget);
+            yield return HeroSystem.Instance.HeroView.PlayAttackAnimation();
             if (playCardGA.Card.ManualTargetEffect != null)
             {
                 PerformEffectGA performEffectGA = new(

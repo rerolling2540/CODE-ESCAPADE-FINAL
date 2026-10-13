@@ -10,6 +10,7 @@ public class ExplorationHUD : MonoBehaviour
 
     private playerMovement player;
     private TutorialSignboard[] signs;
+    private CaveEnemyEncounter[] enemies;
     private Texture2D terrain;
     private Bounds worldBounds;
 
@@ -35,6 +36,7 @@ public class ExplorationHUD : MonoBehaviour
 
         player = FindFirstObjectByType<playerMovement>();
         signs = FindObjectsByType<TutorialSignboard>(FindObjectsSortMode.None);
+        enemies = FindObjectsByType<CaveEnemyEncounter>(FindObjectsSortMode.None);
 
         if (inventory == null)
             inventory = GetComponent<CharacterInventory>();
@@ -521,6 +523,43 @@ public class ExplorationHUD : MonoBehaviour
                 }
             }
 
+            if (enemies != null)
+            {
+                foreach (var encounter in enemies)
+                {
+                    if (encounter == null || !encounter.isActiveAndEnabled)
+                        continue;
+
+                    Vector2 delta = (Vector2)encounter.transform.position - centre;
+                    Vector2 point = new Vector2(
+                        mapRect.width / 2f + delta.x / window.x * mapRect.width,
+                        mapRect.height / 2f - delta.y / window.y * mapRect.height
+                    );
+                    Rect marker = new Rect(point.x - 9f, point.y - 9f, 18f, 18f);
+                    Fill(marker, new Color(0.65f, 0.12f, 0.1f));
+
+                    Sprite portrait = encounter.enemy != null ? encounter.enemy.Image : null;
+                    if (portrait != null)
+                    {
+                        // Use only this sprite's region of the enemy sprite sheet.
+                        Rect region = portrait.textureRect;
+                        float scale = 16f / Mathf.Max(region.width, region.height);
+                        Rect icon = new Rect(
+                            point.x - region.width * scale / 2f,
+                            point.y - region.height * scale / 2f,
+                            region.width * scale, region.height * scale
+                        );
+                        Rect uv = new Rect(
+                            region.x / portrait.texture.width,
+                            region.y / portrait.texture.height,
+                            region.width / portrait.texture.width,
+                            region.height / portrait.texture.height
+                        );
+                        GUI.DrawTextureWithTexCoords(icon, portrait.texture, uv);
+                    }
+                }
+            }
+
             Fill(
                 new Rect(
                     mapRect.width / 2f - 3f,
@@ -534,11 +573,11 @@ public class ExplorationHUD : MonoBehaviour
         GUI.EndGroup();
 
         // Larger, darker legend only
-        GUI.Label(
-            new Rect(38, 235, 280, 29),
-            "Blue: you   Gold: signboards",
-            mapLegendStyle
-        );
+        //GUI.Label(
+            //new Rect(38, 235, 280, 29),
+           // "Blue: you   Gold: signboards",
+            //mapLegendStyle
+        //);
     }
 
     void DrawInventory()

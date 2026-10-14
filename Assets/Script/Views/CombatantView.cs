@@ -23,6 +23,9 @@ public class CombatantView : MonoBehaviour
     [Header("Health System Properties")]
     public int MaxHealth { get; private set; } = 100;
     public int CurrentHealth { get; private set; } = 100;
+    public int AttackDamageBonus { get; private set; }
+    public int AttackPower { get; protected set; } = 30;
+    public int Defense { get; private set; }
     public Vector3 VisualCenter => spriteRenderer != null ? spriteRenderer.bounds.center : transform.position;
     public Bounds VisualBounds => spriteRenderer != null ? spriteRenderer.bounds : new Bounds(transform.position, Vector3.one);
 
@@ -148,6 +151,9 @@ public class CombatantView : MonoBehaviour
 
         MaxHealth = classData.GetHealthForLevel(level);
         CurrentHealth = MaxHealth;
+        AttackDamageBonus = classData.GetAttackBonusForLevel(level);
+        AttackPower = classData.GetAttackPowerForLevel(level);
+        Defense = classData.GetDefenseForLevel(level);
 
         UpdateHealthUI();
     }
@@ -279,7 +285,7 @@ public class CombatantView : MonoBehaviour
 
     public void Damage(int damageAmount)
     {
-        int remainingDamage = damageAmount;
+        int remainingDamage = Mathf.Max(0, damageAmount - Defense);
         int currentArmor = GetStatusEffectStacks(StatusEffectType.ARMOR);
 
         if (currentArmor > 0)

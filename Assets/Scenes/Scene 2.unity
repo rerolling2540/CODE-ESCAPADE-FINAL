@@ -10038,6 +10038,22 @@ MonoBehaviour:
     card: {fileID: 11400000, guid: a49b409c12903a740a4dfb32f653356a, type: 2}
   - id: 980c18db59e9cf946920510c6e295487
     card: {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
+  - id: 3d24bedb84993bd4bb7bc07779a0ac40
+    card: {fileID: 11400000, guid: 3d24bedb84993bd4bb7bc07779a0ac40, type: 2}
+  - id: 96684006bfd95d94caf0267932ec6d1c
+    card: {fileID: 11400000, guid: 96684006bfd95d94caf0267932ec6d1c, type: 2}
+  - id: 0661d68524fd7ae47bf5bce5128c636e
+    card: {fileID: 11400000, guid: 0661d68524fd7ae47bf5bce5128c636e, type: 2}
+  - id: c0030000000000000000000000000003
+    card: {fileID: 11400000, guid: c0030000000000000000000000000003, type: 2}
+  - id: c0040000000000000000000000000004
+    card: {fileID: 11400000, guid: c0040000000000000000000000000004, type: 2}
+  - id: c0050000000000000000000000000005
+    card: {fileID: 11400000, guid: c0050000000000000000000000000005, type: 2}
+  - id: c0060000000000000000000000000006
+    card: {fileID: 11400000, guid: c0060000000000000000000000000006, type: 2}
+  - id: 632aebffcbd6c0f42acd79eb887af739
+    card: {fileID: 11400000, guid: 632aebffcbd6c0f42acd79eb887af739, type: 2}
   starterHero: {fileID: 11400000, guid: afccaf16a67bb1a49945154d3c1a298c, type: 2}
 --- !u!114 &887740003
 MonoBehaviour:
@@ -10158,6 +10174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 0a530db798c141b5b0132a260e1d8770, type: 2}
+  battleEncounter: {fileID: 11400000, guid: e277aecf2d4e4d5da0cdddf10fd89fc2, type: 2}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -10267,6 +10284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 841bcec34100402a81f1e0299b99c08e, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -10376,6 +10394,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 38f3a9a19b7b4605a7b475d5584e1b5a, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -10485,6 +10504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 608dd62a84d7457bb656e9ee7aa6384d, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 1
   patrolSpeed: 1.2
@@ -10594,6 +10614,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 0a530db798c141b5b0132a260e1d8770, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -10703,6 +10724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 841bcec34100402a81f1e0299b99c08e, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -10812,6 +10834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 38f3a9a19b7b4605a7b475d5584e1b5a, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -10921,6 +10944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 608dd62a84d7457bb656e9ee7aa6384d, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 1
   patrolSpeed: 1.2
@@ -11030,6 +11054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 0a530db798c141b5b0132a260e1d8770, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -11139,6 +11164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 841bcec34100402a81f1e0299b99c08e, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -11248,6 +11274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 38f3a9a19b7b4605a7b475d5584e1b5a, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
@@ -11357,6 +11384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 608dd62a84d7457bb656e9ee7aa6384d, type: 2}
+  battleEncounter: {fileID: 0}
   interactionDistance: 2.5
   flying: 1
   patrolSpeed: 1.2

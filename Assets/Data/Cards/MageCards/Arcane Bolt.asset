@@ -10,20 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: New Card Data
+  m_Name: Arcane Bolt
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: 
-  <Mana>k__BackingField: 0
-  <Image>k__BackingField: {fileID: -855298285791758126, guid: 6151e1b7e05b46447b0577447d344215, type: 3}
+  <Description>k__BackingField: Deal 120% Attack Power to one random enemy.
+  <Mana>k__BackingField: 1
+  <Image>k__BackingField: {fileID: -5283208628950590460, guid: 07e809b5d26de8f4eb7baec1d0689e08, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
-  <OtherEffects>k__BackingField: []
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 901
+    <Effect>k__BackingField:
+      rid: 902
   damageType: 1
-  baseDamage: 1000000
-  percentDamage: 100
+  baseDamage: 0
+  percentDamage: 120
   damageMultiplier: 1
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 901
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 902
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:

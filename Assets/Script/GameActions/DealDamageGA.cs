@@ -19,7 +19,7 @@ public class DealDamageGA : GameAction, IHaveCaster
 
         if (cardSource != null && targets != null && targets.Count > 0)
         {
-            Amount = cardSource.GetCalculatedDamage(targets[0], cardLevel);
+            Amount = cardSource.GetCalculatedDamage(caster, targets[0], cardLevel);
         }
     }
 
@@ -37,7 +37,12 @@ public class DealDamageGA : GameAction, IHaveCaster
     {
         if (CardSource != null && target != null)
         {
-            return CardSource.GetCalculatedDamage(target, CardLevel);
+            int damage = CardSource.GetCalculatedDamage(Caster, target, CardLevel);
+            if (Caster is HeroView && CardSource.damageType == DamageType.Flat)
+            {
+                damage += Caster.AttackDamageBonus;
+            }
+            return damage;
         }
 
         return Amount;

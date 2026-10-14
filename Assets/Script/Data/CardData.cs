@@ -3,7 +3,13 @@ using System.Runtime.InteropServices;
 using SerializeReferenceEditor;
 using UnityEngine;
 
-public enum DamageType { Flat, MaxHealthPercent, CurrentHealthPercent }
+public enum DamageType
+{
+    Flat = 0,
+    AttackPercent = 1,
+    [InspectorName("Attack Percent (legacy card data)")]
+    AttackPercentLegacy = 2
+}
 
 [CreateAssetMenu(menuName = "Data/Card")]
 public class CardData : ScriptableObject
@@ -21,15 +27,15 @@ public class CardData : ScriptableObject
     public int baseDamage = 10;
 
     [Header("Percent Damage Settings")]
-    [Tooltip("Percentage value (e.g., 25.5 = 25.5% of target HP)")]
-    [Range(0f, 100f)] 
+    [Tooltip("Percentage of the caster's Attack Power (e.g., 120 = 120% of Attack Power)")]
+    [Range(0f, 500f)]
     public float percentDamage = 10f;
 
     [Header("Multipliers")]
     [Tooltip("1.0 = 100%, 1.2 = 120%, 1.5 = 150%")]
     public float damageMultiplier = 1.0f;
 
-    public int GetCalculatedDamage(CombatantView target = null, int cardLevel = 1)
+    public int GetCalculatedDamage(CombatantView caster, CombatantView target = null, int cardLevel = 1)
     {
         float calculatedBase = 0f;
 
@@ -39,22 +45,16 @@ public class CardData : ScriptableObject
                 calculatedBase = baseDamage;
                 break;
 
-            case DamageType.MaxHealthPercent:
-                if (target != null)
+            case DamageType.AttackPercent:
+            case DamageType.AttackPercentLegacy:
+                if (caster != null)
                 {
-                    calculatedBase = target.MaxHealth * (percentDamage / 100f);
-                }
-                break;
-
-            case DamageType.CurrentHealthPercent:
-                if (target != null)
-                {
-                    calculatedBase = target.CurrentHealth * (percentDamage / 100f);
+                    calculatedBase = caster.AttackPower * (percentDamage / 100f);
                 }
                 break;
         }
 
-        float levelBonus = (cardLevel - 1) * 2f;
+        float levelBonus = damageType == DamageType.Flat ? (cardLevel - 1) * 2f : 0f;
         float rawDamage = (calculatedBase + levelBonus) * damageMultiplier;
 
         return Mathf.RoundToInt(rawDamage);

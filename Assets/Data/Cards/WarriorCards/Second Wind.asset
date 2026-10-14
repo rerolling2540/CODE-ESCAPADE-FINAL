@@ -10,18 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: Armor Up
+  m_Name: Second Wind
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: Add 5 Armor
-  <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: 21300000, guid: 869e123f375764941b2229919baff904, type: 3}
+  <Description>k__BackingField: Restore 14 health and gain 3 Armor.
+  <Mana>k__BackingField: 2
+  <Image>k__BackingField: {fileID: 8431936247138689936, guid: 2c6a25e1f60f15446a1d91206f120aff, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: 7337470306547400791
+      rid: 201
     <Effect>k__BackingField:
-      rid: 7337470306547400792
+      rid: 202
+  - <TargetMode>k__BackingField:
+      rid: 203
+    <Effect>k__BackingField:
+      rid: 204
   baseDamage: 0
   damageMultiplier: 1
   references:
@@ -29,11 +33,18 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 7337470306547400791
+    - rid: 201
       type: {class: HeroTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 7337470306547400792
+      data:
+    - rid: 202
+      type: {class: HealEffect, ns: , asm: Assembly-CSharp}
+      data:
+        healAmount: 14
+    - rid: 203
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 204
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 0
-        stackCount: 5
+        stackCount: 3

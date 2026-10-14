@@ -1,15 +1,18 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class CaveEnemyEncounter : MonoBehaviour
 {
     public EnemyData enemy;
+    [Tooltip("Optional battle squad. The overworld still displays this encounter as the single enemy above.")]
+    public EncounterData battleEncounter;
     public float interactionDistance = 2.5f;
     public bool flying;
     [Min(0.1f)] public float patrolSpeed = 1.2f;
     [Min(0.5f)] public float patrolRadius = 3f;
-    public static EnemyData PendingEnemy;
+    public static List<EnemyData> PendingEnemies;
     public static string PendingEncounterId;
     private static string suppressedEncounter;
     private static bool enteringBattle;
@@ -108,7 +111,8 @@ public class CaveEnemyEncounter : MonoBehaviour
         enteringBattle = true;
         suppressedEncounter = gameObject.name;
         GameSave.EnsureInstance().SaveGame(character.transform);
-        PendingEnemy = enemy;
+        List<EnemyData> squad = battleEncounter != null ? battleEncounter.CreateEnemySquad() : null;
+        PendingEnemies = squad != null && squad.Count > 0 ? squad : new List<EnemyData> { enemy };
         PendingEncounterId = gameObject.name;
         SceneManager.LoadScene("Battle Scene");
     }

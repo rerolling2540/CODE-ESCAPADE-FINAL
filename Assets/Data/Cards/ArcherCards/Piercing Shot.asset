@@ -10,30 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: Doom
+  m_Name: Piercing Shot
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: Doom/Kill in one shot
-  <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: 21300066, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  <Description>k__BackingField: Deal 150% Attack Power to one random enemy.
+  <Mana>k__BackingField: 2
+  <Image>k__BackingField: {fileID: 8781525044889457999, guid: 014667a93c3eb1940996eeaaff2c9313, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: 7337470236345761877
+      rid: 701
     <Effect>k__BackingField:
-      rid: 7337470236345761878
+      rid: 702
   damageType: 1
-  baseDamage: 100000
-  percentDamage: 100
+  baseDamage: 0
+  percentDamage: 150
   damageMultiplier: 1
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 7337470236345761877
+    - rid: 701
       type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 7337470236345761878
+      data:
+    - rid: 702
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
+      data:

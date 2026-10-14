@@ -6,11 +6,13 @@ public class EffectSystem : MonoBehaviour
     void OnEnable()
     {
         ActionSystem.AttachPerformer<PerformEffectGA>(PerformEffectPerformer);
+        ActionSystem.AttachPerformer<HealGA>(HealPerformer);
     }
 
     void OnDisable()
     {
         ActionSystem.DetachPerformer<PerformEffectGA>();
+        ActionSystem.DetachPerformer<HealGA>();
     }
 
     private IEnumerator PerformEffectPerformer(PerformEffectGA performEffectGA)
@@ -24,6 +26,18 @@ public class EffectSystem : MonoBehaviour
 
         ActionSystem.Instance.AddReaction(effectAction);
         yield return null;
+    }
+
+    private IEnumerator HealPerformer(HealGA healGA)
+    {
+        if (healGA.Targets == null) yield break;
+
+        foreach (CombatantView target in healGA.Targets)
+        {
+            if (target != null)
+                target.Heal(healGA.Amount);
+            yield return null;
+        }
     }
 
 }

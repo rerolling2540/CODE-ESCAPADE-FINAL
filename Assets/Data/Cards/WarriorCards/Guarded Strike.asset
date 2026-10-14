@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
+  m_Name: Guarded Strike
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <Description>k__BackingField: Gain 5 Armor and deal 75% of your Attack Power to one random enemy.
+  <Mana>k__BackingField: 2
+  <Image>k__BackingField: {fileID: 5975299861170666812, guid: 8e2b89451a3d2c74ab2da9c40dfa0759, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 201
+    <Effect>k__BackingField:
+      rid: 202
+  - <TargetMode>k__BackingField:
+      rid: 203
+    <Effect>k__BackingField:
+      rid: 204
+  damageType: 1
+  baseDamage: 0
+  percentDamage: 75
+  damageMultiplier: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 201
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 202
+      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 5
+    - rid: 203
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 204
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:

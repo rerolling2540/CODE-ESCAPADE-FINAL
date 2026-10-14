@@ -15,30 +15,12 @@ MonoBehaviour:
   <Image>k__BackingField: {fileID: -3318188226485093758, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
   <Health>k__BackingField: 44
   <Deck>k__BackingField:
+  - {fileID: 11400000, guid: 3d24bedb84993bd4bb7bc07779a0ac40, type: 2}
+  - {fileID: 11400000, guid: 0661d68524fd7ae47bf5bce5128c636e, type: 2}
+  - {fileID: 11400000, guid: 96684006bfd95d94caf0267932ec6d1c, type: 2}
   - {fileID: 11400000, guid: a49b409c12903a740a4dfb32f653356a, type: 2}
-  - {fileID: 11400000, guid: a49b409c12903a740a4dfb32f653356a, type: 2}
-  - {fileID: 11400000, guid: a49b409c12903a740a4dfb32f653356a, type: 2}
-  - {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
-  - {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
-  - {fileID: 11400000, guid: 168c58146a32b25448627cb38164f1f3, type: 2}
-  - {fileID: 11400000, guid: 168c58146a32b25448627cb38164f1f3, type: 2}
-  - {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
-  - {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
-  - {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
-  - {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
   - {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
-  - {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
-  - {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
-  - {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
-  - {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
-  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
-  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
-  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
-  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
-  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
-  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
-  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
-  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
+  - {fileID: 11400000, guid: 632aebffcbd6c0f42acd79eb887af739, type: 2}
   idleFrames:
   - {fileID: -3318188226485093758, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
   - {fileID: -1938354968663525734, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}

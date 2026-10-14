@@ -10,30 +10,42 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: FireBall
+  m_Name: Crippling Blow
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: Aplly Burn Damage
-  <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: 21300000, guid: 539a323ef1250684f8da8ae8e17690cd, type: 3}
+  <Description>k__BackingField: Deal 90% of your Attack Power and apply 2 Burn to all enemies.
+  <Mana>k__BackingField: 2
+  <Image>k__BackingField: {fileID: -9126632893365767051, guid: e132586eb2d464f4c887fbb23340deb3, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: 7337470308311105617
+      rid: 201
     <Effect>k__BackingField:
-      rid: 7337470308311105620
-  baseDamage: 10
+      rid: 202
+  - <TargetMode>k__BackingField:
+      rid: 203
+    <Effect>k__BackingField:
+      rid: 204
+  damageType: 1
+  baseDamage: 0
+  percentDamage: 90
   damageMultiplier: 1
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 7337470308311105617
+    - rid: 201
       type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 7337470308311105620
+      data:
+    - rid: 202
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 203
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 204
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 1
-        stackCount: 3
+        stackCount: 2

@@ -15,3 +15,9 @@ MonoBehaviour:
   <LanguageClass>k__BackingField: 2
   <BaseMaxHP>k__BackingField: 75
   <HPGainPerLevel>k__BackingField: 10
+  <BaseAttackBonus>k__BackingField: 8
+  <AttackBonusGainPerLevel>k__BackingField: 2
+  <BaseAttackPower>k__BackingField: 40
+  <AttackPowerGainPerLevel>k__BackingField: 5
+  <BaseDefense>k__BackingField: 1
+  <DefenseGainPerLevel>k__BackingField: 0

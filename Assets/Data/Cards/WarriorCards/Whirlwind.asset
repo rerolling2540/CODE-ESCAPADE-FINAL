@@ -10,20 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: ArrowRain
+  m_Name: Whirlwind
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: Rain of Arrow
-  <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: 21300000, guid: 76c26ea5c88028e44af875347239e136, type: 3}
+  <Description>k__BackingField: Deal 60% of your Attack Power to all enemies.
+  <Mana>k__BackingField: 2
+  <Image>k__BackingField: {fileID: -5958008836183214221, guid: c2628b59f163c244fa03ad2af2a0e77d, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
-  <OtherEffects>k__BackingField: []
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 201
+    <Effect>k__BackingField:
+      rid: 202
   damageType: 1
-  baseDamage: 100
-  percentDamage: 10
+  baseDamage: 0
+  percentDamage: 60
   damageMultiplier: 1
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 201
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 202
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:

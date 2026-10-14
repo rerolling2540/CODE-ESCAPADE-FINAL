@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
+  m_Name: Iron Guard
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <Description>k__BackingField: Gain 8 armor.
+  <Mana>k__BackingField: 1
+  <Image>k__BackingField: {fileID: -7322822088631733305, guid: bd5fabae958250242bce8deb06245eb9, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 201
+    <Effect>k__BackingField:
+      rid: 202
+  baseDamage: 0
+  damageMultiplier: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 201
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 202
+      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 8

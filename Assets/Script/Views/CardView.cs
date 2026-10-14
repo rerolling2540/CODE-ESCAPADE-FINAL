@@ -85,6 +85,13 @@ public class CardView : MonoBehaviour
         description.text = card.Description;
         mana.text = card.Mana.ToString();
         imageSR.sprite = card.Image;
+        if (imageSR.sprite != null)
+        {
+            // The RPG Icons pack uses 24px sprites. Enlarge those icons to fit the card art window.
+            float sourceSize = Mathf.Max(imageSR.sprite.bounds.size.x, imageSR.sprite.bounds.size.y);
+            float iconScale = sourceSize < 0.6f ? 6f : 1f;
+            imageSR.transform.localScale = Vector3.one * iconScale;
+        }
     }
 
     void OnMouseEnter()

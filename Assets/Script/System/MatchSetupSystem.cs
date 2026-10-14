@@ -14,12 +14,12 @@ public class MatchSetupSystem : MonoBehaviour
     {
         BattleUITheme.Apply();
         HeroSystem.Instance.SetUp(heroData);
-        bool caveBattle = CaveEnemyEncounter.PendingEnemy != null;
+        bool caveBattle = CaveEnemyEncounter.PendingEnemies != null && CaveEnemyEncounter.PendingEnemies.Count > 0;
         string encounterId = CaveEnemyEncounter.PendingEncounterId;
-        if (CaveEnemyEncounter.PendingEnemy != null)
+        if (caveBattle)
         {
-            EnemySystem.Instance.Setup(new List<EnemyData> { CaveEnemyEncounter.PendingEnemy });
-            CaveEnemyEncounter.PendingEnemy = null;
+            EnemySystem.Instance.Setup(CaveEnemyEncounter.PendingEnemies);
+            CaveEnemyEncounter.PendingEnemies = null;
             CaveEnemyEncounter.PendingEncounterId = null;
         }
         else EnemySystem.Instance.Setup(enemyDatas);

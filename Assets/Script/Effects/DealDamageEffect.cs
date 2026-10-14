@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class DealDamageEffect : Effect
 {
     public override GameAction GetGameAction(List<CombatantView> targets, CombatantView caster, CardData cardSource = null)

@@ -17,10 +17,12 @@ public class Card
         Data = cardData;
     }
 
-    public string Title => Data.name;
-    public string Description => Data.Description;
-    public int Mana => Data.Mana;
-    public Sprite Image => Data.Image;
-    public Effect ManualTargetEffect => Data.ManualTargetEffect;
-    public List<AutoTargetEffect> OtherEffects => Data.OtherEffects;
+    public string Title => Data != null ? Data.name : "Missing Card";
+    public string Description => Data != null ? Data.Description : "This card asset is missing.";
+    public int Mana => Data != null ? Data.Mana : 0;
+    public Sprite Image => Data != null ? Data.Image : null;
+    public Effect ManualTargetEffect => Data != null ? Data.ManualTargetEffect : null;
+    public List<AutoTargetEffect> OtherEffects => Data != null && Data.OtherEffects != null
+        ? Data.OtherEffects
+        : new List<AutoTargetEffect>();
 }

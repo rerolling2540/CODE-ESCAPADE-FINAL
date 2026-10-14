@@ -10,24 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: New Card Data
+  m_Name: Battle Focus
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: 
-  <Mana>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 0}
+  <Description>k__BackingField: Draw 2 cards.
+  <Mana>k__BackingField: 1
+  <Image>k__BackingField: {fileID: 6483756081756559317, guid: d1c99cbd232cefb4c92ba8be44df7779, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: -2
+      rid: 201
     <Effect>k__BackingField:
-      rid: -2
-  damageType: 1
-  baseDamage: 10
-  percentDamage: 50.3
+      rid: 202
+  baseDamage: 0
   damageMultiplier: 1
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 201
+      type: {class: NoTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 202
+      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+      data:
+        drawAmount: 2

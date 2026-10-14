@@ -5,7 +5,6 @@ using System.Collections;
 public class EnemyView : CombatantView
 {
    [SerializeField] private TMP_Text attackText;
-   public int AttackPower {get; set; }
    private EnemyData data;
    public bool IsRanged => data != null && data.attackStyle == EnemyAttackStyle.Ranged;
    public bool HasProjectile => data != null && data.projectileFrames != null && data.projectileFrames.Length > 0;

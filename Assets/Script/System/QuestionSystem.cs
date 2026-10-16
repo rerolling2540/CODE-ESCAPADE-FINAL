@@ -34,7 +34,8 @@ public class QuestionSystem : Singleton<QuestionSystem>
                 Debug.Log("Time ran out on Pop Quiz!");
                 isCorrect = false;
                 isDone = true;
-            }
+            },
+            playedCard: action.PlayedCard
         );
 
         // Pause the ActionSystem until answered or timed out
@@ -46,7 +47,12 @@ public class QuestionSystem : Singleton<QuestionSystem>
         // Send answer result back to whoever queued the action
         action.OnAnswered?.Invoke(isCorrect);
     }
-     public void AskRandomQuestion(Action<bool> onAnswered)
+    public void AskRandomQuestion(Action<bool> onAnswered)
+    {
+        AskRandomQuestion(null, onAnswered);
+    }
+
+    public void AskRandomQuestion(Card playedCard, Action<bool> onAnswered)
     {
         Debug.Log("QuestionSystem: AskRandomQuestion");
         QuestionData randomQuestion = database.GetRandomQuestion();
@@ -54,7 +60,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
         Debug.Log("Question Text: " + randomQuestion.questionText);// temp
 
         ActionSystem.Instance.Perform(
-            new QuestionGA(randomQuestion, onAnswered)
+            new QuestionGA(randomQuestion, onAnswered, playedCard)
         );
     }
 }

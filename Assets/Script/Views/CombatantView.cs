@@ -42,6 +42,7 @@ public class CombatantView : MonoBehaviour
     private float hitTime;
     private float hitDirection;
     private Color restingColor = Color.white;
+    private bool healthTextBoundToSlider;
     private Vector3 FacingAnchor => battleAnimationReady && spriteRenderer != null
         ? spriteRenderer.transform.parent.TransformPoint(visualPosition) : transform.position;
 
@@ -260,6 +261,7 @@ public class CombatantView : MonoBehaviour
 
     public void UpdateHealthUI()
     {
+        BindHealthTextToSlider();
         // 1. Dynamic Health Bar Width Scaling
         if (healthBarRect != null && baseHealth > 0)
         {
@@ -283,8 +285,27 @@ public class CombatantView : MonoBehaviour
         }
     }
 
+    private void BindHealthTextToSlider()
+    {
+        if (healthTextBoundToSlider || healthText == null || healthSlider == null) return;
+        RectTransform label = healthText.rectTransform;
+        label.SetParent(healthSlider.transform, false);
+        label.anchorMin = Vector2.zero;
+        label.anchorMax = Vector2.one;
+        label.pivot = new Vector2(0.5f, 0.5f);
+        label.anchoredPosition = Vector2.zero;
+        label.sizeDelta = Vector2.zero;
+        label.SetAsLastSibling();
+        healthText.alignment = TextAlignmentOptions.Center;
+        healthText.fontSize = 18f;
+        healthText.color = Color.white;
+        healthText.raycastTarget = false;
+        healthTextBoundToSlider = true;
+    }
+
     public void Damage(int damageAmount)
     {
+        int healthBefore = CurrentHealth;
         int remainingDamage = Mathf.Max(0, damageAmount - Defense);
         int currentArmor = GetStatusEffectStacks(StatusEffectType.ARMOR);
 
@@ -316,6 +337,8 @@ public class CombatantView : MonoBehaviour
         hitTime = Time.time + 0.18f;
         hitDirection = spriteRenderer != null && spriteRenderer.transform.TransformVector(Vector3.right).x * (spriteRenderer.flipX ? -1f : 1f) > 0f ? -1f : 1f;
         UpdateHealthUI();
+        int healthDamage = healthBefore - CurrentHealth;
+        if (healthDamage > 0) ShowDamageIndicator(healthDamage);
         if (CurrentHealth <= 0 && !deathQueued && this is EnemyView enemy && ActionSystem.Instance != null)
         {
             deathQueued = true;
@@ -323,6 +346,39 @@ public class CombatantView : MonoBehaviour
             if (ActionSystem.Instance.IsPerforming) ActionSystem.Instance.AddReaction(kill);
             else ActionSystem.Instance.Perform(kill);
         }
+    }
+
+    private void ShowDamageIndicator(int amount)
+    {
+        var popup = new GameObject("Damage Indicator", typeof(TextMeshPro));
+        popup.transform.position = new Vector3(VisualCenter.x, VisualBounds.max.y + 0.2f, VisualCenter.z - 0.2f);
+        var label = popup.GetComponent<TextMeshPro>();
+        label.text = "-" + amount;
+        label.fontSize = 5.5f;
+        label.alignment = TextAlignmentOptions.Center;
+        label.color = new Color(0.55f, 0.015f, 0.025f, 1f);
+        label.outlineColor = new Color(1f, 0.82f, 0.48f, 1f);
+        label.outlineWidth = 0.25f;
+        label.sortingOrder = 100;
+        StartCoroutine(AnimateDamageIndicator(popup, label));
+    }
+
+    private IEnumerator AnimateDamageIndicator(GameObject popup, TextMeshPro label)
+    {
+        const float duration = 1.5f;
+        Vector3 start = popup.transform.position;
+        Color color = label.color;
+        float elapsed = 0f;
+        while (elapsed < duration && popup != null)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            popup.transform.position = start + Vector3.up * (1f * t);
+            color.a = 1f - t;
+            label.color = color;
+            yield return null;
+        }
+        if (popup != null) Destroy(popup);
     }
 
     public void Heal(int amount)

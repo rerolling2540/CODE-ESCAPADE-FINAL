@@ -10,7 +10,7 @@ public class CardPileView : MonoBehaviour
     {
         cardSystem = owner;
         isDrawPile = drawPile;
-        transform.localScale = Vector3.one * 0.2f;
+        transform.localScale = Vector3.one * 0.12f;
 
         SpriteRenderer iconRenderer = GetComponent<SpriteRenderer>();
         if (iconRenderer == null) iconRenderer = gameObject.AddComponent<SpriteRenderer>();

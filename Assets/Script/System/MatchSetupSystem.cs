@@ -13,6 +13,7 @@ public class MatchSetupSystem : MonoBehaviour
     private void Start()
     {
         BattleUITheme.Apply();
+        ApplyPlayerHudLayout();
         HeroSystem.Instance.SetUp(heroData);
         bool caveBattle = CaveEnemyEncounter.PendingEnemies != null && CaveEnemyEncounter.PendingEnemies.Count > 0;
         string encounterId = CaveEnemyEncounter.PendingEncounterId;
@@ -32,6 +33,28 @@ public class MatchSetupSystem : MonoBehaviour
         PerkSystem.Instance.AddPerk(new Perk(perkData));
         DrawCardsGA drawCardsGA = new(5);
         ActionSystem.Instance.Perform(drawCardsGA);
+    }
+
+    private static void ApplyPlayerHudLayout()
+    {
+        var portraitFrame = GameObject.Find("PortraitFrame");
+        var portraitIcon = GameObject.Find("PortraitIcon");
+        if (portraitFrame != null && portraitIcon != null)
+        {
+            if (portraitFrame.GetComponent<UnityEngine.UI.RectMask2D>() == null)
+                portraitFrame.AddComponent<UnityEngine.UI.RectMask2D>();
+
+            RectTransform frame = portraitFrame.GetComponent<RectTransform>();
+            RectTransform image = portraitIcon.GetComponent<RectTransform>();
+            image.anchorMin = new Vector2(0f, 1f);
+            image.anchorMax = new Vector2(1f, 1f);
+            image.pivot = new Vector2(0.5f, 1f);
+            image.anchoredPosition = Vector2.zero;
+            // Keep the character's head and shoulders in view, like a classic RPG portrait.
+            image.sizeDelta = new Vector2(0f, frame.rect.height * 2.6f);
+            var portrait = portraitIcon.GetComponent<UnityEngine.UI.Image>();
+            if (portrait != null) portrait.preserveAspect = false;
+        }
     }
 }
 

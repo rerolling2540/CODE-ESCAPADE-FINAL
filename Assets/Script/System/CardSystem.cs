@@ -87,8 +87,8 @@ public class CardSystem : Singleton<CardSystem>
         if (battleCamera != null)
         {
             float cameraDepth = Mathf.Abs(battleCamera.transform.position.z);
-            Vector3 drawPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.14f, 0.16f, cameraDepth));
-            Vector3 discardPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.86f, 0.16f, cameraDepth));
+            Vector3 drawPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.045f, 0.20f, cameraDepth));
+            Vector3 discardPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.955f, 0.20f, cameraDepth));
             drawPosition.z = discardPosition.z = 0f;
             drawPilePoint.position = drawPosition;
             discardPilePoint.position = discardPosition;

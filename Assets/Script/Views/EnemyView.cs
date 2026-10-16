@@ -12,18 +12,13 @@ public class EnemyView : CombatantView
     {
         data = enemyData;
         AttackPower = enemyData.AttackPower;
-        UpdateAttackText();
+        if (attackText != null) attackText.gameObject.SetActive(false);
         SetUpBase(enemyData.Health, enemyData.Image);
         SetBattleMaterial(enemyData.battleMaterial);
         EnlargeEnemyVisual();
         EnsureEnemyHealthBar();
         ConfigureBattleAnimation(enemyData.idleFrames, enemyData.attackFrames, enemyData.battleFramesPerSecond, true, enemyData.hovering);
     }
-    private void UpdateAttackText()
-    {
-        attackText.text = "ATK: " + AttackPower;
-    }
-
     public IEnumerator PlayProjectile(CombatantView target)
     {
         if (!HasProjectile || target == null || target.CurrentHealth <= 0) yield break;

@@ -167,7 +167,7 @@ public class CardView : MonoBehaviour
             {
                 PlayCardGA playCardGA = new(Card);
 
-                QuestionSystem.Instance.AskRandomQuestion(correct =>
+                QuestionSystem.Instance.AskRandomQuestion(Card, correct =>
                 {
                     playCardGA.QuestionAnsweredCorrectly = correct;
                     ActionSystem.Instance.Perform(playCardGA);

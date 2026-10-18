@@ -25,4 +25,5 @@ public class DialogueOption
 {
     public string optionText;
     public DialogueSO nextDialogue;
+    [System.NonSerialized] public System.Action onSelected;
 }

@@ -104,6 +104,7 @@ public class CaveEnemyEncounter : MonoBehaviour
 
     void TryStartBattle(Collider2D other)
     {
+        if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) return;
         if (enemy == null || enteringBattle || Time.timeScale <= 0f || Time.unscaledTime < readyAt ||
             suppressedEncounter == gameObject.name) return;
         var character = other.GetComponentInParent<playerMovement>();

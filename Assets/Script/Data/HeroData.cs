@@ -11,5 +11,8 @@ public class HeroData : ScriptableObject
     public Sprite[] idleFrames;
     public Sprite[] attackFrames;
     [Min(1f)] public float battleFramesPerSecond = 12f;
+    [Tooltip("Optional seconds per attack frame, for weapon-specific anticipation and recovery.")]
+    public float[] attackFrameDurations;
+    public bool hoverBattleAnimation;
 
 }

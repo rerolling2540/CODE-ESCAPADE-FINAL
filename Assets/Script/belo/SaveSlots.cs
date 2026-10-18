@@ -11,6 +11,7 @@ public static class SaveSlots
         public bool hasPosition;
         public Vector3 position;
         public string savedAt;
+        public int elfQuestStage;
         public System.Collections.Generic.List<string> defeatedEncounters = new System.Collections.Generic.List<string>();
     }
     public static int Active

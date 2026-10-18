@@ -23,6 +23,7 @@ public class CharacterInventory : MonoBehaviour
 
     void Awake()
     {
+        starterHero = SelectedHero.Resolve(starterHero);
         SaveSlots.MigrateLegacy();
         bool loaded = false;
         if (PlayerPrefs.HasKey(SaveKey))

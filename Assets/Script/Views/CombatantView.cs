@@ -33,6 +33,7 @@ public class CombatantView : MonoBehaviour
     private bool deathQueued;
     private Sprite[] idleFrames, attackFrames;
     private float battleFrameRate = 12f;
+    private float[] attackFrameDurations;
     private bool attacking, battleAnimationReady, hovering;
     private float idleClock;
     private Vector3 visualScale, visualPosition;
@@ -67,11 +68,13 @@ public class CombatantView : MonoBehaviour
         }
     }
 
-    protected void ConfigureBattleAnimation(Sprite[] idle, Sprite[] attack, float fps, bool faceLeft, bool hover = false)
+    protected void ConfigureBattleAnimation(Sprite[] idle, Sprite[] attack, float fps, bool faceLeft, bool hover = false,
+        float[] frameDurations = null)
     {
         if (spriteRenderer == null) return;
         idleFrames = idle;
         attackFrames = attack;
+        attackFrameDurations = frameDurations;
         battleFrameRate = Mathf.Max(1f, fps);
         hovering = hover;
         spriteRenderer.flipX = faceLeft;
@@ -120,10 +123,14 @@ public class CombatantView : MonoBehaviour
                 for (int i = 0; i < attackFrames.Length; i++)
                 {
                     if (CurrentHealth <= 0) yield break;
-                    SetBattleFrame(attackFrames[i], 1f, 0f);
-                    // Hold anticipation and follow-through; accelerate the weapon swing.
+                    // Keep hovering casters at their current height during the cast.
+                    SetBattleFrame(attackFrames[i], 1f, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
+                    // Preserve the default swing timing unless the hero supplies
+                    // weapon-specific draw, release and recovery durations.
                     float timing = i == 0 ? 1.4f : i == attackFrames.Length - 1 ? 1.5f : 0.8f;
-                    yield return new WaitForSeconds(timing / battleFrameRate);
+                    float duration = attackFrameDurations != null && i < attackFrameDurations.Length &&
+                        attackFrameDurations[i] > 0f ? attackFrameDurations[i] : timing / battleFrameRate;
+                    yield return new WaitForSeconds(duration);
                 }
             }
             else
@@ -136,7 +143,9 @@ public class CombatantView : MonoBehaviour
         finally
         {
             attacking = false;
-            if (spriteRenderer != null) SetBattleFrame(restingSprite, 1f, 0f);
+            if (!hovering && attackFrameDurations != null && attackFrameDurations.Length > 0) idleClock = 0f;
+            if (spriteRenderer != null)
+                SetBattleFrame(restingSprite, 1f, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
         }
     }
 

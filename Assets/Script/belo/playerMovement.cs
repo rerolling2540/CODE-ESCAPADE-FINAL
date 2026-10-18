@@ -5,6 +5,10 @@ public class playerMovement : MonoBehaviour
 {
     public Animator animator;
     public Rigidbody2D rb;
+    [Tooltip("Use the archer artwork even when this prefab is previewed without character selection.")]
+    public bool archerAppearance;
+    [Tooltip("Use the mage artwork when this prefab is placed directly in a scene.")]
+    public bool mageAppearance;
 
     [Header("Movement")]
     public float moveSpeed = 8f;
@@ -40,12 +44,23 @@ public class playerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         if (animator == null) animator = GetComponent<Animator>();
+        if (mageAppearance || (!archerAppearance && SelectedHero.IsMage))
+            spriteRenderer = SelectedHero.ApplyMage(this, spriteRenderer);
+        else if (archerAppearance || SelectedHero.IsArcher)
+            spriteRenderer = SelectedHero.ApplyArcher(this, spriteRenderer);
         if (spriteRenderer != null) facingRight = !spriteRenderer.flipX;
     }
 
     void Update()
     {
         if (Time.timeScale <= 0f) return;
+        if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive)
+        {
+            movement = 0f;
+            isDashing = false;
+            UpdateAnimation();
+            return;
+        }
 
         dashCooldownTimer = Mathf.Max(0f, dashCooldownTimer - Time.deltaTime);
         if (isDashing)

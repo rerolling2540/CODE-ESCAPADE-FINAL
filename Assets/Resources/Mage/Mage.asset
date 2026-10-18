@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 821f49b13094d4740bf767bd41689754, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: Assembly-CSharp::HeroData
+  <Image>k__BackingField: {fileID: 2764273851807834643, guid: 24b67667a6ee5264e89d5be3907fc163, type: 3}
+  <Health>k__BackingField: 44
+  <Deck>k__BackingField:
+  - {fileID: 11400000, guid: c0050000000000000000000000000005, type: 2}
+  - {fileID: 11400000, guid: 980c18db59e9cf946920510c6e295487, type: 2}
+  - {fileID: 11400000, guid: 168c58146a32b25448627cb38164f1f3, type: 2}
+  - {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
+  - {fileID: 11400000, guid: a49b409c12903a740a4dfb32f653356a, type: 2}
+  - {fileID: 11400000, guid: 632aebffcbd6c0f42acd79eb887af739, type: 2}
+  idleFrames:
+  - {fileID: 2764273851807834643, guid: 24b67667a6ee5264e89d5be3907fc163, type: 3}
+  - {fileID: -695089452695666473, guid: 24b67667a6ee5264e89d5be3907fc163, type: 3}
+  - {fileID: -4682600014010829006, guid: 24b67667a6ee5264e89d5be3907fc163, type: 3}
+  - {fileID: 8855350839482124096, guid: 24b67667a6ee5264e89d5be3907fc163, type: 3}
+  - {fileID: -3010720051408544531, guid: 24b67667a6ee5264e89d5be3907fc163, type: 3}
+  - {fileID: -5810423467327373869, guid: 24b67667a6ee5264e89d5be3907fc163, type: 3}
+  attackFrames:
+  - {fileID: -3970589427392028295, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: 1188886742568398702, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: 482797791953838701, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: -5744554377020702508, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: -6006621870850466, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: -7544396562254309787, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: 8528477237256036597, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: -8376795314478499838, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: -5739081026707015955, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: 4344151244158979492, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: 2059169498478239601, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: 3906155987040631856, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: -3992399264991492348, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: -1653630675152714288, guid: c22585029453c1945a55484a3378135d, type: 3}
+  - {fileID: -5794778844162922957, guid: c22585029453c1945a55484a3378135d, type: 3}
+  battleFramesPerSecond: 12
+  attackFrameDurations:
+  - 0.07
+  - 0.07
+  - 0.07
+  - 0.07
+  - 0.08
+  - 0.08
+  - 0.14
+  - 0.04
+  - 0.045
+  - 0.045
+  - 0.05
+  - 0.05
+  - 0.06
+  - 0.08
+  - 0.12
+  hoverBattleAnimation: 1

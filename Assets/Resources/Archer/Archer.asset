@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 821f49b13094d4740bf767bd41689754, type: 3}
+  m_Name: Archer
+  m_EditorClassIdentifier: Assembly-CSharp::HeroData
+  <Image>k__BackingField: {fileID: 8825357171166241873, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
+  <Health>k__BackingField: 44
+  <Deck>k__BackingField:
+  - {fileID: 11400000, guid: c0040000000000000000000000000004, type: 2}
+  - {fileID: 11400000, guid: c0030000000000000000000000000003, type: 2}
+  - {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
+  - {fileID: 11400000, guid: a49b409c12903a740a4dfb32f653356a, type: 2}
+  - {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
+  - {fileID: 11400000, guid: 632aebffcbd6c0f42acd79eb887af739, type: 2}
+  idleFrames:
+  - {fileID: 8825357171166241873, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
+  - {fileID: -2304725672977259091, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
+  - {fileID: 442273805601237685, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
+  - {fileID: 6066229974421152400, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
+  - {fileID: 7476189263210341737, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
+  - {fileID: 4241366359362867961, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
+  attackFrames:
+  - {fileID: -617664976584716111, guid: f6ef97f232f8469458cc33a9aaeb4fd6, type: 3}
+  - {fileID: -1349430813488307998, guid: f6ef97f232f8469458cc33a9aaeb4fd6, type: 3}
+  - {fileID: -299691971416282343, guid: f6ef97f232f8469458cc33a9aaeb4fd6, type: 3}
+  - {fileID: 4606704561395913780, guid: f6ef97f232f8469458cc33a9aaeb4fd6, type: 3}
+  - {fileID: 5948503406558905044, guid: f6ef97f232f8469458cc33a9aaeb4fd6, type: 3}
+  - {fileID: -4873573351319916710, guid: f6ef97f232f8469458cc33a9aaeb4fd6, type: 3}
+  - {fileID: -2504246526643319911, guid: f6ef97f232f8469458cc33a9aaeb4fd6, type: 3}
+  battleFramesPerSecond: 12
+  attackFrameDurations:
+  - 0.1
+  - 0.18
+  - 0.05
+  - 0.08
+  - 0.1
+  - 0.09
+  - 0.13

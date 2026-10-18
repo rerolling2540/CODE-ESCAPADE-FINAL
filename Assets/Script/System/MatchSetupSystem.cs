@@ -12,6 +12,7 @@ public class MatchSetupSystem : MonoBehaviour
 
     private void Start()
     {
+        heroData = SelectedHero.Resolve(heroData);
         BattleUITheme.Apply();
         ApplyPlayerHudLayout();
         HeroSystem.Instance.SetUp(heroData);

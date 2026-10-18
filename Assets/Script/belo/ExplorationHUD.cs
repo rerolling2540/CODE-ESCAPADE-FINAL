@@ -11,6 +11,8 @@ public class ExplorationHUD : MonoBehaviour
     private playerMovement player;
     private TutorialSignboard[] signs;
     private CaveEnemyEncounter[] enemies;
+    private Npc_Talk[] questNpcs;
+    private GUIStyle questMarkerStyle;
     private Texture2D terrain;
     private Bounds worldBounds;
 
@@ -37,6 +39,7 @@ public class ExplorationHUD : MonoBehaviour
         player = FindFirstObjectByType<playerMovement>();
         signs = FindObjectsByType<TutorialSignboard>(FindObjectsSortMode.None);
         enemies = FindObjectsByType<CaveEnemyEncounter>(FindObjectsSortMode.None);
+        questNpcs = FindObjectsByType<Npc_Talk>(FindObjectsSortMode.None);
 
         if (inventory == null)
             inventory = GetComponent<CharacterInventory>();
@@ -560,6 +563,8 @@ public class ExplorationHUD : MonoBehaviour
                 }
             }
 
+            DrawQuestNpcs(mapRect, centre, window);
+
             Fill(
                 new Rect(
                     mapRect.width / 2f - 3f,
@@ -578,6 +583,70 @@ public class ExplorationHUD : MonoBehaviour
            // "Blue: you   Gold: signboards",
             //mapLegendStyle
         //);
+    }
+
+    void DrawQuestNpcs(Rect mapRect, Vector2 centre, Vector2 window)
+    {
+        if (questNpcs == null) return;
+        var saved = SaveSlots.Read(SaveSlots.Active);
+        int stage = saved != null ? saved.elfQuestStage : 0;
+        bool highlighted = stage == 0 || ElfQuestProgress.Ready(saved);
+        Color markerColor = stage >= 4 ? new Color(0.4f, 0.55f, 0.4f) :
+            highlighted ? new Color(1f, 0.78f, 0.12f) : new Color(0.4f, 0.65f, 0.85f);
+        if (questMarkerStyle == null)
+            questMarkerStyle = new GUIStyle(GUI.skin.label) {
+                fontSize = 20, fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter, padding = new RectOffset()
+            };
+
+        foreach (var npc in questNpcs)
+        {
+            // Talking is disabled outside interaction range; the map icon stays visible.
+            if (npc == null || !npc.offersElfQuest || !npc.gameObject.activeInHierarchy) continue;
+            Vector2 delta = (Vector2)npc.transform.position - centre;
+            Vector2 point = new Vector2(
+                mapRect.width / 2f + delta.x / window.x * mapRect.width,
+                mapRect.height / 2f - delta.y / window.y * mapRect.height
+            );
+            if (point.x < 0 || point.x > mapRect.width || point.y < 0 || point.y > mapRect.height) continue;
+            // Keep the portrait and quest badge readable at the map's edges.
+            point.x = Mathf.Clamp(point.x, 12f, mapRect.width - 22f);
+            point.y = Mathf.Clamp(point.y, 24f, mapRect.height - 12f);
+            float pulse = highlighted ? 0.7f + 0.3f * (0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f)) : 0.65f;
+            Color glow = markerColor;
+            glow.a = pulse;
+            Fill(new Rect(point.x - 12f, point.y - 12f, 24f, 24f), glow);
+            Fill(new Rect(point.x - 10f, point.y - 10f, 20f, 20f), Ink);
+
+            Sprite portrait = null;
+            if (npc.dialogueSO != null && npc.dialogueSO.lines != null)
+                foreach (var line in npc.dialogueSO.lines)
+                    if (line.speaker != null && line.speaker.portrait != null)
+                    { portrait = line.speaker.portrait; break; }
+            if (portrait == null)
+            {
+                var renderer = npc.GetComponentInChildren<SpriteRenderer>();
+                if (renderer != null) portrait = renderer.sprite;
+            }
+            if (portrait != null)
+            {
+                Rect region = portrait.textureRect;
+                float scale = 18f / Mathf.Max(region.width, region.height);
+                GUI.DrawTextureWithTexCoords(
+                    new Rect(point.x - region.width * scale / 2f, point.y - region.height * scale / 2f,
+                        region.width * scale, region.height * scale), portrait.texture,
+                    new Rect(region.x / portrait.texture.width, region.y / portrait.texture.height,
+                        region.width / portrait.texture.width, region.height / portrait.texture.height));
+            }
+            if (stage < 4)
+            {
+                Rect badge = new Rect(point.x + 4f, point.y - 24f, 18f, 22f);
+                Fill(badge, Ink);
+                questMarkerStyle.normal.textColor = markerColor;
+                GUI.Label(badge, new GUIContent(stage == 0 ? "!" : "?",
+                    stage == 0 ? "Quest available" : highlighted ? "Reward ready" : "Quest accepted"), questMarkerStyle);
+            }
+        }
     }
 
     void DrawInventory()

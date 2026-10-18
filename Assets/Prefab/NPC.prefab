@@ -64,6 +64,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Npc_Talk
   interactAnim: {fileID: 3588886547248971965}
   dialogueSO: {fileID: 11400000, guid: c6b4c5c5ef30fb2459cba2fc97c9fb4b, type: 2}
+  offersElfQuest: 1
 --- !u!58 &268619279422135407
 CircleCollider2D:
   m_ObjectHideFlags: 0

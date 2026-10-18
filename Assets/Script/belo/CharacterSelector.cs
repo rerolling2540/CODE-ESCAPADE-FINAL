@@ -51,6 +51,8 @@ public class CharacterSelector : MonoBehaviour
     void UpdateCharacter()
     {
         characterImage.sprite = characters[currentCharacter];
+        // Fit each portrait into the same display area without stretching its artwork.
+        characterImage.preserveAspect = true;
         characterName.text = characterNames[currentCharacter];
 
         // I-UPDATE DIN ANG LOGO

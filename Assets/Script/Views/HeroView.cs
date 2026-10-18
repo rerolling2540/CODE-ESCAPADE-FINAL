@@ -9,6 +9,7 @@ public class HeroView : CombatantView
         int targetHealth = (MaxHealth > 0) ? MaxHealth : heroData.Health;
 
         SetUpBase(targetHealth, heroData.Image);
-        ConfigureBattleAnimation(heroData.idleFrames, heroData.attackFrames, heroData.battleFramesPerSecond, false);
+        ConfigureBattleAnimation(heroData.idleFrames, heroData.attackFrames, heroData.battleFramesPerSecond, false,
+            hover: heroData.hoverBattleAnimation, frameDurations: heroData.attackFrameDurations);
     }
 }

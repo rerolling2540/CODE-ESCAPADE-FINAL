@@ -460,12 +460,12 @@ MonoBehaviour:
   - {fileID: 658376006698470442, guid: 62131fce7467a450d9e53be66d58eb39, type: 3}
   characters:
   - {fileID: 709901728315876072, guid: 1acaed507baac4d42a2dc2a7d3d3e3ef, type: 3}
-  - {fileID: 21300000, guid: 9edc5b4d2d1aee74498c7bbd83c4ddb0, type: 3}
-  - {fileID: 6937817954938267909, guid: e15ce8f661e0f8c4d84b6fd3f5f3bcdd, type: 3}
+  - {fileID: 8825357171166241873, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
+  - {fileID: 2764273851807834643, guid: 24b67667a6ee5264e89d5be3907fc163, type: 3}
   characterNames:
-  - belo
-  - justin
-  - florenc
+  - Warrior
+  - Archer
+  - Mage
 --- !u!114 &138459871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8096,7 +8096,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

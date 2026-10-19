@@ -62,6 +62,11 @@ public class MainMenuSaveSlots : MonoBehaviour
     void Awake()
     {
         GameSave.EnsureInstance();
+        if (buttonAudioSource != null)
+        {
+            GameAudio.Route(buttonAudioSource, false);
+            buttonAudioSource.volume = 1f;
+        }
     }
 
     void PlayClickSound()

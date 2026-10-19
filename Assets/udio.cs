@@ -26,33 +26,41 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        musicSource.clip = background;
-        musicSource.volume = musicVolume;
-        musicSource.Play();
-
-        SFXSource.volume = sfxVolume;
+        GameAudio.Route(musicSource, true);
+        GameAudio.Route(SFXSource, false);
+        GameAudio.ApplySavedVolumes();
+        if (musicSource != null)
+        {
+            musicSource.clip = background;
+            musicSource.volume = Mathf.Clamp01(musicVolume);
+            musicSource.loop = true;
+            if (background != null) musicSource.Play();
+        }
+        if (SFXSource != null)
+        {
+            SFXSource.volume = Mathf.Clamp01(sfxVolume);
+            SFXSource.loop = false;
+        }
     }
 
     public void PlayButtonSound()
     {
-        SFXSource.PlayOneShot(buttonClick);
+        if (SFXSource != null && buttonClick != null) SFXSource.PlayOneShot(buttonClick);
     }
 
     public void SetMusicVolume(float volume)
     {
-        musicVolume = volume;
-        musicSource.volume = volume;
+        GameAudio.SetMusicVolume(volume);
     }
 
     public void SetSFXVolume(float volume)
     {
-        sfxVolume = volume;
-        SFXSource.volume = volume;
+        GameAudio.SetSfxVolume(volume);
     }
 
     public void PlayButtonSoundAndLoadScene(string sceneName)
     {
-        SFXSource.PlayOneShot(buttonClick);
+        PlayButtonSound();
         StartCoroutine(LoadSceneAfterSound(sceneName));
     }
 

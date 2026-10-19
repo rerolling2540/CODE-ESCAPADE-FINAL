@@ -61,6 +61,7 @@ public class PortalEntrySound : MonoBehaviour
         source.priority = 32;
         source.volume = gain;
         source.clip = clip;
+        GameAudio.Route(source, false);
         source.Play();
         Destroy(playback, clip.length + 0.2f);
     }

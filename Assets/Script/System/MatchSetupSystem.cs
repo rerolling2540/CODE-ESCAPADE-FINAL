@@ -30,7 +30,7 @@ public class MatchSetupSystem : MonoBehaviour
         if (EnemySystem.Instance.Enemies.Count > 0)
             HeroSystem.Instance.HeroView.FaceTowards(EnemySystem.Instance.Enemies[0]);
         gameObject.AddComponent<EncounterBattleReturn>().Configure(caveBattle, encounterId);
-        CardSystem.Instance.Setup(heroData.Deck);
+        CardSystem.Instance.Setup(CharacterInventory.WithChestRewards(heroData.Deck));
         PerkSystem.Instance.AddPerk(new Perk(perkData));
         DrawCardsGA drawCardsGA = new(5);
         ActionSystem.Instance.Perform(drawCardsGA);

@@ -1,52 +1,21 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class PortalNextScene : MonoBehaviour
 {
     public string nextSceneName = "NextScene";
     public AudioClip portalSound;
 
-    [Range(0f, 5f)]
-    public float soundVolume = 3f;
-
-    [Header("Portal Delay")]
-    public float portalDelay = 2f;
+    [Range(0f, 1f)]
+    public float soundVolume = 1f;
 
     private bool isEntering = false;
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void Start()
     {
-        if (isEntering || !other.CompareTag("Player"))
-            return;
-
-        isEntering = true;
-        StartCoroutine(EnterPortal());
-    }
-
-    IEnumerator EnterPortal()
-    {
-        if (portalSound != null)
-        {
-            AudioSource source = gameObject.AddComponent<AudioSource>();
-            source.clip = portalSound;
-            source.volume = soundVolume;
-            source.spatialBlend = 0f;
-            source.playOnAwake = false;
-            source.Play();
-
-            // Hintayin matapos ang sound
-            yield return new WaitForSecondsRealtime(
-                portalSound.length
-            );
-
-            Destroy(source);
-        }
-
-        // Dagdag na delay bago lumipat ng Scene
-        yield return new WaitForSecondsRealtime(portalDelay);
-
-        SceneManager.LoadScene(nextSceneName);
+        PortalInteraction.For(gameObject).AddRoute(
+            () => isActiveAndEnabled && !isEntering && !string.IsNullOrEmpty(nextSceneName) && Application.CanStreamedLevelBeLoaded(nextSceneName),
+            player => { isEntering = true; SceneManager.LoadScene(nextSceneName); });
     }
 }

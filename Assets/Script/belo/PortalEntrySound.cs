@@ -1,7 +1,6 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 [RequireComponent(typeof(AudioSource))]
 public class PortalEntrySound : MonoBehaviour
@@ -16,46 +15,53 @@ public class PortalEntrySound : MonoBehaviour
     public string playerTag = "Player";
     public bool changeScene = false;
     public string destinationScene;
-    public float delayBeforeTeleport = 0.5f;
-
-    private AudioSource audioSource;
+    private static AudioClip defaultSound;
     private bool isEntering = false;
 
     private void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
+        var audioSource = GetComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.loop = false;
+        var interaction = PortalInteraction.For(gameObject);
+        interaction.AddRoute(
+            () => isActiveAndEnabled && changeScene && !isEntering && !string.IsNullOrEmpty(destinationScene) && Application.CanStreamedLevelBeLoaded(destinationScene),
+            player => { isEntering = true; SceneManager.LoadScene(destinationScene); });
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    public static void Preload()
     {
-        if (isEntering || !other.CompareTag(playerTag))
-            return;
-
-        if (portalSound != null)
-            audioSource.PlayOneShot(portalSound, volume);
-        else
-            Debug.LogWarning("Assign Portal Sound!", this);
-
-        if (changeScene)
-        {
-            isEntering = true;
-            StartCoroutine(ChangeSceneAfterSound());
-        }
+        if (defaultSound == null) defaultSound = Resources.Load<AudioClip>("PortalAudio/PortalEnter");
+        if (defaultSound != null && defaultSound.loadState == AudioDataLoadState.Unloaded)
+            defaultSound.LoadAudioData();
     }
 
-    private IEnumerator ChangeSceneAfterSound()
+    public static void PlayFor(GameObject portal)
     {
-        float waitTime = portalSound != null
-            ? Mathf.Max(delayBeforeTeleport, portalSound.length)
-            : delayBeforeTeleport;
+        Preload();
+        AudioClip clip = null;
+        float gain = 1f;
+        // Select a valid clip even when an empty duplicate component comes first.
+        foreach (var sound in portal.GetComponents<PortalEntrySound>())
+            if (sound.isActiveAndEnabled && sound.portalSound != null)
+            { clip = sound.portalSound; gain = Mathf.Clamp01(sound.volume); break; }
+        var nextScene = portal.GetComponent<PortalNextScene>();
+        if (clip == null && nextScene != null && nextScene.portalSound != null)
+        { clip = nextScene.portalSound; gain = Mathf.Clamp01(nextScene.soundVolume); }
+        if (clip == null) clip = defaultSound;
+        if (clip == null) return;
 
-        yield return new WaitForSeconds(waitTime);
-
-        if (!string.IsNullOrEmpty(destinationScene))
-            SceneManager.LoadScene(destinationScene);
-        else
-            isEntering = false;
+        // A 2D source stays audible after teleporting away or loading another scene.
+        var playback = new GameObject("Portal Entry Sound");
+        DontDestroyOnLoad(playback);
+        var source = playback.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = false;
+        source.spatialBlend = 0f;
+        source.priority = 32;
+        source.volume = gain;
+        source.clip = clip;
+        source.Play();
+        Destroy(playback, clip.length + 0.2f);
     }
 }

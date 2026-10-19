@@ -612,11 +612,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PortalEntrySound
   portalSound: {fileID: 8300000, guid: 6ce2b62cb039c4ef582058ea11872be0, type: 3}
-  volume: 0.193
+  volume: 1
   playerTag: Player
   changeScene: 0
   destinationScene: 
-  delayBeforeTeleport: 0.5
 --- !u!1 &101925622
 GameObject:
   m_ObjectHideFlags: 0
@@ -373514,7 +373513,6 @@ GameObject:
   - component: {fileID: 2038102753}
   - component: {fileID: 2038102752}
   - component: {fileID: 2038102751}
-  - component: {fileID: 2038102750}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -373542,20 +373540,6 @@ RectTransform:
   m_AnchoredPosition: {x: 860.9, y: 275}
   m_SizeDelta: {x: 110.4227, y: 113.7015}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2038102750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2038102748}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0c09fcb7914438ab003c0a7d44ac6df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ExplorationHUD
-  inventory: {fileID: 887740002}
-  minimapWorldSize: {x: 64, y: 38}
 --- !u!114 &2038102751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373600,7 +373584,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2038102750}
+      - m_Target: {fileID: 887740003}
         m_TargetAssemblyTypeName: ExplorationHUD, Assembly-CSharp
         m_MethodName: OpenInventoryFromButton
         m_Mode: 1
@@ -373970,7 +373954,6 @@ MonoBehaviour:
   playerTag: Player
   changeScene: 0
   destinationScene: 
-  delayBeforeTeleport: 0.5
 --- !u!82 &2122921384
 AudioSource:
   m_ObjectHideFlags: 0
@@ -374081,11 +374064,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PortalEntrySound
   portalSound: {fileID: 8300000, guid: 6ce2b62cb039c4ef582058ea11872be0, type: 3}
-  volume: 0.193
+  volume: 1
   playerTag: Player
   changeScene: 0
   destinationScene: 
-  delayBeforeTeleport: 0.5
 --- !u!1001 &2130818800
 PrefabInstance:
   m_ObjectHideFlags: 0

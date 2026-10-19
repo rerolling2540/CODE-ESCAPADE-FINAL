@@ -15,12 +15,10 @@ public class TeyoSceneManager : MonoBehaviour
     
 
     }
-    public void OnTriggerEnter2D(Collider2D collision)
+    private void Start()
     {
-        if (collision != null &&
-            (collision.GetComponentInParent<playerMovement>() != null || collision.CompareTag("Player")))
-        {
-           GoToScene(loadScene);
-        }
+        PortalInteraction.For(gameObject).AddRoute(
+            () => isActiveAndEnabled && !isLoading && !string.IsNullOrWhiteSpace(loadScene) && Application.CanStreamedLevelBeLoaded(loadScene),
+            player => GoToScene(loadScene));
     }
 }

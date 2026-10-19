@@ -11,6 +11,8 @@ public class CharacterInventory : MonoBehaviour
         public List<Stack> cards = new List<Stack>();
         public int coins;
         public int libraryTokens;
+        public List<string> openedChests = new List<string>();
+        public int starterCardsVersion;
     }
 
     public List<CatalogEntry> catalog = new List<CatalogEntry>();
@@ -24,6 +26,15 @@ public class CharacterInventory : MonoBehaviour
     void Awake()
     {
         starterHero = SelectedHero.Resolve(starterHero);
+        var sharedCatalog = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
+        if (sharedCatalog != null)
+            foreach (var entry in sharedCatalog.cards)
+                if (entry != null && entry.card != null && !string.IsNullOrEmpty(entry.id) &&
+                    !catalog.Exists(e => e != null && e.card == entry.card))
+                    catalog.Add(new CatalogEntry { id = entry.id, card = entry.card });
+        foreach (var card in Resources.LoadAll<CardData>("ChestCards"))
+            if (!catalog.Exists(e => e != null && e.card == card))
+                catalog.Add(new CatalogEntry { id = "chest." + card.name, card = card });
         SaveSlots.MigrateLegacy();
         bool loaded = false;
         if (PlayerPrefs.HasKey(SaveKey))
@@ -34,6 +45,7 @@ public class CharacterInventory : MonoBehaviour
                 if (saved != null && saved.cards != null)
                 {
                     data = saved;
+                    if (data.openedChests == null) data.openedChests = new List<string>();
                     data.cards.RemoveAll(s => s == null || s.quantity <= 0);
                     data.coins = Mathf.Max(0, data.coins);
                     data.libraryTokens = Mathf.Max(0, data.libraryTokens);
@@ -42,15 +54,49 @@ public class CharacterInventory : MonoBehaviour
             }
             catch (ArgumentException) { Debug.LogWarning("Inventory save could not be read; restoring starter cards."); }
         }
-        if (!loaded)
+        if (!loaded || data.starterCardsVersion < 1)
         {
+            bool complete = starterHero != null && starterHero.Deck != null;
             if (starterHero != null && starterHero.Deck != null)
-                foreach (var card in starterHero.Deck) AddCardInternal(card, 1);
+                foreach (var card in starterHero.Deck)
+                {
+                    var entry = catalog.Find(e => e != null && e.card == card && !string.IsNullOrEmpty(e.id));
+                    if (card == null || entry == null) { complete = false; continue; }
+                    // Repair older saves once, preserving owned copies and all earned rewards.
+                    if ((!loaded || !data.cards.Exists(s => s.id == entry.id)) && !AddCardInternal(card, 1))
+                        complete = false;
+                }
+            if (complete) data.starterCardsVersion = 1;
             Save();
         }
     }
 
     public CardData GetCard(string id) => catalog.Find(e => e != null && e.id == id)?.card;
+
+    public bool IsChestOpened(string id) => data.openedChests.Contains(id);
+
+    public bool ClaimChest(string id, CardData card)
+    {
+        if (string.IsNullOrEmpty(id) || IsChestOpened(id) || !AddCardInternal(card, 1)) return false;
+        // Persist the reward and chest together so a reload cannot duplicate the card.
+        data.openedChests.Add(id);
+        Save();
+        return true;
+    }
+
+    public static List<CardData> WithChestRewards(List<CardData> starterDeck)
+    {
+        var deck = starterDeck != null ? new List<CardData>(starterDeck) : new List<CardData>();
+        if (!PlayerPrefs.HasKey(SaveKey)) return deck;
+        SaveData saved;
+        try { saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey)); }
+        catch (ArgumentException) { return deck; }
+        if (saved?.cards == null) return deck;
+        foreach (var card in Resources.LoadAll<CardData>("ChestCards"))
+            if (saved.cards.Exists(s => s != null && s.id == "chest." + card.name && s.quantity > 0) && !deck.Contains(card))
+                deck.Add(card);
+        return deck;
+    }
 
     bool AddCardInternal(CardData card, int amount)
     {

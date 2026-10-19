@@ -8,12 +8,11 @@ public class TwoWayPortal : MonoBehaviour
 
     private static bool isTeleporting = false;
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void Start()
     {
-        if (isTeleporting || !other.CompareTag("Player"))
-            return;
-
-        StartCoroutine(Teleport(other.transform));
+        PortalInteraction.For(gameObject).AddRoute(
+            () => isActiveAndEnabled && !isTeleporting && destination != null,
+            player => StartCoroutine(Teleport(player)));
     }
 
     private IEnumerator Teleport(Transform player)

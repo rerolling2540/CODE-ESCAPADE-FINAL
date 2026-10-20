@@ -26,6 +26,8 @@ public class MatchSetupSystem : MonoBehaviour
             CaveEnemyEncounter.PendingEncounterId = null;
         }
         else EnemySystem.Instance.Setup(enemyDatas);
+        var platform = FindFirstObjectByType<BattlePlatform>();
+        if (platform != null) platform.GroundCombatants(HeroSystem.Instance.HeroView, EnemySystem.Instance.Enemies);
         foreach (var enemy in EnemySystem.Instance.Enemies)
             enemy.FaceTowards(HeroSystem.Instance.HeroView);
         if (EnemySystem.Instance.Enemies.Count > 0)

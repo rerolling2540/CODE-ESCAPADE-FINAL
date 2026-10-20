@@ -28,6 +28,7 @@ public class CombatantView : MonoBehaviour
     public int Defense { get; private set; }
     public Vector3 VisualCenter => spriteRenderer != null ? spriteRenderer.bounds.center : transform.position;
     public Bounds VisualBounds => spriteRenderer != null ? spriteRenderer.bounds : new Bounds(transform.position, Vector3.one);
+    public bool IsHovering => hovering;
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
     private bool deathQueued;

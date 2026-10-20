@@ -370,6 +370,7 @@ public class QuestionUI : MonoBehaviour
     private void OnButtonClicked(int index)
     {
         if (isAnswered) return;
+        BattleAudio.Play(BattleSound.AnswerSelect);
         EnsureCanvasGroup();
         isAnswered = true;
         if (timerCoroutine != null) StopCoroutine(timerCoroutine);
@@ -432,6 +433,7 @@ public class QuestionUI : MonoBehaviour
 
     private IEnumerator AnimateScroll(bool opening)
     {
+        BattleAudio.Play(opening ? BattleSound.QuestionOpen : BattleSound.QuestionClose);
         EnsureCanvasGroup();
         const float duration = 0.48f;
         float elapsed = 0f;

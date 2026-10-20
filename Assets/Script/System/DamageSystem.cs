@@ -18,7 +18,9 @@ public class DamageSystem : MonoBehaviour
         foreach (var target in dealDamageGA.Targets)
         {
             if (target == null || target.CurrentHealth <= 0) continue;
+            int previousHealth = target.CurrentHealth;
             target.Damage(dealDamageGA.GetDamageForTarget(target));
+            BattleAudio.Impact(dealDamageGA, target, previousHealth);
             if (damageVFX != null) Instantiate(damageVFX, target.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.15f);
         }

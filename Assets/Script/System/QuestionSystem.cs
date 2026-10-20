@@ -45,6 +45,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
         }
 
         // Send answer result back to whoever queued the action
+        BattleAudio.Play(isCorrect ? BattleSound.Correct : BattleSound.Wrong);
         action.OnAnswered?.Invoke(isCorrect);
     }
     public void AskRandomQuestion(Action<bool> onAnswered)

@@ -15,6 +15,7 @@ public class BurnSystem : MonoBehaviour
     private IEnumerator ApplyBurnPerformer(ApplyBurnGA applyBurnGA)
     {
         CombatantView target = applyBurnGA.Target;
+        BattleAudio.Play(BattleSound.FireHit);
         Instantiate(burnVFX, target.transform.position, Quaternion.identity);
         target.Damage(applyBurnGA.BurnDamage);
         target.RemoveStatusEffect(StatusEffectType.BURN, 1);

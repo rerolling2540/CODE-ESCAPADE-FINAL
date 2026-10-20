@@ -85,6 +85,7 @@ public class EnemySystem : Singleton<EnemySystem>
 
             if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
             // Melee attack frames contain the weapon slash; ranged frames launch the projectile.
+            BattleAudio.Play(attacker.IsRanged ? BattleSound.MagicCast : BattleSound.SwordSwing);
             yield return attacker.PlayAttackAnimation();
             if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
 

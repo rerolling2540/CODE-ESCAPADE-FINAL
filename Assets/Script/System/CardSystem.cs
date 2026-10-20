@@ -209,6 +209,7 @@ public class CardSystem : Singleton<CardSystem>
             yield break;
         }
 
+        BattleAudio.Play(BattleSound.CardPlay);
         CardView cardView = handView.RemoveCard(playCardGA.Card);
         yield return DiscardCard(cardView);
 
@@ -219,6 +220,7 @@ public class CardSystem : Singleton<CardSystem>
         {
             if (playCardGA.ManualTarget != null)
                 HeroSystem.Instance.HeroView.FaceTowards(playCardGA.ManualTarget);
+            BattleAudio.HeroAttack(playCardGA.Card.CardData);
             yield return HeroSystem.Instance.HeroView.PlayAttackAnimation();
             if (playCardGA.Card.ManualTargetEffect != null)
             {

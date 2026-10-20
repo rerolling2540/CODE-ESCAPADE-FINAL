@@ -156,6 +156,7 @@ public class CardView : MonoBehaviour
             EnemyView target = ManualTargetSystem.Instance.EndTargeting(mousePosition);
             if (target != null && ManaSystem.Instance.HasEnoughMana(Card.Mana))
             {
+                BattleAudio.Play(BattleSound.CardActivate);
                 PlayCardGA playCard = new(Card, target);
                 ActionSystem.Instance.Perform(playCard);
             }
@@ -165,6 +166,7 @@ public class CardView : MonoBehaviour
             if (ManaSystem.Instance.HasEnoughMana(Card.Mana)
             && Physics.Raycast(transform.position, Vector3.forward, out RaycastHit hit, 10f, dropLayer))
             {
+                BattleAudio.Play(BattleSound.CardActivate);
                 PlayCardGA playCardGA = new(Card);
 
                 QuestionSystem.Instance.AskRandomQuestion(Card, correct =>

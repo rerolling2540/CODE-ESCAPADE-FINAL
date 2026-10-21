@@ -1,0 +1,1690 @@
+fileFormatVersion: 2
+guid: 160e6c858aab8427d8eeca786e517d2a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -296015985743169196
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_0
+  - first:
+      213: -8066010120997344634
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_1
+  - first:
+      213: 4532771564190380681
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_2
+  - first:
+      213: -350281408641581119
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_3
+  - first:
+      213: 5425160025462056841
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_4
+  - first:
+      213: 7842148934130171124
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_5
+  - first:
+      213: -4190562099726855759
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_6
+  - first:
+      213: 3274212228964463582
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_7
+  - first:
+      213: -6353288381598389248
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_8
+  - first:
+      213: -1628076651626368741
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_9
+  - first:
+      213: -5138929631581208397
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_10
+  - first:
+      213: -1360752901749841866
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_11
+  - first:
+      213: 377766354010882572
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_12
+  - first:
+      213: -4445885464570686240
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_13
+  - first:
+      213: 3760288679738173525
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_14
+  - first:
+      213: -7053127042657876964
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_15
+  - first:
+      213: 8842890332789476858
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_16
+  - first:
+      213: -2547477840418416050
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_17
+  - first:
+      213: -8105928666592553906
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_18
+  - first:
+      213: -1870182514908914669
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_19
+  - first:
+      213: 6620487165514102417
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_20
+  - first:
+      213: -5444286527052253787
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_21
+  - first:
+      213: 1506134448884397005
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_22
+  - first:
+      213: -5930565463264652743
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_23
+  - first:
+      213: -6115545335338804336
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_24
+  - first:
+      213: -5796205175939057476
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_25
+  - first:
+      213: -8750943247716744647
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_26
+  - first:
+      213: -3531388197418005960
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_27
+  - first:
+      213: 4935054723665082845
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_28
+  - first:
+      213: 8501355697900274864
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_29
+  - first:
+      213: 6603056218586097979
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_30
+  - first:
+      213: -6367529609467336921
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_31
+  - first:
+      213: 3410701035592555019
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_32
+  - first:
+      213: -5867898971200265608
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_33
+  - first:
+      213: -4661853078891195779
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_34
+  - first:
+      213: 5531167099674764243
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_35
+  - first:
+      213: -8877049790812696520
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_36
+  - first:
+      213: 2210159532239449434
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_37
+  - first:
+      213: 639715059085716462
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_38
+  - first:
+      213: -3568085837065268200
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_39
+  - first:
+      213: 4886926948980514652
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_40
+  - first:
+      213: -6803819017328397291
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_41
+  - first:
+      213: -6455064092392954703
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_42
+  - first:
+      213: 7833483589637417217
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_43
+  - first:
+      213: 3034901814824690651
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_44
+  - first:
+      213: -7276396427582800533
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_45
+  - first:
+      213: 3209471443444200146
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_46
+  - first:
+      213: -2016670888867304028
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_47
+  - first:
+      213: 8887317862359229579
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_48
+  - first:
+      213: 7861564523821380394
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_49
+  - first:
+      213: -7199908244205845244
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_50
+  - first:
+      213: -6462115884018139755
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_51
+  - first:
+      213: 297740527615832699
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_52
+  - first:
+      213: -6286472385697591472
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_53
+  - first:
+      213: -4985295753825711134
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_54
+  - first:
+      213: -7884761204952502659
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_55
+  - first:
+      213: 1894957068023311081
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_56
+  - first:
+      213: 5708270134569893299
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_57
+  - first:
+      213: -9122224656036771844
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_58
+  - first:
+      213: 8932863168625570185
+    second: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_59
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_0
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 527
+        width: 18
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 459f0f1870754ebf0800000000000000
+      internalID: -296015985743169196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_1
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 527
+        width: 18
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68a6f3fc786cf0090800000000000000
+      internalID: -8066010120997344634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_2
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 527
+        width: 18
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9823f83d8b3a7ee30800000000000000
+      internalID: 4532771564190380681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_3
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 527
+        width: 18
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cfbe7a2aec832bf0800000000000000
+      internalID: -350281408641581119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_4
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 486
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 987a057ac4a0a4b40800000000000000
+      internalID: 5425160025462056841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_5
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 486
+        width: 18
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fc7986f7e8e4dc60800000000000000
+      internalID: 7842148934130171124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_6
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 485
+        width: 18
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b1d09c09f128d5c0800000000000000
+      internalID: -4190562099726855759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_7
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 486
+        width: 18
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed3baaabca6507d20800000000000000
+      internalID: 3274212228964463582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_8
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 431
+        width: 23
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00c263bc0e594d7a0800000000000000
+      internalID: -6353288381598389248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_9
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 431
+        width: 19
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b11f3b849e8e769e0800000000000000
+      internalID: -1628076651626368741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_10
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 431
+        width: 18
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b08fdf2abadea8b0800000000000000
+      internalID: -5138929631581208397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_11
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 431
+        width: 22
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6306e180272ad1de0800000000000000
+      internalID: -1360752901749841866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_12
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 431
+        width: 23
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c02c9ea5f781e3500800000000000000
+      internalID: 377766354010882572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_13
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 431
+        width: 18
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e4113ca9ba0d42c0800000000000000
+      internalID: -4445885464570686240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_14
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 431
+        width: 18
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55867b0a1aa3f2430800000000000000
+      internalID: 3760288679738173525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_15
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 431
+        width: 22
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c140da2e2524e1e90800000000000000
+      internalID: -7053127042657876964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_16
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 391
+        width: 19
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afd07a1f7e148ba70800000000000000
+      internalID: 8842890332789476858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_17
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 390
+        width: 19
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4a5ea8b66a85acd0800000000000000
+      internalID: -2547477840418416050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_18
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 390
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e44581523d4f18f80800000000000000
+      internalID: -8105928666592553906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_19
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 392
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31c15bd49e6cb06e0800000000000000
+      internalID: -1870182514908914669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_20
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 391
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 196308c0002b0eb50800000000000000
+      internalID: 6620487165514102417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_21
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 390
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a5fa9baf320274b0800000000000000
+      internalID: -5444286527052253787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_22
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 390
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc3bbb92d4dd6e410800000000000000
+      internalID: 1506134448884397005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_23
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 392
+        width: 18
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93219e4f12662bda0800000000000000
+      internalID: -5930565463264652743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_24
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 335
+        width: 34
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09b55574be7312ba0800000000000000
+      internalID: -6115545335338804336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_25
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 335
+        width: 34
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb83fd22a1ebf8fa0800000000000000
+      internalID: -5796205175939057476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_26
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 335
+        width: 34
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9328d3e0b776e8680800000000000000
+      internalID: -8750943247716744647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_27
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 335
+        width: 34
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83a84e0052dfdfec0800000000000000
+      internalID: -3531388197418005960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_28
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 335
+        width: 34
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd9bb27cf16dc7440800000000000000
+      internalID: 4935054723665082845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_29
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 335
+        width: 34
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b4c69217f1eaf570800000000000000
+      internalID: 8501355697900274864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_30
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 335
+        width: 34
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3922c475a4c2ab50800000000000000
+      internalID: 6603056218586097979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_31
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 335
+        width: 34
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 727eaea8e8df1a7a0800000000000000
+      internalID: -6367529609467336921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_32
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 287
+        width: 34
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0a1d8d658e355f20800000000000000
+      internalID: 3410701035592555019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_33
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 287
+        width: 34
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8726ab3a9f8019ea0800000000000000
+      internalID: -5867898971200265608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_34
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 287
+        width: 34
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7211a50355cd4fb0800000000000000
+      internalID: -4661853078891195779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_35
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 287
+        width: 34
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d32179fb27a2cc40800000000000000
+      internalID: 5531167099674764243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_36
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 287
+        width: 34
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83057257f326ec480800000000000000
+      internalID: -8877049790812696520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_37
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 287
+        width: 34
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5d631872601cae10800000000000000
+      internalID: 2210159532239449434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_38
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 287
+        width: 34
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeba546f479b0e800800000000000000
+      internalID: 639715059085716462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_39
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 287
+        width: 34
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8145f91f5dc9b7ec0800000000000000
+      internalID: -3568085837065268200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_40
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 247
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5f54450b2ad1d340800000000000000
+      internalID: 4886926948980514652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_41
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 246
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 514f714e6aaf391a0800000000000000
+      internalID: -6803819017328397291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_42
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 246
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b4e98a88610b66a0800000000000000
+      internalID: -6455064092392954703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_43
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 248
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 109a03a32df16bc60800000000000000
+      internalID: 7833483589637417217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_44
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 247
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd360d8fe132e1a20800000000000000
+      internalID: 3034901814824690651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_45
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 246
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6d7109400c050b90800000000000000
+      internalID: -7276396427582800533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_46
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 246
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d27047f5455a8c20800000000000000
+      internalID: 3209471443444200146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_47
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 248
+        width: 34
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ad6138e2885304e0800000000000000
+      internalID: -2016670888867304028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_48
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 191
+        width: 32
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b84e7ef3288165b70800000000000000
+      internalID: 8887317862359229579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_49
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 152
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a23bf253843e91d60800000000000000
+      internalID: 7861564523821380394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_50
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 95
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40544b04999c41c90800000000000000
+      internalID: -7199908244205845244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_51
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 47
+        width: 23
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59d70bb57d3f156a0800000000000000
+      internalID: -6462115884018139755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_52
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 47
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7277cfae69c12400800000000000000
+      internalID: 297740527615832699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_53
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 47
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05f41302ca6f1c8a0800000000000000
+      internalID: -6286472385697591472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_54
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 47
+        width: 22
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2eb84f4dceba0dab0800000000000000
+      internalID: -4985295753825711134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_55
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 47
+        width: 23
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7e66089573b39290800000000000000
+      internalID: -7884761204952502659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_56
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 47
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ea2528d96d3c4a10800000000000000
+      internalID: 1894957068023311081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_57
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 47
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bd72059179d73f40800000000000000
+      internalID: 5708270134569893299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_58
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 47
+        width: 22
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf74e97c109576180800000000000000
+      internalID: -9122224656036771844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_59
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 0
+        width: 21
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 981f81939b7e7fb70800000000000000
+      internalID: 8932863168625570185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_0: -296015985743169196
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_1: -8066010120997344634
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_10: -5138929631581208397
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_11: -1360752901749841866
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_12: 377766354010882572
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_13: -4445885464570686240
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_14: 3760288679738173525
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_15: -7053127042657876964
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_16: 8842890332789476858
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_17: -2547477840418416050
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_18: -8105928666592553906
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_19: -1870182514908914669
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_2: 4532771564190380681
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_20: 6620487165514102417
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_21: -5444286527052253787
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_22: 1506134448884397005
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_23: -5930565463264652743
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_24: -6115545335338804336
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_25: -5796205175939057476
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_26: -8750943247716744647
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_27: -3531388197418005960
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_28: 4935054723665082845
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_29: 8501355697900274864
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_3: -350281408641581119
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_30: 6603056218586097979
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_31: -6367529609467336921
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_32: 3410701035592555019
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_33: -5867898971200265608
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_34: -4661853078891195779
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_35: 5531167099674764243
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_36: -8877049790812696520
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_37: 2210159532239449434
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_38: 639715059085716462
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_39: -3568085837065268200
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_4: 5425160025462056841
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_40: 4886926948980514652
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_41: -6803819017328397291
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_42: -6455064092392954703
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_43: 7833483589637417217
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_44: 3034901814824690651
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_45: -7276396427582800533
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_46: 3209471443444200146
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_47: -2016670888867304028
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_48: 8887317862359229579
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_49: 7861564523821380394
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_5: 7842148934130171124
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_50: -7199908244205845244
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_51: -6462115884018139755
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_52: 297740527615832699
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_53: -6286472385697591472
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_54: -4985295753825711134
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_55: -7884761204952502659
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_56: 1894957068023311081
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_57: 5708270134569893299
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_58: -9122224656036771844
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_59: 8932863168625570185
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_6: -4190562099726855759
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_7: 3274212228964463582
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_8: -6353288381598389248
+      hollow-dolphin_hollow-echo_green-character_spritesheet_no-notes_9: -1628076651626368741
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

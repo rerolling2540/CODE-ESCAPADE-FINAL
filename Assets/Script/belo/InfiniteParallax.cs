@@ -1,145 +1,75 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>Sets up one consistent, looping parallax on each background layer.</summary>
+[DefaultExecutionOrder(-1000)]
 public class InfiniteParallax : MonoBehaviour
 {
     [SerializeField] private Transform cameraTransform;
-    [SerializeField] private Transform[] backgrounds;
+    [SerializeField, Range(0f, 1f)] private float parallaxAmount = 0.1f;
+    [SerializeField, Min(0f)] private float smoothTime = 0.08f;
 
-    [SerializeField, Range(0f, 1f)]
-    private float parallaxAmount = 0.3f;
-
-    private float lastCameraX;
-
-    void Start()
+    private void Start()
     {
-        if (cameraTransform == null)
+        if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
 
         if (cameraTransform == null)
         {
-            Debug.LogError("Main Camera not found!");
+            Debug.LogError("InfiniteParallax: walang Main Camera.", this);
             enabled = false;
             return;
         }
 
-        if (backgrounds == null || backgrounds.Length == 0)
+        Renderer[] renderers = FindObjectsOfType<Renderer>();
+        var configured = new List<ParallaxBackground>();
+
+        foreach (Renderer renderer in renderers)
         {
-            Debug.LogError("Maglagay ng backgrounds sa Inspector.");
+            if (!IsBackgroundRenderer(renderer))
+                continue;
+
+            ParallaxBackground layer = renderer.GetComponent<ParallaxBackground>();
+            if (layer == null)
+                layer = renderer.gameObject.AddComponent<ParallaxBackground>();
+
+            layer.cam = cameraTransform;
+            layer.parallaxEffect = parallaxAmount;
+            layer.smoothTime = smoothTime;
+            layer.enabled = true;
+            configured.Add(layer);
+        }
+
+        if (configured.Count == 0)
+        {
+            Debug.LogError("InfiniteParallax: walang active background SpriteRenderer o TilemapRenderer. Pangalanan ang layer na Background/BG o i-assign ang script sa background object.", this);
             enabled = false;
             return;
         }
 
-        lastCameraX = cameraTransform.position.x;
+        // This component only wires up the layers. The layer components handle
+        // their own seamless copies, so they never fight over the same object.
+        enabled = false;
     }
 
-    void LateUpdate()
+    private bool IsBackgroundRenderer(Renderer renderer)
     {
-        float cameraMovement =
-            cameraTransform.position.x - lastCameraX;
+        if (renderer == null || renderer == GetComponent<Renderer>() ||
+            !renderer.enabled || !renderer.gameObject.activeInHierarchy)
+            return false;
 
-        // Parallax movement
-        foreach (Transform bg in backgrounds)
-        {
-            if (bg != null)
-            {
-                bg.position += Vector3.right *
-                               (cameraMovement * parallaxAmount);
-            }
-        }
+        if (!(renderer is SpriteRenderer) && !(renderer is TilemapRenderer))
+            return false;
 
-        // Infinite scrolling
-        for (int i = 0; i < backgrounds.Length; i++)
-        {
-            if (backgrounds[i] == null)
-                continue;
+        if (renderer.bounds.size.x <= 0f)
+            return false;
 
-            Tilemap tilemap = backgrounds[i].GetComponent<Tilemap>();
+        string objectName = renderer.gameObject.name.ToLowerInvariant();
+        if (objectName.Contains("_tile") || objectName.Contains("_loop"))
+            return false;
 
-            if (tilemap == null)
-                continue;
-
-            float leftEdge =
-                tilemap.localBounds.min.x + backgrounds[i].position.x;
-
-            float rightEdge =
-                tilemap.localBounds.max.x + backgrounds[i].position.x;
-
-            // Move background to the right
-            if (rightEdge <
-                cameraTransform.position.x - tilemap.localBounds.size.x)
-            {
-                float farthestRight = GetFarthestRight();
-
-                backgrounds[i].position = new Vector3(
-                    farthestRight - tilemap.localBounds.min.x,
-                    backgrounds[i].position.y,
-                    backgrounds[i].position.z
-                );
-            }
-
-            // Move background to the left
-            if (leftEdge >
-                cameraTransform.position.x + tilemap.localBounds.size.x)
-            {
-                float farthestLeft = GetFarthestLeft();
-
-                backgrounds[i].position = new Vector3(
-                    farthestLeft - tilemap.localBounds.max.x,
-                    backgrounds[i].position.y,
-                    backgrounds[i].position.z
-                );
-            }
-        }
-
-        lastCameraX = cameraTransform.position.x;
-    }
-
-    float GetFarthestRight()
-    {
-        float farthest = float.MinValue;
-
-        foreach (Transform bg in backgrounds)
-        {
-            if (bg == null)
-                continue;
-
-            Tilemap tilemap = bg.GetComponent<Tilemap>();
-
-            if (tilemap == null)
-                continue;
-
-            float right =
-                tilemap.localBounds.max.x + bg.position.x;
-
-            if (right > farthest)
-                farthest = right;
-        }
-
-        return farthest;
-    }
-
-    float GetFarthestLeft()
-    {
-        float farthest = float.MaxValue;
-
-        foreach (Transform bg in backgrounds)
-        {
-            if (bg == null)
-                continue;
-
-            Tilemap tilemap = bg.GetComponent<Tilemap>();
-
-            if (tilemap == null)
-                continue;
-
-            float left =
-                tilemap.localBounds.min.x + bg.position.x;
-
-            if (left < farthest)
-                farthest = left;
-        }
-
-        return farthest;
+        return objectName.Contains("background") || objectName.StartsWith("bg") ||
+               objectName.Contains("mountain") || objectName.Contains("parallax");
     }
 }

@@ -43,7 +43,7 @@ public class GameSave : MonoBehaviour
     public void SaveGame(Transform player)
     {
         string scene = SceneManager.GetActiveScene().name;
-        if (player == null || (scene != "Scene 2" && scene != "Scene3" && scene != "Scene4") || pendingRestore != null) return;
+        if (player == null || (scene != "Scene 2" && scene != "Scene3" && scene != "Scene4" && scene != "map 4") || pendingRestore != null) return;
         var saved = SaveSlots.Read(SaveSlots.Active) ?? new SaveSlots.Record();
         saved.scene = scene;
         saved.hasPosition = true;

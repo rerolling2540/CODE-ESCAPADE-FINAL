@@ -15294,8 +15294,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BackgroundController
   cameraTransform: {fileID: 0}
-  backgrounds: []
   parallaxAmount: 0.3
+  smoothTime: 0.08
 --- !u!212 &1214942892
 SpriteRenderer:
   serializedVersion: 2
@@ -43470,8 +43470,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InfiniteParallax
   cameraTransform: {fileID: 0}
-  backgrounds: []
   parallaxAmount: 0.3
+  smoothTime: 0.08
 --- !u!1 &1820765674
 GameObject:
   m_ObjectHideFlags: 0

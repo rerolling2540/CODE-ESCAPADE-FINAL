@@ -1,6 +1,6 @@
+
 using UnityEngine;
 
-/// <summary>Repeats one background sprite horizontally with smooth parallax motion.</summary>
 [DefaultExecutionOrder(1000)]
 public class ParallaxBackground : MonoBehaviour
 {
@@ -13,12 +13,10 @@ public class ParallaxBackground : MonoBehaviour
     public float smoothTime = 0.08f;
 
     private Transform[] tiles;
-    private float[] tileStartX;
-    private float[] tileVelocity;
     private float tileWidth;
     private float cameraStartX;
-    private Camera targetCamera;
     private float halfViewWidth;
+    private float[] velocities;
 
     private void Start()
     {
@@ -27,65 +25,73 @@ public class ParallaxBackground : MonoBehaviour
 
         if (cam == null)
         {
-            Debug.LogError("ParallaxBackground: Main Camera is missing.", this);
+            Debug.LogError("Parallax: Walang Camera!");
             enabled = false;
             return;
         }
 
-        SpriteRenderer sprite = GetComponent<SpriteRenderer>();
-        if (sprite == null || sprite.sprite == null)
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+
+        if (sr == null || sr.sprite == null)
         {
-            Debug.LogError("ParallaxBackground: kailangan ng SpriteRenderer na may Sprite sa object na ito.", this);
+            Debug.LogError("Parallax: Walang SpriteRenderer o Sprite!");
             enabled = false;
             return;
         }
 
-        tileWidth = sprite.bounds.size.x;
-        if (tileWidth <= 0f)
-        {
-            Debug.LogError("ParallaxBackground: zero ang lapad ng sprite.", this);
-            enabled = false;
-            return;
-        }
+        tileWidth = sr.bounds.size.x;
 
-        targetCamera = cam.GetComponent<Camera>();
-        if (targetCamera == null)
-            targetCamera = Camera.main;
-        halfViewWidth = targetCamera != null && targetCamera.orthographic
-            ? targetCamera.orthographicSize * targetCamera.aspect
+        Camera cameraComponent = cam.GetComponent<Camera>();
+        if (cameraComponent == null)
+            cameraComponent = Camera.main;
+
+        halfViewWidth = cameraComponent != null &&
+                        cameraComponent.orthographic
+            ? cameraComponent.orthographicSize * cameraComponent.aspect
             : tileWidth;
 
         cameraStartX = cam.position.x;
-        int tileCount = Mathf.Max(3, Mathf.CeilToInt((halfViewWidth * 2f) / tileWidth) + 2);
-        if (tileCount % 2 == 0)
-            tileCount++;
 
-        tiles = new Transform[tileCount];
-        tileStartX = new float[tileCount];
-        tileVelocity = new float[tileCount];
-        int centerIndex = tileCount / 2;
-        tiles[centerIndex] = transform;
+        int count = Mathf.Max(
+            3,
+            Mathf.CeilToInt(halfViewWidth * 2f / tileWidth) + 3
+        );
 
-        for (int i = 0; i < tileCount; i++)
+        if (count % 2 == 0)
+            count++;
+
+        tiles = new Transform[count];
+        velocities = new float[count];
+
+        int center = count / 2;
+        tiles[center] = transform;
+
+        for (int i = 0; i < count; i++)
         {
-            if (i == centerIndex)
+            if (i == center)
                 continue;
 
             GameObject copy = Instantiate(gameObject, transform.parent);
-            copy.name = gameObject.name + "_Tile" + (i - centerIndex);
-            ParallaxBackground copyScript = copy.GetComponent<ParallaxBackground>();
-            if (copyScript != null)
-                copyScript.enabled = false;
-            copy.transform.SetPositionAndRotation(transform.position, transform.rotation);
+            copy.name = gameObject.name + "_Tile_" + i;
+
+            ParallaxBackground script =
+                copy.GetComponent<ParallaxBackground>();
+
+            if (script != null)
+                script.enabled = false;
+
+            copy.transform.SetPositionAndRotation(
+                transform.position, transform.rotation);
+
             copy.transform.localScale = transform.localScale;
             tiles[i] = copy.transform;
         }
 
-        float originalX = transform.position.x;
-        for (int i = 0; i < tileCount; i++)
+        for (int i = 0; i < count; i++)
         {
-            tileStartX[i] = originalX + (i - centerIndex) * tileWidth;
-            SetTileX(i, tileStartX[i]);
+            Vector3 p = tiles[i].position;
+            p.x = transform.position.x + (i - center) * tileWidth;
+            tiles[i].position = p;
         }
     }
 
@@ -94,46 +100,39 @@ public class ParallaxBackground : MonoBehaviour
         if (cam == null || tiles == null)
             return;
 
-        float cameraDelta = cam.position.x - cameraStartX;
-        float offset = cameraDelta * parallaxEffect;
-        float viewLeft = cam.position.x - halfViewWidth;
-        float viewRight = cam.position.x + halfViewWidth;
+        // Gumalaw lang kapag gumalaw ang camera.
+        float cameraMovement = cam.position.x - cameraStartX;
+        float parallaxOffset = cameraMovement * parallaxEffect;
+
+        float cameraX = cam.position.x;
+        float left = cameraX - halfViewWidth;
+        float right = cameraX + halfViewWidth;
 
         for (int i = 0; i < tiles.Length; i++)
         {
-            float targetX = tileStartX[i] + offset;
-            float leftEdge = targetX - tileWidth * 0.5f;
-            float rightEdge = targetX + tileWidth * 0.5f;
+            if (tiles[i] == null)
+                continue;
 
-            if (rightEdge < viewLeft)
-            {
-                float repeats = Mathf.Ceil((viewLeft - rightEdge) / tileWidth);
-                tileStartX[i] += repeats * tileWidth;
-                targetX += repeats * tileWidth;
-            }
-            else if (leftEdge > viewRight)
-            {
-                float repeats = Mathf.Ceil((leftEdge - viewRight) / tileWidth);
-                tileStartX[i] -= repeats * tileWidth;
-                targetX -= repeats * tileWidth;
-            }
+            // Target position based on camera movement.
+            float targetX =
+                tiles[i].position.x +
+                (cam.position.x - cameraX) * parallaxEffect;
 
-            SetTileXSmooth(i, targetX);
+            // Smoothly follow the parallax target.
+            Vector3 pos = tiles[i].position;
+            pos.x = Mathf.SmoothDamp(
+                pos.x,
+                targetX,
+                ref velocities[i],
+                smoothTime,
+                Mathf.Infinity,
+                Time.deltaTime
+            );
+
+            tiles[i].position = pos;
         }
-    }
 
-    private void SetTileX(int index, float x)
-    {
-        Vector3 position = tiles[index].position;
-        position.x = x;
-        tiles[index].position = position;
-    }
-
-    private void SetTileXSmooth(int index, float targetX)
-    {
-        Vector3 position = tiles[index].position;
-        position.x = Mathf.SmoothDamp(position.x, targetX, ref tileVelocity[index],
-            smoothTime, Mathf.Infinity, Time.unscaledDeltaTime);
-        tiles[index].position = position;
+        // Update reference for the next frame.
+        cameraStartX = cam.position.x;
     }
 }

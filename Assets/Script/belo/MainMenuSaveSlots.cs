@@ -14,6 +14,7 @@ public class MainMenuSaveSlots : MonoBehaviour
     public float clickVolume = 0.8f;
 
     private bool open;
+    public bool IsOpen => open;
     private bool confirmOverwrite;
     private bool confirmDelete;
 

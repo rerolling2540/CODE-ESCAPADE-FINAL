@@ -221,7 +221,17 @@ public class CardSystem : Singleton<CardSystem>
             if (playCardGA.ManualTarget != null)
                 HeroSystem.Instance.HeroView.FaceTowards(playCardGA.ManualTarget);
             BattleAudio.HeroAttack(playCardGA.Card.CardData);
-            yield return HeroSystem.Instance.HeroView.PlayAttackAnimation();
+            CombatantView attackTarget = playCardGA.Card.ManualTargetEffect is DealDamageEffect ? playCardGA.ManualTarget : null;
+            if (attackTarget == null)
+            {
+                foreach (var effect in playCardGA.Card.OtherEffects)
+                {
+                    if (!(effect.Effect is DealDamageEffect)) continue;
+                    attackTarget = effect.TargetMode.GetTargets().Find(target => target is EnemyView && target.CurrentHealth > 0);
+                    if (attackTarget != null) break;
+                }
+            }
+            yield return HeroSystem.Instance.HeroView.PlayBattleAttack(attackTarget);
             if (playCardGA.Card.ManualTargetEffect != null)
             {
                 PerformEffectGA performEffectGA = new(

@@ -14,5 +14,12 @@ public class HeroData : ScriptableObject
     [Tooltip("Optional seconds per attack frame, for weapon-specific anticipation and recovery.")]
     public float[] attackFrameDurations;
     public bool hoverBattleAnimation;
+    [Header("Battle Attack VFX")]
+    public Sprite[] attackVfxFrames;
+    [Min(0)] public int attackVfxStartFrame = 3;
+    [Min(0.1f)] public float attackVfxHeight = 2.5f;
+    [Header("Melee Battle Movement")]
+    public bool dashToBattleTarget;
+    public Sprite[] battleDashFrames;
 
 }

@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Forest Demon
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 4610576671343732192, guid: b6c2fc55e774cea4685cde80cd655eff, type: 3}
+  <Health>k__BackingField: 70
+  <AttackPower>k__BackingField: 9
+  idleFrames:
+  - {fileID: 4610576671343732192, guid: b6c2fc55e774cea4685cde80cd655eff, type: 3}
+  - {fileID: 7933169506272541288, guid: b6c2fc55e774cea4685cde80cd655eff, type: 3}
+  - {fileID: -4751834672829971033, guid: b6c2fc55e774cea4685cde80cd655eff, type: 3}
+  - {fileID: 5165554279181358532, guid: b6c2fc55e774cea4685cde80cd655eff, type: 3}
+  - {fileID: 4962841209916830064, guid: b6c2fc55e774cea4685cde80cd655eff, type: 3}
+  - {fileID: -7143203775114824597, guid: b6c2fc55e774cea4685cde80cd655eff, type: 3}
+  walkFrames:
+  - {fileID: 1564836920576004226, guid: 37dc5ee8b6536c94abe89b38507d1151, type: 3}
+  - {fileID: 8663930358724894708, guid: 37dc5ee8b6536c94abe89b38507d1151, type: 3}
+  - {fileID: 4476905305216522435, guid: 37dc5ee8b6536c94abe89b38507d1151, type: 3}
+  - {fileID: -6252743113012979243, guid: 37dc5ee8b6536c94abe89b38507d1151, type: 3}
+  - {fileID: -4330850591289345602, guid: 37dc5ee8b6536c94abe89b38507d1151, type: 3}
+  - {fileID: -7873456424031651436, guid: 37dc5ee8b6536c94abe89b38507d1151, type: 3}
+  - {fileID: -8357550592321713677, guid: 37dc5ee8b6536c94abe89b38507d1151, type: 3}
+  - {fileID: -7433738477138490237, guid: 37dc5ee8b6536c94abe89b38507d1151, type: 3}
+  attackFrames:
+  - {fileID: -4885465403820583246, guid: 3d0cdbc103a759c4b99a019997561301, type: 3}
+  - {fileID: 714159002586540784, guid: 3d0cdbc103a759c4b99a019997561301, type: 3}
+  - {fileID: 4870265971847230695, guid: 3d0cdbc103a759c4b99a019997561301, type: 3}
+  - {fileID: 1998906437285517073, guid: 3d0cdbc103a759c4b99a019997561301, type: 3}
+  - {fileID: -301280052444656893, guid: 3d0cdbc103a759c4b99a019997561301, type: 3}
+  - {fileID: 2613070745431093251, guid: 3d0cdbc103a759c4b99a019997561301, type: 3}
+  - {fileID: 3161286735664444143, guid: 3d0cdbc103a759c4b99a019997561301, type: 3}
+  battleFramesPerSecond: 12
+  hovering: 0
+  battleMaterial: {fileID: 0}
+  attackStyle: 0
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

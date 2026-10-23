@@ -72,8 +72,13 @@ public class CaveEnemyEncounter : MonoBehaviour
     void Update()
     {
         if (player == null) player = FindFirstObjectByType<playerMovement>();
-        if (enemy != null && enemy.idleFrames != null && enemy.idleFrames.Length > 0)
-            visual.sprite = enemy.idleFrames[Mathf.FloorToInt(Time.time * 8f) % enemy.idleFrames.Length];
+        if (enemy != null)
+        {
+            var frames = !enteringBattle && patrolSpeed > 0f && enemy.walkFrames != null && enemy.walkFrames.Length > 0
+                ? enemy.walkFrames : enemy.idleFrames;
+            if (frames != null && frames.Length > 0)
+                visual.sprite = frames[Mathf.FloorToInt(Time.time * 8f) % frames.Length];
+        }
         if (suppressedEncounter == gameObject.name && player != null &&
             Vector2.Distance(player.transform.position, visual.bounds.center) > 3.5f)
             suppressedEncounter = null;

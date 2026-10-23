@@ -11,6 +11,8 @@ public class EnemyData : ScriptableObject
     [field: SerializeField] public int AttackPower {get; private set;}
     [Header("Battle Animation")]
     public Sprite[] idleFrames;
+    [Header("Overworld Patrol Animation")]
+    public Sprite[] walkFrames;
     public Sprite[] attackFrames;
     [Min(1f)] public float battleFramesPerSecond = 12f;
     public bool hovering;

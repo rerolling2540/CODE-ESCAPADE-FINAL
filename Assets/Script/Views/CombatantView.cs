@@ -126,6 +126,7 @@ public class CombatantView : MonoBehaviour
                     if (CurrentHealth <= 0) yield break;
                     // Keep hovering casters at their current height during the cast.
                     SetBattleFrame(attackFrames[i], 1f, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
+                    OnAttackFrame(i, attackFrames.Length);
                     // Preserve the default swing timing unless the hero supplies
                     // weapon-specific draw, release and recovery durations.
                     float timing = i == 0 ? 1.4f : i == attackFrames.Length - 1 ? 1.5f : 0.8f;
@@ -143,10 +144,39 @@ public class CombatantView : MonoBehaviour
         }
         finally
         {
+            OnAttackFinished();
             attacking = false;
             if (!hovering && attackFrameDurations != null && attackFrameDurations.Length > 0) idleClock = 0f;
             if (spriteRenderer != null)
                 SetBattleFrame(restingSprite, 1f, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
+        }
+    }
+
+    protected virtual void OnAttackFrame(int index, int count) { }
+    protected virtual void OnAttackFinished() { }
+
+    protected IEnumerator PlayBattleTravel(Vector3 destination, float duration, Sprite[] frames)
+    {
+        Vector3 origin = transform.position;
+        attacking = true;
+        float elapsed = 0f;
+        try
+        {
+            while (elapsed < duration && CurrentHealth > 0)
+            {
+                float t = Mathf.Clamp01(elapsed / duration);
+                transform.position = Vector3.Lerp(origin, destination, 1f - (1f - t) * (1f - t));
+                if (frames != null && frames.Length > 0)
+                    SetBattleFrame(frames[Mathf.Min(frames.Length - 1, Mathf.FloorToInt(t * frames.Length))], 1f, 0f);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            if (CurrentHealth > 0) transform.position = destination;
+        }
+        finally
+        {
+            attacking = false;
+            if (spriteRenderer != null) SetBattleFrame(restingSprite, 1f, 0f);
         }
     }
 

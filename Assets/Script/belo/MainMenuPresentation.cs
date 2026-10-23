@@ -31,12 +31,17 @@ public sealed class MainMenuPresentation : MonoBehaviour
             fullscreen.onValueChanged.AddListener(SetFullscreen);
         }
         if (versionLabel != null) versionLabel.text = "CODE ESCAPADE  /  v" + Application.version;
+        RefreshSaveStatus();
+        Select(playButton != null ? playButton.gameObject : null);
+    }
+
+    private void RefreshSaveStatus()
+    {
         int used = 0;
         for (int i = 0; i < SaveSlots.Count; i++) if (SaveSlots.Read(i) != null) used++;
         if (saveStatus != null) saveStatus.text = used == 0
             ? "Your first adventure awaits · 3 save slots"
             : used + " / 3 save slots used · Continue or begin anew";
-        Select(playButton != null ? playButton.gameObject : null);
     }
 
     private void Update()
@@ -44,7 +49,11 @@ public sealed class MainMenuPresentation : MonoBehaviour
         bool savesOpen = slots != null && slots.IsOpen;
         if (savesOpen || slotsWereOpen)
         {
-            if (!savesOpen) Select(playButton.gameObject);
+            if (!savesOpen)
+            {
+                RefreshSaveStatus();
+                Select(playButton.gameObject);
+            }
             slotsWereOpen = savesOpen;
             return;
         }

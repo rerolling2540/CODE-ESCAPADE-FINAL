@@ -42,3 +42,27 @@ MonoBehaviour:
   - {fileID: 7378919880078719499, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
   - {fileID: -50406204238961237, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
   battleFramesPerSecond: 16
+  attackFrameDurations: []
+  hoverBattleAnimation: 0
+  attackVfxFrames:
+  - {fileID: 5356357066474658458, guid: 453b0cb49f779a945a4d49fb146e93e8, type: 3}
+  - {fileID: 822879637270261129, guid: ed759f95e926ab54abc2e98276d1c074, type: 3}
+  - {fileID: 2594905499477158020, guid: 4fc1701a12d3b774ab1f167738d27ea6, type: 3}
+  - {fileID: 4786514375011746267, guid: 95725a9fa96f9e448a39319b822a90c6, type: 3}
+  - {fileID: -2213622233335560431, guid: ab8d1b1b3ffc92348b96ad0f676a05fa, type: 3}
+  - {fileID: -5762151412472864944, guid: 0e9cb34b076538b44927be30f2a2c332, type: 3}
+  - {fileID: 4482499457625184677, guid: edc6320c5feea9f49b96a05035d53d12, type: 3}
+  - {fileID: 4750374364898646410, guid: 6a1c0f13934dc8e4283bee2f4f62f2b9, type: 3}
+  - {fileID: 7418507693279341030, guid: 4ede740a2d5fd4b4db8b68b8e030bd7a, type: 3}
+  - {fileID: -4736526089082279817, guid: 3dbf92f95b9f13b49a65736c8df48400, type: 3}
+  attackVfxStartFrame: 3
+  attackVfxHeight: 2.5
+  dashToBattleTarget: 1
+  battleDashFrames:
+  - {fileID: 2127461698910248042, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: 8874842850510428824, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -1175057978942713942, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: 8396084745013482390, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -5219189033981844993, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: 8048201136183370311, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -5008098951225157325, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}

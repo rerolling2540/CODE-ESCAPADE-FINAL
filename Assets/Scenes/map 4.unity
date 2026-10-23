@@ -536,6 +536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1373580943}
+  requiredDefeatedEncounters: 0
 --- !u!4 &62101237
 Transform:
   m_ObjectHideFlags: 0
@@ -874,6 +875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 121949131}
+  requiredDefeatedEncounters: 0
 --- !u!4 &79909424
 Transform:
   m_ObjectHideFlags: 0
@@ -1461,6 +1463,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 471466129}
+  requiredDefeatedEncounters: 0
 --- !u!4 &98027868
 Transform:
   m_ObjectHideFlags: 0
@@ -39486,6 +39489,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Procedural Portal Effect
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.11
@@ -39568,6 +39575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   loadScene: Scene4
+  requiredDefeatedEncounters: 0
 --- !u!61 &364550455
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -171688,7 +171696,7 @@ Transform:
   m_GameObject: {fileID: 813388511}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 128.146, y: -173.09401, z: -10}
+  m_LocalPosition: {x: 139.246, y: -166.59401, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -193068,6 +193076,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 5.6
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.4651446
@@ -193539,6 +193551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1327867618}
+  requiredDefeatedEncounters: 0
 --- !u!4 &1590944843
 Transform:
   m_ObjectHideFlags: 0
@@ -193710,6 +193723,10 @@ PrefabInstance:
     - target: {fileID: 3955808756769843235, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_Name
       value: Procedural Portal Effect
+      objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.x
@@ -194125,6 +194142,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalScale.y
       value: 2
@@ -194261,17 +194282,21 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalScale.y
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.01
+      value: -0.41
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.06
+      value: 0.26
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.z
@@ -200157,6 +200182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1332001262}
+  requiredDefeatedEncounters: 0
 --- !u!4 &2021440315
 Transform:
   m_ObjectHideFlags: 0
@@ -200737,6 +200763,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 425739076}
+  requiredDefeatedEncounters: 0
 --- !u!4 &2024375566
 Transform:
   m_ObjectHideFlags: 0
@@ -200854,7 +200881,7 @@ Transform:
   m_GameObject: {fileID: 2025787674}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 128.146, y: -173.09401, z: -10}
+  m_LocalPosition: {x: 139.246, y: -166.59401, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -200871,6 +200898,10 @@ PrefabInstance:
     - target: {fileID: 3955808756769843235, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_Name
       value: Procedural Portal Effect
+      objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 5.6
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.x
@@ -200943,11 +200974,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 128.2
+      value: 139.3
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -175.5
+      value: -169
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z

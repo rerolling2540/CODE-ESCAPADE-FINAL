@@ -42,7 +42,7 @@ Shader "FX/Procedural Portal Effect"
         [Header(Edge Animation)]
         _EdgeNoiseScale("Edge Noise Scale", Range(0.5, 30)) = 10
         _EdgeNoiseSpeed("Edge Noise Speed", Range(0, 15)) = 2.2
-        _EdgeFlicker("Edge Flicker", Range(0, 2)) = 0.7
+        _EdgeFlicker("Edge Flicker", Range(0, 2)) = 0.2
         _EdgeWobble("Edge Wobble", Range(0, 0.15)) = 0.035
 
         [Header(Sparks)]
@@ -277,8 +277,9 @@ Shader "FX/Procedural Portal Effect"
                 float3 holeCol = _HoleColor.rgb;
                 float3 innerCol = holeCol + swirlCol * _InnerIntensity;
 
+                // Keep the portal's edge alive without pulsing its whole frame
+                // at a high frequency, which reads as distracting blinking.
                 float flicker = 1.0 + (edgeN - 0.5) * _EdgeFlicker;
-                flicker *= 0.88 + 0.12 * sin(t * 9.0 + edgeN * 6.2831853);
 
                 float outerPow = pow(saturate(outerFrame), 0.35);
                 float3 outerCol = (_OuterColor.rgb * 0.75 + _OuterGlowColor.rgb * 0.55) * outerPow * (_OuterIntensity * flicker);

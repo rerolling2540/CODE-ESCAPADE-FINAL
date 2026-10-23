@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -120,6 +119,6 @@ public class CaveEnemyEncounter : MonoBehaviour
         List<EnemyData> squad = battleEncounter != null ? battleEncounter.CreateEnemySquad() : null;
         PendingEnemies = squad != null && squad.Count > 0 ? squad : new List<EnemyData> { enemy };
         PendingEncounterId = gameObject.name;
-        SceneManager.LoadScene("Battle Scene");
+        SceneTransitionFader.Load("Battle Scene");
     }
 }

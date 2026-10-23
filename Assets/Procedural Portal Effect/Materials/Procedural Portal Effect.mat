@@ -30,7 +30,7 @@ Material:
     - _BandSpeed: 2
     - _CenterFade: 2
     - _Distortion: 0.1
-    - _EdgeFlicker: 0.7
+    - _EdgeFlicker: 0.2
     - _EdgeNoiseScale: 6.5
     - _EdgeNoiseSpeed: 2
     - _EdgeSoftness: 0.05

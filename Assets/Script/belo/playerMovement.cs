@@ -31,6 +31,7 @@ public class playerMovement : MonoBehaviour
     private int airJumpsRemaining = 1;
     private bool facingRight = true;
     private SpriteRenderer spriteRenderer;
+    private CharacterSmokeEffects smokeEffects;
     private readonly HashSet<Collider2D> groundContacts = new HashSet<Collider2D>();
     private float lastGroundedTime = float.NegativeInfinity;
     private bool isDashing;
@@ -49,6 +50,9 @@ public class playerMovement : MonoBehaviour
         else if (archerAppearance || SelectedHero.IsArcher)
             spriteRenderer = SelectedHero.ApplyArcher(this, spriteRenderer);
         if (spriteRenderer != null) facingRight = !spriteRenderer.flipX;
+
+        smokeEffects = gameObject.AddComponent<CharacterSmokeEffects>();
+        smokeEffects.Initialize(spriteRenderer, GetComponent<CapsuleCollider2D>());
     }
 
     void Update()
@@ -107,6 +111,8 @@ public class playerMovement : MonoBehaviour
         // Rising includes the apex so the pose does not flicker around zero velocity.
         animator.SetBool("Jumping", !groundedPose && !isDashing && rb.linearVelocity.y >= -0.1f);
         animator.SetBool("Falling", !groundedPose && !isDashing && rb.linearVelocity.y < -0.1f);
+        if (smokeEffects != null)
+            smokeEffects.UpdateRunning(runningPose && !isDashing, isGrounded, facingRight);
     }
 
     void FixedUpdate()
@@ -149,6 +155,7 @@ public class playerMovement : MonoBehaviour
         dashTimer = dashDuration;
         dashCooldownTimer = dashCooldown;
         dashDirection = facingRight ? 1f : -1f;
+        if (smokeEffects != null) smokeEffects.PlayDash(facingRight);
         animator.SetBool("Dashing", true);
         animator.SetBool("Jumping", false);
         animator.SetBool("Falling", false);

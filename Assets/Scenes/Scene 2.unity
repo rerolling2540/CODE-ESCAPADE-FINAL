@@ -131,13 +131,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: Procedural Portal Effect
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: framesPerSecond
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.089
+      objectReference: {fileID: 0}
+    - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.1378303
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.11
+      value: 0.21
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.02
+      value: 0.41
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7207,7 +7223,7 @@ Transform:
   m_GameObject: {fileID: 606382705}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 463.8, y: -49.643997, z: -10}
+  m_LocalPosition: {x: 366.71, y: -13.774, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7233,7 +7249,7 @@ GameObject:
   - component: {fileID: 698617805}
   - component: {fileID: 698617811}
   m_Layer: 0
-  m_Name: portal1 (1)
+  m_Name: next scene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7454,6 +7470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 0}
+  requiredDefeatedEncounters: 0
 --- !u!4 &698617809
 Transform:
   m_ObjectHideFlags: 0
@@ -7463,7 +7480,7 @@ Transform:
   m_GameObject: {fileID: 698617803}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 507.77, y: -24.15, z: 0}
+  m_LocalPosition: {x: 508.13, y: -24.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7484,6 +7501,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PortalNextScene
   nextSceneName: Scene3
   portalSound: {fileID: 8300000, guid: 6ce2b62cb039c4ef582058ea11872be0, type: 3}
+  requiredDefeatedEncounters: 0
   soundVolume: 1
 --- !u!1 &704261777
 GameObject:
@@ -11575,6 +11593,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Procedural Portal Effect
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.11
@@ -12004,7 +12026,7 @@ GameObject:
   - component: {fileID: 887760002}
   - component: {fileID: 887760003}
   m_Layer: 0
-  m_Name: Cave Skeleton 01
+  m_Name: enemy tutorial
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12019,7 +12041,7 @@ Transform:
   m_GameObject: {fileID: 887760000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 260.84, y: -43.57, z: 0}
+  m_LocalPosition: {x: 379.6, y: -17.7, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12129,7 +12151,7 @@ Transform:
   m_GameObject: {fileID: 887760010}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 290.08, y: -44.2, z: 0}
+  m_LocalPosition: {x: 307.05, y: -38.26, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12239,7 +12261,7 @@ Transform:
   m_GameObject: {fileID: 887760020}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 320.26, y: -46.14, z: 0}
+  m_LocalPosition: {x: 325.9, y: -45.23, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12459,7 +12481,7 @@ Transform:
   m_GameObject: {fileID: 887760040}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 364.04, y: -50.18, z: 0}
+  m_LocalPosition: {x: 335.15, y: -27.03, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12569,7 +12591,7 @@ Transform:
   m_GameObject: {fileID: 887760050}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 370.5, y: -51.514, z: 0}
+  m_LocalPosition: {x: 402.91, y: -42.23, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12789,7 +12811,7 @@ Transform:
   m_GameObject: {fileID: 887760070}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 409.5, y: -44.02, z: 0}
+  m_LocalPosition: {x: 261.91, y: -44.76, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12899,7 +12921,7 @@ Transform:
   m_GameObject: {fileID: 887760080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 330.2318, y: -17.2996, z: 0}
+  m_LocalPosition: {x: 449.73, y: -31.1, z: 0}
   m_LocalScale: {x: 5.119993, y: 5.5087204, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13009,7 +13031,7 @@ Transform:
   m_GameObject: {fileID: 887760090}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 450.5, y: -32.514, z: 0}
+  m_LocalPosition: {x: 442.17, y: -48.19, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13119,7 +13141,7 @@ Transform:
   m_GameObject: {fileID: 887760100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 470.5, y: -29.502, z: 0}
+  m_LocalPosition: {x: 481.52, y: -28.26, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13229,7 +13251,7 @@ Transform:
   m_GameObject: {fileID: 887760110}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 488.5, y: -28.02, z: 0}
+  m_LocalPosition: {x: 375.9, y: -53.02, z: 0}
   m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14356,6 +14378,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalScale.x
       value: 4.5112596
@@ -14366,11 +14392,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.03
+      value: -0.15
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.05
+      value: -0.27
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.z
@@ -14761,6 +14787,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalScale.y
       value: 2
@@ -15140,11 +15170,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 464.59
+      value: 367.5
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -50.07
+      value: -14.2
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -15704,6 +15734,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1853031098}
+  requiredDefeatedEncounters: 0
 --- !u!4 &1229592074
 Transform:
   m_ObjectHideFlags: 0
@@ -16252,6 +16283,10 @@ PrefabInstance:
     - target: {fileID: 3955808756769843235, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalScale.y
@@ -17390,6 +17425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1055496915}
+  requiredDefeatedEncounters: 5
 --- !u!4 &1435540837
 Transform:
   m_ObjectHideFlags: 0
@@ -17399,7 +17435,7 @@ Transform:
   m_GameObject: {fileID: 1435540831}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 279.56, y: -43.44, z: 0}
+  m_LocalPosition: {x: 283.72, y: -42.76, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -21910,6 +21946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 116174064}
+  requiredDefeatedEncounters: 0
 --- !u!4 &1566197788
 Transform:
   m_ObjectHideFlags: 0
@@ -21945,7 +21982,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &1573207140
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -22060,7 +22097,7 @@ Transform:
   m_GameObject: {fileID: 1573207139}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 505.9, y: -25.81, z: 0}
+  m_LocalPosition: {x: 505.86, y: -25.81, z: 0}
   m_LocalScale: {x: 1, y: 0.9818, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22079,6 +22116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   loadScene: Scene3
+  requiredDefeatedEncounters: 0
 --- !u!82 &1573207145
 AudioSource:
   m_ObjectHideFlags: 0
@@ -22478,6 +22516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1692790260}
+  requiredDefeatedEncounters: 0
 --- !u!4 &1621679249
 Transform:
   m_ObjectHideFlags: 0
@@ -231404,7 +231443,7 @@ Transform:
   m_GameObject: {fileID: 2095482350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 463.8, y: -49.643997, z: -10}
+  m_LocalPosition: {x: 366.71, y: -13.774, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

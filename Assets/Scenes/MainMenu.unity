@@ -3661,7 +3661,7 @@ MonoBehaviour:
   m_text: '<color=#E8C47A>THE TOWER CALLS</color>
 
 
-    At Quijano Tower, an elf
+    At The RiftSpire, an elf
     awaits a new adventurer. Beyond its walls lie unfamiliar paths, restless creatures,
     and questions that cannot be answered by a blade alone.
 
@@ -6422,8 +6422,7 @@ MonoBehaviour:
     ahead.
 
 
-    Choose a Warrior, Archer, or Mage. Each journey begins at Quijano
-    Tower.
+    Choose a Warrior, Archer, or Mage. Each journey begins at The RiftSpire.
 
 
     <color=#AEBFCF>Powered by Unity
@@ -9570,10 +9569,10 @@ RectTransform:
   - {fileID: 1480411669}
   m_Father: {fileID: 168696288}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 636.75, y: 86}
-  m_SizeDelta: {x: 418, y: 117.3693}
+  m_AnchorMin: {x: 0.81, y: 0.81}
+  m_AnchorMax: {x: 0.81, y: 0.81}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 290, y: 62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1422619023
 MonoBehaviour:
@@ -10246,7 +10245,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: -44, y: -16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1480411670
 MonoBehaviour:
@@ -10278,7 +10277,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4278245375
-  m_fontColor: {r: 1, g: 0.8431373, b: 0, a: 1}
+  m_fontColor: {r: 0.97, g: 0.94, b: 0.84, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -10295,8 +10294,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 23
+  m_fontSizeBase: 23
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -10305,7 +10304,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: 2
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0

@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 
 public class PortalInteraction : MonoBehaviour
 {
+    public string entryPrompt = "[E] Enter portal";
+    public string unavailablePrompt;
+    public bool playEntrySound = true;
     private sealed class Route
     {
         public Func<bool> available;
@@ -84,14 +87,17 @@ public class PortalInteraction : MonoBehaviour
         var player = NearbyPlayer();
         enteredFrame = Time.frameCount;
         readyAt = Time.unscaledTime + 0.75f;
-        PortalEntrySound.PlayFor(gameObject);
+        if (playEntrySound) PortalEntrySound.PlayFor(gameObject);
         Entered?.Invoke();
         route.enter(player);
     }
 
     void OnGUI()
     {
-        if (!CanEnter() || Camera.main == null) return;
+        bool canEnter = CanEnter();
+        bool showLocked = !HasRoute() && NearbyPlayer() != null && !string.IsNullOrEmpty(unavailablePrompt) &&
+            Time.timeScale > 0f && (DialogueManager.Instance == null || !DialogueManager.Instance.isDialogueActive);
+        if ((!canEnter && !showLocked) || Camera.main == null) return;
         var bounds = GetComponent<Collider2D>();
         Vector3 anchor = bounds != null ? new Vector3(bounds.bounds.center.x, bounds.bounds.max.y + 0.4f, transform.position.z) : transform.position + Vector3.up * 2f;
         Vector3 screen = Camera.main.WorldToScreenPoint(anchor);
@@ -105,9 +111,13 @@ public class PortalInteraction : MonoBehaviour
         var oldColor = GUI.color;
         GUI.matrix = Matrix4x4.identity;
         GUI.color = Color.white;
-        Rect button = new Rect(Mathf.Clamp(screen.x - 85f, 4f, Mathf.Max(4f, Screen.width - 174f)),
-            Mathf.Clamp(Screen.height - screen.y - 20f, 4f, Mathf.Max(4f, Screen.height - 44f)), 170f, 40f);
-        if (GUI.Button(button, "[E] Enter portal", buttonStyle)) TryEnter();
+        float width = showLocked ? 300f : 170f;
+        Rect button = new Rect(Mathf.Clamp(screen.x - width * 0.5f, 4f, Mathf.Max(4f, Screen.width - width - 4f)),
+            Mathf.Clamp(Screen.height - screen.y - 20f, 4f, Mathf.Max(4f, Screen.height - 44f)), width, 40f);
+        bool oldEnabled = GUI.enabled;
+        GUI.enabled = oldEnabled && canEnter;
+        if (GUI.Button(button, canEnter ? entryPrompt : unavailablePrompt, buttonStyle)) TryEnter();
+        GUI.enabled = oldEnabled;
         GUI.color = oldColor;
         GUI.matrix = oldMatrix;
     }

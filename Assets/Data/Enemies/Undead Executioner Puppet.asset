@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Undead Executioner Puppet
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 8793639957104055765, guid: ff3256f65f657d747ba405d1351e3c2a, type: 3}
+  <Health>k__BackingField: 180
+  <AttackPower>k__BackingField: 14
+  idleFrames:
+  - {fileID: 8793639957104055765, guid: ff3256f65f657d747ba405d1351e3c2a, type: 3}
+  - {fileID: 6084859605308855041, guid: ff3256f65f657d747ba405d1351e3c2a, type: 3}
+  - {fileID: 8603369663158992956, guid: ff3256f65f657d747ba405d1351e3c2a, type: 3}
+  - {fileID: -5906421172241655209, guid: ff3256f65f657d747ba405d1351e3c2a, type: 3}
+  walkFrames: []
+  attackFrames:
+  - {fileID: 210704702857509274, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: 7467001538722481690, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: -9118675687842726345, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: -4401908728460256907, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: -2559348636315826340, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: -7854623405326919840, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: -3255058754827376486, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: 4774364955286074200, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: 3496524092526253487, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: 3275866309459176758, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: 5928742637116941630, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: 4741326518408471436, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  - {fileID: -2630918475818767111, guid: f3c9ca4cd4bc52f42b2f77e5cf465ada, type: 3}
+  battleFramesPerSecond: 12
+  hovering: 0
+  battleMaterial: {fileID: 0}
+  attackStyle: 0
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

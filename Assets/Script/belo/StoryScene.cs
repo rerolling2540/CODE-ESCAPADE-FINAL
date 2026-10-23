@@ -7,7 +7,7 @@ public class StoryScene : MonoBehaviour
     [SerializeField] string destinationScene = "Scene 2";
     [SerializeField] string[] titles = { "THE TOWER CALLS", "KNOWLEDGE IS YOUR WEAPON", "BEYOND THE GATE", "YOUR FIRST CHAPTER" };
     [SerializeField, TextArea(3, 8)] string[] passages = {
-        "At Quijano Tower, an elf awaits a new adventurer. Beyond its walls lie unfamiliar paths, restless creatures, and questions that cannot be answered by a blade alone.",
+        "At The RiftSpire, an elf awaits a new adventurer. Beyond its walls lie unfamiliar paths, restless creatures, and questions that cannot be answered by a blade alone.",
         "In this land, every challenge is a lesson. Read carefully, think through each problem, and turn your knowledge of code into the strength to survive. Your cards and your choices will shape each battle.",
         "The trail leads from the tower toward the caves. Goblins, skeletons, and stranger creatures guard the way. Prepare before crossing a portal: courage will carry you forward, but a clear mind will carry you home.",
         "Now it is your turn. Meet the elf, explore your surroundings, and learn what waits beyond the tower. The next page of Code Escapade belongs to you." };
@@ -92,7 +92,7 @@ public class StoryScene : MonoBehaviour
         for (int i = 0; i < 3; i++) Fill(new Rect(246, 295 + i * 65, 18, 29), gold);
         Fill(new Rect(234, 500, 42, 60), new Color(0.035f, 0.055f, 0.09f));
         Fill(new Rect(70, 560, 360, 60), new Color(0.08f, 0.14f, 0.17f));
-        GUI.Label(new Rect(99, 578, 320, 28), "QUIJANO TOWER / PROLOGUE", small);
+        GUI.Label(new Rect(99, 578, 320, 28), "The RiftSpire / PROLOGUE", small);
         GUI.Label(new Rect(490, 100, 680, 30), "CODE ESCAPADE   /   THE STORY", small);
         Fill(new Rect(490, 150, 80, 3), gold);
         GUI.Label(new Rect(490, 185, 680, 105), titles[page], heading);

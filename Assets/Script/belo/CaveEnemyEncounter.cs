@@ -9,7 +9,8 @@ public class CaveEnemyEncounter : MonoBehaviour
     public EncounterData battleEncounter;
     public float interactionDistance = 2.5f;
     public bool flying;
-    [Min(0.1f)] public float patrolSpeed = 1.2f;
+    [Min(0f)] public float patrolSpeed = 1.2f;
+    [Min(0.5f)] public float overworldHeight = 1.9f;
     [Min(0.5f)] public float patrolRadius = 3f;
     public static List<EnemyData> PendingEnemies;
     public static string PendingEncounterId;
@@ -34,7 +35,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         if (enemy != null && enemy.Image != null)
         {
             visual.sprite = enemy.Image;
-            transform.localScale = Vector3.one * (1.9f / Mathf.Max(0.1f, enemy.Image.bounds.size.y));
+            transform.localScale = Vector3.one * (overworldHeight / Mathf.Max(0.1f, enemy.Image.bounds.size.y));
             if (enemy.battleMaterial != null) visual.sharedMaterial = enemy.battleMaterial;
         }
         // Anchor the enlarged sprite to the actual cave floor.
@@ -77,6 +78,13 @@ public class CaveEnemyEncounter : MonoBehaviour
                 ? enemy.walkFrames : enemy.idleFrames;
             if (frames != null && frames.Length > 0)
                 visual.sprite = frames[Mathf.FloorToInt(Time.time * 8f) % frames.Length];
+            if (!flying && patrolSpeed <= 0f && visual.sprite != null && enemy.Image != null)
+            {
+                // Cropped idle frames must keep the stationary boss on the floor.
+                Vector2 position = body.position;
+                position.y = restingPosition.y + (enemy.Image.bounds.min.y - visual.sprite.bounds.min.y) * transform.localScale.y;
+                body.position = position;
+            }
         }
         if (suppressedEncounter == gameObject.name && player != null &&
             Vector2.Distance(player.transform.position, visual.bounds.center) > 3.5f)
@@ -86,6 +94,11 @@ public class CaveEnemyEncounter : MonoBehaviour
     void FixedUpdate()
     {
         if (body == null || enteringBattle) return;
+        if (patrolSpeed <= 0f)
+        {
+            if (player != null) visual.flipX = player.transform.position.x < transform.position.x;
+            return;
+        }
         float ahead = body.position.x + direction * 0.7f;
         bool turn = Mathf.Abs(ahead - restingPosition.x) >= patrolRadius;
         float feet = visual.bounds.min.y;

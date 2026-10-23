@@ -76,6 +76,7 @@ public class MainMenuSaveSlots : MonoBehaviour
     private string confirmPassword = "";
     private string emailCode = "";
     private string authStatus = "";
+    private CloudSaveSync cloudSaveSync;
     private Coroutine authRequest;
 
     private readonly List<CanvasGroup> groups =
@@ -500,6 +501,7 @@ public class MainMenuSaveSlots : MonoBehaviour
             authenticatedUserId = response.user != null ? response.user.id : "";
             loginComplete = true;
             authStatus = "Signed in successfully.";
+            StartCloudSaveSync(response.access_token);
         }
     }
 
@@ -513,6 +515,7 @@ public class MainMenuSaveSlots : MonoBehaviour
         CurrentAccessToken = null;
         CurrentRefreshToken = null;
         authenticatedUserId = "";
+        if (CloudSaveSync.Instance != null) CloudSaveSync.Instance.EndSession();
         loginComplete = false;
         registerMode = false;
         waitingForEmailCode = false;
@@ -525,6 +528,25 @@ public class MainMenuSaveSlots : MonoBehaviour
         {
             StartCoroutine(LogoutRoutine(endpoint, accessToken));
         }
+    }
+
+    void StartCloudSaveSync(string accessToken)
+    {
+        cloudSaveSync = CloudSaveSync.EnsureInstance();
+        cloudSaveSync.BeginSession(
+            supabaseProjectUrl,
+            supabasePublishableKey,
+            accessToken,
+            authenticatedUserId
+        );
+
+        authRequestInProgress = true;
+        authStatus = "Checking your account save...";
+        cloudSaveSync.StartInitialSync(SaveSlots.HasLocalProgress(), status =>
+        {
+            authStatus = status;
+            authRequestInProgress = false;
+        });
     }
 
     IEnumerator LogoutRoutine(string authEndpoint, string accessToken)
@@ -736,6 +758,7 @@ public class MainMenuSaveSlots : MonoBehaviour
             authenticatedUserId = response.user != null ? response.user.id : "";
             loginComplete = true;
             authStatus = "Email verified. You are now signed in.";
+            StartCloudSaveSync(response.access_token);
         }
     }
 

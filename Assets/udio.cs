@@ -60,6 +60,24 @@ public class AudioManager : MonoBehaviour
 
     public void PlayButtonSoundAndLoadScene(string sceneName)
     {
+        if (string.IsNullOrWhiteSpace(sceneName))
+        {
+            Debug.LogWarning(
+                "Cannot load a scene because the requested scene name is empty.",
+                this
+            );
+            return;
+        }
+
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError(
+                $"Cannot load scene '{sceneName}' because it is not enabled in Build Settings.",
+                this
+            );
+            return;
+        }
+
         PlayButtonSound();
         StartCoroutine(LoadSceneAfterSound(sceneName));
     }

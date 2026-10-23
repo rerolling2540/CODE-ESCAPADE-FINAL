@@ -2805,7 +2805,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 635.19, y: 64}
+  m_AnchoredPosition: {x: 635.19, y: -46}
   m_SizeDelta: {x: 414.87, y: 117.3693}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &631789728
@@ -3412,6 +3412,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuSaveSlots
   characterSelector: {fileID: 138459870}
+  supabaseProjectUrl: https://ffdnnayomwpevyrgximp.supabase.co
+  supabasePublishableKey: sb_publishable_jxfiqtXQFFDgfoIrzVxD8g_G7Cx8CI-
   buttonAudioSource: {fileID: 887750003}
   buttonClickSound: {fileID: 8300000, guid: 59d085a5c69e04f878caa67ce53a3990, type: 3}
   clickVolume: 0.8
@@ -4853,12 +4855,12 @@ GameObject:
   - component: {fileID: 1422619028}
   - component: {fileID: 1422619029}
   m_Layer: 5
-  m_Name: Continue
+  m_Name: Login
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1422619022
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4876,7 +4878,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 636.75, y: 102}
+  m_AnchoredPosition: {x: 636.75, y: 86}
   m_SizeDelta: {x: 418, y: 117.3693}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1422619023
@@ -4922,19 +4924,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1422619024}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 887750002}
-        m_TargetAssemblyTypeName: MainMenuSaveSlots, Assembly-CSharp
-        m_MethodName: ShowContinue
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1422619024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5443,7 +5433,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CONTINUE
+  m_text: LOGIN
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6857,7 +6847,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 636.75, y: -90}
+  m_AnchoredPosition: {x: 636.75, y: -178}
   m_SizeDelta: {x: 417.99, y: 117.3693}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1780684412

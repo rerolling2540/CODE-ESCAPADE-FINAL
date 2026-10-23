@@ -1,10 +1,60 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class MainMenuSaveSlots : MonoBehaviour
 {
     public CharacterSelector characterSelector;
+
+    [Header("Supabase Authentication")]
+    [SerializeField] private string supabaseProjectUrl = "";
+    [SerializeField] private string supabasePublishableKey = "";
+
+    public static string CurrentAccessToken { get; private set; }
+    public static string CurrentRefreshToken { get; private set; }
+    private string authenticatedUserId = "";
+
+    [System.Serializable]
+    private class SignupRequest
+    {
+        public string email;
+        public string password;
+    }
+
+    [System.Serializable]
+    private class VerifySignupRequest
+    {
+        public string email;
+        public string token;
+        public string type = "signup";
+    }
+
+    [System.Serializable]
+    private class AuthResponse
+    {
+        public string access_token;
+        public string refresh_token;
+        public AuthUser user;
+    }
+
+    [System.Serializable]
+    private class AuthUser
+    {
+        public string id;
+        public string email;
+    }
+
+    [System.Serializable]
+    private class AuthErrorResponse
+    {
+        public string message;
+        public string msg;
+        public string error_description;
+        public string error;
+    }
 
     [Header("Button Sound Effects")]
     public AudioSource buttonAudioSource;
@@ -14,8 +64,19 @@ public class MainMenuSaveSlots : MonoBehaviour
     public float clickVolume = 0.8f;
 
     private bool open;
+    private bool loginOpen;
+    private bool registerMode;
+    private bool waitingForEmailCode;
+    private bool authRequestInProgress;
+    private bool loginComplete;
     private bool confirmOverwrite;
     private bool confirmDelete;
+    private string loginEmail = "";
+    private string loginPassword = "";
+    private string confirmPassword = "";
+    private string emailCode = "";
+    private string authStatus = "";
+    private Coroutine authRequest;
 
     private readonly List<CanvasGroup> groups =
         new List<CanvasGroup>();
@@ -49,6 +110,9 @@ public class MainMenuSaveSlots : MonoBehaviour
     private Texture2D dangerTexture;
     private Texture2D dangerHoverTexture;
     private Texture2D backdropTexture;
+    private Texture2D inputTexture;
+    private GUIStyle inputStyle;
+    private GUIStyle fieldLabelStyle;
 
     private readonly Color gold =
         new Color(1f, 0.76f, 0.34f);
@@ -62,6 +126,17 @@ public class MainMenuSaveSlots : MonoBehaviour
     void Awake()
     {
         GameSave.EnsureInstance();
+
+        GameObject loginObject = GameObject.Find("Login");
+        Button loginButton = loginObject != null
+            ? loginObject.GetComponent<Button>()
+            : null;
+
+        if (loginButton != null)
+        {
+            loginButton.onClick.AddListener(OpenLogin);
+        }
+
         if (buttonAudioSource != null)
         {
             GameAudio.Route(buttonAudioSource, false);
@@ -129,6 +204,9 @@ public class MainMenuSaveSlots : MonoBehaviour
         backdropTexture = MakeTexture(
             new Color(0f, 0f, 0f, 0.76f));
 
+        inputTexture = MakeTexture(
+            new Color(0.055f, 0.045f, 0.032f, 1f));
+
         titleStyle = new GUIStyle(GUI.skin.label);
         titleStyle.fontSize = 30;
         titleStyle.fontStyle = FontStyle.Bold;
@@ -181,6 +259,20 @@ public class MainMenuSaveSlots : MonoBehaviour
         statusStyle.fontStyle = FontStyle.Bold;
         statusStyle.alignment = TextAnchor.MiddleRight;
         statusStyle.normal.textColor = gold;
+
+        inputStyle = new GUIStyle(GUI.skin.textField);
+        inputStyle.fontSize = 18;
+        inputStyle.padding = new RectOffset(12, 12, 8, 8);
+        inputStyle.normal.background = inputTexture;
+        inputStyle.focused.background = inputTexture;
+        inputStyle.normal.textColor = paleGold;
+        inputStyle.focused.textColor = Color.white;
+        inputStyle.border = new RectOffset(2, 2, 2, 2);
+
+        fieldLabelStyle = new GUIStyle(GUI.skin.label);
+        fieldLabelStyle.fontSize = 14;
+        fieldLabelStyle.fontStyle = FontStyle.Bold;
+        fieldLabelStyle.normal.textColor = paleGold;
     }
 
     GUIStyle CreateButtonStyle(
@@ -316,11 +408,394 @@ public class MainMenuSaveSlots : MonoBehaviour
         ShowSlots();
     }
 
+    public void OpenLogin()
+    {
+        if (loginOpen || open) return;
+
+        loginOpen = true;
+        registerMode = false;
+        waitingForEmailCode = false;
+        authRequestInProgress = false;
+        loginPassword = "";
+        confirmPassword = "";
+        emailCode = "";
+        loginComplete = !string.IsNullOrWhiteSpace(CurrentAccessToken);
+        authStatus = "";
+        if (!loginComplete) loginEmail = "";
+
+        LockMenuCanvas();
+    }
+
+    void SwitchAuthMode()
+    {
+        if (authRequestInProgress || waitingForEmailCode || loginComplete) return;
+
+        registerMode = !registerMode;
+        confirmPassword = "";
+        authStatus = "";
+    }
+
+    void SubmitLogin()
+    {
+        loginEmail = loginEmail.Trim();
+
+        if (!IsValidEmail(loginEmail))
+        {
+            authStatus = "Enter a valid email address.";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(loginPassword))
+        {
+            authStatus = "Enter your password.";
+            return;
+        }
+
+        if (!TryGetAuthEndpoint(out string endpoint)) return;
+
+        authStatus = "Signing in...";
+        authRequestInProgress = true;
+        authRequest = StartCoroutine(LoginRoutine(endpoint));
+    }
+
+    IEnumerator LoginRoutine(string authEndpoint)
+    {
+        var payload = new SignupRequest
+        {
+            email = loginEmail,
+            password = loginPassword
+        };
+
+        using (var request = new UnityWebRequest(
+                   authEndpoint + "/token?grant_type=password",
+                   UnityWebRequest.kHttpVerbPOST))
+        {
+            byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(payload));
+            request.uploadHandler = new UploadHandlerRaw(body);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", supabasePublishableKey.Trim());
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json");
+
+            yield return request.SendWebRequest();
+
+            authRequestInProgress = false;
+            authRequest = null;
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                authStatus = ReadAuthError(request.downloadHandler.text, request.error);
+                yield break;
+            }
+
+            AuthResponse response = ParseAuthResponse(request.downloadHandler.text);
+            if (response == null || string.IsNullOrWhiteSpace(response.access_token))
+            {
+                authStatus = "Supabase signed in without returning a session.";
+                yield break;
+            }
+
+            CurrentAccessToken = response.access_token;
+            CurrentRefreshToken = response.refresh_token;
+            authenticatedUserId = response.user != null ? response.user.id : "";
+            loginComplete = true;
+            authStatus = "Signed in successfully.";
+        }
+    }
+
+    void Logout()
+    {
+        string accessToken = CurrentAccessToken;
+        string endpoint = "";
+        bool canRevoke = !string.IsNullOrWhiteSpace(accessToken) &&
+                         TryGetAuthEndpoint(out endpoint);
+
+        CurrentAccessToken = null;
+        CurrentRefreshToken = null;
+        authenticatedUserId = "";
+        loginComplete = false;
+        registerMode = false;
+        waitingForEmailCode = false;
+        loginPassword = "";
+        confirmPassword = "";
+        emailCode = "";
+        authStatus = "You have been logged out. Log in again or register an account.";
+
+        if (canRevoke)
+        {
+            StartCoroutine(LogoutRoutine(endpoint, accessToken));
+        }
+    }
+
+    IEnumerator LogoutRoutine(string authEndpoint, string accessToken)
+    {
+        using (var request = new UnityWebRequest(
+                   authEndpoint + "/logout",
+                   UnityWebRequest.kHttpVerbPOST))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", supabasePublishableKey.Trim());
+            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
+            yield return request.SendWebRequest();
+        }
+
+    }
+
+    void LockMenuCanvas()
+    {
+        groups.Clear();
+        previousInteraction.Clear();
+        previousRaycasts.Clear();
+
+        foreach (Canvas canvas in FindObjectsByType<Canvas>(
+                     FindObjectsSortMode.None))
+        {
+            if (!canvas.isRootCanvas) continue;
+
+            CanvasGroup group = canvas.GetComponent<CanvasGroup>();
+            if (group == null)
+            {
+                group = canvas.gameObject.AddComponent<CanvasGroup>();
+            }
+
+            groups.Add(group);
+            previousInteraction.Add(group.interactable);
+            previousRaycasts.Add(group.blocksRaycasts);
+            group.interactable = false;
+            group.blocksRaycasts = false;
+        }
+    }
+
+    void SubmitSignup()
+    {
+        loginEmail = loginEmail.Trim();
+
+        if (!IsValidEmail(loginEmail))
+        {
+            authStatus = "Enter a valid email address.";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(loginPassword))
+        {
+            authStatus = "Enter a password.";
+            return;
+        }
+
+        if (loginPassword != confirmPassword)
+        {
+            authStatus = "The passwords do not match.";
+            return;
+        }
+
+        if (!TryGetAuthEndpoint(out string endpoint)) return;
+
+        authStatus = "Sending your verification code...";
+        authRequestInProgress = true;
+        authRequest = StartCoroutine(SignupRoutine(endpoint));
+    }
+
+    bool TryGetAuthEndpoint(out string endpoint)
+    {
+        endpoint = "";
+        string projectUrl = supabaseProjectUrl.Trim().TrimEnd('/');
+
+        if (!projectUrl.StartsWith("https://", System.StringComparison.OrdinalIgnoreCase) ||
+            string.IsNullOrWhiteSpace(supabasePublishableKey))
+        {
+            authStatus = "Set the Supabase project URL and publishable key on this component in the Inspector.";
+            return false;
+        }
+
+        if (!System.Uri.TryCreate(projectUrl, System.UriKind.Absolute, out System.Uri uri) ||
+            !System.Text.RegularExpressions.Regex.IsMatch(uri.Host, "^[A-Za-z0-9.-]+$"))
+        {
+            authStatus = "The Supabase project URL is not valid.";
+            return false;
+        }
+
+        endpoint = projectUrl + "/auth/v1";
+        return true;
+    }
+
+    static bool IsValidEmail(string email)
+    {
+        int at = email.IndexOf('@');
+        int dot = email.LastIndexOf('.');
+        return at > 0 && dot > at + 1 && dot < email.Length - 1;
+    }
+
+    IEnumerator SignupRoutine(string authEndpoint)
+    {
+        var payload = new SignupRequest
+        {
+            email = loginEmail,
+            password = loginPassword
+        };
+
+        using (var request = new UnityWebRequest(
+                   authEndpoint + "/signup",
+                   UnityWebRequest.kHttpVerbPOST))
+        {
+            byte[] body = Encoding.UTF8.GetBytes(
+                JsonUtility.ToJson(payload));
+            request.uploadHandler = new UploadHandlerRaw(body);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", supabasePublishableKey.Trim());
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json");
+
+            yield return request.SendWebRequest();
+
+            authRequestInProgress = false;
+            authRequest = null;
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                authStatus = ReadAuthError(request.downloadHandler.text,
+                    request.error);
+                yield break;
+            }
+
+            AuthResponse response = ParseAuthResponse(
+                request.downloadHandler.text);
+
+            if (response != null &&
+                !string.IsNullOrWhiteSpace(response.access_token))
+            {
+                authStatus = "Email confirmation is disabled in Supabase. Enable it to require the six-digit code.";
+                yield break;
+            }
+        }
+
+        loginPassword = "";
+        confirmPassword = "";
+        waitingForEmailCode = true;
+        authStatus = "Check your email and enter the six-digit signup code.";
+    }
+
+    void VerifyEmailCode()
+    {
+        if (emailCode.Length != 6)
+        {
+            authStatus = "Enter all six digits from the email.";
+            return;
+        }
+
+        if (!TryGetAuthEndpoint(out string endpoint)) return;
+
+        authStatus = "Verifying your code...";
+        authRequestInProgress = true;
+        authRequest = StartCoroutine(VerifyRoutine(endpoint));
+    }
+
+    IEnumerator VerifyRoutine(string authEndpoint)
+    {
+        var payload = new VerifySignupRequest
+        {
+            email = loginEmail,
+            token = emailCode
+        };
+
+        using (var request = new UnityWebRequest(
+                   authEndpoint + "/verify",
+                   UnityWebRequest.kHttpVerbPOST))
+        {
+            byte[] body = Encoding.UTF8.GetBytes(
+                JsonUtility.ToJson(payload));
+            request.uploadHandler = new UploadHandlerRaw(body);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", supabasePublishableKey.Trim());
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json");
+
+            yield return request.SendWebRequest();
+
+            authRequestInProgress = false;
+            authRequest = null;
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                authStatus = ReadAuthError(request.downloadHandler.text,
+                    request.error);
+                yield break;
+            }
+
+            AuthResponse response = ParseAuthResponse(
+                request.downloadHandler.text);
+
+            if (response == null ||
+                string.IsNullOrWhiteSpace(response.access_token))
+            {
+                authStatus = "Email verified, but Supabase did not return a login session.";
+                yield break;
+            }
+
+            CurrentAccessToken = response.access_token;
+            CurrentRefreshToken = response.refresh_token;
+            authenticatedUserId = response.user != null ? response.user.id : "";
+            loginComplete = true;
+            authStatus = "Email verified. You are now signed in.";
+        }
+    }
+
+    static AuthResponse ParseAuthResponse(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return null;
+
+        try
+        {
+            return JsonUtility.FromJson<AuthResponse>(json);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    static string ReadAuthError(string json, string fallback)
+    {
+        if (!string.IsNullOrWhiteSpace(json))
+        {
+            try
+            {
+                AuthErrorResponse error =
+                    JsonUtility.FromJson<AuthErrorResponse>(json);
+                if (error != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(error.message)) return error.message;
+                    if (!string.IsNullOrWhiteSpace(error.msg)) return error.msg;
+                    if (!string.IsNullOrWhiteSpace(error.error_description)) return error.error_description;
+                    if (!string.IsNullOrWhiteSpace(error.error)) return error.error;
+                }
+            }
+            catch
+            {
+                // Fall through to the request's transport error.
+            }
+        }
+
+        return string.IsNullOrWhiteSpace(fallback)
+            ? "Supabase authentication failed."
+            : fallback;
+    }
+
     void Close()
     {
         open = false;
+        loginOpen = false;
         confirmOverwrite = false;
         confirmDelete = false;
+
+        if (authRequest != null)
+        {
+            StopCoroutine(authRequest);
+            authRequest = null;
+        }
+
+        authRequestInProgress = false;
+        loginPassword = "";
+        confirmPassword = "";
 
         for (int i = 0; i < groups.Count; i++)
         {
@@ -345,7 +820,7 @@ public class MainMenuSaveSlots : MonoBehaviour
 
     void Update()
     {
-        if (open && Input.GetKeyDown(KeyCode.Escape))
+        if ((open || loginOpen) && Input.GetKeyDown(KeyCode.Escape))
         {
             Close();
         }
@@ -503,9 +978,189 @@ public class MainMenuSaveSlots : MonoBehaviour
         );
     }
 
+    void DrawLoginOverlay()
+    {
+        GUI.Label(
+            new Rect(270, 84, 740, 48),
+            loginComplete ? "SIGNED IN" :
+                (waitingForEmailCode ? "VERIFY YOUR EMAIL" :
+                    (registerMode ? "CREATE YOUR ACCOUNT" : "LOG IN")),
+            titleStyle
+        );
+
+        GUI.Label(
+            new Rect(300, 137, 680, 32),
+            waitingForEmailCode
+                ? "A six-digit signup code was sent to " + loginEmail
+                : (loginComplete
+                    ? "You are signed in to this account."
+                    : registerMode
+                    ? "Create an account with your email and a password."
+                    : "Enter the email and password for your existing account."),
+            subtitleStyle
+        );
+
+        bool oldEnabled = GUI.enabled;
+        GUI.enabled = oldEnabled && !authRequestInProgress;
+
+        if (loginComplete)
+        {
+            GUI.Label(
+                new Rect(350, 212, 580, 28),
+                "ACCOUNT EMAIL",
+                fieldLabelStyle
+            );
+            GUI.Label(
+                new Rect(350, 242, 580, 42),
+                loginEmail,
+                confirmTitleStyle
+            );
+
+            GUI.Label(
+                new Rect(350, 300, 580, 28),
+                "USER ID",
+                fieldLabelStyle
+            );
+            GUI.Label(
+                new Rect(350, 330, 580, 38),
+                string.IsNullOrWhiteSpace(authenticatedUserId)
+                    ? "Available for this session"
+                    : authenticatedUserId,
+                subtitleStyle
+            );
+
+            DrawActionButton(
+                new Rect(350, 430, 270, 52),
+                "LOG OUT",
+                Logout,
+                true
+            );
+
+            DrawActionButton(
+                new Rect(650, 430, 270, 52),
+                "CLOSE",
+                Close
+            );
+        }
+        else if (waitingForEmailCode)
+        {
+            GUI.Label(
+                new Rect(350, 252, 580, 28),
+                "SIX-DIGIT CODE",
+                fieldLabelStyle
+            );
+
+            emailCode = KeepDigits(GUI.TextField(
+                new Rect(350, 284, 580, 52),
+                emailCode,
+                6,
+                inputStyle
+            ));
+
+            DrawActionButton(
+                new Rect(350, 378, 270, 52),
+                "VERIFY AND SIGN IN",
+                VerifyEmailCode
+            );
+
+            DrawActionButton(
+                new Rect(650, 378, 270, 52),
+                "BACK",
+                Close
+            );
+        }
+        else
+        {
+            GUI.Label(new Rect(350, 190, 580, 24), "EMAIL", fieldLabelStyle);
+            loginEmail = GUI.TextField(
+                new Rect(350, 216, 580, 46),
+                loginEmail,
+                inputStyle
+            );
+
+            GUI.Label(new Rect(350, 273, 580, 24), "PASSWORD", fieldLabelStyle);
+            loginPassword = GUI.PasswordField(
+                new Rect(350, 299, 580, 46),
+                loginPassword,
+                '*',
+                inputStyle
+            );
+
+            if (registerMode)
+            {
+                GUI.Label(new Rect(350, 356, 580, 24), "CONFIRM PASSWORD", fieldLabelStyle);
+                confirmPassword = GUI.PasswordField(
+                    new Rect(350, 382, 580, 46),
+                    confirmPassword,
+                    '*',
+                    inputStyle
+                );
+
+                DrawActionButton(
+                    new Rect(350, 458, 270, 52),
+                    "SEND VERIFICATION CODE",
+                    SubmitSignup
+                );
+            }
+            else
+            {
+                DrawActionButton(
+                    new Rect(350, 382, 270, 52),
+                    "LOG IN",
+                    SubmitLogin
+                );
+            }
+
+            DrawActionButton(
+                new Rect(650, registerMode ? 458 : 382, 270, 52),
+                "BACK",
+                Close
+            );
+
+            GUIStyle switchStyle = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 16
+            };
+            switchStyle.normal.textColor = paleGold;
+            string switchLabel = registerMode
+                ? "Already have an account? Log in"
+                : "Need an account? Register";
+            if (GUI.Button(new Rect(350, 510, 570, 30), switchLabel, switchStyle))
+            {
+                PlayClickSound();
+                SwitchAuthMode();
+            }
+        }
+
+        GUI.enabled = oldEnabled;
+
+        if (!string.IsNullOrWhiteSpace(authStatus))
+        {
+            GUI.Label(
+                new Rect(290, 548, 700, 42),
+                authStatus,
+                subtitleStyle
+            );
+        }
+    }
+
+    static string KeepDigits(string value)
+    {
+        var digits = new StringBuilder(6);
+        foreach (char character in value)
+        {
+            if (character < '0' || character > '9') continue;
+            digits.Append(character);
+            if (digits.Length == 6) break;
+        }
+
+        return digits.ToString();
+    }
+
     void OnGUI()
     {
-        if (!open) return;
+        if (!open && !loginOpen) return;
 
         if (titleStyle == null)
         {
@@ -532,6 +1187,15 @@ public class MainMenuSaveSlots : MonoBehaviour
         );
 
         DrawFrame();
+
+        if (loginOpen)
+        {
+            DrawLoginOverlay();
+            GUI.enabled = oldEnabled;
+            GUI.color = oldColor;
+            GUI.matrix = oldMatrix;
+            return;
+        }
 
         GUI.Label(
             new Rect(270, 78, 740, 52),
@@ -665,6 +1329,7 @@ public class MainMenuSaveSlots : MonoBehaviour
         DestroyTexture(dangerTexture);
         DestroyTexture(dangerHoverTexture);
         DestroyTexture(backdropTexture);
+        DestroyTexture(inputTexture);
     }
 
     void DestroyTexture(Texture2D texture)

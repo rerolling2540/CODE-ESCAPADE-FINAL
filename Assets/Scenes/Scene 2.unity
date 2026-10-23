@@ -16461,8 +16461,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 82990642}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
-        m_MethodName: PlayButtonSoundAndLoadScene
-        m_Mode: 5
+        m_MethodName: PlayButtonSound
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

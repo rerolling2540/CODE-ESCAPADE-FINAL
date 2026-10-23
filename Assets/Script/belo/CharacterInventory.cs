@@ -142,5 +142,10 @@ public class CharacterInventory : MonoBehaviour
     }
 
     public static void ResetSavedInventory() { PlayerPrefs.DeleteKey(SaveKey); }
-    void Save() { PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data)); PlayerPrefs.Save(); }
+    void Save()
+    {
+        PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data));
+        PlayerPrefs.Save();
+        SaveSlots.NotifyLocalSaveChanged();
+    }
 }

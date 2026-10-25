@@ -319499,6 +319499,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &152479441
 SpriteRenderer:
@@ -329837,6 +329838,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.4
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &320820573
 SpriteRenderer:
@@ -330056,11 +330058,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 168.29
+      value: -15.44
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -25.32
+      value: 12.83
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -330288,6 +330290,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.4
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &401087198
 SpriteRenderer:
@@ -330473,6 +330476,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.4
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &417280479
 SpriteRenderer:
@@ -332513,6 +332517,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.4
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &523438081
 SpriteRenderer:
@@ -338276,6 +338281,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &737472051
 SpriteRenderer:
@@ -338675,6 +338681,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &801680412
 SpriteRenderer:
@@ -339757,6 +339764,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.4
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &909101051
 SpriteRenderer:
@@ -344947,6 +344955,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Procedural Portal Effect
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.11
@@ -345825,6 +345837,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &1199232086
 SpriteRenderer:
@@ -359660,6 +359673,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.4
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &1257494611
 SpriteRenderer:
@@ -360264,6 +360278,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &1445907605
 SpriteRenderer:
@@ -365548,7 +365563,7 @@ Transform:
   m_GameObject: {fileID: 1534294954}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 168.236, y: -24.57, z: -10}
+  m_LocalPosition: {x: -15.4939995, y: 13.580001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -370605,6 +370620,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.4
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &1623889704
 SpriteRenderer:
@@ -401208,6 +401224,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.4
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &1729154676
 SpriteRenderer:
@@ -401779,6 +401796,10 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6197345612323400001, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: worldSize
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalScale.y
       value: 2
@@ -402117,7 +402138,7 @@ Transform:
   m_GameObject: {fileID: 1865409911}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 168.236, y: -24.57, z: -10}
+  m_LocalPosition: {x: -15.4939995, y: 13.580001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -407530,6 +407551,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &1993913406
 SpriteRenderer:
@@ -408438,6 +408460,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &2044590909
 SpriteRenderer:
@@ -408722,6 +408745,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1
+  overworldHeight: 1.9
   patrolRadius: 2
 --- !u!212 &2101547961
 SpriteRenderer:

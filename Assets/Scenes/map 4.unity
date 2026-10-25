@@ -38299,6 +38299,50 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1 &216484849
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 216484851}
+  - component: {fileID: 216484850}
+  m_Layer: 0
+  m_Name: Map 4 Trap Battle HUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &216484850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216484849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28e1e967416040968e36b882c5eb330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Map4TrapBattleSetup
+--- !u!4 &216484851
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216484849}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &222120354
 GameObject:
   m_ObjectHideFlags: 0
@@ -169150,7 +169194,7 @@ Tilemap:
   - m_RefCount: 5
     m_Data: {fileID: 11400000, guid: 51e169405524f456299a5812a9753517, type: 2}
   - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: 25f8dbab6828e424ab912b2db51902a3, type: 2}
+    m_Data: {fileID: 11400000, guid: 9f6fde09a29464fefbdd39aec19ff976, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 30b3c747bbd1f463986b301eb6d0c91e, type: 2}
   - m_RefCount: 1
@@ -169955,7 +169999,7 @@ Tilemap:
   - m_RefCount: 1
     m_Data: {fileID: -8785921526295313727, guid: bc16c3c8f5720477687451d18c2641cc, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: -132364621, guid: bc16c3c8f5720477687451d18c2641cc, type: 3}
+    m_Data: {fileID: -386553162, guid: bc16c3c8f5720477687451d18c2641cc, type: 3}
   - m_RefCount: 7
     m_Data: {fileID: -1764844263, guid: bc16c3c8f5720477687451d18c2641cc, type: 3}
   - m_RefCount: 5
@@ -171696,7 +171740,7 @@ Transform:
   m_GameObject: {fileID: 813388511}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 139.246, y: -166.59401, z: -10}
+  m_LocalPosition: {x: 231.54602, y: -177.104, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -194296,7 +194340,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.26
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 7239361314865794458, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
       propertyPath: m_LocalPosition.z
@@ -200881,7 +200925,7 @@ Transform:
   m_GameObject: {fileID: 2025787674}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 139.246, y: -166.59401, z: -10}
+  m_LocalPosition: {x: 231.54602, y: -177.104, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -200974,11 +201018,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 139.3
+      value: 231.6
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -169
+      value: -179.51
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -201242,6 +201286,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
+  overworldHeight: 1.9
   patrolRadius: 3
 --- !u!1 &2100001110
 GameObject:
@@ -201352,6 +201397,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
+  overworldHeight: 1.9
   patrolRadius: 3
 --- !u!1 &2100001120
 GameObject:
@@ -201462,6 +201508,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
+  overworldHeight: 1.9
   patrolRadius: 3
 --- !u!1 &2100001130
 GameObject:
@@ -201572,6 +201619,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 1
   patrolSpeed: 1.2
+  overworldHeight: 1.9
   patrolRadius: 3
 --- !u!1 &2100001140
 GameObject:
@@ -201682,6 +201730,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
+  overworldHeight: 1.9
   patrolRadius: 3
 --- !u!1 &2100001150
 GameObject:
@@ -201792,6 +201841,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
+  overworldHeight: 1.9
   patrolRadius: 3
 --- !u!1 &2100001160
 GameObject:
@@ -201902,6 +201952,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 0
   patrolSpeed: 1.2
+  overworldHeight: 1.9
   patrolRadius: 3
 --- !u!1 &2100001170
 GameObject:
@@ -202012,6 +202063,7 @@ MonoBehaviour:
   interactionDistance: 2.5
   flying: 1
   patrolSpeed: 1.2
+  overworldHeight: 1.9
   patrolRadius: 3
 --- !u!50 &2123456780
 Rigidbody2D:
@@ -207168,3 +207220,4 @@ SceneRoots:
   - {fileID: 2024375566}
   - {fileID: 425739076}
   - {fileID: 2100001091}
+  - {fileID: 216484851}

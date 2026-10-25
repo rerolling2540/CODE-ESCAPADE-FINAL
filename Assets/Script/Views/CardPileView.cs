@@ -47,6 +47,7 @@ public class CardPileView : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (cardSystem != null) cardSystem.OpenPile(isDrawPile);
+        if (cardSystem != null && Interactions.Instance != null && Interactions.Instance.PlayerCanInteract())
+            cardSystem.OpenPile(isDrawPile);
     }
 }

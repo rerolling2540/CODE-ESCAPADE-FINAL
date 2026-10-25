@@ -104,7 +104,12 @@ public class CardView : MonoBehaviour
 
     void OnMouseExit()
     {
-        if (!Interactions.Instance.PlayerCanHover()) return;
+        if (Interactions.Instance != null && !Interactions.Instance.PlayerCanHover())
+        {
+            CardViewHoverSystem.Instance?.Hide();
+            if (wrapper != null) wrapper.SetActive(true);
+            return;
+        }
         CardViewHoverSystem.Instance.Hide();
         wrapper.SetActive(true);
     }

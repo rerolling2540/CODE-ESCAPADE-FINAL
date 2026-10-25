@@ -30,6 +30,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Card Data Editor.unity
     guid: d8c6edfe6e6a4c3b9a338eb612249247
   - enabled: 1
+    path: Assets/Scenes/Question Data Editor.unity
+    guid: f8ad356bb5874964a50cb9d0d03f6992
+  - enabled: 1
     path: Assets/Scenes/Scene4.unity
     guid: b294eb1b636d490b9656c99fc9024b5a
   - enabled: 1

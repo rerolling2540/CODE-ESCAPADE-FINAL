@@ -7,6 +7,8 @@ using System.Collections;
 [RequireComponent(typeof(CanvasGroup))]
 public class QuestionUI : MonoBehaviour
 {
+    public static bool IsQuestionActive { get; private set; }
+
     [Header("General Question UI")]
     [SerializeField] private TMP_Text questionText;
     [SerializeField] private TMP_Text codeSnippetText;
@@ -31,6 +33,18 @@ public class QuestionUI : MonoBehaviour
     private const int PlayedCardLayer = 31;
     private static Sprite scrollSprite;
 
+    public static void LockGameplayInput()
+    {
+        IsQuestionActive = true;
+        if (CardSystem.Instance != null) CardSystem.Instance.ClosePileWindow();
+        if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
+    }
+
+    public static void UnlockGameplayInput()
+    {
+        IsQuestionActive = false;
+    }
+
     private CanvasGroup EnsureCanvasGroup()
     {
         // Reacquire the component in case it was removed/recreated while the panel was open.
@@ -44,9 +58,12 @@ public class QuestionUI : MonoBehaviour
         if (data == null)
         {
             Debug.LogError("QuestionUI cannot show a null question.", this);
+            UnlockGameplayInput();
             onTimeOut?.Invoke();
             return;
         }
+
+        LockGameplayInput();
 
         if (transitionCoroutine != null) StopCoroutine(transitionCoroutine);
         if (timerCoroutine != null) StopCoroutine(timerCoroutine);
@@ -61,6 +78,7 @@ public class QuestionUI : MonoBehaviour
         if (questionText == null)
         {
             Debug.LogError("QuestionUI has no question text assigned.", this);
+            UnlockGameplayInput();
             onTimeOut?.Invoke();
             gameObject.SetActive(false);
             return;
@@ -89,6 +107,7 @@ public class QuestionUI : MonoBehaviour
         else
         {
             Debug.LogError($"Question type '{data.GetType().Name}' is not supported by QuestionUI.", this);
+            UnlockGameplayInput();
             onTimeOut?.Invoke();
             gameObject.SetActive(false);
             return;
@@ -384,6 +403,7 @@ public class QuestionUI : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnlockGameplayInput();
         ClearPlayedCard();
         if (playedCardCamera != null) Destroy(playedCardCamera.gameObject);
         if (playedCardTexture != null)
@@ -415,7 +435,7 @@ public class QuestionUI : MonoBehaviour
         Action<int> callback = onOptionSelected;
         onOptionSelected = null;
         canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
+        canvasGroup.blocksRaycasts = true;
         transitionCoroutine = StartCoroutine(ClosePanel());
         callback?.Invoke(index);
     }
@@ -443,7 +463,7 @@ public class QuestionUI : MonoBehaviour
             isAnswered = true;
             timerCoroutine = null;
             canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
+            canvasGroup.blocksRaycasts = true;
             transitionCoroutine = StartCoroutine(ClosePanel());
             onTimeOut?.Invoke();
         }
@@ -453,11 +473,18 @@ public class QuestionUI : MonoBehaviour
     {
         EnsureCanvasGroup();
         canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
+        canvasGroup.blocksRaycasts = true;
         yield return AnimateScroll(false);
+        canvasGroup.blocksRaycasts = false;
         ClearPlayedCard();
         transitionCoroutine = null;
+        UnlockGameplayInput();
         if (gameObject != null && gameObject.activeSelf) gameObject.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        UnlockGameplayInput();
     }
 
     private void SetPanelOpenState(bool open)

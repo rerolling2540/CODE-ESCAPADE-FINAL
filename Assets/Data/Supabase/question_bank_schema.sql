@@ -29,6 +29,15 @@ create policy "Published questions are readable" on public.question_bank
 revoke insert, update, delete, truncate, references, trigger on public.question_bank from anon, authenticated;
 grant select on public.question_bank to anon, authenticated;
 
+-- Admin-only editor access. Run this block after the table exists, or run the
+-- standalone question_bank_admin_policy.sql migration for an existing project.
+grant insert, update, delete on public.question_bank to authenticated;
+drop policy if exists "Admin can manage question bank" on public.question_bank;
+create policy "Admin can manage question bank" on public.question_bank
+    for all to authenticated
+    using (lower(coalesce(auth.jwt() ->> 'email', '')) = 'adeventurerank60@gmail.com')
+    with check (lower(coalesce(auth.jwt() ->> 'email', '')) = 'adeventurerank60@gmail.com');
+
 -- Seed is repeatable: re-running updates existing IDs instead of duplicating rows.
 -- Keep correct answers in this client-readable table only for a learning game;
 -- a determined player can inspect any answer delivered to the game client.

@@ -128,13 +128,24 @@ public class CardSystem : Singleton<CardSystem>
 
     public void OpenPile(bool draw)
     {
+        if (QuestionUI.IsQuestionActive) return;
         showDrawPile = draw;
         pileWindowScroll = Vector2.zero;
         pileWindowOpen = true;
     }
 
+    public void ClosePileWindow()
+    {
+        pileWindowOpen = false;
+    }
+
     private void OnGUI()
     {
+        if (QuestionUI.IsQuestionActive)
+        {
+            pileWindowOpen = false;
+            return;
+        }
         if (GameControlsGuide.GameplayOverlayHidden) return;
         if (!pileWindowOpen) return;
 

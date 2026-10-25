@@ -43,7 +43,7 @@ public class CardRewardChest : MonoBehaviour
     bool CanInteract()
     {
         return !opened && reward != null && spriteSheet != null && inventory != null && player != null &&
-            Time.timeScale > 0f &&
+            !GameControlsGuide.MapHidden &&
             (DialogueManager.Instance == null || !DialogueManager.Instance.isDialogueActive) &&
             Vector2.Distance(player.transform.position, visual.bounds.center) <= interactionDistance;
     }
@@ -79,7 +79,7 @@ public class CardRewardChest : MonoBehaviour
 
     void OnGUI()
     {
-        if (GameControlsGuide.SettingsOpen) return;
+        if (GameControlsGuide.MapHidden) return;
         if (!CanInteract() && Time.unscaledTime >= messageUntil) return;
         if (Camera.main == null) return;
         if (promptStyle == null)

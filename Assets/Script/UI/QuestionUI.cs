@@ -108,7 +108,8 @@ public class QuestionUI : MonoBehaviour
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = true;
         SetPanelOpenState(false);
-        transitionCoroutine = StartCoroutine(OpenAndStartTimer(data.timeLimitInSeconds, onTimeOut));
+        float duration = BattleTutorialGuide.IsTraining ? Mathf.Max(60f, data.timeLimitInSeconds) : data.timeLimitInSeconds;
+        transitionCoroutine = StartCoroutine(OpenAndStartTimer(duration, onTimeOut));
     }
 
     private void SetOptions(string[] choices)

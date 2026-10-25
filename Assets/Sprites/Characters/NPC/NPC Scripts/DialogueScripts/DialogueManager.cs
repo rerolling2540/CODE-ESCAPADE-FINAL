@@ -34,7 +34,7 @@ public class DialogueManager : MonoBehaviour
     void LateUpdate()
     {
         if (!isDialogueActive || canvasGroup == null) return;
-        bool visible = !GameControlsGuide.SettingsOpen;
+        bool visible = !GameControlsGuide.GameplayOverlayHidden;
         canvasGroup.alpha = visible ? 1f : 0f;
         canvasGroup.interactable = visible;
         canvasGroup.blocksRaycasts = visible;

@@ -61,7 +61,7 @@ public class PortalInteraction : MonoBehaviour
 
     bool CanEnter()
     {
-        if (Time.timeScale <= 0f || Time.unscaledTime < readyAt || enteredFrame == Time.frameCount ||
+        if (GameControlsGuide.MapHidden || Time.unscaledTime < readyAt || enteredFrame == Time.frameCount ||
             (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) || !HasRoute()) return false;
         var player = NearbyPlayer();
         if (player == null) return false;
@@ -94,7 +94,7 @@ public class PortalInteraction : MonoBehaviour
 
     void OnGUI()
     {
-        if (GameControlsGuide.SettingsOpen) return;
+        if (GameControlsGuide.MapHidden) return;
         bool canEnter = CanEnter();
         bool showLocked = !HasRoute() && NearbyPlayer() != null && !string.IsNullOrEmpty(unavailablePrompt) &&
             Time.timeScale > 0f && (DialogueManager.Instance == null || !DialogueManager.Instance.isDialogueActive);

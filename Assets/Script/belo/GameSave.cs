@@ -7,6 +7,7 @@ public class GameSave : MonoBehaviour
     public static GameSave Instance;
     private SaveSlots.Record pendingRestore;
     private float nextAutoSave;
+    private bool freshTutorialStart;
 
     public static GameSave EnsureInstance()
     {
@@ -61,6 +62,7 @@ public class GameSave : MonoBehaviour
             return;
         }
         pendingRestore = saved;
+        freshTutorialStart = false;
         PlayerPrefs.SetInt("SelectedCharacter", saved.character);
         Time.timeScale = 1f;
         SceneManager.LoadScene(saved.scene);
@@ -70,6 +72,8 @@ public class GameSave : MonoBehaviour
     {
         if (pendingRestore != null && scene.name == pendingRestore.scene)
             StartCoroutine(RestorePlayer());
+        else if (freshTutorialStart && scene.name == "Scene 2")
+            StartCoroutine(StartAtTutorial());
         nextAutoSave = Time.unscaledTime + 15f;
     }
 
@@ -97,12 +101,48 @@ public class GameSave : MonoBehaviour
             }
             else Debug.LogError("Could not find a player to restore the save position.");
         }
+        else if (saved.scene == "Scene 2")
+        {
+            var player = FindFirstObjectByType<playerMovement>();
+            if (player != null) PlaceAtTutorial(player);
+        }
         pendingRestore = null;
+    }
+
+    IEnumerator StartAtTutorial()
+    {
+        yield return null;
+        float deadline = Time.realtimeSinceStartup + 5f;
+        playerMovement player = null;
+        while (player == null && Time.realtimeSinceStartup < deadline)
+        {
+            player = FindFirstObjectByType<playerMovement>();
+            if (player == null) yield return null;
+        }
+        if (player != null) PlaceAtTutorial(player);
+        freshTutorialStart = false;
+    }
+
+    private static void PlaceAtTutorial(playerMovement player)
+    {
+        var start = GameObject.Find("Tutorial Start");
+        if (start == null) return;
+        Vector3 destination = start.transform.position;
+        var collider = player.GetComponent<Collider2D>();
+        float feetOffset = collider != null ? collider.bounds.min.y - player.transform.position.y : -0.8f;
+        foreach (var hit in Physics2D.RaycastAll(destination, Vector2.down, 20f))
+            if (hit.collider != null && !hit.collider.isTrigger && hit.collider.CompareTag("Ground") && hit.normal.y > 0.5f)
+            { destination.y = hit.point.y - feetOffset + 0.05f; break; }
+        player.transform.position = destination;
+        var body = player.GetComponent<Rigidbody2D>();
+        if (body != null) { body.position = destination; body.linearVelocity = Vector2.zero; }
+        Physics2D.SyncTransforms();
     }
 
     public void NewGame()
     {
         pendingRestore = null;
+        freshTutorialStart = true;
         SaveSlots.BeginNew(PlayerPrefs.GetInt("SelectedCharacter", 0));
     }
 

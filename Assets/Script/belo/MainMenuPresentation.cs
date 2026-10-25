@@ -46,6 +46,7 @@ public sealed class MainMenuPresentation : MonoBehaviour
 
     private void Update()
     {
+        if (CharacterAlmanac.IsOpen) return;
         bool savesOpen = slots != null && slots.IsOpen;
         if (savesOpen || slotsWereOpen)
         {

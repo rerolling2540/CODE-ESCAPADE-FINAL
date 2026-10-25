@@ -815,8 +815,8 @@ MonoBehaviour:
   characterName: {fileID: 441132784}
   logoImage: {fileID: 921314553}
   characterLogos:
-  - {fileID: 4937556754909001280, guid: 8ca562f9ac2e540798123e03b675a16e, type: 3}
   - {fileID: 742719646798723058, guid: cb6f45c5d2857468bbe15b4918d4197b, type: 3}
+  - {fileID: 4937556754909001280, guid: 8ca562f9ac2e540798123e03b675a16e, type: 3}
   - {fileID: 658376006698470442, guid: 62131fce7467a450d9e53be66d58eb39, type: 3}
   characters:
   - {fileID: 709901728315876072, guid: 1acaed507baac4d42a2dc2a7d3d3e3ef, type: 3}
@@ -6865,9 +6865,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 742719646798723058, guid: cb6f45c5d2857468bbe15b4918d4197b, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

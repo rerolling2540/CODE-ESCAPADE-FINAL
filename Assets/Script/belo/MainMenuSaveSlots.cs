@@ -876,6 +876,7 @@ public class MainMenuSaveSlots : MonoBehaviour
 
     void Update()
     {
+        if (CharacterAlmanac.IsOpen) return;
         if ((open || loginOpen) && Input.GetKeyDown(KeyCode.Escape))
         {
             Close();
@@ -1233,6 +1234,7 @@ public class MainMenuSaveSlots : MonoBehaviour
 
     void OnGUI()
     {
+        if (CharacterAlmanac.IsOpen) return;
         if (!open && !loginOpen) return;
 
         if (titleStyle == null)

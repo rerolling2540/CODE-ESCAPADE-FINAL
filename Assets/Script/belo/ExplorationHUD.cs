@@ -18,6 +18,7 @@ public class ExplorationHUD : MonoBehaviour
 
     private bool showMap = true;
     private bool inventoryOpen;
+    public bool IsMapVisible => showMap && !inventoryOpen && !GameControlsGuide.MapHidden;
     private float previousTimeScale = 1f;
 
     private int selected = -1;
@@ -34,6 +35,7 @@ public class ExplorationHUD : MonoBehaviour
 
     void Start()
     {
+        if (GetComponent<CharacterAlmanac>() == null) gameObject.AddComponent<CharacterAlmanac>();
         GameSave.EnsureInstance();
 
         player = FindFirstObjectByType<playerMovement>();
@@ -51,8 +53,9 @@ public class ExplorationHUD : MonoBehaviour
     {
         if (player == null)
             player = FindFirstObjectByType<playerMovement>();
+        if (GameControlsGuide.GameplayOverlayHidden) return;
 
-        if (!GameControlsGuide.SettingsOpen && Input.GetKeyDown(KeyCode.M))
+        if (!inventoryOpen && !GameControlsGuide.MapHidden && Input.GetKeyDown(KeyCode.M))
             showMap = !showMap;
 
         if (inventoryOpen)
@@ -89,6 +92,7 @@ public class ExplorationHUD : MonoBehaviour
 
     void OpenInventory()
     {
+        if (GameControlsGuide.MapHidden) return;
         if (inventory == null || inventoryOpen)
             return;
 
@@ -284,7 +288,7 @@ public class ExplorationHUD : MonoBehaviour
         // MAP-ONLY TEXT STYLES
         mapTitleStyle = new GUIStyle(GUI.skin.label)
         {
-            fontSize = 23,
+            fontSize = 19,
             fontStyle = FontStyle.Bold,
             wordWrap = false,
             alignment = TextAnchor.MiddleLeft
@@ -422,7 +426,7 @@ public class ExplorationHUD : MonoBehaviour
 
     void OnGUI()
     {
-        if (GameControlsGuide.SettingsOpen) return;
+        if (GameControlsGuide.GameplayOverlayHidden) return;
         InitStyles();
 
         Matrix4x4 oldMatrix = GUI.matrix;
@@ -444,7 +448,7 @@ public class ExplorationHUD : MonoBehaviour
 
         if (!inventoryOpen)
         {
-            if (showMap)
+            if (IsMapVisible)
                 DrawMinimap();
         }
         else
@@ -457,16 +461,16 @@ public class ExplorationHUD : MonoBehaviour
 
     void DrawMinimap()
     {
-        Frame(new Rect(16, 16, 310, 260));
+        Frame(new Rect(16, 16, 250, 202));
 
         // Larger map title only
         GUI.Label(
-            new Rect(39, 29, 275, 38),
+            new Rect(32, 27, 218, 30),
             "Traveller's Map  [M]",
             mapTitleStyle
         );
 
-        Rect mapRect = new Rect(38, 72, 266, 157);
+        Rect mapRect = new Rect(32, 62, 218, 128);
 
         GUI.BeginGroup(mapRect);
 

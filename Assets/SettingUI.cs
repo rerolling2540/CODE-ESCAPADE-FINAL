@@ -44,10 +44,56 @@ public static class GameControlsGuide
             return settingsPanels.Exists(panel => panel.activeInHierarchy && panel.scene == SceneManager.GetActiveScene());
         }
     }
+    public static bool GameplayOverlayHidden => SettingsOpen || CharacterAlmanac.IsOpen || BattleTutorialGuide.BlocksInput;
+    private static readonly System.Collections.Generic.List<GameObject> mapBlockingPanels = new System.Collections.Generic.List<GameObject>();
+    public static void RegisterMapBlocker(GameObject panel)
+    {
+        if(panel!=null&&!mapBlockingPanels.Contains(panel))mapBlockingPanels.Add(panel);
+    }
+    public static bool MapHidden
+    {
+        get
+        {
+            mapBlockingPanels.RemoveAll(panel=>panel==null);
+            return GameplayOverlayHidden || Time.timeScale<=0f || TutorialSignboard.IsOpen || MovementTutorial.AnyOpen ||
+                (DialogueManager.Instance!=null&&DialogueManager.Instance.isDialogueActive) ||
+                mapBlockingPanels.Exists(panel=>panel.activeInHierarchy&&panel.scene==SceneManager.GetActiveScene());
+        }
+    }
+    private static GUIStyle guideWoodStyle, guidePaperStyle, guideHeadingStyle, guideBodyStyle, guideButtonStyle, guideCaptionStyle;
+    public static bool DrawTravellerGuide(string heading,string instructions,float alpha=1f)
+    {
+        if(guideWoodStyle==null)
+        {
+            guideWoodStyle=new GUIStyle(GUI.skin.box){border=new RectOffset(10,10,10,10)};
+            guideWoodStyle.normal.background=Frame(false).texture;
+            guidePaperStyle=new GUIStyle(guideWoodStyle);guidePaperStyle.normal.background=Frame(true).texture;
+            guideHeadingStyle=new GUIStyle(GUI.skin.label){fontSize=28,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter,wordWrap=true};
+            guideHeadingStyle.normal.textColor=new Color(1,.86f,.54f);
+            guideCaptionStyle=new GUIStyle(guideHeadingStyle){fontSize=14};
+            guideBodyStyle=new GUIStyle(GUI.skin.label){fontSize=22,wordWrap=true,padding=new RectOffset()};guideBodyStyle.normal.textColor=Ink;
+            guideButtonStyle=new GUIStyle(GUI.skin.button){fontSize=21,fontStyle=FontStyle.Bold,border=new RectOffset(10,10,10,10)};
+            guideButtonStyle.normal.background=guideButtonStyle.hover.background=guideButtonStyle.active.background=Frame(false).texture;
+            guideButtonStyle.normal.textColor=new Color(1,.86f,.54f);guideButtonStyle.hover.textColor=Color.white;
+        }
+        Color old=GUI.color;
+        try
+        {
+            GUI.color=new Color(0,0,0,.65f*alpha);GUI.DrawTexture(new Rect(0,0,1280,720),Texture2D.whiteTexture);
+            GUI.color=new Color(1,1,1,alpha);
+            GUI.Box(new Rect(220,120,840,470),GUIContent.none,guideWoodStyle);
+            GUI.Label(new Rect(250,138,780,24),"THE TRAVELLER'S FIELD MANUAL",guideCaptionStyle);
+            GUI.Label(new Rect(250,164,780,45),heading,guideHeadingStyle);
+            GUI.Box(new Rect(240,218,800,278),GUIContent.none,guidePaperStyle);
+            GUI.Label(new Rect(264,240,752,232),instructions,guideBodyStyle);
+            return GUI.Button(new Rect(460,520,360,46),"Back to game  [E / Esc]",guideButtonStyle);
+        }
+        finally{GUI.color=old;}
+    }
     private static Sprite paperFrame, woodFrame;
     private static readonly Color Ink = new Color(0.19f, 0.095f, 0.035f);
 
-    static Sprite Frame(bool paper)
+    public static Sprite Frame(bool paper)
     {
         var cached = paper ? paperFrame : woodFrame;
         if (cached != null) return cached;
@@ -96,11 +142,14 @@ public static class GameControlsGuide
         "<b>M</b>  Show / hide the minimap\n" +
         "<b>Q or click the Quest Journal header</b>  Minimize / expand quests\n" +
         "<b>I</b>  Open / close inventory; <b>Esc</b> also closes inventory\n" +
+        "<b>L or click Almanac</b>  Open / close the learning almanac during exploration\n" +
         "Click the settings icon to open Settings; use Resume to return\n\n" +
         "<b><color=#703513>BATTLE</color></b>\n" +
         "Hover over a card to inspect it. Drag a targeted card onto an enemy to play it.\n" +
         "Answer the programming question using the answer buttons or input field.\n" +
         "Use <b>End Turn</b> to finish your turn. Use <b>Retreat</b> to leave a battle.\n\n" +
+        "In the training battle, click <b>Review guide</b> to reread the manual.\n" +
+        "Use <b>Back / Left Arrow</b> and <b>Forward / Enter</b> to navigate guide pages.\n\n" +
         "<b><color=#703513>SAVING</color></b>\n" +
         "Choose Play in the main menu to create or continue one of three save slots.";
 

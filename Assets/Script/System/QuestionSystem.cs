@@ -48,6 +48,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private IEnumerator PerformQuestion(QuestionGA action)
     {
+        yield return BattleTutorialGuide.ExplainQuestion();
         bool isDone = false;
         bool isCorrect = false;
 
@@ -75,6 +76,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
         // Send answer result back to whoever queued the action
         BattleAudio.Play(isCorrect ? BattleSound.Correct : BattleSound.Wrong);
+        BattleTutorialGuide.NotifyAnswer(isCorrect);
         action.OnAnswered?.Invoke(isCorrect);
     }
     public void AskRandomQuestion(Action<bool> onAnswered)
@@ -90,6 +92,11 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private IEnumerator AskWhenReady(Card playedCard, Action<bool> onAnswered)
     {
+        if (BattleTutorialGuide.IsTraining)
+        {
+            ActionSystem.Instance.Perform(new QuestionGA(BattleTutorialGuide.NextPracticeQuestion(), onAnswered, playedCard));
+            yield break;
+        }
         // Wait for the bank request so card questions use the published database bank.
         while (!remoteLoadFinished) yield return null;
 

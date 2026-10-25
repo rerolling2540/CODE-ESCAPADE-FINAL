@@ -158,7 +158,11 @@ public class CardView : MonoBehaviour
             {
                 BattleAudio.Play(BattleSound.CardActivate);
                 PlayCardGA playCard = new(Card, target);
-                ActionSystem.Instance.Perform(playCard);
+                QuestionSystem.Instance.AskRandomQuestion(Card, correct =>
+                {
+                    playCard.QuestionAnsweredCorrectly = correct;
+                    ActionSystem.Instance.Perform(playCard);
+                });
             }
         }
         else

@@ -35,7 +35,7 @@ public class Npc_Talk : MonoBehaviour
     private void Update()
     {
         var manager = DialogueManager.Instance;
-        if (manager == null || Time.timeScale <= 0f || manager.isDialogueActive) return;
+        if (manager == null || GameControlsGuide.MapHidden || manager.isDialogueActive) return;
         bool interact = Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame;
         interact |= Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame;
         if (!interact) return;
@@ -204,8 +204,7 @@ public class ElfQuestTracker : MonoBehaviour
 
     void Update()
     {
-        bool dialogueOpen = DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive;
-        if (!dialogueOpen && !GameControlsGuide.SettingsOpen && Time.timeScale > 0f && Input.GetKeyDown(KeyCode.Q)) minimized = !minimized;
+        if (!GameControlsGuide.MapHidden && Input.GetKeyDown(KeyCode.Q)) minimized = !minimized;
         if (Time.unscaledTime < refreshAt) return;
         refreshAt = Time.unscaledTime + 0.5f;
         objective = ElfQuestProgress.Objective(SaveSlots.Read(SaveSlots.Active));
@@ -237,7 +236,7 @@ public class ElfQuestTracker : MonoBehaviour
 
     void OnGUI()
     {
-        if (GameControlsGuide.SettingsOpen || Time.timeScale <= 0f || (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive)) return;
+        if (GameControlsGuide.MapHidden) return;
         InitStyles();
         var oldMatrix = GUI.matrix;
         var oldColor = GUI.color;

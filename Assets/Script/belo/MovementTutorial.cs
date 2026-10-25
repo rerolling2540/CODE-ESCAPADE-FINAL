@@ -49,6 +49,7 @@ public class MovementTutorial : MonoBehaviour
 
     void Update()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         if (!isOpen || isClosing)
             return;
 
@@ -98,6 +99,7 @@ public class MovementTutorial : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         if (!isOpen)
             return;
 

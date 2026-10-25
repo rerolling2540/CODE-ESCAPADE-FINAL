@@ -34,6 +34,7 @@ public class TutorialSignboard : MonoBehaviour
 
     void Update()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         if (lastInteractionFrame == Time.frameCount) return;
         if (openedSign == this)
         {
@@ -66,6 +67,7 @@ public class TutorialSignboard : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         if (titleStyle == null)
         {
             titleStyle = new GUIStyle(GUI.skin.label) { fontSize = 28, fontStyle = FontStyle.Bold,

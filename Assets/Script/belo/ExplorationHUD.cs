@@ -52,7 +52,7 @@ public class ExplorationHUD : MonoBehaviour
         if (player == null)
             player = FindFirstObjectByType<playerMovement>();
 
-        if (Input.GetKeyDown(KeyCode.M))
+        if (!GameControlsGuide.SettingsOpen && Input.GetKeyDown(KeyCode.M))
             showMap = !showMap;
 
         if (inventoryOpen)
@@ -422,6 +422,7 @@ public class ExplorationHUD : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         InitStyles();
 
         Matrix4x4 oldMatrix = GUI.matrix;

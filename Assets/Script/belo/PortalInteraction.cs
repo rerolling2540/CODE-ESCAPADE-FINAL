@@ -94,6 +94,7 @@ public class PortalInteraction : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         bool canEnter = CanEnter();
         bool showLocked = !HasRoute() && NearbyPlayer() != null && !string.IsNullOrEmpty(unavailablePrompt) &&
             Time.timeScale > 0f && (DialogueManager.Instance == null || !DialogueManager.Instance.isDialogueActive);

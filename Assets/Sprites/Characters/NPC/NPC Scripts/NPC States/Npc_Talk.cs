@@ -197,25 +197,81 @@ public class ElfQuestTracker : MonoBehaviour
 {
     private float refreshAt;
     private string objective;
-    private GUIStyle textStyle;
+    private static bool minimized;
+    private GUIStyle textStyle, titleStyle, headerStyle, toggleStyle;
+    private static readonly Color Brass = new Color(0.72f, 0.52f, 0.23f);
+    private static readonly Color Ink = new Color(0.16f, 0.09f, 0.035f);
+
     void Update()
     {
+        bool dialogueOpen = DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive;
+        if (!dialogueOpen && !GameControlsGuide.SettingsOpen && Time.timeScale > 0f && Input.GetKeyDown(KeyCode.Q)) minimized = !minimized;
         if (Time.unscaledTime < refreshAt) return;
         refreshAt = Time.unscaledTime + 0.5f;
         objective = ElfQuestProgress.Objective(SaveSlots.Read(SaveSlots.Active));
     }
+
+    void InitStyles()
+    {
+        if (textStyle != null) return;
+        textStyle = new GUIStyle(GUI.skin.label) {
+            fontSize = 16, wordWrap = true, padding = new RectOffset(),
+            normal = { textColor = Ink }
+        };
+        titleStyle = new GUIStyle(textStyle) { fontSize = 17, fontStyle = FontStyle.Bold };
+        headerStyle = new GUIStyle(GUIStyle.none) {
+            fontSize = 17, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleLeft,
+            padding = new RectOffset(14, 40, 0, 0), normal = { textColor = new Color(1f, 0.88f, 0.61f) },
+            hover = { textColor = Color.white }, active = { textColor = Color.white }
+        };
+        toggleStyle = new GUIStyle(headerStyle) { alignment = TextAnchor.MiddleCenter, padding = new RectOffset(), fontSize = 24 };
+    }
+
+    static void Fill(Rect rect, Color color)
+    {
+        var old = GUI.color;
+        GUI.color = color;
+        GUI.DrawTexture(rect, Texture2D.whiteTexture);
+        GUI.color = old;
+    }
+
     void OnGUI()
     {
-        if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) return;
-        if (textStyle == null) textStyle = new GUIStyle(GUI.skin.label) {
-            fontSize = 16, wordWrap = true, normal = { textColor = new Color(1f, 0.89f, 0.65f) }
-        };
-        float width = Mathf.Min(360f, Screen.width - 32f);
+        if (GameControlsGuide.SettingsOpen || Time.timeScale <= 0f || (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive)) return;
+        InitStyles();
+        var oldMatrix = GUI.matrix;
         var oldColor = GUI.color;
-        GUI.color = new Color(0.25f, 0.16f, 0.09f, 0.94f);
-        GUI.Box(new Rect(16, Screen.height - 120, width, 102), GUIContent.none);
-        GUI.color = oldColor;
-        GUI.Label(new Rect(28, Screen.height - 112, width - 24, 28), "WARDEN OF THE HOLLOW", textStyle);
-        GUI.Label(new Rect(28, Screen.height - 84, width - 24, 64), objective ?? "Speak to the elf [E].", textStyle);
+        try
+        {
+            // Match the minimap's 1280x720 HUD scaling. Its frame ends at x=326.
+            float scale = Mathf.Min(Screen.width / 1280f, Screen.height / 720f);
+            GUI.matrix = Matrix4x4.TRS(new Vector3((Screen.width - 1280f * scale) / 2f,
+                (Screen.height - 720f * scale) / 2f, 0f), Quaternion.identity, Vector3.one * scale);
+            GUI.color = Color.white;
+            float width = minimized ? 240f : 380f;
+            float bodyHeight = textStyle.CalcHeight(new GUIContent(objective ?? "Speak to the elf [E]."), width - 40f);
+            var panel = new Rect(348f, 16f, width, minimized ? 44f : 94f + bodyHeight);
+            Fill(new Rect(panel.x + 4f, panel.y + 5f, panel.width, panel.height), new Color(0, 0, 0, 0.35f));
+            Fill(panel, new Color(0.15f, 0.085f, 0.04f));
+            Fill(new Rect(panel.x + 2, panel.y + 2, panel.width - 4, panel.height - 4), Brass);
+            Fill(new Rect(panel.x + 5, panel.y + 5, panel.width - 10, panel.height - 10), new Color(0.26f, 0.15f, 0.075f));
+            // Subtle horizontal wood grain, with brass corner studs.
+            for (int i = 0; i < 3; i++)
+                Fill(new Rect(panel.x + 10, panel.y + 10 + i * 10, panel.width - 20, 1), new Color(0.38f, 0.24f, 0.12f));
+            foreach (float x in new[] { panel.x + 7, panel.xMax - 11 })
+                Fill(new Rect(x, panel.y + 7, 4, 4), new Color(0.95f, 0.77f, 0.4f));
+            var header = new Rect(panel.x + 5, panel.y + 5, panel.width - 10, 34);
+            if (GUI.Button(header, new GUIContent("Quest Journal  [Q]", minimized ? "Expand quests" : "Minimize quests"), headerStyle))
+                minimized = !minimized;
+            GUI.Label(new Rect(panel.xMax - 38, panel.y + 5, 28, 34), minimized ? "+" : "-", toggleStyle);
+            if (panel.height > 44f)
+            {
+                Fill(new Rect(panel.x + 10, panel.y + 44, panel.width - 20, panel.height - 54), new Color(0.87f, 0.78f, 0.59f));
+                Fill(new Rect(panel.x + 15, panel.y + 49, panel.width - 30, 1), Brass);
+                GUI.Label(new Rect(panel.x + 20, panel.y + 55, panel.width - 40, 26), "Warden of the Hollow", titleStyle);
+                GUI.Label(new Rect(panel.x + 20, panel.y + 83, panel.width - 40, bodyHeight), objective ?? "Speak to the elf [E].", textStyle);
+            }
+        }
+        finally { GUI.matrix = oldMatrix; GUI.color = oldColor; }
     }
 }

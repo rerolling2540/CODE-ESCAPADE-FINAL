@@ -275,6 +275,7 @@ public class EncounterBattleReturn : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         if (returning) return;
         if (BattleEnded)
         {

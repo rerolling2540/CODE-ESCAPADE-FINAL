@@ -79,6 +79,7 @@ public class CardRewardChest : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         if (!CanInteract() && Time.unscaledTime >= messageUntil) return;
         if (Camera.main == null) return;
         if (promptStyle == null)

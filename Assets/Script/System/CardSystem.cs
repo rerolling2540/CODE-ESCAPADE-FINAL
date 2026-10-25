@@ -135,6 +135,7 @@ public class CardSystem : Singleton<CardSystem>
 
     private void OnGUI()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         if (!pileWindowOpen) return;
 
         const float width = 360f;

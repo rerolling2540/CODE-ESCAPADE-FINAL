@@ -8,6 +8,7 @@ public class Settings : MonoBehaviour
     // OPEN SETTINGS
     public void OpenSettings()
     {
+        GameControlsGuide.EnsureSettings(settingsPanel);
         settingsPanel.SetActive(true);
         Time.timeScale = 0f;
     }

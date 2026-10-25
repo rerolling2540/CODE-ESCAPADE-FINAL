@@ -39,8 +39,12 @@ public sealed class DemonDoor : MonoBehaviour
     void AskQuestion(Transform player)
     {
         asking = true;
-        var questions = entranceQuestions != null && System.Array.Exists(entranceQuestions, q => q != null)
-            ? entranceQuestions : new[] { entranceQuestion };
+        var questions = QuestionSystem.Instance != null
+            ? QuestionSystem.Instance.GetQuestionsForCurrentPlayer()
+            : System.Array.Empty<MultipleChoiceQuestionData>();
+        if (questions.Length == 0)
+            questions = entranceQuestions != null && System.Array.Exists(entranceQuestions, q => q != null)
+                ? entranceQuestions : new[] { entranceQuestion };
         DoorJavaQuestionPanel.Show(questions, () =>
         {
             asking = false;

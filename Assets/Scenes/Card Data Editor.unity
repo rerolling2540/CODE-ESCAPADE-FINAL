@@ -83,6 +83,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e3517237c34cf6bad8fdbc5f97916b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardDataEditorScreen
+  supabaseProjectUrl: https://ffdnnayomwpevyrgximp.supabase.co
+  supabasePublishableKey: sb_publishable_jxfiqtXQFFDgfoIrzVxD8g_G7Cx8CI-
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

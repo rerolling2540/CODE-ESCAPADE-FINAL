@@ -9,6 +9,9 @@ public class PlayerStats : MonoBehaviour
     [Header("Component Reference")]
     [SerializeField] private CombatantView combatantView;
 
+    public HeroClassData HeroClass => heroClassData;
+    public int CurrentLevel => Mathf.Max(1, currentLevel);
+
     private void Awake()
     {
         if (combatantView == null)

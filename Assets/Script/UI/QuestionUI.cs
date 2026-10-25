@@ -94,6 +94,8 @@ public class QuestionUI : MonoBehaviour
             return;
         }
 
+        LayoutQuestionForCurrentContent();
+
         for (int i = 0; i < optionButtons.Length; i++)
         {
             int index = i;
@@ -145,8 +147,8 @@ public class QuestionUI : MonoBehaviour
         {
             scrollRect = background.GetComponent<RectTransform>();
             scrollRect.anchorMin = scrollRect.anchorMax = new Vector2(0.5f, 0.5f);
-            scrollRect.anchoredPosition = new Vector2(125f, 90f);
-            scrollRect.sizeDelta = new Vector2(1170f, 440f);
+            scrollRect.anchoredPosition = Vector2.zero;
+            scrollRect.sizeDelta = new Vector2(1180f, 820f);
             var image = background.GetComponent<Image>();
             if (image != null)
             {
@@ -168,8 +170,8 @@ public class QuestionUI : MonoBehaviour
             if (scrollRect != null) questionRect.SetParent(scrollRect, false);
             questionRect.anchorMin = questionRect.anchorMax = new Vector2(0.5f, 0.5f);
             questionRect.pivot = new Vector2(0.5f, 0.5f);
-            questionRect.anchoredPosition = Vector2.zero;
-            questionRect.sizeDelta = new Vector2(1020f, 96f);
+            questionRect.anchoredPosition = new Vector2(0f, 185f);
+            questionRect.sizeDelta = new Vector2(1060f, 100f);
         }
 
         RectTransform snippetRect = codeSnippetText != null ? codeSnippetText.rectTransform : null;
@@ -178,30 +180,32 @@ public class QuestionUI : MonoBehaviour
             if (scrollRect != null) snippetRect.SetParent(scrollRect, false);
             snippetRect.anchorMin = snippetRect.anchorMax = new Vector2(0.5f, 0.5f);
             snippetRect.pivot = new Vector2(0.5f, 0.5f);
-            snippetRect.anchoredPosition = new Vector2(0f, -132f);
-            snippetRect.sizeDelta = new Vector2(1040f, 128f);
+            snippetRect.anchoredPosition = new Vector2(0f, 25f);
+            snippetRect.sizeDelta = new Vector2(1060f, 160f);
         }
 
         RectTransform answersRect = transform.Find("Answers") as RectTransform;
         if (answersRect != null)
         {
+            if (scrollRect != null) answersRect.SetParent(scrollRect, false);
             answersRect.anchorMin = answersRect.anchorMax = new Vector2(0.5f, 0.5f);
-            answersRect.anchoredPosition = Vector2.zero;
+            answersRect.anchoredPosition = new Vector2(0f, -130f);
             answersRect.sizeDelta = Vector2.zero;
         }
         Vector2[] answerPositions =
         {
-            new Vector2(-135f, -190f), new Vector2(385f, -190f),
-            new Vector2(-135f, -266f), new Vector2(385f, -266f)
+            new Vector2(-250f, -115f), new Vector2(250f, -115f),
+            new Vector2(-250f, -200f), new Vector2(250f, -200f)
         };
         for (int i = 0; i < optionButtons.Length; i++)
         {
             if (optionButtons[i] == null) continue;
             RectTransform optionRect = optionButtons[i].GetComponent<RectTransform>();
             if (optionRect == null) continue;
+            optionRect.SetParent(scrollRect != null ? scrollRect : optionRect.parent, false);
             optionRect.anchorMin = optionRect.anchorMax = new Vector2(0.5f, 0.5f);
             optionRect.pivot = new Vector2(0.5f, 0.5f);
-            optionRect.sizeDelta = new Vector2(490f, 64f);
+            optionRect.sizeDelta = new Vector2(480f, 68f);
             optionRect.anchoredPosition = answerPositions[i % answerPositions.Length];
         }
         RectTransform timerRect = timerSlider != null ? timerSlider.GetComponent<RectTransform>() : null;
@@ -209,20 +213,26 @@ public class QuestionUI : MonoBehaviour
         {
             if (scrollRect != null) timerRect.SetParent(scrollRect, false);
             timerRect.anchorMin = timerRect.anchorMax = new Vector2(0.5f, 0.5f);
-            timerRect.anchoredPosition = new Vector2(445f, 170f);
+            timerRect.anchoredPosition = new Vector2(440f, 270f);
             timerRect.sizeDelta = new Vector2(270f, 30f);
         }
 
         if (questionText != null)
         {
-            questionText.color = new Color(0.22f, 0.11f, 0.035f);
+            questionText.color = new Color(0.12f, 0.075f, 0.035f);
             questionText.fontStyle = FontStyles.Bold;
             questionText.alignment = TextAlignmentOptions.Center;
+            questionText.enableAutoSizing = true;
+            questionText.fontSizeMin = 23f;
+            questionText.fontSizeMax = 38f;
         }
         if (codeSnippetText != null)
         {
-            codeSnippetText.color = new Color(0.28f, 0.16f, 0.07f);
-            codeSnippetText.alignment = TextAlignmentOptions.Center;
+            codeSnippetText.color = new Color(0.10f, 0.075f, 0.05f);
+            codeSnippetText.alignment = TextAlignmentOptions.Midline;
+            codeSnippetText.enableAutoSizing = true;
+            codeSnippetText.fontSizeMin = 19f;
+            codeSnippetText.fontSizeMax = 29f;
         }
 
         for (int i = 0; i < optionButtons.Length; i++)
@@ -248,6 +258,32 @@ public class QuestionUI : MonoBehaviour
                 var fillImage = timerSlider.fillRect.GetComponent<Image>();
                 if (fillImage != null) fillImage.color = new Color(0.78f, 0.49f, 0.16f);
             }
+        }
+    }
+
+    private void LayoutQuestionForCurrentContent()
+    {
+        bool hasCode = codeSnippetText != null && codeSnippetText.gameObject.activeSelf;
+        if (questionText != null)
+            questionText.rectTransform.anchoredPosition = new Vector2(0f, hasCode ? 185f : 130f);
+
+        if (codeSnippetText != null)
+        {
+            codeSnippetText.rectTransform.anchoredPosition = new Vector2(0f, hasCode ? 25f : 15f);
+            codeSnippetText.rectTransform.sizeDelta = new Vector2(1060f, hasCode ? 160f : 0f);
+        }
+
+        Vector2 firstRow = hasCode ? new Vector2(-250f, -115f) : new Vector2(-250f, 20f);
+        Vector2 secondRow = hasCode ? new Vector2(-250f, -200f) : new Vector2(-250f, -65f);
+        Vector2[] positions =
+        {
+            firstRow, new Vector2(250f, firstRow.y),
+            secondRow, new Vector2(250f, secondRow.y)
+        };
+        for (int i = 0; i < optionButtons.Length; i++)
+        {
+            if (optionButtons[i] == null) continue;
+            optionButtons[i].GetComponent<RectTransform>().anchoredPosition = positions[i];
         }
     }
 

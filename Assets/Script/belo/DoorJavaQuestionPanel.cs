@@ -58,7 +58,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         BattleAudio.Play(BattleSound.AnswerSelect);
         if (!question.CheckAnswer(index))
         {
-            PickQuestion("Incorrect. The door remains closed. Try this different Java question.");
+            PickQuestion("Incorrect. The door remains closed. Try a different question.");
             return;
         }
         var callback = accepted;
@@ -120,7 +120,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         var panel = Box("Question Panel", root.transform, Vector2.zero, new Vector2(960, 600), new Color(0.13f, 0.085f, 0.06f));
         var border = panel.gameObject.AddComponent<UnityEngine.UI.Outline>();
         border.effectColor = new Color(0.73f, 0.52f, 0.22f); border.effectDistance = new Vector2(3, -3);
-        Label("Title", panel, new Vector2(0, 248), new Vector2(850, 46), "THE DEMON'S JAVA CHALLENGE", 30);
+        Label("Title", panel, new Vector2(0, 248), new Vector2(850, 46), "THE DEMON'S CODE CHALLENGE", 30);
         instance.questionLabel = Label("Question", panel, new Vector2(0, 174), new Vector2(850, 84), "", 26);
         var code = Box("Code", panel, new Vector2(0, 85), new Vector2(840, 70), new Color(0.035f, 0.03f, 0.025f));
         instance.codeLabel = Label("Java Code", code, Vector2.zero, new Vector2(800, 62), "", 27);

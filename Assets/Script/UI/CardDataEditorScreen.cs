@@ -10,8 +10,9 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 /// <summary>
-/// Runtime Supabase/PostgREST editor for the cards table. Project URL, anon key,
-/// and a user access token are entered in the scene and are never saved to disk.
+/// Runtime Supabase/PostgREST editor for the cards table. Project URL and
+/// publishable key can be configured once in the Inspector. Auth reuses the
+/// current game session; bearer tokens stay in memory.
 /// </summary>
 public class CardDataEditorScreen : MonoBehaviour
 {
@@ -56,6 +57,10 @@ public class CardDataEditorScreen : MonoBehaviour
         public CardRecord[] items;
     }
 
+    [Header("Supabase Card Editor")]
+    [SerializeField] private string supabaseProjectUrl = "";
+    [SerializeField] private string supabasePublishableKey = "";
+
     private readonly System.Collections.Generic.List<CardRecord> cards = new();
     private string projectUrl = string.Empty;
     private string anonKey = string.Empty;
@@ -69,7 +74,6 @@ public class CardDataEditorScreen : MonoBehaviour
 
     private TMP_InputField projectUrlInput;
     private TMP_InputField anonKeyInput;
-    private TMP_InputField accessTokenInput;
     private TMP_InputField nameInput;
     private TMP_InputField descriptionInput;
     private TMP_InputField manaInput;
@@ -94,6 +98,16 @@ public class CardDataEditorScreen : MonoBehaviour
     {
         EnsureRenderCamera();
         BuildInterface();
+        if (!string.IsNullOrWhiteSpace(MainMenuSaveSlots.CurrentAccessToken))
+        {
+            accessToken = MainMenuSaveSlots.CurrentAccessToken;
+            SetStatus("Using the signed-in game account. Connecting…", false);
+            StartCoroutine(RefreshRoutine());
+        }
+        else
+        {
+            SetStatus("Return to the Main Menu and sign in to the admin account before editing cards.", true);
+        }
     }
 
     private void EnsureRenderCamera()
@@ -135,15 +149,16 @@ public class CardDataEditorScreen : MonoBehaviour
             new Vector2(30, -20), new Vector2(800, 48), GoldColor);
         AddText(root, "Subtitle", "Supabase card catalog editor  /  REST API", 17, FontStyles.Normal,
             TextAlignmentOptions.Left, new Vector2(32, -63), new Vector2(700, 28), MutedTextColor);
+        AddButton(root, "BACK TO GAME", new Vector2(1370, -20), new Vector2(200, 44), BackToGame);
 
         projectUrlInput = AddInput(root, "Supabase project URL", "https://your-project.supabase.co",
-            new Vector2(30, -102), new Vector2(390, 46));
+            new Vector2(30, -102), new Vector2(420, 46));
+        projectUrlInput.text = supabaseProjectUrl;
         anonKeyInput = AddInput(root, "Anon / publishable key", "Supabase public key",
-            new Vector2(430, -102), new Vector2(370, 46));
-        accessTokenInput = AddInput(root, "User access token (JWT)", "Authenticated user JWT (required by RLS)",
-            new Vector2(810, -102), new Vector2(440, 46), true);
-        connectButton = AddButton(root, "Connect", new Vector2(1270, -102), new Vector2(145, 46), Connect);
-        refreshButton = AddButton(root, "Refresh", new Vector2(1425, -102), new Vector2(145, 46), Refresh);
+            new Vector2(460, -102), new Vector2(700, 46));
+        anonKeyInput.text = supabasePublishableKey;
+        connectButton = AddButton(root, "Connect", new Vector2(1170, -102), new Vector2(170, 46), Connect);
+        refreshButton = AddButton(root, "Refresh", new Vector2(1350, -102), new Vector2(220, 46), Refresh);
 
         RectTransform listPanel = AddPanel(root, "Cards List Panel", new Vector2(30, -170), new Vector2(430, 690));
         AddText(listPanel, "List Heading", "CARDS", 23, FontStyles.Bold, TextAlignmentOptions.Left,
@@ -350,7 +365,29 @@ public class CardDataEditorScreen : MonoBehaviour
         rect.sizeDelta = size;
     }
 
-    private void Connect() => StartCoroutine(RefreshRoutine());
+    private void Connect()
+    {
+        if (string.IsNullOrWhiteSpace(accessToken))
+            accessToken = MainMenuSaveSlots.CurrentAccessToken;
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            SetStatus("Return to the Main Menu and sign in to the admin account before editing cards.", true);
+            return;
+        }
+        StartCoroutine(RefreshRoutine());
+    }
+
+    private void BackToGame()
+    {
+        if (!Application.CanStreamedLevelBeLoaded("MainMenu"))
+        {
+            SetStatus("MainMenu scene is not included in Build Settings.", true);
+            return;
+        }
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+    }
+
     private void Refresh() => StartCoroutine(RefreshRoutine());
     private void Save() => StartCoroutine(SaveRoutine());
     private void Delete() => StartCoroutine(DeleteRoutine());
@@ -455,9 +492,29 @@ public class CardDataEditorScreen : MonoBehaviour
     private bool TryBuildEndpoint(out string endpoint)
     {
         endpoint = string.Empty;
+        if (!TryBuildBaseUrl(out _))
+        {
+            endpoint = string.Empty;
+            return false;
+        }
         projectUrl = projectUrlInput.text.Trim().TrimEnd('/');
         anonKey = anonKeyInput.text.Trim();
-        accessToken = accessTokenInput.text.Trim();
+        if (string.IsNullOrWhiteSpace(accessToken))
+            accessToken = MainMenuSaveSlots.CurrentAccessToken;
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            SetStatus("Sign in first so the editor can use an authenticated account for database access.", true);
+            return false;
+        }
+        endpoint = projectUrl + "/rest/v1/" + DefaultTableName;
+        return true;
+    }
+
+    private bool TryBuildBaseUrl(out string baseUrl)
+    {
+        baseUrl = string.Empty;
+        projectUrl = projectUrlInput.text.Trim().TrimEnd('/');
+        anonKey = anonKeyInput.text.Trim();
         if (!projectUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
             !Uri.TryCreate(projectUrl, UriKind.Absolute, out Uri uri) ||
             !Regex.IsMatch(uri.Host, @"^[A-Za-z0-9.-]+$"))
@@ -470,7 +527,7 @@ public class CardDataEditorScreen : MonoBehaviour
             SetStatus("Enter the Supabase anon / publishable key.", true);
             return false;
         }
-        endpoint = projectUrl + "/rest/v1/" + DefaultTableName;
+        baseUrl = projectUrl;
         return true;
     }
 

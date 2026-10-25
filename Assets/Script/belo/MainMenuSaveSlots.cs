@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class MainMenuSaveSlots : MonoBehaviour
 {
+    private const string AdminEmail = "adeventurerank60@gmail.com";
+
     public CharacterSelector characterSelector;
 
     [Header("Supabase Authentication")]
@@ -15,6 +17,7 @@ public class MainMenuSaveSlots : MonoBehaviour
 
     public static string CurrentAccessToken { get; private set; }
     public static string CurrentRefreshToken { get; private set; }
+    public static string CurrentUserEmail { get; private set; }
     private string authenticatedUserId = "";
 
     [System.Serializable]
@@ -423,7 +426,7 @@ public class MainMenuSaveSlots : MonoBehaviour
         emailCode = "";
         loginComplete = !string.IsNullOrWhiteSpace(CurrentAccessToken);
         authStatus = "";
-        if (!loginComplete) loginEmail = "";
+        loginEmail = loginComplete ? CurrentUserEmail ?? "" : "";
 
         LockMenuCanvas();
     }
@@ -499,6 +502,9 @@ public class MainMenuSaveSlots : MonoBehaviour
 
             CurrentAccessToken = response.access_token;
             CurrentRefreshToken = response.refresh_token;
+            CurrentUserEmail = response.user != null && !string.IsNullOrWhiteSpace(response.user.email)
+                ? response.user.email
+                : loginEmail;
             authenticatedUserId = response.user != null ? response.user.id : "";
             loginComplete = true;
             authStatus = "Signed in successfully.";
@@ -515,6 +521,7 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         CurrentAccessToken = null;
         CurrentRefreshToken = null;
+        CurrentUserEmail = null;
         authenticatedUserId = "";
         if (CloudSaveSync.Instance != null) CloudSaveSync.Instance.EndSession();
         loginComplete = false;
@@ -529,6 +536,28 @@ public class MainMenuSaveSlots : MonoBehaviour
         {
             StartCoroutine(LogoutRoutine(endpoint, accessToken));
         }
+    }
+
+    bool IsAdminAccount()
+    {
+        string accountEmail = string.IsNullOrWhiteSpace(CurrentUserEmail)
+            ? loginEmail
+            : CurrentUserEmail;
+        return loginComplete && !string.IsNullOrWhiteSpace(CurrentAccessToken) &&
+               string.Equals(accountEmail.Trim(), AdminEmail, System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    void OpenAdminCardEditor()
+    {
+        if (!IsAdminAccount()) return;
+        if (!Application.CanStreamedLevelBeLoaded("Card Data Editor"))
+        {
+            authStatus = "Card Data Editor scene is not included in Build Settings.";
+            return;
+        }
+
+        Close();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Card Data Editor");
     }
 
     void StartCloudSaveSync(string accessToken)
@@ -756,6 +785,9 @@ public class MainMenuSaveSlots : MonoBehaviour
 
             CurrentAccessToken = response.access_token;
             CurrentRefreshToken = response.refresh_token;
+            CurrentUserEmail = response.user != null && !string.IsNullOrWhiteSpace(response.user.email)
+                ? response.user.email
+                : loginEmail;
             authenticatedUserId = response.user != null ? response.user.id : "";
             loginComplete = true;
             authStatus = "Email verified. You are now signed in.";
@@ -1054,17 +1086,34 @@ public class MainMenuSaveSlots : MonoBehaviour
             );
 
             DrawActionButton(
-                new Rect(350, 430, 270, 52),
+                new Rect(300, 430, 220, 52),
                 "LOG OUT",
                 Logout,
                 true
             );
 
-            DrawActionButton(
-                new Rect(650, 430, 270, 52),
-                "CLOSE",
-                Close
-            );
+            if (IsAdminAccount())
+            {
+                DrawActionButton(
+                    new Rect(535, 430, 250, 52),
+                    "CARD EDITOR",
+                    OpenAdminCardEditor
+                );
+
+                DrawActionButton(
+                    new Rect(800, 430, 220, 52),
+                    "CLOSE",
+                    Close
+                );
+            }
+            else
+            {
+                DrawActionButton(
+                    new Rect(650, 430, 270, 52),
+                    "CLOSE",
+                    Close
+                );
+            }
         }
         else if (waitingForEmailCode)
         {

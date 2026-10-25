@@ -85,6 +85,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
     public void AskRandomQuestion(Card playedCard, Action<bool> onAnswered)
     {
         Debug.Log("QuestionSystem: AskRandomQuestion");
+        QuestionUI.LockGameplayInput();
         StartCoroutine(AskWhenReady(playedCard, onAnswered));
     }
 
@@ -103,6 +104,15 @@ public class QuestionSystem : Singleton<QuestionSystem>
         if (selected == null)
         {
             Debug.LogError("No questions are available. Check the Supabase question bank setup and the local QuestionDatabase.");
+            QuestionUI.UnlockGameplayInput();
+            onAnswered?.Invoke(false);
+            yield break;
+        }
+
+        if (questionUI == null)
+        {
+            Debug.LogError("QuestionSystem has no QuestionUI assigned.", this);
+            QuestionUI.UnlockGameplayInput();
             onAnswered?.Invoke(false);
             yield break;
         }

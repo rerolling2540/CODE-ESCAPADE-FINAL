@@ -18,6 +18,11 @@ public class MainMenuSaveSlots : MonoBehaviour
     public static string CurrentAccessToken { get; private set; }
     public static string CurrentRefreshToken { get; private set; }
     public static string CurrentUserEmail { get; private set; }
+    public static string CurrentSupabaseProjectUrl { get; private set; }
+    public static string CurrentSupabasePublishableKey { get; private set; }
+    public static bool HasAdminSession =>
+        !string.IsNullOrWhiteSpace(CurrentAccessToken) &&
+        string.Equals(CurrentUserEmail?.Trim(), AdminEmail, System.StringComparison.OrdinalIgnoreCase);
     private string authenticatedUserId = "";
 
     [System.Serializable]
@@ -130,6 +135,8 @@ public class MainMenuSaveSlots : MonoBehaviour
 
     void Awake()
     {
+        CurrentSupabaseProjectUrl = supabaseProjectUrl;
+        CurrentSupabasePublishableKey = supabasePublishableKey;
         GameSave.EnsureInstance();
 
         GameObject loginObject = GameObject.Find("Login");
@@ -558,6 +565,19 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         Close();
         UnityEngine.SceneManagement.SceneManager.LoadScene("Card Data Editor");
+    }
+
+    void OpenAdminQuestionEditor()
+    {
+        if (!IsAdminAccount()) return;
+        if (!Application.CanStreamedLevelBeLoaded("Question Data Editor"))
+        {
+            authStatus = "Question Data Editor scene is not included in Build Settings.";
+            return;
+        }
+
+        Close();
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Question Data Editor");
     }
 
     void StartCloudSaveSync(string accessToken)
@@ -1086,7 +1106,7 @@ public class MainMenuSaveSlots : MonoBehaviour
             );
 
             DrawActionButton(
-                new Rect(300, 430, 220, 52),
+                new Rect(180, 430, 210, 52),
                 "LOG OUT",
                 Logout,
                 true
@@ -1095,13 +1115,19 @@ public class MainMenuSaveSlots : MonoBehaviour
             if (IsAdminAccount())
             {
                 DrawActionButton(
-                    new Rect(535, 430, 250, 52),
+                    new Rect(405, 430, 220, 52),
                     "CARD EDITOR",
                     OpenAdminCardEditor
                 );
 
                 DrawActionButton(
-                    new Rect(800, 430, 220, 52),
+                    new Rect(650, 430, 270, 52),
+                    "QUESTION EDITOR",
+                    OpenAdminQuestionEditor
+                );
+
+                DrawActionButton(
+                    new Rect(930, 430, 190, 52),
                     "CLOSE",
                     Close
                 );

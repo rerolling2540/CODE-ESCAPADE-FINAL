@@ -281,7 +281,7 @@ public class EncounterBattleReturn : MonoBehaviour
             BattleUITheme.DrawResultPanel(new Rect(Screen.width / 2f - 240, Screen.height / 2f - 65, 480, 130),
                 victory ? "VICTORY\nReturning from battle..." : "DEFEAT\nReturning from battle...");
         }
-        else if (caveBattle)
+        else if (caveBattle && !QuestionUI.IsQuestionActive)
         {
             bool previousEnabled = GUI.enabled;
             GUI.enabled = ActionSystem.Instance != null && !ActionSystem.Instance.IsPerforming;

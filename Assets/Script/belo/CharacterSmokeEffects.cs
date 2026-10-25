@@ -5,18 +5,26 @@ public sealed class CharacterSmokeEffects : MonoBehaviour
 {
     private const string RunSheetPath = "SmokeFX/SmokeFX Lite SpriteSheet 1A-1";
     private const string DashSheetPath = "SmokeFX/SmokeFX Lite SpriteSheet 2A-1";
+    private const string JumpSheetPath = "SmokeFX/Smoke VFX 1";
+    private const string LandingSheetPath = "SmokeFX/Smoke VFX 2";
     private const int FrameSize = 64;
 
     [SerializeField, Min(0.08f)] private float runPuffInterval = 0.22f;
     [SerializeField, Min(0.01f)] private float runFrameDuration = 0.035f;
     [SerializeField, Min(0.01f)] private float dashFrameDuration = 0.04f;
+    [SerializeField, Min(0.01f)] private float jumpFrameDuration = 0.04f;
+    [SerializeField, Min(0.01f)] private float landingFrameDuration = 0.045f;
     [SerializeField, Min(0.1f)] private float runPuffScale = 0.62f;
     [SerializeField, Min(0.1f)] private float dashPuffScale = 1.05f;
+    [SerializeField, Min(0.1f)] private float jumpPuffScale = 0.82f;
+    [SerializeField, Min(0.1f)] private float landingPuffScale = 0.9f;
 
     private SpriteRenderer characterRenderer;
     private CapsuleCollider2D characterCollider;
     private Sprite[] runFrames;
     private Sprite[] dashFrames;
+    private Sprite[] jumpFrames;
+    private Sprite[] landingFrames;
     private float runPuffTimer;
 
     public void Initialize(SpriteRenderer visual, CapsuleCollider2D capsule)
@@ -25,9 +33,11 @@ public sealed class CharacterSmokeEffects : MonoBehaviour
         characterCollider = capsule;
         runFrames = LoadStrip(RunSheetPath);
         dashFrames = LoadStrip(DashSheetPath);
+        jumpFrames = LoadStrip(JumpSheetPath, 48, 32, 48);
+        landingFrames = LoadStrip(LandingSheetPath, 48, 32, 48);
 
-        if (runFrames == null || dashFrames == null)
-            Debug.LogWarning("Smoke FX sprite sheets could not be loaded from Resources/SmokeFX.", this);
+        if (runFrames == null || dashFrames == null || jumpFrames == null || landingFrames == null)
+            Debug.LogWarning("One or more smoke FX sprite sheets could not be loaded from Resources/SmokeFX.", this);
     }
 
     public void UpdateRunning(bool running, bool grounded, bool facingRight)
@@ -56,6 +66,22 @@ public sealed class CharacterSmokeEffects : MonoBehaviour
         SpawnPuff(dashFrames, position, !facingRight, dashFrameDuration, dashPuffScale);
     }
 
+    public void PlayJump(bool facingRight)
+    {
+        if (jumpFrames == null || characterRenderer == null) return;
+
+        Vector3 position = GetFeetPosition();
+        SpawnPuff(jumpFrames, position, !facingRight, jumpFrameDuration, jumpPuffScale);
+    }
+
+    public void PlayLanding(bool facingRight)
+    {
+        if (landingFrames == null || characterRenderer == null) return;
+
+        Vector3 position = GetFeetPosition();
+        SpawnPuff(landingFrames, position, !facingRight, landingFrameDuration, landingPuffScale);
+    }
+
     private Vector3 GetFeetPosition()
     {
         if (characterCollider != null)
@@ -80,18 +106,20 @@ public sealed class CharacterSmokeEffects : MonoBehaviour
         StartCoroutine(AnimatePuff(puff, renderer, frames, frameDuration));
     }
 
-    private static Sprite[] LoadStrip(string resourcePath)
+    private static Sprite[] LoadStrip(string resourcePath, int frameWidth = FrameSize,
+        int frameHeight = FrameSize, float pixelsPerUnit = 100f)
     {
         Texture2D texture = Resources.Load<Texture2D>(resourcePath);
-        if (texture == null || texture.width < FrameSize || texture.width % FrameSize != 0 || texture.height < FrameSize)
+        if (texture == null || texture.width < frameWidth || texture.width % frameWidth != 0 ||
+            texture.height < frameHeight)
             return null;
 
-        int frameCount = texture.width / FrameSize;
+        int frameCount = texture.width / frameWidth;
         var frames = new Sprite[frameCount];
         for (int i = 0; i < frameCount; i++)
         {
-            frames[i] = Sprite.Create(texture, new Rect(i * FrameSize, 0, FrameSize, FrameSize),
-                new Vector2(0.5f, 0.12f), FrameSize, 0, SpriteMeshType.FullRect);
+            frames[i] = Sprite.Create(texture, new Rect(i * frameWidth, 0, frameWidth, frameHeight),
+                new Vector2(0.5f, 0.12f), pixelsPerUnit, 0, SpriteMeshType.FullRect);
             frames[i].name = $"{resourcePath}_Frame_{i + 1}";
         }
 

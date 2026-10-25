@@ -39,6 +39,7 @@ public class playerMovement : MonoBehaviour
     private float dashCooldownTimer;
     private float dashDirection;
     private bool runningPose;
+    private bool hasBeenAirborne;
 
     void Start()
     {
@@ -51,7 +52,8 @@ public class playerMovement : MonoBehaviour
             spriteRenderer = SelectedHero.ApplyArcher(this, spriteRenderer);
         if (spriteRenderer != null) facingRight = !spriteRenderer.flipX;
 
-        smokeEffects = gameObject.AddComponent<CharacterSmokeEffects>();
+        smokeEffects = GetComponent<CharacterSmokeEffects>();
+        if (smokeEffects == null) smokeEffects = gameObject.AddComponent<CharacterSmokeEffects>();
         smokeEffects.Initialize(spriteRenderer, GetComponent<CapsuleCollider2D>());
     }
 
@@ -65,6 +67,9 @@ public class playerMovement : MonoBehaviour
             UpdateAnimation();
             return;
         }
+
+        if (!isGrounded && rb != null && rb.linearVelocity.y < -0.5f)
+            hasBeenAirborne = true;
 
         dashCooldownTimer = Mathf.Max(0f, dashCooldownTimer - Time.deltaTime);
         if (isDashing)
@@ -142,6 +147,8 @@ public class playerMovement : MonoBehaviour
         groundContacts.Clear();
         lastGroundedTime = float.NegativeInfinity;
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        hasBeenAirborne = true;
+        if (smokeEffects != null) smokeEffects.PlayJump(facingRight);
         animator.SetBool("Grounded", false);
         animator.SetBool("Falling", false);
         animator.SetBool("Jumping", true);
@@ -182,11 +189,17 @@ public class playerMovement : MonoBehaviour
         }
         if (supporting) groundContacts.Add(collision.collider);
         else groundContacts.Remove(collision.collider);
+        bool wasGrounded = isGrounded;
         isGrounded = groundContacts.Count > 0;
         if (isGrounded)
         {
             airJumpsRemaining = 1;
             lastGroundedTime = Time.time;
+            if (!wasGrounded && hasBeenAirborne)
+            {
+                if (smokeEffects != null) smokeEffects.PlayLanding(facingRight);
+                hasBeenAirborne = false;
+            }
         }
     }
 
@@ -208,5 +221,6 @@ public class playerMovement : MonoBehaviour
         movement = 0f;
         runningPose = false;
         airJumpsRemaining = 1;
+        hasBeenAirborne = false;
     }
 }

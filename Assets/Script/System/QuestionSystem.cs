@@ -48,6 +48,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private IEnumerator PerformQuestion(QuestionGA action)
     {
+        yield return BattleTutorialGuide.ExplainQuestion();
         bool isDone = false;
         bool isCorrect = false;
 
@@ -75,6 +76,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
         // Send answer result back to whoever queued the action
         BattleAudio.Play(isCorrect ? BattleSound.Correct : BattleSound.Wrong);
+        BattleTutorialGuide.NotifyAnswer(isCorrect);
         action.OnAnswered?.Invoke(isCorrect);
     }
     public void AskRandomQuestion(Action<bool> onAnswered)
@@ -85,11 +87,17 @@ public class QuestionSystem : Singleton<QuestionSystem>
     public void AskRandomQuestion(Card playedCard, Action<bool> onAnswered)
     {
         Debug.Log("QuestionSystem: AskRandomQuestion");
+        QuestionUI.LockGameplayInput();
         StartCoroutine(AskWhenReady(playedCard, onAnswered));
     }
 
     private IEnumerator AskWhenReady(Card playedCard, Action<bool> onAnswered)
     {
+        if (BattleTutorialGuide.IsTraining)
+        {
+            ActionSystem.Instance.Perform(new QuestionGA(BattleTutorialGuide.NextPracticeQuestion(), onAnswered, playedCard));
+            yield break;
+        }
         // Wait for the bank request so card questions use the published database bank.
         while (!remoteLoadFinished) yield return null;
 
@@ -103,6 +111,15 @@ public class QuestionSystem : Singleton<QuestionSystem>
         if (selected == null)
         {
             Debug.LogError("No questions are available. Check the Supabase question bank setup and the local QuestionDatabase.");
+            QuestionUI.UnlockGameplayInput();
+            onAnswered?.Invoke(false);
+            yield break;
+        }
+
+        if (questionUI == null)
+        {
+            Debug.LogError("QuestionSystem has no QuestionUI assigned.", this);
+            QuestionUI.UnlockGameplayInput();
             onAnswered?.Invoke(false);
             yield break;
         }

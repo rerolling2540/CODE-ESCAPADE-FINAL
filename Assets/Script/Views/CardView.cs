@@ -104,7 +104,12 @@ public class CardView : MonoBehaviour
 
     void OnMouseExit()
     {
-        if (!Interactions.Instance.PlayerCanHover()) return;
+        if (Interactions.Instance != null && !Interactions.Instance.PlayerCanHover())
+        {
+            CardViewHoverSystem.Instance?.Hide();
+            if (wrapper != null) wrapper.SetActive(true);
+            return;
+        }
         CardViewHoverSystem.Instance.Hide();
         wrapper.SetActive(true);
     }
@@ -158,7 +163,11 @@ public class CardView : MonoBehaviour
             {
                 BattleAudio.Play(BattleSound.CardActivate);
                 PlayCardGA playCard = new(Card, target);
-                ActionSystem.Instance.Perform(playCard);
+                QuestionSystem.Instance.AskRandomQuestion(Card, correct =>
+                {
+                    playCard.QuestionAnsweredCorrectly = correct;
+                    ActionSystem.Instance.Perform(playCard);
+                });
             }
         }
         else

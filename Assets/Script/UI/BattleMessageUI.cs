@@ -60,7 +60,7 @@ public class BattleMessageUI : MonoBehaviour
     private void Update()
 {
     // Temporary test
-    if (Input.GetKeyDown(KeyCode.T))
+    if (!QuestionUI.IsQuestionActive && Input.GetKeyDown(KeyCode.T))
     {
         Show(
             "✔ Correct!",

@@ -31,6 +31,15 @@ public class DialogueManager : MonoBehaviour
 
     private void OnDestroy() { if (Instance == this) Instance = null; }
 
+    void LateUpdate()
+    {
+        if (!isDialogueActive || canvasGroup == null) return;
+        bool visible = !GameControlsGuide.GameplayOverlayHidden;
+        canvasGroup.alpha = visible ? 1f : 0f;
+        canvasGroup.interactable = visible;
+        canvasGroup.blocksRaycasts = visible;
+    }
+
     void Update()
     {
         if (!isDialogueActive || Time.frameCount == openedFrame || Time.timeScale <= 0f) return;

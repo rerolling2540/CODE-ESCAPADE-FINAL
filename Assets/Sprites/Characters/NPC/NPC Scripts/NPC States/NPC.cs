@@ -46,6 +46,7 @@ public class NPC : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameControlsGuide.MapHidden) return;
         if (talk == null || !talk.offersElfQuest || Camera.main == null) return;
         var saved = SaveSlots.Read(SaveSlots.Active);
         int stage = saved != null ? saved.elfQuestStage : 0;

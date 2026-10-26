@@ -1,0 +1,1804 @@
+{
+  "items": [
+    {
+      "id": "lesson-java-01",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Variables and data types",
+      "meaning": "A variable is a named place to keep a value. Later statements can read it or replace it. A type describes the kinds of values and operations that are permitted.",
+      "purpose": "Use clear names for changing state such as ammunition or health. Read the right side of an assignment before replacing the value on its left. int declares a whole-number variable in this example.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int arrows = 18;\n        arrows = arrows + 4;\n        System.out.println(arrows);\n    }\n}",
+      "example_output": "22",
+      "walkthrough": "The variable starts at 18, then adds four and stores 22. The output reads the updated value.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int potions = 11;\n        potions = potions - 3;\n        System.out.println(potions);\n    }\n}",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The new assignment stores 11 - 3, so the final value is 8.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-02",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Arithmetic and precedence",
+      "meaning": "Arithmetic operators calculate values: + adds, - subtracts, and * multiplies. Multiplication is evaluated before addition unless parentheses change the grouping.",
+      "purpose": "Use arithmetic for prices, scores, and damage. Work through the calculation in precedence order, rather than assuming every operation happens from left to right.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int pouches = 5;\n        int coins = pouches * 7 + 4;\n        System.out.println(coins);\n    }\n}",
+      "example_output": "39",
+      "walkthrough": "Multiplication produces 35 before addition contributes four more.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int torches = 9;\n        int charges = torches * 3 + 2;\n        System.out.println(charges);\n    }\n}",
+      "choices": [
+        "29"
+      ],
+      "correct_index": 0,
+      "explanation": "Multiply 9 by 3 to get 27, then add 2.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-03",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Output and joining strings",
+      "meaning": "A string is a sequence of text characters. Joining two strings with + produces a new string; it does not insert spaces automatically.",
+      "purpose": "Use output for messages and debugging. Put spaces and punctuation inside the text literals, and pay attention to the difference between text and numbers.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        String hero = \"Mira\";\n        System.out.println(\"Welcome, \" + hero);\n    }\n}",
+      "example_output": "Welcome, Mira",
+      "walkthrough": "The greeting literal supplies its trailing space. Joining the name produces one message.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        String place = \"Citadel\";\n        System.out.println(\"Next stop: \" + place);\n    }\n}",
+      "choices": [
+        "Next stop: Citadel"
+      ],
+      "correct_index": 0,
+      "explanation": "The literal provides the words, colon, and space; the variable supplies Citadel.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-04",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Comparisons and equality",
+      "meaning": "A comparison produces true or false. == tests equality, while <, >, <=, and >= compare ordering. A single = assigns a value rather than comparing it.",
+      "purpose": "Use comparisons to decide whether a requirement is met. Check whether your rule includes the boundary value: >= includes equality, but > does not.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int rank = 7;\n        System.out.println(rank == 7);\n    }\n}",
+      "example_output": "true",
+      "walkthrough": "Both sides are seven, so equality succeeds.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int keys = 4;\n        System.out.println(keys >= 6);\n    }\n}",
+      "choices": [
+        "false"
+      ],
+      "correct_index": 0,
+      "explanation": "Four is less than six, so the requirement fails.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-05",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Boolean logic",
+      "meaning": "A boolean represents a true/false condition. Logical AND requires both conditions to succeed. One failed requirement makes an AND expression false.",
+      "purpose": "Use combined conditions for gates or abilities with more than one requirement. Name the separate conditions when doing so makes a rule easier to read. The logical AND operator is &&.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        boolean hasMap = true;\n        int energy = 9;\n        System.out.println(hasMap && energy > 5);\n    }\n}",
+      "example_output": "true",
+      "walkthrough": "Both the map condition and the energy comparison succeed.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        boolean hasKey = true;\n        int energy = 2;\n        System.out.println(hasKey && energy > 5);\n    }\n}",
+      "choices": [
+        "false"
+      ],
+      "correct_index": 0,
+      "explanation": "The key condition succeeds, but the energy comparison fails. AND requires both.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-06",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Indexes in arrays and lists",
+      "meaning": "An index identifies a position in an ordered collection. Nonnegative indexes start at zero, so index 1 is the second element.",
+      "purpose": "Use indexing to retrieve one particular item. For a nonempty collection of size n, its final ordinary nonnegative index is n - 1.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] supplies = { 6, 13, 21 };\n        System.out.println(supplies[1]);\n    }\n}",
+      "example_output": "13",
+      "walkthrough": "Index 1 selects the second position, which contains 13.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] runes = { 4, 15, 26, 37 };\n        System.out.println(runes[2]);\n    }\n}",
+      "choices": [
+        "26"
+      ],
+      "correct_index": 0,
+      "explanation": "Index 2 selects the third position, containing 26.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-07",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Functions and return values",
+      "meaning": "A function groups reusable instructions. Parameters receive inputs. return sends a result back to the caller; printing a value instead only displays it.",
+      "purpose": "Use functions to avoid repeating calculations. The caller can store, print, or combine a returned result. A function should make its expected inputs and result clear. The int before the method name declares its return type.",
+      "code_snippet": "public class LessonDemo {\n    static int heal(int baseValue, int bonus) {\n        return baseValue + bonus;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(heal(7, 5));\n    }\n}",
+      "example_output": "12",
+      "walkthrough": "The parameters receive 7 and 5. The function returns their sum, then the caller prints it.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    static int heal(int baseValue, int bonus) {\n        return baseValue + bonus;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(heal(9, 6));\n    }\n}",
+      "choices": [
+        "15"
+      ],
+      "correct_index": 0,
+      "explanation": "The supplied arguments are added and returned as 15.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-08",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Counting loops",
+      "meaning": "A counting loop repeats a block while a counter advances through a range. Initialization chooses the first value, and the condition decides whether another iteration runs.",
+      "purpose": "Use counting loops for a known number of repetitions. Check the upper boundary carefully so the loop runs neither one too many times nor one too few. The < condition excludes the upper limit.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        for (int step = 2; step < 5; step++) {\n            System.out.println(step);\n        }\n    }\n}",
+      "example_output": "2\n3\n4",
+      "walkthrough": "The counter visits 2, 3, and 4. It stops before 5.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        for (int step = 4; step < 7; step++) {\n            System.out.println(step);\n        }\n    }\n}",
+      "choices": [
+        "4\n5\n6"
+      ],
+      "correct_index": 0,
+      "explanation": "The range starts at 4 and excludes 7, so three values are printed.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-09",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "Assignment and statement syntax",
+      "meaning": "Assignment replaces the value stored in a variable. The expression on the right can read the old value before the new one is stored.",
+      "purpose": "Use assignment to update state. Statement endings and block structure are part of the language syntax; missing or misplaced syntax can prevent code from running. These simple statements end in semicolons; braces group blocks.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int shield = 14;\n        shield = shield - 5;\n        System.out.println(shield);\n    }\n}",
+      "example_output": "9",
+      "walkthrough": "The old value is used to calculate 14 - 5 before shield is replaced.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int supplies = 8;\n        supplies = supplies * 2;\n        System.out.println(supplies);\n    }\n}",
+      "choices": [
+        "16"
+      ],
+      "correct_index": 0,
+      "explanation": "Eight is doubled, and 16 replaces the old value.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-10",
+      "language": "java",
+      "difficulty": "easy",
+      "title": "If and else branches",
+      "meaning": "An if statement chooses a block using a boolean condition. An optional else block runs when the condition is false.",
+      "purpose": "Use branches for actions that depend on current state. In a single if/else pair only one branch runs, so trace the condition before reading its output.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int coins = 18;\n        if (coins >= 15) {\n            System.out.println(\"Enter\");\n        } else {\n            System.out.println(\"Wait\");\n        }\n    }\n}",
+      "example_output": "Enter",
+      "walkthrough": "Eighteen is at least fifteen. The first block runs and the else block is skipped.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int coins = 12;\n        if (coins >= 15) {\n            System.out.println(\"Enter\");\n        } else {\n            System.out.println(\"Wait\");\n        }\n    }\n}",
+      "choices": [
+        "Wait"
+      ],
+      "correct_index": 0,
+      "explanation": "Twelve does not meet the threshold, so the else block prints Wait.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-java-11",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Accumulating a total",
+      "meaning": "An accumulator is updated repeatedly to combine a sequence of values. A sum normally starts at zero, the value that changes nothing when added.",
+      "purpose": "Use this pattern for total coins, damage, or measurements. Initialize the accumulator outside the loop so each iteration keeps the earlier work.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int total = 0;\n        for (int wave = 1; wave < 5; wave++) {\n            total = total + wave;\n        }\n        System.out.println(total);\n    }\n}",
+      "example_output": "10",
+      "walkthrough": "The running values are 1, 3, 6, and 10 after adding 1 through 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int total = 0;\n        for (int wave = 2; wave < 6; wave++) {\n            total = total + wave;\n        }\n        System.out.println(total);\n    }\n}",
+      "choices": [
+        "14"
+      ],
+      "correct_index": 0,
+      "explanation": "The loop adds 2 + 3 + 4 + 5 to make 14.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-12",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Selecting part of a string",
+      "meaning": "A substring or slice selects a section of text by position. The exact meaning of the second argument depends on the language.",
+      "purpose": "Use substring operations for prefixes and fragments. Distinguish an end index from a character count; Java, C#, and Python do not all use the same convention. Java substring(start, end) excludes end.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        String word = \"CASTLE\";\n        System.out.println(word.substring(1, 4));\n    }\n}",
+      "example_output": "AST",
+      "walkthrough": "The chosen positions are 1, 2, and 3: A, S, and T.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        String word = \"DRAGON\";\n        System.out.println(word.substring(1, 4));\n    }\n}",
+      "choices": [
+        "RAG"
+      ],
+      "correct_index": 0,
+      "explanation": "Positions 1 through 3 contain R, A, and G.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-13",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Safe collection iteration",
+      "meaning": "The size of a collection counts its elements. Because indexing begins at zero, an index equal to the size is already past the end.",
+      "purpose": "Use the actual collection size rather than a hard-coded loop endpoint. This keeps the loop correct when the collection grows or shrinks.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] gems = { 8, 14, 20 };\n        for (int i = 0; i < gems.length; i++) {\n            System.out.println(gems[i]);\n        }\n    }\n}",
+      "example_output": "8\n14\n20",
+      "walkthrough": "The size is three, so the loop visits indexes 0, 1, and 2 only.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] gems = { 5, 17 };\n        for (int i = 0; i < gems.length; i++) {\n            System.out.println(gems[i]);\n        }\n    }\n}",
+      "choices": [
+        "5\n17"
+      ],
+      "correct_index": 0,
+      "explanation": "The size is two. The loop visits indexes 0 and 1.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-14",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Compound assignment",
+      "meaning": "A compound assignment combines an operation with storing its result. For these integers, x += amount adds amount to x and replaces x with that result.",
+      "purpose": "Use compound assignment for counters and running totals when it improves readability. It changes a value; it is not an equality comparison.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int charge = 12;\n        charge += 3;\n        charge *= 2;\n        System.out.println(charge);\n    }\n}",
+      "example_output": "30",
+      "walkthrough": "Addition changes 12 to 15; multiplication then changes 15 to 30.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int charge = 7;\n        charge += 5;\n        charge -= 4;\n        System.out.println(charge);\n    }\n}",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The updates produce 12 and then 8.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-15",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Comparing string contents",
+      "meaning": "Value equality asks whether text contains the same characters. Object identity asks whether two references identify the same object; that is a different question.",
+      "purpose": "Use a value comparison for commands and labels. Ordinary comparisons in these examples are case-sensitive, so capitalization matters. Java String.equals compares contents. Calling it on a non-null literal handles a null variable safely.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        String password = \"rune\";\n        System.out.println(\"rune\".equals(password));\n    }\n}",
+      "example_output": "true",
+      "walkthrough": "The same four characters appear on both sides.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        String password = \"Rune\";\n        System.out.println(\"rune\".equals(password));\n    }\n}",
+      "choices": [
+        "false"
+      ],
+      "correct_index": 0,
+      "explanation": "Uppercase R differs from lowercase r in this comparison.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-16",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Collection size and final index",
+      "meaning": "Size counts positions, not distinct values. Repeated elements still occupy separate positions. For a nonempty collection the final index is size - 1.",
+      "purpose": "Use size to display item counts or control iteration. Do not subtract one when you want a count; subtract one only when you need a final valid index.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] loot = { 12, 24, 36, 48 };\n        System.out.println(loot.length);\n    }\n}",
+      "example_output": "4",
+      "walkthrough": "Four positions exist, although the final index is 3.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] loot = { 7, 7, 7, 7, 7 };\n        System.out.println(loot.length);\n    }\n}",
+      "choices": [
+        "5"
+      ],
+      "correct_index": 0,
+      "explanation": "All five positions count, even though their stored values repeat.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-17",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Parameters and reusable calculations",
+      "meaning": "Parameters are local names for the values supplied at a call site. Changing the arguments can change a function result without changing its instructions.",
+      "purpose": "Separate an algorithm from its input data. Check argument order: swapping two inputs can change which one gets multiplied or otherwise transformed.",
+      "code_snippet": "public class LessonDemo {\n    static int damage(int baseValue, int bonus) {\n        return baseValue * 2 + bonus;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(damage(6, 4));\n    }\n}",
+      "example_output": "16",
+      "walkthrough": "The first parameter is doubled, then the second is added: 12 + 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    static int damage(int baseValue, int bonus) {\n        return baseValue * 2 + bonus;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(damage(4, 6));\n    }\n}",
+      "choices": [
+        "14"
+      ],
+      "correct_index": 0,
+      "explanation": "Swapping the inputs calculates 4 * 2 + 6 instead.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-18",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "The remainder operator",
+      "meaning": "For positive integers, a % b is what remains after making complete groups of size b. It differs from the quotient produced by division.",
+      "purpose": "Use remainders for cycles and even/odd checks. These examples use positive integers; negative-operand remainder rules differ between languages.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int crystals = 23;\n        System.out.println(crystals % 6);\n    }\n}",
+      "example_output": "5",
+      "walkthrough": "Three groups of six use eighteen crystals. Five remain.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int coins = 31;\n        System.out.println(coins % 5);\n    }\n}",
+      "choices": [
+        "1"
+      ],
+      "correct_index": 0,
+      "explanation": "Six groups of five use thirty coins. One remains.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-19",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Skipping iterations with continue",
+      "meaning": "continue skips the rest of the current loop iteration. It does not finish the whole loop; later iterations can still run.",
+      "purpose": "Use continue to ignore an unwanted item and process the remaining items. Use break when you intend to stop the loop altogether.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        for (int i = 1; i < 5; i++) {\n            if (i == 3) {\n                continue;\n            }\n            System.out.println(i);\n        }\n    }\n}",
+      "example_output": "1\n2\n4",
+      "walkthrough": "The output is skipped at i = 3, but the loop still processes i = 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        for (int i = 3; i < 7; i++) {\n            if (i == 5) {\n                continue;\n            }\n            System.out.println(i);\n        }\n    }\n}",
+      "choices": [
+        "3\n4\n6"
+      ],
+      "correct_index": 0,
+      "explanation": "The loop visits 3 through 6 but skips printing at 5.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-20",
+      "language": "java",
+      "difficulty": "medium",
+      "title": "Updating an indexed element",
+      "meaning": "An indexed assignment replaces a single element. Reading from one index and writing to another does not move every element in the collection.",
+      "purpose": "Use indexed updates for inventory slots or saved scores. Check both indexes before tracing the expression: the source and destination positions can be different.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] scores = { 9, 18, 27 };\n        scores[1] = scores[1] + 6;\n        System.out.println(scores[1]);\n    }\n}",
+      "example_output": "24",
+      "walkthrough": "The second element changes from 18 to 24. Other positions are untouched.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] scores = { 8, 16, 24 };\n        scores[2] = scores[0] + 5;\n        System.out.println(scores[2]);\n    }\n}",
+      "choices": [
+        "13"
+      ],
+      "correct_index": 0,
+      "explanation": "The first element is read as eight. Adding five produces 13, which replaces the third element.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-java-21",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Recursion and returned results",
+      "meaning": "A recursive function calls itself on a smaller version of the same problem. Its returned results are combined as the earlier calls finish.",
+      "purpose": "Use recursion for naturally repeating subproblems. Trace both the calls going toward the base case and the results returning toward the original caller. This function expects a nonnegative integer input.",
+      "code_snippet": "public class LessonDemo {\n    static int doublePower(int n) {\n        if (n == 0) return 1;\n        return 2 * doublePower(n - 1);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(doublePower(3));\n    }\n}",
+      "example_output": "8",
+      "walkthrough": "The base returns one. Returning through three calls doubles it to 2, 4, and 8.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    static int doublePower(int n) {\n        if (n == 0) return 1;\n        return 2 * doublePower(n - 1);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(doublePower(5));\n    }\n}",
+      "choices": [
+        "32"
+      ],
+      "correct_index": 0,
+      "explanation": "Five doublings from one produce 2, 4, 8, 16, and 32.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-22",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Binary search on sorted data",
+      "meaning": "Binary search compares a target with the middle element of sorted data, then discards the half that cannot contain the target.",
+      "purpose": "Use it for lookups in sorted data. Each step approximately halves the search interval, giving O(log n) search time. Sorting itself has a separate cost.",
+      "code_snippet": "public class LessonDemo {\n    static int findRune(int[] values, int target) {\n        int low = 0, high = values.length - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (values[mid] == target) return mid;\n            if (values[mid] < target) low = mid + 1;\n            else high = mid - 1;\n        }\n        return -1;\n    }\n\n    public static void main(String[] args) {\n        int[] runes = { 3, 7, 11, 19, 27, 34 };\n        System.out.println(findRune(runes, 19));\n    }\n}",
+      "example_output": "3",
+      "walkthrough": "Nineteen is the fourth element, at index three. Comparing with the midpoint narrows the interval until that position is found.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    static int findRune(int[] values, int target) {\n        int low = 0, high = values.length - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (values[mid] == target) return mid;\n            if (values[mid] < target) low = mid + 1;\n            else high = mid - 1;\n        }\n        return -1;\n    }\n\n    public static void main(String[] args) {\n        int[] runes = { 4, 9, 16, 25, 31 };\n        System.out.println(findRune(runes, 31));\n    }\n}",
+      "choices": [
+        "4"
+      ],
+      "correct_index": 0,
+      "explanation": "Thirty-one is the final value in this five-element collection. Its zero-based index is four.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-23",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Growing collections",
+      "meaning": "A dynamic collection can grow when elements are added. Appending an element adds a new position rather than replacing an existing one.",
+      "purpose": "Use a dynamic collection when the item count can change. Its current size describes how many elements it contains, not how much capacity may be reserved internally. Use add and size for Java ArrayList.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        java.util.ArrayList<String> bag = new java.util.ArrayList<>();\n        bag.add(\"map\");\n        bag.add(\"torch\");\n        bag.add(\"rope\");\n        System.out.println(bag.size());\n    }\n}",
+      "example_output": "3",
+      "walkthrough": "The worked bag ends with map, torch, and rope: three entries.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        java.util.ArrayList<String> bag = new java.util.ArrayList<>();\n        bag.add(\"key\");\n        bag.add(\"coin\");\n        bag.add(\"gem\");\n        bag.add(\"scroll\");\n        System.out.println(bag.size());\n    }\n}",
+      "choices": [
+        "4"
+      ],
+      "correct_index": 0,
+      "explanation": "Each append or add creates one more position. Count the entries remaining after all additions.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-24",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Object identity and value equality",
+      "meaning": "Separately created objects have different identities even if their fields match. A custom class can define what equality of its values should mean.",
+      "purpose": "Define value equality explicitly for domain objects. This example compares a rune power field. In hash-based collections, equality and hashing must obey a consistent contract. Java overrides equals to define value equality. Equal objects must have equal hash codes, so hashCode is overridden too.",
+      "code_snippet": "public class LessonDemo {\n    static final class Rune {\n        final int power;\n        Rune(int power) { this.power = power; }\n        @Override public boolean equals(Object obj) {\n            return obj instanceof Rune && power == ((Rune)obj).power;\n        }\n        @Override public int hashCode() { return Integer.hashCode(power); }\n    }\n\n    public static void main(String[] args) {\n        Rune a = new Rune(8);\n        Rune b = new Rune(8);\n        System.out.println(a.equals(b));\n    }\n}",
+      "example_output": "true",
+      "walkthrough": "Both power fields contain eight, so the custom value comparison succeeds even though these are separate objects.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    static final class Rune {\n        final int power;\n        Rune(int power) { this.power = power; }\n        @Override public boolean equals(Object obj) {\n            return obj instanceof Rune && power == ((Rune)obj).power;\n        }\n        @Override public int hashCode() { return Integer.hashCode(power); }\n    }\n\n    public static void main(String[] args) {\n        Rune a = new Rune(4);\n        Rune b = new Rune(9);\n        System.out.println(a.equals(b));\n    }\n}",
+      "choices": [
+        "false"
+      ],
+      "correct_index": 0,
+      "explanation": "The power fields contain four and nine. The custom comparison therefore returns false.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-25",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Exceptions and recovery",
+      "meaning": "An exception signals that an operation could not finish normally. A matching catch or except handler can choose how to recover from that failure.",
+      "purpose": "Handle failures you can meaningfully recover from. Catch the specific error you expect instead of silently swallowing every possible problem.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        try {\n            int divisor = 0;\n            System.out.println(18 / divisor);\n        } catch (ArithmeticException ex) {\n            System.out.println(\"No divisor\");\n        }\n    }\n}",
+      "example_output": "No divisor",
+      "walkthrough": "Division by zero transfers control to the matching handler, which prints a recovery message.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        try {\n            int divisor = 3;\n            System.out.println(18 / divisor);\n        } catch (ArithmeticException ex) {\n            System.out.println(\"No divisor\");\n        }\n    }\n}",
+      "choices": [
+        "6"
+      ],
+      "correct_index": 0,
+      "explanation": "The divisor is three, so the division succeeds and the handler is skipped.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-26",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Generic collection element types",
+      "meaning": "A generic type parameter declares the kind of element a collection stores. The compiler checks element usage against that type, which catches many invalid operations before the program runs.",
+      "purpose": "Use a typed collection to catch invalid element usage early, or use a short comprehension to express a clear transformation. Keep transformations readable. Java generic arguments use reference types such as String and Integer, rather than primitive int.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        java.util.ArrayList<String> names = new java.util.ArrayList<>();\n        names.add(\"oak\");\n        names.add(\"ember\");\n        System.out.println(names.get(1));\n    }\n}",
+      "example_output": "ember",
+      "walkthrough": "The element type is text, and index one selects the second string.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        java.util.ArrayList<Integer> gems = new java.util.ArrayList<>();\n        gems.add(7);\n        gems.add(10);\n        gems.add(15);\n        System.out.println(gems.get(0) + gems.get(2));\n    }\n}",
+      "choices": [
+        "22"
+      ],
+      "correct_index": 0,
+      "explanation": "The integer elements at positions zero and two contain seven and fifteen. Their sum is 22.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-27",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Parentheses and expression evaluation",
+      "meaning": "Parentheses group an expression so that its value is calculated before the surrounding operations use it. This can change the result.",
+      "purpose": "Use parentheses to make a rule explicit when operators are mixed. Grouping is also useful when it improves readability without changing the result.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int power = 4;\n        System.out.println((power + 5) * 3);\n    }\n}",
+      "example_output": "27",
+      "walkthrough": "The grouped addition produces nine before multiplication produces 27.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int power = 6;\n        System.out.println((power + 2) * 4);\n    }\n}",
+      "choices": [
+        "32"
+      ],
+      "correct_index": 0,
+      "explanation": "The grouped addition produces eight; multiplying by four gives 32.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-28",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Stacks and last-in-first-out",
+      "meaning": "A stack removes the most recently added element first. This is last-in-first-out, or LIFO. A pop both returns and removes the top element.",
+      "purpose": "Use stacks for undo history or backtracking. Check that a stack contains an item before popping; removing from an empty stack is an error.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        java.util.Deque<String> trail = new java.util.ArrayDeque<>();\n        trail.push(\"gate\");\n        trail.push(\"tower\");\n        System.out.println(trail.pop());\n    }\n}",
+      "example_output": "tower",
+      "walkthrough": "tower was added after gate, so it is the first value removed.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        java.util.Deque<String> trail = new java.util.ArrayDeque<>();\n        trail.push(\"camp\");\n        trail.push(\"bridge\");\n        trail.push(\"keep\");\n        trail.pop();\n        System.out.println(trail.pop());\n    }\n}",
+      "choices": [
+        "bridge"
+      ],
+      "correct_index": 0,
+      "explanation": "The first pop discards keep. bridge is then on top and is returned by the second pop.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-29",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Integer division inside a loop",
+      "meaning": "An accumulator can combine the results of another operation. For positive values, integer division keeps the complete groups and discards any fractional part.",
+      "purpose": "Use this pattern when leftovers from separate batches cannot be pooled. Dividing each batch before summing is different from summing all batches before division. Integer division truncates toward zero; these inputs are all positive.",
+      "code_snippet": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] rewards = { 9, 16, 24 };\n        int total = 0;\n        for (int i = 0; i < rewards.length; i++) {\n            total = total + rewards[i] / 4;\n        }\n        System.out.println(total);\n    }\n}",
+      "example_output": "12",
+      "walkthrough": "The individual divisions produce two, four, and six. Adding those results produces twelve.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    public static void main(String[] args) {\n        int[] rewards = { 11, 20, 28 };\n        int total = 0;\n        for (int i = 0; i < rewards.length; i++) {\n            total = total + rewards[i] / 6;\n        }\n        System.out.println(total);\n    }\n}",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The divisions produce one, three, and four. The sum is eight.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-java-30",
+      "language": "java",
+      "difficulty": "hard",
+      "title": "Base cases and recursive progress",
+      "meaning": "A base case returns without another recursive call. The recursive step must make progress toward that case; merely having a base case does not guarantee termination.",
+      "purpose": "Choose a stopping condition that covers the values a recursive step can reach. Subtracting by more than one can pass below zero, so equality with zero may be insufficient.",
+      "code_snippet": "public class LessonDemo {\n    static int steps(int n) {\n        if (n <= 0) return 0;\n        return 1 + steps(n - 3);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(steps(8));\n    }\n}",
+      "example_output": "3",
+      "walkthrough": "The arguments are 8, 5, 2, and -1. The final call returns zero. Three earlier calls each add one.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "public class LessonDemo {\n    static int steps(int n) {\n        if (n <= 0) return 0;\n        return 1 + steps(n - 3);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(steps(10));\n    }\n}",
+      "choices": [
+        "4"
+      ],
+      "correct_index": 0,
+      "explanation": "The arguments are 10, 7, 4, 1, and -2. Four non-base calls add one before the stopping call returns zero.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-01",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Variables and data types",
+      "meaning": "A variable is a named place to keep a value. Later statements can read it or replace it. A type describes the kinds of values and operations that are permitted.",
+      "purpose": "Use clear names for changing state such as ammunition or health. Read the right side of an assignment before replacing the value on its left. int declares a whole-number variable in this example.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int arrows = 18;\n        arrows = arrows + 4;\n        Console.WriteLine(arrows);\n    }\n}",
+      "example_output": "22",
+      "walkthrough": "The variable starts at 18, then adds four and stores 22. The output reads the updated value.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int potions = 11;\n        potions = potions - 3;\n        Console.WriteLine(potions);\n    }\n}",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The new assignment stores 11 - 3, so the final value is 8.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-02",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Arithmetic and precedence",
+      "meaning": "Arithmetic operators calculate values: + adds, - subtracts, and * multiplies. Multiplication is evaluated before addition unless parentheses change the grouping.",
+      "purpose": "Use arithmetic for prices, scores, and damage. Work through the calculation in precedence order, rather than assuming every operation happens from left to right.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int pouches = 5;\n        int coins = pouches * 7 + 4;\n        Console.WriteLine(coins);\n    }\n}",
+      "example_output": "39",
+      "walkthrough": "Multiplication produces 35 before addition contributes four more.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int torches = 9;\n        int charges = torches * 3 + 2;\n        Console.WriteLine(charges);\n    }\n}",
+      "choices": [
+        "29"
+      ],
+      "correct_index": 0,
+      "explanation": "Multiply 9 by 3 to get 27, then add 2.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-03",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Output and joining strings",
+      "meaning": "A string is a sequence of text characters. Joining two strings with + produces a new string; it does not insert spaces automatically.",
+      "purpose": "Use output for messages and debugging. Put spaces and punctuation inside the text literals, and pay attention to the difference between text and numbers.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        string hero = \"Mira\";\n        Console.WriteLine(\"Welcome, \" + hero);\n    }\n}",
+      "example_output": "Welcome, Mira",
+      "walkthrough": "The greeting literal supplies its trailing space. Joining the name produces one message.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        string place = \"Citadel\";\n        Console.WriteLine(\"Next stop: \" + place);\n    }\n}",
+      "choices": [
+        "Next stop: Citadel"
+      ],
+      "correct_index": 0,
+      "explanation": "The literal provides the words, colon, and space; the variable supplies Citadel.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-04",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Comparisons and equality",
+      "meaning": "A comparison produces true or false. == tests equality, while <, >, <=, and >= compare ordering. A single = assigns a value rather than comparing it.",
+      "purpose": "Use comparisons to decide whether a requirement is met. Check whether your rule includes the boundary value: >= includes equality, but > does not.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int rank = 7;\n        Console.WriteLine(rank == 7);\n    }\n}",
+      "example_output": "True",
+      "walkthrough": "Both sides are seven, so equality succeeds.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int keys = 4;\n        Console.WriteLine(keys >= 6);\n    }\n}",
+      "choices": [
+        "False"
+      ],
+      "correct_index": 0,
+      "explanation": "Four is less than six, so the requirement fails.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-05",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Boolean logic",
+      "meaning": "A boolean represents a true/false condition. Logical AND requires both conditions to succeed. One failed requirement makes an AND expression false.",
+      "purpose": "Use combined conditions for gates or abilities with more than one requirement. Name the separate conditions when doing so makes a rule easier to read. The logical AND operator is &&.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        bool hasMap = true;\n        int energy = 9;\n        Console.WriteLine(hasMap && energy > 5);\n    }\n}",
+      "example_output": "True",
+      "walkthrough": "Both the map condition and the energy comparison succeed.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        bool hasKey = true;\n        int energy = 2;\n        Console.WriteLine(hasKey && energy > 5);\n    }\n}",
+      "choices": [
+        "False"
+      ],
+      "correct_index": 0,
+      "explanation": "The key condition succeeds, but the energy comparison fails. AND requires both.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-06",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Indexes in arrays and lists",
+      "meaning": "An index identifies a position in an ordered collection. Nonnegative indexes start at zero, so index 1 is the second element.",
+      "purpose": "Use indexing to retrieve one particular item. For a nonempty collection of size n, its final ordinary nonnegative index is n - 1.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] supplies = { 6, 13, 21 };\n        Console.WriteLine(supplies[1]);\n    }\n}",
+      "example_output": "13",
+      "walkthrough": "Index 1 selects the second position, which contains 13.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] runes = { 4, 15, 26, 37 };\n        Console.WriteLine(runes[2]);\n    }\n}",
+      "choices": [
+        "26"
+      ],
+      "correct_index": 0,
+      "explanation": "Index 2 selects the third position, containing 26.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-07",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Functions and return values",
+      "meaning": "A function groups reusable instructions. Parameters receive inputs. return sends a result back to the caller; printing a value instead only displays it.",
+      "purpose": "Use functions to avoid repeating calculations. The caller can store, print, or combine a returned result. A function should make its expected inputs and result clear. The int before the method name declares its return type.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int heal(int baseValue, int bonus) {\n        return baseValue + bonus;\n    }\n\n    static void Main() {\n        Console.WriteLine(heal(7, 5));\n    }\n}",
+      "example_output": "12",
+      "walkthrough": "The parameters receive 7 and 5. The function returns their sum, then the caller prints it.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int heal(int baseValue, int bonus) {\n        return baseValue + bonus;\n    }\n\n    static void Main() {\n        Console.WriteLine(heal(9, 6));\n    }\n}",
+      "choices": [
+        "15"
+      ],
+      "correct_index": 0,
+      "explanation": "The supplied arguments are added and returned as 15.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-08",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Counting loops",
+      "meaning": "A counting loop repeats a block while a counter advances through a range. Initialization chooses the first value, and the condition decides whether another iteration runs.",
+      "purpose": "Use counting loops for a known number of repetitions. Check the upper boundary carefully so the loop runs neither one too many times nor one too few. The < condition excludes the upper limit.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        for (int step = 2; step < 5; step++) {\n            Console.WriteLine(step);\n        }\n    }\n}",
+      "example_output": "2\n3\n4",
+      "walkthrough": "The counter visits 2, 3, and 4. It stops before 5.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        for (int step = 4; step < 7; step++) {\n            Console.WriteLine(step);\n        }\n    }\n}",
+      "choices": [
+        "4\n5\n6"
+      ],
+      "correct_index": 0,
+      "explanation": "The range starts at 4 and excludes 7, so three values are printed.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-09",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "Assignment and statement syntax",
+      "meaning": "Assignment replaces the value stored in a variable. The expression on the right can read the old value before the new one is stored.",
+      "purpose": "Use assignment to update state. Statement endings and block structure are part of the language syntax; missing or misplaced syntax can prevent code from running. These simple statements end in semicolons; braces group blocks.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int shield = 14;\n        shield = shield - 5;\n        Console.WriteLine(shield);\n    }\n}",
+      "example_output": "9",
+      "walkthrough": "The old value is used to calculate 14 - 5 before shield is replaced.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int supplies = 8;\n        supplies = supplies * 2;\n        Console.WriteLine(supplies);\n    }\n}",
+      "choices": [
+        "16"
+      ],
+      "correct_index": 0,
+      "explanation": "Eight is doubled, and 16 replaces the old value.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-10",
+      "language": "csharp",
+      "difficulty": "easy",
+      "title": "If and else branches",
+      "meaning": "An if statement chooses a block using a boolean condition. An optional else block runs when the condition is false.",
+      "purpose": "Use branches for actions that depend on current state. In a single if/else pair only one branch runs, so trace the condition before reading its output.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int coins = 18;\n        if (coins >= 15) {\n            Console.WriteLine(\"Enter\");\n        } else {\n            Console.WriteLine(\"Wait\");\n        }\n    }\n}",
+      "example_output": "Enter",
+      "walkthrough": "Eighteen is at least fifteen. The first block runs and the else block is skipped.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int coins = 12;\n        if (coins >= 15) {\n            Console.WriteLine(\"Enter\");\n        } else {\n            Console.WriteLine(\"Wait\");\n        }\n    }\n}",
+      "choices": [
+        "Wait"
+      ],
+      "correct_index": 0,
+      "explanation": "Twelve does not meet the threshold, so the else block prints Wait.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-csharp-11",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Accumulating a total",
+      "meaning": "An accumulator is updated repeatedly to combine a sequence of values. A sum normally starts at zero, the value that changes nothing when added.",
+      "purpose": "Use this pattern for total coins, damage, or measurements. Initialize the accumulator outside the loop so each iteration keeps the earlier work.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int total = 0;\n        for (int wave = 1; wave < 5; wave++) {\n            total = total + wave;\n        }\n        Console.WriteLine(total);\n    }\n}",
+      "example_output": "10",
+      "walkthrough": "The running values are 1, 3, 6, and 10 after adding 1 through 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int total = 0;\n        for (int wave = 2; wave < 6; wave++) {\n            total = total + wave;\n        }\n        Console.WriteLine(total);\n    }\n}",
+      "choices": [
+        "14"
+      ],
+      "correct_index": 0,
+      "explanation": "The loop adds 2 + 3 + 4 + 5 to make 14.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-12",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Selecting part of a string",
+      "meaning": "A substring or slice selects a section of text by position. The exact meaning of the second argument depends on the language.",
+      "purpose": "Use substring operations for prefixes and fragments. Distinguish an end index from a character count; Java, C#, and Python do not all use the same convention. C# Substring(start, length) takes length characters.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        string word = \"CASTLE\";\n        Console.WriteLine(word.Substring(1, 3));\n    }\n}",
+      "example_output": "AST",
+      "walkthrough": "The chosen positions are 1, 2, and 3: A, S, and T.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        string word = \"DRAGON\";\n        Console.WriteLine(word.Substring(1, 3));\n    }\n}",
+      "choices": [
+        "RAG"
+      ],
+      "correct_index": 0,
+      "explanation": "Positions 1 through 3 contain R, A, and G.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-13",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Safe collection iteration",
+      "meaning": "The size of a collection counts its elements. Because indexing begins at zero, an index equal to the size is already past the end.",
+      "purpose": "Use the actual collection size rather than a hard-coded loop endpoint. This keeps the loop correct when the collection grows or shrinks.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] gems = { 8, 14, 20 };\n        for (int i = 0; i < gems.Length; i++) {\n            Console.WriteLine(gems[i]);\n        }\n    }\n}",
+      "example_output": "8\n14\n20",
+      "walkthrough": "The size is three, so the loop visits indexes 0, 1, and 2 only.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] gems = { 5, 17 };\n        for (int i = 0; i < gems.Length; i++) {\n            Console.WriteLine(gems[i]);\n        }\n    }\n}",
+      "choices": [
+        "5\n17"
+      ],
+      "correct_index": 0,
+      "explanation": "The size is two. The loop visits indexes 0 and 1.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-14",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Compound assignment",
+      "meaning": "A compound assignment combines an operation with storing its result. For these integers, x += amount adds amount to x and replaces x with that result.",
+      "purpose": "Use compound assignment for counters and running totals when it improves readability. It changes a value; it is not an equality comparison.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int charge = 12;\n        charge += 3;\n        charge *= 2;\n        Console.WriteLine(charge);\n    }\n}",
+      "example_output": "30",
+      "walkthrough": "Addition changes 12 to 15; multiplication then changes 15 to 30.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int charge = 7;\n        charge += 5;\n        charge -= 4;\n        Console.WriteLine(charge);\n    }\n}",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The updates produce 12 and then 8.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-15",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Comparing string contents",
+      "meaning": "Value equality asks whether text contains the same characters. Object identity asks whether two references identify the same object; that is a different question.",
+      "purpose": "Use a value comparison for commands and labels. Ordinary comparisons in these examples are case-sensitive, so capitalization matters. C# string == compares string values.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        string password = \"rune\";\n        Console.WriteLine(password == \"rune\");\n    }\n}",
+      "example_output": "True",
+      "walkthrough": "The same four characters appear on both sides.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        string password = \"Rune\";\n        Console.WriteLine(password == \"rune\");\n    }\n}",
+      "choices": [
+        "False"
+      ],
+      "correct_index": 0,
+      "explanation": "Uppercase R differs from lowercase r in this comparison.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-16",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Collection size and final index",
+      "meaning": "Size counts positions, not distinct values. Repeated elements still occupy separate positions. For a nonempty collection the final index is size - 1.",
+      "purpose": "Use size to display item counts or control iteration. Do not subtract one when you want a count; subtract one only when you need a final valid index.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] loot = { 12, 24, 36, 48 };\n        Console.WriteLine(loot.Length);\n    }\n}",
+      "example_output": "4",
+      "walkthrough": "Four positions exist, although the final index is 3.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] loot = { 7, 7, 7, 7, 7 };\n        Console.WriteLine(loot.Length);\n    }\n}",
+      "choices": [
+        "5"
+      ],
+      "correct_index": 0,
+      "explanation": "All five positions count, even though their stored values repeat.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-17",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Parameters and reusable calculations",
+      "meaning": "Parameters are local names for the values supplied at a call site. Changing the arguments can change a function result without changing its instructions.",
+      "purpose": "Separate an algorithm from its input data. Check argument order: swapping two inputs can change which one gets multiplied or otherwise transformed.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int damage(int baseValue, int bonus) {\n        return baseValue * 2 + bonus;\n    }\n\n    static void Main() {\n        Console.WriteLine(damage(6, 4));\n    }\n}",
+      "example_output": "16",
+      "walkthrough": "The first parameter is doubled, then the second is added: 12 + 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int damage(int baseValue, int bonus) {\n        return baseValue * 2 + bonus;\n    }\n\n    static void Main() {\n        Console.WriteLine(damage(4, 6));\n    }\n}",
+      "choices": [
+        "14"
+      ],
+      "correct_index": 0,
+      "explanation": "Swapping the inputs calculates 4 * 2 + 6 instead.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-18",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "The remainder operator",
+      "meaning": "For positive integers, a % b is what remains after making complete groups of size b. It differs from the quotient produced by division.",
+      "purpose": "Use remainders for cycles and even/odd checks. These examples use positive integers; negative-operand remainder rules differ between languages.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int crystals = 23;\n        Console.WriteLine(crystals % 6);\n    }\n}",
+      "example_output": "5",
+      "walkthrough": "Three groups of six use eighteen crystals. Five remain.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int coins = 31;\n        Console.WriteLine(coins % 5);\n    }\n}",
+      "choices": [
+        "1"
+      ],
+      "correct_index": 0,
+      "explanation": "Six groups of five use thirty coins. One remains.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-19",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Skipping iterations with continue",
+      "meaning": "continue skips the rest of the current loop iteration. It does not finish the whole loop; later iterations can still run.",
+      "purpose": "Use continue to ignore an unwanted item and process the remaining items. Use break when you intend to stop the loop altogether.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        for (int i = 1; i < 5; i++) {\n            if (i == 3) {\n                continue;\n            }\n            Console.WriteLine(i);\n        }\n    }\n}",
+      "example_output": "1\n2\n4",
+      "walkthrough": "The output is skipped at i = 3, but the loop still processes i = 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        for (int i = 3; i < 7; i++) {\n            if (i == 5) {\n                continue;\n            }\n            Console.WriteLine(i);\n        }\n    }\n}",
+      "choices": [
+        "3\n4\n6"
+      ],
+      "correct_index": 0,
+      "explanation": "The loop visits 3 through 6 but skips printing at 5.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-20",
+      "language": "csharp",
+      "difficulty": "medium",
+      "title": "Updating an indexed element",
+      "meaning": "An indexed assignment replaces a single element. Reading from one index and writing to another does not move every element in the collection.",
+      "purpose": "Use indexed updates for inventory slots or saved scores. Check both indexes before tracing the expression: the source and destination positions can be different.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] scores = { 9, 18, 27 };\n        scores[1] = scores[1] + 6;\n        Console.WriteLine(scores[1]);\n    }\n}",
+      "example_output": "24",
+      "walkthrough": "The second element changes from 18 to 24. Other positions are untouched.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] scores = { 8, 16, 24 };\n        scores[2] = scores[0] + 5;\n        Console.WriteLine(scores[2]);\n    }\n}",
+      "choices": [
+        "13"
+      ],
+      "correct_index": 0,
+      "explanation": "The first element is read as eight. Adding five produces 13, which replaces the third element.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-csharp-21",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Recursion and returned results",
+      "meaning": "A recursive function calls itself on a smaller version of the same problem. Its returned results are combined as the earlier calls finish.",
+      "purpose": "Use recursion for naturally repeating subproblems. Trace both the calls going toward the base case and the results returning toward the original caller. This function expects a nonnegative integer input.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int doublePower(int n) {\n        if (n == 0) return 1;\n        return 2 * doublePower(n - 1);\n    }\n\n    static void Main() {\n        Console.WriteLine(doublePower(3));\n    }\n}",
+      "example_output": "8",
+      "walkthrough": "The base returns one. Returning through three calls doubles it to 2, 4, and 8.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int doublePower(int n) {\n        if (n == 0) return 1;\n        return 2 * doublePower(n - 1);\n    }\n\n    static void Main() {\n        Console.WriteLine(doublePower(5));\n    }\n}",
+      "choices": [
+        "32"
+      ],
+      "correct_index": 0,
+      "explanation": "Five doublings from one produce 2, 4, 8, 16, and 32.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-22",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Binary search on sorted data",
+      "meaning": "Binary search compares a target with the middle element of sorted data, then discards the half that cannot contain the target.",
+      "purpose": "Use it for lookups in sorted data. Each step approximately halves the search interval, giving O(log n) search time. Sorting itself has a separate cost.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int findRune(int[] values, int target) {\n        int low = 0, high = values.Length - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (values[mid] == target) return mid;\n            if (values[mid] < target) low = mid + 1;\n            else high = mid - 1;\n        }\n        return -1;\n    }\n\n    static void Main() {\n        int[] runes = { 3, 7, 11, 19, 27, 34 };\n        Console.WriteLine(findRune(runes, 19));\n    }\n}",
+      "example_output": "3",
+      "walkthrough": "Nineteen is the fourth element, at index three. Comparing with the midpoint narrows the interval until that position is found.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int findRune(int[] values, int target) {\n        int low = 0, high = values.Length - 1;\n        while (low <= high) {\n            int mid = low + (high - low) / 2;\n            if (values[mid] == target) return mid;\n            if (values[mid] < target) low = mid + 1;\n            else high = mid - 1;\n        }\n        return -1;\n    }\n\n    static void Main() {\n        int[] runes = { 4, 9, 16, 25, 31 };\n        Console.WriteLine(findRune(runes, 31));\n    }\n}",
+      "choices": [
+        "4"
+      ],
+      "correct_index": 0,
+      "explanation": "Thirty-one is the final value in this five-element collection. Its zero-based index is four.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-23",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Growing collections",
+      "meaning": "A dynamic collection can grow when elements are added. Appending an element adds a new position rather than replacing an existing one.",
+      "purpose": "Use a dynamic collection when the item count can change. Its current size describes how many elements it contains, not how much capacity may be reserved internally. Use Add and Count for C# List<T>.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        List<string> bag = new List<string> { \"map\", \"torch\" };\n        bag.Add(\"rope\");\n        Console.WriteLine(bag.Count);\n    }\n}",
+      "example_output": "3",
+      "walkthrough": "The worked bag ends with map, torch, and rope: three entries.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        List<string> bag = new List<string> { \"key\" };\n        bag.Add(\"coin\");\n        bag.Add(\"gem\");\n        bag.Add(\"scroll\");\n        Console.WriteLine(bag.Count);\n    }\n}",
+      "choices": [
+        "4"
+      ],
+      "correct_index": 0,
+      "explanation": "Each append or add creates one more position. Count the entries remaining after all additions.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-24",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Object identity and value equality",
+      "meaning": "Separately created objects have different identities even if their fields match. A custom class can define what equality of its values should mean.",
+      "purpose": "Define value equality explicitly for domain objects. This example compares a rune power field. In hash-based collections, equality and hashing must obey a consistent contract. C# overrides Equals and supplies a consistent GetHashCode. This does not overload == for the Rune class.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    sealed class Rune {\n        public int Power { get; }\n        public Rune(int power) { Power = power; }\n        public override bool Equals(object obj) {\n            return obj is Rune other && Power == other.Power;\n        }\n        public override int GetHashCode() { return Power.GetHashCode(); }\n    }\n\n    static void Main() {\n        Rune a = new Rune(8);\n        Rune b = new Rune(8);\n        Console.WriteLine(a.Equals(b));\n    }\n}",
+      "example_output": "True",
+      "walkthrough": "Both power fields contain eight, so the custom value comparison succeeds even though these are separate objects.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    sealed class Rune {\n        public int Power { get; }\n        public Rune(int power) { Power = power; }\n        public override bool Equals(object obj) {\n            return obj is Rune other && Power == other.Power;\n        }\n        public override int GetHashCode() { return Power.GetHashCode(); }\n    }\n\n    static void Main() {\n        Rune a = new Rune(4);\n        Rune b = new Rune(9);\n        Console.WriteLine(a.Equals(b));\n    }\n}",
+      "choices": [
+        "False"
+      ],
+      "correct_index": 0,
+      "explanation": "The power fields contain four and nine. The custom comparison therefore returns false.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-25",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Exceptions and recovery",
+      "meaning": "An exception signals that an operation could not finish normally. A matching catch or except handler can choose how to recover from that failure.",
+      "purpose": "Handle failures you can meaningfully recover from. Catch the specific error you expect instead of silently swallowing every possible problem.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        try {\n            int divisor = 0;\n            Console.WriteLine(18 / divisor);\n        } catch (DivideByZeroException ex) {\n            Console.WriteLine(\"No divisor\");\n        }\n    }\n}",
+      "example_output": "No divisor",
+      "walkthrough": "Division by zero transfers control to the matching handler, which prints a recovery message.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        try {\n            int divisor = 3;\n            Console.WriteLine(18 / divisor);\n        } catch (DivideByZeroException ex) {\n            Console.WriteLine(\"No divisor\");\n        }\n    }\n}",
+      "choices": [
+        "6"
+      ],
+      "correct_index": 0,
+      "explanation": "The divisor is three, so the division succeeds and the handler is skipped.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-26",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Generic collection element types",
+      "meaning": "A generic type parameter declares the kind of element a collection stores. The compiler checks element usage against that type, which catches many invalid operations before the program runs.",
+      "purpose": "Use a typed collection to catch invalid element usage early, or use a short comprehension to express a clear transformation. Keep transformations readable. C# List<T> can use value types such as int and reference types such as string.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        List<string> names = new List<string> { \"oak\", \"ember\" };\n        Console.WriteLine(names[1]);\n    }\n}",
+      "example_output": "ember",
+      "walkthrough": "The element type is text, and index one selects the second string.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        List<int> gems = new List<int> { 7, 10, 15 };\n        Console.WriteLine(gems[0] + gems[2]);\n    }\n}",
+      "choices": [
+        "22"
+      ],
+      "correct_index": 0,
+      "explanation": "The integer elements at positions zero and two contain seven and fifteen. Their sum is 22.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-27",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Parentheses and expression evaluation",
+      "meaning": "Parentheses group an expression so that its value is calculated before the surrounding operations use it. This can change the result.",
+      "purpose": "Use parentheses to make a rule explicit when operators are mixed. Grouping is also useful when it improves readability without changing the result.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int power = 4;\n        Console.WriteLine((power + 5) * 3);\n    }\n}",
+      "example_output": "27",
+      "walkthrough": "The grouped addition produces nine before multiplication produces 27.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int power = 6;\n        Console.WriteLine((power + 2) * 4);\n    }\n}",
+      "choices": [
+        "32"
+      ],
+      "correct_index": 0,
+      "explanation": "The grouped addition produces eight; multiplying by four gives 32.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-28",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Stacks and last-in-first-out",
+      "meaning": "A stack removes the most recently added element first. This is last-in-first-out, or LIFO. A pop both returns and removes the top element.",
+      "purpose": "Use stacks for undo history or backtracking. Check that a stack contains an item before popping; removing from an empty stack is an error.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        Stack<string> trail = new Stack<string>();\n        trail.Push(\"gate\");\n        trail.Push(\"tower\");\n        Console.WriteLine(trail.Pop());\n    }\n}",
+      "example_output": "tower",
+      "walkthrough": "tower was added after gate, so it is the first value removed.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        Stack<string> trail = new Stack<string>();\n        trail.Push(\"camp\");\n        trail.Push(\"bridge\");\n        trail.Push(\"keep\");\n        trail.Pop();\n        Console.WriteLine(trail.Pop());\n    }\n}",
+      "choices": [
+        "bridge"
+      ],
+      "correct_index": 0,
+      "explanation": "The first pop discards keep. bridge is then on top and is returned by the second pop.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-29",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Integer division inside a loop",
+      "meaning": "An accumulator can combine the results of another operation. For positive values, integer division keeps the complete groups and discards any fractional part.",
+      "purpose": "Use this pattern when leftovers from separate batches cannot be pooled. Dividing each batch before summing is different from summing all batches before division. Integer division truncates toward zero; these inputs are all positive.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] rewards = { 9, 16, 24 };\n        int total = 0;\n        for (int i = 0; i < rewards.Length; i++) {\n            total = total + rewards[i] / 4;\n        }\n        Console.WriteLine(total);\n    }\n}",
+      "example_output": "12",
+      "walkthrough": "The individual divisions produce two, four, and six. Adding those results produces twelve.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static void Main() {\n        int[] rewards = { 11, 20, 28 };\n        int total = 0;\n        for (int i = 0; i < rewards.Length; i++) {\n            total = total + rewards[i] / 6;\n        }\n        Console.WriteLine(total);\n    }\n}",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The divisions produce one, three, and four. The sum is eight.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-csharp-30",
+      "language": "csharp",
+      "difficulty": "hard",
+      "title": "Base cases and recursive progress",
+      "meaning": "A base case returns without another recursive call. The recursive step must make progress toward that case; merely having a base case does not guarantee termination.",
+      "purpose": "Choose a stopping condition that covers the values a recursive step can reach. Subtracting by more than one can pass below zero, so equality with zero may be insufficient.",
+      "code_snippet": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int steps(int n) {\n        if (n <= 0) return 0;\n        return 1 + steps(n - 3);\n    }\n\n    static void Main() {\n        Console.WriteLine(steps(8));\n    }\n}",
+      "example_output": "3",
+      "walkthrough": "The arguments are 8, 5, 2, and -1. The final call returns zero. Three earlier calls each add one.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "using System;\nusing System.Collections.Generic;\nclass LessonDemo {\n    static int steps(int n) {\n        if (n <= 0) return 0;\n        return 1 + steps(n - 3);\n    }\n\n    static void Main() {\n        Console.WriteLine(steps(10));\n    }\n}",
+      "choices": [
+        "4"
+      ],
+      "correct_index": 0,
+      "explanation": "The arguments are 10, 7, 4, 1, and -2. Four non-base calls add one before the stopping call returns zero.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-01",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Variables and data types",
+      "meaning": "A variable is a named place to keep a value. Later statements can read it or replace it. A type describes the kinds of values and operations that are permitted.",
+      "purpose": "Use clear names for changing state such as ammunition or health. Read the right side of an assignment before replacing the value on its left. Python determines the type from the assigned value.",
+      "code_snippet": "arrows = 18\narrows = arrows + 4\nprint(arrows)",
+      "example_output": "22",
+      "walkthrough": "The variable starts at 18, then adds four and stores 22. The output reads the updated value.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "potions = 11\npotions = potions - 3\nprint(potions)",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The new assignment stores 11 - 3, so the final value is 8.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-02",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Arithmetic and precedence",
+      "meaning": "Arithmetic operators calculate values: + adds, - subtracts, and * multiplies. Multiplication is evaluated before addition unless parentheses change the grouping.",
+      "purpose": "Use arithmetic for prices, scores, and damage. Work through the calculation in precedence order, rather than assuming every operation happens from left to right.",
+      "code_snippet": "pouches = 5\ncoins = pouches * 7 + 4\nprint(coins)",
+      "example_output": "39",
+      "walkthrough": "Multiplication produces 35 before addition contributes four more.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "torches = 9\ncharges = torches * 3 + 2\nprint(charges)",
+      "choices": [
+        "29"
+      ],
+      "correct_index": 0,
+      "explanation": "Multiply 9 by 3 to get 27, then add 2.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-03",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Output and joining strings",
+      "meaning": "A string is a sequence of text characters. Joining two strings with + produces a new string; it does not insert spaces automatically.",
+      "purpose": "Use output for messages and debugging. Put spaces and punctuation inside the text literals, and pay attention to the difference between text and numbers.",
+      "code_snippet": "hero = \"Mira\"\nprint(\"Welcome, \" + hero)",
+      "example_output": "Welcome, Mira",
+      "walkthrough": "The greeting literal supplies its trailing space. Joining the name produces one message.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "place = \"Citadel\"\nprint(\"Next stop: \" + place)",
+      "choices": [
+        "Next stop: Citadel"
+      ],
+      "correct_index": 0,
+      "explanation": "The literal provides the words, colon, and space; the variable supplies Citadel.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-04",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Comparisons and equality",
+      "meaning": "A comparison produces true or false. == tests equality, while <, >, <=, and >= compare ordering. A single = assigns a value rather than comparing it.",
+      "purpose": "Use comparisons to decide whether a requirement is met. Check whether your rule includes the boundary value: >= includes equality, but > does not.",
+      "code_snippet": "rank = 7\nprint(rank == 7)",
+      "example_output": "True",
+      "walkthrough": "Both sides are seven, so equality succeeds.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "keys = 4\nprint(keys >= 6)",
+      "choices": [
+        "False"
+      ],
+      "correct_index": 0,
+      "explanation": "Four is less than six, so the requirement fails.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-05",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Boolean logic",
+      "meaning": "A boolean represents a true/false condition. Logical AND requires both conditions to succeed. One failed requirement makes an AND expression false.",
+      "purpose": "Use combined conditions for gates or abilities with more than one requirement. Name the separate conditions when doing so makes a rule easier to read. The logical AND operator is and.",
+      "code_snippet": "hasMap = True\nenergy = 9\nprint(hasMap and energy > 5)",
+      "example_output": "True",
+      "walkthrough": "Both the map condition and the energy comparison succeed.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "hasKey = True\nenergy = 2\nprint(hasKey and energy > 5)",
+      "choices": [
+        "False"
+      ],
+      "correct_index": 0,
+      "explanation": "The key condition succeeds, but the energy comparison fails. AND requires both.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-06",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Indexes in arrays and lists",
+      "meaning": "An index identifies a position in an ordered collection. Nonnegative indexes start at zero, so index 1 is the second element.",
+      "purpose": "Use indexing to retrieve one particular item. For a nonempty collection of size n, its final ordinary nonnegative index is n - 1.",
+      "code_snippet": "supplies = [6, 13, 21]\nprint(supplies[1])",
+      "example_output": "13",
+      "walkthrough": "Index 1 selects the second position, which contains 13.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "runes = [4, 15, 26, 37]\nprint(runes[2])",
+      "choices": [
+        "26"
+      ],
+      "correct_index": 0,
+      "explanation": "Index 2 selects the third position, containing 26.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-07",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Functions and return values",
+      "meaning": "A function groups reusable instructions. Parameters receive inputs. return sends a result back to the caller; printing a value instead only displays it.",
+      "purpose": "Use functions to avoid repeating calculations. The caller can store, print, or combine a returned result. A function should make its expected inputs and result clear. Python declares a function with def.",
+      "code_snippet": "def heal(base, bonus):\n    return base + bonus\n\nprint(heal(7, 5))",
+      "example_output": "12",
+      "walkthrough": "The parameters receive 7 and 5. The function returns their sum, then the caller prints it.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "def heal(base, bonus):\n    return base + bonus\n\nprint(heal(9, 6))",
+      "choices": [
+        "15"
+      ],
+      "correct_index": 0,
+      "explanation": "The supplied arguments are added and returned as 15.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-08",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Counting loops",
+      "meaning": "A counting loop repeats a block while a counter advances through a range. Initialization chooses the first value, and the condition decides whether another iteration runs.",
+      "purpose": "Use counting loops for a known number of repetitions. Check the upper boundary carefully so the loop runs neither one too many times nor one too few. Python range excludes its stop argument.",
+      "code_snippet": "for step in range(2, 5):\n    print(step)",
+      "example_output": "2\n3\n4",
+      "walkthrough": "The counter visits 2, 3, and 4. It stops before 5.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "for step in range(4, 7):\n    print(step)",
+      "choices": [
+        "4\n5\n6"
+      ],
+      "correct_index": 0,
+      "explanation": "The range starts at 4 and excludes 7, so three values are printed.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-09",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "Assignment and statement syntax",
+      "meaning": "Assignment replaces the value stored in a variable. The expression on the right can read the old value before the new one is stored.",
+      "purpose": "Use assignment to update state. Statement endings and block structure are part of the language syntax; missing or misplaced syntax can prevent code from running. Python uses newlines for these statements and indentation for blocks.",
+      "code_snippet": "shield = 14\nshield = shield - 5\nprint(shield)",
+      "example_output": "9",
+      "walkthrough": "The old value is used to calculate 14 - 5 before shield is replaced.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "supplies = 8\nsupplies = supplies * 2\nprint(supplies)",
+      "choices": [
+        "16"
+      ],
+      "correct_index": 0,
+      "explanation": "Eight is doubled, and 16 replaces the old value.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-10",
+      "language": "python",
+      "difficulty": "easy",
+      "title": "If and else branches",
+      "meaning": "An if statement chooses a block using a boolean condition. An optional else block runs when the condition is false.",
+      "purpose": "Use branches for actions that depend on current state. In a single if/else pair only one branch runs, so trace the condition before reading its output.",
+      "code_snippet": "coins = 18\nif coins >= 15:\n    print(\"Enter\")\nelse:\n    print(\"Wait\")",
+      "example_output": "Enter",
+      "walkthrough": "Eighteen is at least fifteen. The first block runs and the else block is skipped.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "coins = 12\nif coins >= 15:\n    print(\"Enter\")\nelse:\n    print(\"Wait\")",
+      "choices": [
+        "Wait"
+      ],
+      "correct_index": 0,
+      "explanation": "Twelve does not meet the threshold, so the else block prints Wait.",
+      "min_level": 1,
+      "max_level": 5
+    },
+    {
+      "id": "lesson-python-11",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Accumulating a total",
+      "meaning": "An accumulator is updated repeatedly to combine a sequence of values. A sum normally starts at zero, the value that changes nothing when added.",
+      "purpose": "Use this pattern for total coins, damage, or measurements. Initialize the accumulator outside the loop so each iteration keeps the earlier work.",
+      "code_snippet": "total = 0\nfor wave in range(1, 5):\n    total = total + wave\nprint(total)",
+      "example_output": "10",
+      "walkthrough": "The running values are 1, 3, 6, and 10 after adding 1 through 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "total = 0\nfor wave in range(2, 6):\n    total = total + wave\nprint(total)",
+      "choices": [
+        "14"
+      ],
+      "correct_index": 0,
+      "explanation": "The loop adds 2 + 3 + 4 + 5 to make 14.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-12",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Selecting part of a string",
+      "meaning": "A substring or slice selects a section of text by position. The exact meaning of the second argument depends on the language.",
+      "purpose": "Use substring operations for prefixes and fragments. Distinguish an end index from a character count; Java, C#, and Python do not all use the same convention. Python [start:stop] excludes stop.",
+      "code_snippet": "word = \"CASTLE\"\nprint(word[1:4])",
+      "example_output": "AST",
+      "walkthrough": "The chosen positions are 1, 2, and 3: A, S, and T.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "word = \"DRAGON\"\nprint(word[1:4])",
+      "choices": [
+        "RAG"
+      ],
+      "correct_index": 0,
+      "explanation": "Positions 1 through 3 contain R, A, and G.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-13",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Safe collection iteration",
+      "meaning": "The size of a collection counts its elements. Because indexing begins at zero, an index equal to the size is already past the end.",
+      "purpose": "Use the actual collection size rather than a hard-coded loop endpoint. This keeps the loop correct when the collection grows or shrinks.",
+      "code_snippet": "gems = [8, 14, 20]\nfor i in range(0, len(gems)):\n    print(gems[i])",
+      "example_output": "8\n14\n20",
+      "walkthrough": "The size is three, so the loop visits indexes 0, 1, and 2 only.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "gems = [5, 17]\nfor i in range(0, len(gems)):\n    print(gems[i])",
+      "choices": [
+        "5\n17"
+      ],
+      "correct_index": 0,
+      "explanation": "The size is two. The loop visits indexes 0 and 1.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-14",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Compound assignment",
+      "meaning": "A compound assignment combines an operation with storing its result. For these integers, x += amount adds amount to x and replaces x with that result.",
+      "purpose": "Use compound assignment for counters and running totals when it improves readability. It changes a value; it is not an equality comparison.",
+      "code_snippet": "charge = 12\ncharge += 3\ncharge *= 2\nprint(charge)",
+      "example_output": "30",
+      "walkthrough": "Addition changes 12 to 15; multiplication then changes 15 to 30.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "charge = 7\ncharge += 5\ncharge -= 4\nprint(charge)",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The updates produce 12 and then 8.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-15",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Comparing string contents",
+      "meaning": "Value equality asks whether text contains the same characters. Object identity asks whether two references identify the same object; that is a different question.",
+      "purpose": "Use a value comparison for commands and labels. Ordinary comparisons in these examples are case-sensitive, so capitalization matters. Python == compares values; is tests identity.",
+      "code_snippet": "password = \"rune\"\nprint(password == \"rune\")",
+      "example_output": "True",
+      "walkthrough": "The same four characters appear on both sides.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "password = \"Rune\"\nprint(password == \"rune\")",
+      "choices": [
+        "False"
+      ],
+      "correct_index": 0,
+      "explanation": "Uppercase R differs from lowercase r in this comparison.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-16",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Collection size and final index",
+      "meaning": "Size counts positions, not distinct values. Repeated elements still occupy separate positions. For a nonempty collection the final index is size - 1.",
+      "purpose": "Use size to display item counts or control iteration. Do not subtract one when you want a count; subtract one only when you need a final valid index.",
+      "code_snippet": "loot = [12, 24, 36, 48]\nprint(len(loot))",
+      "example_output": "4",
+      "walkthrough": "Four positions exist, although the final index is 3.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "loot = [7, 7, 7, 7, 7]\nprint(len(loot))",
+      "choices": [
+        "5"
+      ],
+      "correct_index": 0,
+      "explanation": "All five positions count, even though their stored values repeat.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-17",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Parameters and reusable calculations",
+      "meaning": "Parameters are local names for the values supplied at a call site. Changing the arguments can change a function result without changing its instructions.",
+      "purpose": "Separate an algorithm from its input data. Check argument order: swapping two inputs can change which one gets multiplied or otherwise transformed.",
+      "code_snippet": "def damage(base, bonus):\n    return base * 2 + bonus\n\nprint(damage(6, 4))",
+      "example_output": "16",
+      "walkthrough": "The first parameter is doubled, then the second is added: 12 + 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "def damage(base, bonus):\n    return base * 2 + bonus\n\nprint(damage(4, 6))",
+      "choices": [
+        "14"
+      ],
+      "correct_index": 0,
+      "explanation": "Swapping the inputs calculates 4 * 2 + 6 instead.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-18",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "The remainder operator",
+      "meaning": "For positive integers, a % b is what remains after making complete groups of size b. It differs from the quotient produced by division.",
+      "purpose": "Use remainders for cycles and even/odd checks. These examples use positive integers; negative-operand remainder rules differ between languages.",
+      "code_snippet": "crystals = 23\nprint(crystals % 6)",
+      "example_output": "5",
+      "walkthrough": "Three groups of six use eighteen crystals. Five remain.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "coins = 31\nprint(coins % 5)",
+      "choices": [
+        "1"
+      ],
+      "correct_index": 0,
+      "explanation": "Six groups of five use thirty coins. One remains.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-19",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Skipping iterations with continue",
+      "meaning": "continue skips the rest of the current loop iteration. It does not finish the whole loop; later iterations can still run.",
+      "purpose": "Use continue to ignore an unwanted item and process the remaining items. Use break when you intend to stop the loop altogether.",
+      "code_snippet": "for i in range(1, 5):\n    if i == 3:\n        continue\n    print(i)",
+      "example_output": "1\n2\n4",
+      "walkthrough": "The output is skipped at i = 3, but the loop still processes i = 4.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "for i in range(3, 7):\n    if i == 5:\n        continue\n    print(i)",
+      "choices": [
+        "3\n4\n6"
+      ],
+      "correct_index": 0,
+      "explanation": "The loop visits 3 through 6 but skips printing at 5.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-20",
+      "language": "python",
+      "difficulty": "medium",
+      "title": "Updating an indexed element",
+      "meaning": "An indexed assignment replaces a single element. Reading from one index and writing to another does not move every element in the collection.",
+      "purpose": "Use indexed updates for inventory slots or saved scores. Check both indexes before tracing the expression: the source and destination positions can be different.",
+      "code_snippet": "scores = [9, 18, 27]\nscores[1] = scores[1] + 6\nprint(scores[1])",
+      "example_output": "24",
+      "walkthrough": "The second element changes from 18 to 24. Other positions are untouched.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "scores = [8, 16, 24]\nscores[2] = scores[0] + 5\nprint(scores[2])",
+      "choices": [
+        "13"
+      ],
+      "correct_index": 0,
+      "explanation": "The first element is read as eight. Adding five produces 13, which replaces the third element.",
+      "min_level": 6,
+      "max_level": 15
+    },
+    {
+      "id": "lesson-python-21",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Recursion and returned results",
+      "meaning": "A recursive function calls itself on a smaller version of the same problem. Its returned results are combined as the earlier calls finish.",
+      "purpose": "Use recursion for naturally repeating subproblems. Trace both the calls going toward the base case and the results returning toward the original caller. This function expects a nonnegative integer input.",
+      "code_snippet": "def double_power(n):\n    if n == 0:\n        return 1\n    return 2 * double_power(n - 1)\n\nprint(double_power(3))",
+      "example_output": "8",
+      "walkthrough": "The base returns one. Returning through three calls doubles it to 2, 4, and 8.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "def double_power(n):\n    if n == 0:\n        return 1\n    return 2 * double_power(n - 1)\n\nprint(double_power(5))",
+      "choices": [
+        "32"
+      ],
+      "correct_index": 0,
+      "explanation": "Five doublings from one produce 2, 4, 8, 16, and 32.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-22",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Binary search on sorted data",
+      "meaning": "Binary search compares a target with the middle element of sorted data, then discards the half that cannot contain the target.",
+      "purpose": "Use it for lookups in sorted data. Each step approximately halves the search interval, giving O(log n) search time. Sorting itself has a separate cost.",
+      "code_snippet": "def find_rune(values, target):\n    low, high = 0, len(values) - 1\n    while low <= high:\n        mid = low + (high - low) // 2\n        if values[mid] == target:\n            return mid\n        if values[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\nrunes = [3, 7, 11, 19, 27, 34]\nprint(find_rune(runes, 19))",
+      "example_output": "3",
+      "walkthrough": "Nineteen is the fourth element, at index three. Comparing with the midpoint narrows the interval until that position is found.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "def find_rune(values, target):\n    low, high = 0, len(values) - 1\n    while low <= high:\n        mid = low + (high - low) // 2\n        if values[mid] == target:\n            return mid\n        if values[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\nrunes = [4, 9, 16, 25, 31]\nprint(find_rune(runes, 31))",
+      "choices": [
+        "4"
+      ],
+      "correct_index": 0,
+      "explanation": "Thirty-one is the final value in this five-element collection. Its zero-based index is four.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-23",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Growing collections",
+      "meaning": "A dynamic collection can grow when elements are added. Appending an element adds a new position rather than replacing an existing one.",
+      "purpose": "Use a dynamic collection when the item count can change. Its current size describes how many elements it contains, not how much capacity may be reserved internally. Use append and len for Python lists.",
+      "code_snippet": "bag = [\"map\", \"torch\"]\nbag.append(\"rope\")\nprint(len(bag))",
+      "example_output": "3",
+      "walkthrough": "The worked bag ends with map, torch, and rope: three entries.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "bag = [\"key\"]\nbag.append(\"coin\")\nbag.append(\"gem\")\nprint(len(bag))",
+      "choices": [
+        "3"
+      ],
+      "correct_index": 0,
+      "explanation": "Each append or add creates one more position. Count the entries remaining after all additions.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-24",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Object identity and value equality",
+      "meaning": "Separately created objects have different identities even if their fields match. A custom class can define what equality of its values should mean.",
+      "purpose": "Define value equality explicitly for domain objects. This example compares a rune power field. In hash-based collections, equality and hashing must obey a consistent contract. Python uses __eq__ for ==. Defining __eq__ alone does not make this class hashable; __hash__ is a separate contract.",
+      "code_snippet": "class Rune:\n    def __init__(self, power):\n        self.power = power\n\n    def __eq__(self, other):\n        if not isinstance(other, Rune):\n            return NotImplemented\n        return self.power == other.power\n\na = Rune(8)\nb = Rune(8)\nprint(a == b)",
+      "example_output": "True",
+      "walkthrough": "Both power fields contain eight, so the custom value comparison succeeds even though these are separate objects.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "class Rune:\n    def __init__(self, power):\n        self.power = power\n\n    def __eq__(self, other):\n        if not isinstance(other, Rune):\n            return NotImplemented\n        return self.power == other.power\n\na = Rune(4)\nb = Rune(9)\nprint(a == b)",
+      "choices": [
+        "False"
+      ],
+      "correct_index": 0,
+      "explanation": "The power fields contain four and nine. The custom comparison therefore returns false.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-25",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Exceptions and recovery",
+      "meaning": "An exception signals that an operation could not finish normally. A matching catch or except handler can choose how to recover from that failure.",
+      "purpose": "Handle failures you can meaningfully recover from. Catch the specific error you expect instead of silently swallowing every possible problem.",
+      "code_snippet": "try:\n    divisor = 0\n    print(18 // divisor)\nexcept ZeroDivisionError:\n    print(\"No divisor\")",
+      "example_output": "No divisor",
+      "walkthrough": "Division by zero transfers control to the matching handler, which prints a recovery message.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "try:\n    divisor = 3\n    print(18 // divisor)\nexcept ZeroDivisionError:\n    print(\"No divisor\")",
+      "choices": [
+        "6"
+      ],
+      "correct_index": 0,
+      "explanation": "The divisor is three, so the division succeeds and the handler is skipped.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-26",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "List comprehensions",
+      "meaning": "A list comprehension builds a new list by transforming items from an iterable, optionally including only items that pass a condition.",
+      "purpose": "Use a typed collection to catch invalid element usage early, or use a short comprehension to express a clear transformation. Keep transformations readable. A Python comprehension writes the output expression before for and an optional filter after if.",
+      "code_snippet": "values = [1, 2, 3]\nboosted = [n * 3 for n in values if n > 1]\nprint(boosted)",
+      "example_output": "[6, 9]",
+      "walkthrough": "The condition excludes one. The remaining inputs, two and three, are multiplied by three.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "values = [2, 5, 8]\nboosted = [n + 1 for n in values if n % 2 == 0]\nprint(boosted)",
+      "choices": [
+        "[3, 9]"
+      ],
+      "correct_index": 0,
+      "explanation": "Only two and eight satisfy the even-number condition. Adding one to each creates [3, 9].",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-27",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Parentheses and expression evaluation",
+      "meaning": "Parentheses group an expression so that its value is calculated before the surrounding operations use it. This can change the result.",
+      "purpose": "Use parentheses to make a rule explicit when operators are mixed. Grouping is also useful when it improves readability without changing the result.",
+      "code_snippet": "power = 4\nprint((power + 5) * 3)",
+      "example_output": "27",
+      "walkthrough": "The grouped addition produces nine before multiplication produces 27.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "power = 6\nprint((power + 2) * 4)",
+      "choices": [
+        "32"
+      ],
+      "correct_index": 0,
+      "explanation": "The grouped addition produces eight; multiplying by four gives 32.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-28",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Stacks and last-in-first-out",
+      "meaning": "A stack removes the most recently added element first. This is last-in-first-out, or LIFO. A pop both returns and removes the top element.",
+      "purpose": "Use stacks for undo history or backtracking. Check that a stack contains an item before popping; removing from an empty stack is an error.",
+      "code_snippet": "trail = []\ntrail.append(\"gate\")\ntrail.append(\"tower\")\nprint(trail.pop())",
+      "example_output": "tower",
+      "walkthrough": "tower was added after gate, so it is the first value removed.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "trail = []\ntrail.append(\"camp\")\ntrail.append(\"bridge\")\ntrail.append(\"keep\")\ntrail.pop()\nprint(trail.pop())",
+      "choices": [
+        "bridge"
+      ],
+      "correct_index": 0,
+      "explanation": "The first pop discards keep. bridge is then on top and is returned by the second pop.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-29",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Integer division inside a loop",
+      "meaning": "An accumulator can combine the results of another operation. For positive values, integer division keeps the complete groups and discards any fractional part.",
+      "purpose": "Use this pattern when leftovers from separate batches cannot be pooled. Dividing each batch before summing is different from summing all batches before division. Python // rounds down; these inputs are all positive.",
+      "code_snippet": "rewards = [9, 16, 24]\ntotal = 0\nfor i in range(0, len(rewards)):\n    total = total + rewards[i] // 4\nprint(total)",
+      "example_output": "12",
+      "walkthrough": "The individual divisions produce two, four, and six. Adding those results produces twelve.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "rewards = [11, 20, 28]\ntotal = 0\nfor i in range(0, len(rewards)):\n    total = total + rewards[i] // 6\nprint(total)",
+      "choices": [
+        "8"
+      ],
+      "correct_index": 0,
+      "explanation": "The divisions produce one, three, and four. The sum is eight.",
+      "min_level": 16,
+      "max_level": 0
+    },
+    {
+      "id": "lesson-python-30",
+      "language": "python",
+      "difficulty": "hard",
+      "title": "Base cases and recursive progress",
+      "meaning": "A base case returns without another recursive call. The recursive step must make progress toward that case; merely having a base case does not guarantee termination.",
+      "purpose": "Choose a stopping condition that covers the values a recursive step can reach. Subtracting by more than one can pass below zero, so equality with zero may be insufficient.",
+      "code_snippet": "def steps(n):\n    if n <= 0:\n        return 0\n    return 1 + steps(n - 3)\n\nprint(steps(8))",
+      "example_output": "3",
+      "walkthrough": "The arguments are 8, 5, 2, and -1. The final call returns zero. Three earlier calls each add one.",
+      "prompt": "What does the practice example print? Trace it before revealing the answer.",
+      "practice_code": "def steps(n):\n    if n <= 0:\n        return 0\n    return 1 + steps(n - 3)\n\nprint(steps(10))",
+      "choices": [
+        "4"
+      ],
+      "correct_index": 0,
+      "explanation": "The arguments are 10, 7, 4, 1, and -2. Four non-base calls add one before the stopping call returns zero.",
+      "min_level": 16,
+      "max_level": 0
+    }
+  ]
+}

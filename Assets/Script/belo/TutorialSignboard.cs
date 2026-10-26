@@ -9,10 +9,11 @@ public class TutorialSignboard : MonoBehaviour
 
     private static readonly List<TutorialSignboard> signs = new List<TutorialSignboard>();
     private static TutorialSignboard openedSign;
+    public static bool IsOpen => openedSign != null;
     private static int lastInteractionFrame = -1;
     private playerMovement player;
     private float previousTimeScale;
-    private GUIStyle titleStyle, bodyStyle, promptStyle;
+    private GUIStyle promptStyle;
 
     void OnEnable() { signs.Add(this); }
 
@@ -34,12 +35,14 @@ public class TutorialSignboard : MonoBehaviour
 
     void Update()
     {
+        if (GameControlsGuide.GameplayOverlayHidden || MovementTutorial.AnyOpen) return;
         if (lastInteractionFrame == Time.frameCount) return;
         if (openedSign == this)
         {
             if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Escape)) Close();
             return;
         }
+        if (GameControlsGuide.MapHidden) return;
         if (openedSign == null && Time.timeScale > 0f && IsNearest() &&
             Input.GetKeyDown(KeyCode.E))
         {
@@ -66,14 +69,11 @@ public class TutorialSignboard : MonoBehaviour
 
     void OnGUI()
     {
-        if (titleStyle == null)
+        if (GameControlsGuide.GameplayOverlayHidden || MovementTutorial.AnyOpen) return;
+        if (promptStyle == null)
         {
-            titleStyle = new GUIStyle(GUI.skin.label) { fontSize = 28, fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter, wordWrap = true };
-            bodyStyle = new GUIStyle(GUI.skin.label) { fontSize = 22, wordWrap = true };
-            promptStyle = new GUIStyle(GUI.skin.box) { fontSize = 20,
-                alignment = TextAnchor.MiddleCenter };
-            titleStyle.normal.textColor = bodyStyle.normal.textColor = new Color(1f, 0.9f, 0.68f);
+            promptStyle = new GUIStyle(GUI.skin.box) { fontSize = 20, alignment = TextAnchor.MiddleCenter };
+            promptStyle.normal.textColor = new Color(1f, 0.9f, 0.68f);
         }
         Matrix4x4 previousMatrix = GUI.matrix;
         float scale = Mathf.Min(Screen.width / 1280f, Screen.height / 720f);
@@ -81,15 +81,9 @@ public class TutorialSignboard : MonoBehaviour
             (Screen.height - 720f * scale) / 2f, 0), Quaternion.identity, Vector3.one * scale);
         if (openedSign == this)
         {
-            Color previousColor = GUI.color;
-            GUI.color = new Color(0.08f, 0.06f, 0.04f, 0.96f);
-            GUI.DrawTexture(new Rect(270, 160, 740, 400), Texture2D.whiteTexture);
-            GUI.color = previousColor;
-            GUI.Label(new Rect(300, 185, 680, 70), heading, titleStyle);
-            GUI.Label(new Rect(315, 275, 650, 200), instructions, bodyStyle);
-            if (GUI.Button(new Rect(490, 495, 300, 42), "Close guide  [E / Esc]")) Close();
+            if(GameControlsGuide.DrawTravellerGuide(heading,instructions))Close();
         }
-        else if (openedSign == null && Time.timeScale > 0f && IsNearest())
+        else if (openedSign == null && !GameControlsGuide.MapHidden && IsNearest())
             GUI.Box(new Rect(420, 625, 440, 48), "[E] Read " + heading, promptStyle);
         GUI.matrix = previousMatrix;
     }

@@ -12,6 +12,7 @@ public class LobbyConfirmation : MonoBehaviour
 
     public void ShowConfirmation()
     {
+        GameControlsGuide.RegisterMapBlocker(confirmPanel);
         confirmPanel.SetActive(true);
     }
 

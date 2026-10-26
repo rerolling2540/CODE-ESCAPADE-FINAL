@@ -37,6 +37,7 @@ public class MatchSetupSystem : MonoBehaviour
         PerkSystem.Instance.AddPerk(new Perk(perkData));
         DrawCardsGA drawCardsGA = new(5);
         ActionSystem.Instance.Perform(drawCardsGA);
+        if (BattleTutorialGuide.IsTutorialEncounter(encounterId)) gameObject.AddComponent<BattleTutorialGuide>();
     }
 
     private static void ApplyPlayerHudLayout()
@@ -208,7 +209,7 @@ public class BattleEndTurnState : MonoBehaviour
     {
         bool resolving = ActionSystem.Instance != null && ActionSystem.Instance.IsPerforming;
         bool answering = question != null && question.isActiveAndEnabled;
-        button.interactable = !resolving && !answering && !EncounterBattleReturn.BattleEnded;
+        button.interactable = !resolving && !answering && !BattleTutorialGuide.BlocksInput && !EncounterBattleReturn.BattleEnded;
         if (label != null) label.text = EncounterBattleReturn.BattleEnded ? "Battle Complete" :
             answering ? "Answer Question" : resolving ? "Resolving..." : "End Turn";
     }
@@ -258,6 +259,7 @@ public class EncounterBattleReturn : MonoBehaviour
 
     IEnumerator EndBattle()
     {
+        yield return BattleTutorialGuide.ExplainResult(victory);
         yield return new WaitForSecondsRealtime(1.8f);
         Return();
     }
@@ -275,13 +277,14 @@ public class EncounterBattleReturn : MonoBehaviour
 
     void OnGUI()
     {
+        if (GameControlsGuide.GameplayOverlayHidden) return;
         if (returning) return;
         if (BattleEnded)
         {
             BattleUITheme.DrawResultPanel(new Rect(Screen.width / 2f - 240, Screen.height / 2f - 65, 480, 130),
                 victory ? "VICTORY\nReturning from battle..." : "DEFEAT\nReturning from battle...");
         }
-        else if (caveBattle)
+        else if (caveBattle && !QuestionUI.IsQuestionActive)
         {
             bool previousEnabled = GUI.enabled;
             GUI.enabled = ActionSystem.Instance != null && !ActionSystem.Instance.IsPerforming;

@@ -46,6 +46,7 @@ public sealed class MainMenuPresentation : MonoBehaviour
 
     private void Update()
     {
+        if (CharacterAlmanac.IsOpen) return;
         bool savesOpen = slots != null && slots.IsOpen;
         if (savesOpen || slotsWereOpen)
         {
@@ -97,9 +98,9 @@ public sealed class MainMenuPresentation : MonoBehaviour
         audioManager?.PlayButtonSound();
     }
 
-    public void ShowSettings() { Show(settingsPanel); }
+    public void ShowSettings() { GameControlsGuide.EnsureSettings(settingsPanel); Show(settingsPanel); }
     public void ShowStory() { Show(storyPanel); }
-    public void ShowHelp() { Show(helpPanel); }
+    public void ShowHelp() { GameControlsGuide.FillHelp(helpPanel); Show(helpPanel); }
     public void ShowAbout() { Show(aboutPanel); }
     public void ShowQuit() { Show(quitPanel); }
     public void CloseModal()

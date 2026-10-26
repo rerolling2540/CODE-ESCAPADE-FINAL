@@ -118,7 +118,7 @@ public class CardView : MonoBehaviour
     {
         if (!Interactions.Instance.PlayerCanInteract()) return;
         if (!MouseUtil.TryGetMousePositionInWorldSpace(out Vector3 mousePosition, -1)) return;
-        if (Card.ManualTargetEffect != null)
+        if (Card.RequiresManualTarget)
         {
             ManualTargetSystem.Instance.StartTargeting(transform.position);
         }
@@ -137,7 +137,7 @@ public class CardView : MonoBehaviour
     void OnMouseDrag()
     {
         if (!Interactions.Instance.PlayerCanInteract()) return;
-        if (Card.ManualTargetEffect != null) return;
+        if (Card.RequiresManualTarget) return;
         if (MouseUtil.TryGetMousePositionInWorldSpace(out Vector3 mousePosition, -1))
             transform.position = mousePosition;
     }
@@ -147,7 +147,7 @@ public class CardView : MonoBehaviour
         if (!Interactions.Instance.PlayerCanInteract()) return;
         if (!MouseUtil.TryGetMousePositionInWorldSpace(out Vector3 mousePosition, -1))
         {
-            if (Card.ManualTargetEffect != null) ManualTargetSystem.Instance.CancelTargeting();
+            if (Card.RequiresManualTarget) ManualTargetSystem.Instance.CancelTargeting();
             else
             {
                 transform.position = draStartPosition;
@@ -156,7 +156,7 @@ public class CardView : MonoBehaviour
             Interactions.Instance.PlayerIsDragging = false;
             return;
         }
-        if (Card.ManualTargetEffect != null)
+        if (Card.RequiresManualTarget)
         {
             EnemyView target = ManualTargetSystem.Instance.EndTargeting(mousePosition);
             if (target != null && ManaSystem.Instance.HasEnoughMana(Card.Mana))

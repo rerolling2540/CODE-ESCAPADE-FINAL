@@ -296,42 +296,75 @@ public class CardSystem : Singleton<CardSystem>
                 HeroSystem.Instance.HeroView.FaceTowards(playCardGA.ManualTarget);
             BattleAudio.HeroAttack(playCardGA.Card.CardData);
             CombatantView attackTarget = playCardGA.Card.ManualTargetEffect is DealDamageEffect ? playCardGA.ManualTarget : null;
-            if (attackTarget == null)
+            Dictionary<AutoTargetEffect, List<CombatantView>> effectTargets = new();
+            foreach (AutoTargetEffect effect in playCardGA.Card.OtherEffects)
             {
-                foreach (var effect in playCardGA.Card.OtherEffects)
-                {
-                    if (!(effect.Effect is DealDamageEffect)) continue;
-                    attackTarget = effect.TargetMode.GetTargets().Find(target => target is EnemyView && target.CurrentHealth > 0);
-                    if (attackTarget != null) break;
-                }
+                if (effect == null || effect.Effect == null || effect.TargetMode == null) continue;
+                List<CombatantView> targets = effect.TargetMode.GetTargets();
+                effectTargets[effect] = targets;
+                if (attackTarget == null && effect.Effect is DealDamageEffect)
+                    attackTarget = targets.Find(target => target is EnemyView && target.CurrentHealth > 0);
             }
             yield return HeroSystem.Instance.HeroView.PlayBattleAttack(attackTarget);
             if (playCardGA.Card.ManualTargetEffect != null)
             {
-                PerformEffectGA performEffectGA = new(
-                    playCardGA.Card.ManualTargetEffect,
-                    new() { playCardGA.ManualTarget },
-                    playCardGA.Card.CardData);
-
-                ActionSystem.Instance.AddReaction(performEffectGA);
+                List<CombatantView> targets = new() { playCardGA.ManualTarget };
+                if (playCardGA.Card.ManualTargetEffect is DealDamageEffect)
+                {
+                    DealDamageGA damageGA = (DealDamageGA)playCardGA.Card.ManualTargetEffect.GetGameAction(
+                        targets, HeroSystem.Instance.HeroView, playCardGA.Card.CardData);
+                    yield return DamageSystemRunner(damageGA);
+                }
+                else
+                {
+                    ActionSystem.Instance.AddReaction(new PerformEffectGA(
+                        playCardGA.Card.ManualTargetEffect, targets, playCardGA.Card.CardData));
+                }
             }
 
             foreach (var effectWrapper in playCardGA.Card.OtherEffects)
             {
-                List<CombatantView> targets = effectWrapper.TargetMode.GetTargets();
+                if (effectWrapper == null || !effectTargets.TryGetValue(effectWrapper, out List<CombatantView> targets))
+                    continue;
 
-                PerformEffectGA performEffectGA = new(
-                    effectWrapper.Effect, 
-                    targets, 
-                    playCardGA.Card.CardData);
-
-                ActionSystem.Instance.AddReaction(performEffectGA);
+                if (effectWrapper.Effect is DealDamageEffect)
+                {
+                    DealDamageGA damageGA = (DealDamageGA)effectWrapper.Effect.GetGameAction(
+                        targets, HeroSystem.Instance.HeroView, playCardGA.Card.CardData);
+                    yield return DamageSystemRunner(damageGA);
+                }
+                else
+                {
+                    ActionSystem.Instance.AddReaction(new PerformEffectGA(
+                        effectWrapper.Effect, targets, playCardGA.Card.CardData));
+                }
             }
         }
         else
         {
             AttackHeroGA attackHeroGA = new(EnemySystem.Instance.CurrentEnemy);
             ActionSystem.Instance.AddReaction(attackHeroGA);
+        }
+
+        ManualTargetSystem.Instance?.ClearTargetHighlight();
+    }
+
+    private static IEnumerator DamageSystemRunner(DealDamageGA damageGA)
+    {
+        DamageSystem damageSystem = FindFirstObjectByType<DamageSystem>();
+        if (damageSystem != null)
+        {
+            yield return damageSystem.ApplyDamageDirect(damageGA);
+            yield break;
+        }
+
+        // Keep combat functional if a scene is missing the presentation system.
+        if (damageGA?.Targets == null) yield break;
+        foreach (CombatantView target in damageGA.Targets)
+        {
+            if (target == null || target.CurrentHealth <= 0) continue;
+            target.Damage(damageGA.GetDamageForTarget(target));
+            yield return null;
         }
     }
 

@@ -105,12 +105,16 @@ public class EnemySystem : Singleton<EnemySystem>
         }
 
         if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
+        int attackDamage = Mathf.Max(1, attacker.AttackPower);
         DealDamageGA dealDamageGA = new(
-            attacker.AttackPower,
+            attackDamage,
             new() { HeroSystem.Instance.HeroView },
             attackHeroGA.Caster);
-
-        ActionSystem.Instance.AddReaction(dealDamageGA);
+        DamageSystem damageSystem = FindFirstObjectByType<DamageSystem>();
+        if (damageSystem != null)
+            yield return damageSystem.ApplyDamageDirect(dealDamageGA);
+        else
+            HeroSystem.Instance.HeroView.Damage(attackDamage);
     }
     private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
     {

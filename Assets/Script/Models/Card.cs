@@ -25,4 +25,9 @@ public class Card
     public List<AutoTargetEffect> OtherEffects => Data != null && Data.OtherEffects != null
         ? Data.OtherEffects
         : new List<AutoTargetEffect>();
+
+    public bool RequiresManualTarget
+    {
+        get { return ManualTargetEffect != null; }
+    }
 }

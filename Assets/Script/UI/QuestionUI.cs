@@ -19,6 +19,11 @@ public class QuestionUI : MonoBehaviour
     [SerializeField] private Button[] optionButtons = new Button[4];
     [SerializeField] private TMP_Text[] optionTexts = new TMP_Text[4];
 
+    private TMP_Text timerLabel;
+    private Image hourglassImage;
+    private RectTransform hourglassRect;
+    private Texture2D hourglassTexture;
+    private Sprite hourglassSprite;
     private Action<int> onOptionSelected;
     private Coroutine timerCoroutine;
     private Coroutine transitionCoroutine;
@@ -32,6 +37,12 @@ public class QuestionUI : MonoBehaviour
     private RenderTexture playedCardTexture;
     private const int PlayedCardLayer = 31;
     private static Sprite scrollSprite;
+
+    private void Update()
+    {
+        if (IsQuestionActive && hourglassRect != null)
+            hourglassRect.Rotate(0f, 0f, -120f * Time.unscaledDeltaTime);
+    }
 
     public static void LockGameplayInput()
     {
@@ -128,6 +139,7 @@ public class QuestionUI : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
         SetPanelOpenState(false);
         float duration = BattleTutorialGuide.IsTraining ? Mathf.Max(60f, data.timeLimitInSeconds) : data.timeLimitInSeconds;
+        UpdateTimerLabel(duration);
         transitionCoroutine = StartCoroutine(OpenAndStartTimer(duration, onTimeOut));
     }
 
@@ -167,8 +179,8 @@ public class QuestionUI : MonoBehaviour
         {
             scrollRect = background.GetComponent<RectTransform>();
             scrollRect.anchorMin = scrollRect.anchorMax = new Vector2(0.5f, 0.5f);
-            scrollRect.anchoredPosition = Vector2.zero;
-            scrollRect.sizeDelta = new Vector2(1180f, 820f);
+            scrollRect.anchoredPosition = new Vector2(80f, 0f);
+            scrollRect.sizeDelta = new Vector2(1040f, 740f);
             var image = background.GetComponent<Image>();
             if (image != null)
             {
@@ -191,7 +203,7 @@ public class QuestionUI : MonoBehaviour
             questionRect.anchorMin = questionRect.anchorMax = new Vector2(0.5f, 0.5f);
             questionRect.pivot = new Vector2(0.5f, 0.5f);
             questionRect.anchoredPosition = new Vector2(0f, 185f);
-            questionRect.sizeDelta = new Vector2(1060f, 100f);
+            questionRect.sizeDelta = new Vector2(960f, 100f);
         }
 
         RectTransform snippetRect = codeSnippetText != null ? codeSnippetText.rectTransform : null;
@@ -201,7 +213,7 @@ public class QuestionUI : MonoBehaviour
             snippetRect.anchorMin = snippetRect.anchorMax = new Vector2(0.5f, 0.5f);
             snippetRect.pivot = new Vector2(0.5f, 0.5f);
             snippetRect.anchoredPosition = new Vector2(0f, 25f);
-            snippetRect.sizeDelta = new Vector2(1060f, 160f);
+            snippetRect.sizeDelta = new Vector2(960f, 160f);
         }
 
         RectTransform answersRect = transform.Find("Answers") as RectTransform;
@@ -225,7 +237,7 @@ public class QuestionUI : MonoBehaviour
             optionRect.SetParent(scrollRect != null ? scrollRect : optionRect.parent, false);
             optionRect.anchorMin = optionRect.anchorMax = new Vector2(0.5f, 0.5f);
             optionRect.pivot = new Vector2(0.5f, 0.5f);
-            optionRect.sizeDelta = new Vector2(480f, 68f);
+            optionRect.sizeDelta = new Vector2(430f, 68f);
             optionRect.anchoredPosition = answerPositions[i % answerPositions.Length];
         }
         RectTransform timerRect = timerSlider != null ? timerSlider.GetComponent<RectTransform>() : null;
@@ -233,9 +245,10 @@ public class QuestionUI : MonoBehaviour
         {
             if (scrollRect != null) timerRect.SetParent(scrollRect, false);
             timerRect.anchorMin = timerRect.anchorMax = new Vector2(0.5f, 0.5f);
-            timerRect.anchoredPosition = new Vector2(440f, 270f);
-            timerRect.sizeDelta = new Vector2(270f, 30f);
+            timerRect.anchoredPosition = new Vector2(0f, 320f);
+            timerRect.sizeDelta = new Vector2(300f, 30f);
         }
+        EnsureTimerLabels();
 
         if (questionText != null)
         {
@@ -281,6 +294,90 @@ public class QuestionUI : MonoBehaviour
         }
     }
 
+    private void EnsureTimerLabels()
+    {
+        RectTransform parent = scrollRect != null ? scrollRect : transform as RectTransform;
+        if (parent == null) return;
+
+        if (hourglassImage == null)
+        {
+            GameObject iconObject = new GameObject("Rotating Hourglass",
+                typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            hourglassRect = iconObject.GetComponent<RectTransform>();
+            hourglassRect.SetParent(parent, false);
+            hourglassRect.anchorMin = hourglassRect.anchorMax = new Vector2(0.5f, 0.5f);
+            hourglassRect.pivot = new Vector2(0.5f, 0.5f);
+            if (hourglassSprite == null) hourglassSprite = CreateHourglassSprite();
+            hourglassImage = iconObject.GetComponent<Image>();
+            hourglassImage.sprite = hourglassSprite;
+            hourglassImage.color = new Color(1f, 0.78f, 0.36f);
+            hourglassImage.raycastTarget = false;
+        }
+        hourglassRect.anchoredPosition = new Vector2(-205f, 320f);
+        hourglassRect.sizeDelta = new Vector2(46f, 46f);
+
+        if (timerLabel == null)
+        {
+            GameObject timeObject = new GameObject("Question Time Remaining",
+                typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+            RectTransform timeRect = timeObject.GetComponent<RectTransform>();
+            timeRect.SetParent(parent, false);
+            timeRect.anchorMin = timeRect.anchorMax = new Vector2(0.5f, 0.5f);
+            timeRect.pivot = new Vector2(0.5f, 0.5f);
+            timerLabel = timeObject.GetComponent<TextMeshProUGUI>();
+            timerLabel.font = questionText != null ? questionText.font : null;
+            timerLabel.fontSize = 29f;
+            timerLabel.fontStyle = FontStyles.Bold;
+            timerLabel.alignment = TextAlignmentOptions.Center;
+            timerLabel.color = new Color(1f, 0.88f, 0.63f);
+            timerLabel.raycastTarget = false;
+        }
+        RectTransform timerLabelRect = timerLabel.rectTransform;
+        timerLabelRect.anchoredPosition = new Vector2(215f, 320f);
+        timerLabelRect.sizeDelta = new Vector2(105f, 46f);
+        hourglassRect.SetAsLastSibling();
+        timerLabel.transform.SetAsLastSibling();
+    }
+
+    private Sprite CreateHourglassSprite()
+    {
+        const int width = 48;
+        const int height = 64;
+        hourglassTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        hourglassTexture.name = "Question Timer Hourglass Texture";
+        hourglassTexture.filterMode = FilterMode.Point;
+        hourglassTexture.wrapMode = TextureWrapMode.Clamp;
+        var pixels = new Color32[width * height];
+        Color32 white = new Color32(255, 255, 255, 255);
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                bool cap = (y >= 2 && y <= 6 || y >= 57 && y <= 61) && x >= 5 && x <= 42;
+                if (cap)
+                {
+                    pixels[y * width + x] = white;
+                    continue;
+                }
+
+                if (y < 7 || y > 56) continue;
+                float t = y < 32 ? (y - 7f) / 24f : (y - 32f) / 24f;
+                int left = y < 32 ? 5 + Mathf.RoundToInt(t * 18f) : 23 - Mathf.RoundToInt(t * 18f);
+                int right = y < 32 ? 42 - Mathf.RoundToInt(t * 18f) : 24 + Mathf.RoundToInt(t * 18f);
+                bool outline = x - left < 2 || right - x < 2;
+                bool upperSand = y >= 23 && y < 32 && Mathf.Abs(x - 23) <= Mathf.Max(0, (31 - y) / 2);
+                bool lowerSand = y >= 43 && Mathf.Abs(x - 23) <= (y - 42) / 2;
+                if (x >= left && x <= right && (outline || upperSand || lowerSand))
+                    pixels[y * width + x] = white;
+            }
+        }
+
+        hourglassTexture.SetPixels32(pixels);
+        hourglassTexture.Apply(false, true);
+        return Sprite.Create(hourglassTexture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f), 64f);
+    }
+
     private void LayoutQuestionForCurrentContent()
     {
         bool hasCode = codeSnippetText != null && codeSnippetText.gameObject.activeSelf;
@@ -290,7 +387,7 @@ public class QuestionUI : MonoBehaviour
         if (codeSnippetText != null)
         {
             codeSnippetText.rectTransform.anchoredPosition = new Vector2(0f, hasCode ? 25f : 15f);
-            codeSnippetText.rectTransform.sizeDelta = new Vector2(1060f, hasCode ? 160f : 0f);
+            codeSnippetText.rectTransform.sizeDelta = new Vector2(960f, hasCode ? 160f : 0f);
         }
 
         Vector2 firstRow = hasCode ? new Vector2(-250f, -115f) : new Vector2(-250f, 20f);
@@ -366,8 +463,8 @@ public class QuestionUI : MonoBehaviour
             rect.SetParent(transform, false);
             rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
             rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition = new Vector2(-665f, 90f);
-            rect.sizeDelta = new Vector2(340f, 490f);
+            rect.anchoredPosition = new Vector2(-640f, 0f);
+            rect.sizeDelta = new Vector2(420f, 600f);
             playedCardImage = imageObject.GetComponent<RawImage>();
             playedCardImage.raycastTarget = false;
             imageObject.SetActive(false);
@@ -405,6 +502,8 @@ public class QuestionUI : MonoBehaviour
     {
         UnlockGameplayInput();
         ClearPlayedCard();
+        if (hourglassSprite != null) Destroy(hourglassSprite);
+        if (hourglassTexture != null) Destroy(hourglassTexture);
         if (playedCardCamera != null) Destroy(playedCardCamera.gameObject);
         if (playedCardTexture != null)
         {
@@ -443,8 +542,9 @@ public class QuestionUI : MonoBehaviour
     private IEnumerator TimerRoutine(float duration, Action onTimeOut)
     {
         EnsureCanvasGroup();
-        float remaining = duration;
         duration = Mathf.Max(0f, duration);
+        float remaining = duration;
+        UpdateTimerLabel(remaining);
         if (timerSlider != null)
         {
             timerSlider.maxValue = duration;
@@ -455,6 +555,7 @@ public class QuestionUI : MonoBehaviour
         {
             remaining -= Time.unscaledDeltaTime;
             if (timerSlider != null) timerSlider.value = Mathf.Max(0f, remaining);
+            UpdateTimerLabel(remaining);
             yield return null;
         }
 
@@ -467,6 +568,13 @@ public class QuestionUI : MonoBehaviour
             transitionCoroutine = StartCoroutine(ClosePanel());
             onTimeOut?.Invoke();
         }
+    }
+
+    private void UpdateTimerLabel(float remaining)
+    {
+        if (timerLabel == null) return;
+        int totalSeconds = Mathf.CeilToInt(Mathf.Max(0f, remaining));
+        timerLabel.text = (totalSeconds / 60).ToString("00") + ":" + (totalSeconds % 60).ToString("00");
     }
 
     private IEnumerator ClosePanel()

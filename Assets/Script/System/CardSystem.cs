@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -18,6 +17,9 @@ public class CardSystem : Singleton<CardSystem>
     private bool pileWindowOpen;
     private bool showDrawPile;
     private Vector2 pileWindowScroll;
+    private GUIStyle pileTitleStyle;
+    private GUIStyle pileCardTitleStyle;
+    private GUIStyle pileCardDetailsStyle;
 
     public int DrawPileCount => drawPile.Count;
     public int DiscardPileCount => discardPile.Count;
@@ -48,7 +50,6 @@ public class CardSystem : Singleton<CardSystem>
             return;
         }
 
-        var addedCards = new HashSet<CardData>();
         for (int i = 0; i < deckData.Count; i++)
         {
             CardData cardData = deckData[i];
@@ -58,17 +59,11 @@ public class CardSystem : Singleton<CardSystem>
                 continue;
             }
 
-            if (!addedCards.Add(cardData))
-            {
-                Debug.LogWarning($"CardSystem skipped duplicate '{cardData.name}' entry in HeroData.Deck. Each card asset can appear only once in battle.");
-                continue;
-            }
-
+            // Repeated CardData references represent separate copies in the deck.
             drawPile.Add(new Card(cardData));
         }
 
         SetupPileViews();
-        RefreshPileViews();
 
         if (drawPile.Count == 0)
             Debug.LogError("CardSystem has no valid cards to draw. Check the HeroData deck references.");
@@ -120,15 +115,15 @@ public class CardSystem : Singleton<CardSystem>
         return view;
     }
 
-    private void RefreshPileViews()
-    {
-        if (drawPileView != null) drawPileView.SetCount(drawPile.Count);
-        if (discardPileView != null) discardPileView.SetCount(discardPile.Count);
-    }
-
-    public void OpenPile(bool draw)
+    public void TogglePile(bool draw)
     {
         if (QuestionUI.IsQuestionActive) return;
+        if (pileWindowOpen && showDrawPile == draw)
+        {
+            ClosePileWindow();
+            return;
+        }
+
         showDrawPile = draw;
         pileWindowScroll = Vector2.zero;
         pileWindowOpen = true;
@@ -149,45 +144,112 @@ public class CardSystem : Singleton<CardSystem>
         if (GameControlsGuide.GameplayOverlayHidden) return;
         if (!pileWindowOpen) return;
 
-        const float width = 360f;
-        const float height = 460f;
+        float width = Mathf.Min(960f, Screen.width * 0.86f);
+        float height = Mathf.Min(850f, Screen.height * 0.84f);
         Rect windowRect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
+        Event currentEvent = Event.current;
+        if (currentEvent.type == EventType.MouseDown &&
+            !windowRect.Contains(currentEvent.mousePosition) &&
+            !IsPileIconAt(currentEvent.mousePosition))
+        {
+            ClosePileWindow();
+            currentEvent.Use();
+            return;
+        }
+
         Color oldColor = GUI.color;
         Color oldContentColor = GUI.contentColor;
-        GUI.color = new Color(0.22f, 0.14f, 0.08f, 0.98f);
+        GUI.color = new Color(0.10f, 0.08f, 0.07f, 0.98f);
         GUI.Box(windowRect, GUIContent.none);
         GUI.color = oldColor;
+        List<Card> pile = showDrawPile ? drawPile : discardPile;
+        EnsurePileWindowStyles();
         GUI.contentColor = new Color(1f, 0.91f, 0.73f);
 
-        GUILayout.BeginArea(new Rect(windowRect.x + 16f, windowRect.y + 14f, windowRect.width - 32f, windowRect.height - 28f));
-        GUILayout.BeginHorizontal();
-        List<Card> pile = showDrawPile ? drawPile : discardPile;
-        GUILayout.Label($"{(showDrawPile ? "DRAW PILE" : "DISCARD PILE")}  ({pile.Count})", GUI.skin.GetStyle("boldLabel"));
-        if (GUILayout.Button("Close", GUILayout.Width(62f))) pileWindowOpen = false;
-        GUILayout.EndHorizontal();
-        GUILayout.Space(10f);
+        Rect inner = new Rect(windowRect.x + 16f, windowRect.y + 12f, windowRect.width - 32f, windowRect.height - 24f);
+        Rect titleRect = new Rect(inner.x, inner.y, inner.width - 80f, 34f);
+        GUI.Label(titleRect, $"{(showDrawPile ? "DRAW PILE" : "DISCARD PILE")}  ·  {pile.Count} cards", pileTitleStyle);
+        if (GUI.Button(new Rect(inner.xMax - 72f, inner.y, 72f, 30f), "Close"))
+            pileWindowOpen = false;
 
-        pileWindowScroll = GUILayout.BeginScrollView(pileWindowScroll);
-        foreach (var row in CountCardsByTitle(pile))
-            GUILayout.Label($"{row.Key}  × {row.Value}");
-        if (pile.Count == 0) GUILayout.Label("This pile is empty.");
-        GUILayout.EndScrollView();
-        GUILayout.EndArea();
-
+        Rect listRect = new Rect(inner.x, inner.y + 40f, inner.width, inner.height - 40f);
+        float rowHeight = 172f;
+        float contentHeight = Mathf.Max(listRect.height, pile.Count * rowHeight + 8f);
+        Rect viewRect = new Rect(0f, 0f, listRect.width - 18f, contentHeight);
+        pileWindowScroll = GUI.BeginScrollView(listRect, pileWindowScroll, viewRect);
+        if (pile.Count == 0)
+        {
+            GUI.Label(new Rect(12f, 14f, viewRect.width - 24f, 34f), "This pile is empty.");
+        }
+        else
+        {
+            for (int i = 0; i < pile.Count; i++)
+                DrawPileCard(new Rect(4f, 4f + i * rowHeight, viewRect.width - 8f, rowHeight - 8f), pile[i], i + 1);
+        }
+        GUI.EndScrollView();
         GUI.color = oldColor;
         GUI.contentColor = oldContentColor;
     }
 
-    private static List<KeyValuePair<string, int>> CountCardsByTitle(List<Card> cards)
+    private bool IsPileIconAt(Vector2 guiPosition)
     {
-        var counts = new Dictionary<string, int>();
-        foreach (Card card in cards)
-        {
-            string title = card != null ? card.Title : "Missing Card";
-            counts[title] = counts.TryGetValue(title, out int count) ? count + 1 : 1;
-        }
+        return (drawPileView != null && drawPileView.ContainsGuiPoint(guiPosition)) ||
+               (discardPileView != null && discardPileView.ContainsGuiPoint(guiPosition));
+    }
 
-        return counts.OrderBy(pair => pair.Key, System.StringComparer.Ordinal).ToList();
+    private void EnsurePileWindowStyles()
+    {
+        if (pileTitleStyle != null) return;
+        pileTitleStyle = new GUIStyle(GUI.skin.GetStyle("boldLabel"))
+        {
+            fontSize = 30,
+            alignment = TextAnchor.MiddleLeft
+        };
+        pileCardTitleStyle = new GUIStyle(GUI.skin.GetStyle("boldLabel"))
+        {
+            fontSize = 24,
+            alignment = TextAnchor.MiddleLeft
+        };
+        pileCardDetailsStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 18,
+            wordWrap = true,
+            alignment = TextAnchor.UpperLeft
+        };
+    }
+
+    private void DrawPileCard(Rect rect, Card card, int position)
+    {
+        Color oldColor = GUI.color;
+        GUI.color = new Color(0.30f, 0.23f, 0.15f, 1f);
+        GUI.Box(rect, GUIContent.none);
+        GUI.color = oldColor;
+
+        GUI.contentColor = new Color(1f, 0.89f, 0.62f);
+        string title = card != null ? card.Title : "Missing Card";
+        GUI.Label(new Rect(rect.x + 14f, rect.y + 10f, rect.width - 170f, 38f), $"{position}.  {title}", pileCardTitleStyle);
+        GUI.Label(new Rect(rect.xMax - 145f, rect.y + 10f, 132f, 38f), card != null ? $"{card.Mana} mana" : "—", pileCardTitleStyle);
+
+        if (card != null && card.Image != null)
+            DrawPileCardArt(new Rect(rect.x + 14f, rect.y + 54f, 90f, 102f), card.Image);
+
+        GUI.contentColor = new Color(0.96f, 0.91f, 0.80f);
+        float detailsX = rect.x + (card != null && card.Image != null ? 118f : 14f);
+        GUI.Label(new Rect(detailsX, rect.y + 56f, rect.width - (detailsX - rect.x) - 16f, rect.height - 64f),
+            card != null ? card.Description : "The card data asset is missing.", pileCardDetailsStyle);
+    }
+
+    private static void DrawPileCardArt(Rect rect, Sprite sprite)
+    {
+        if (sprite == null || (sprite.packed && sprite.packingMode == SpritePackingMode.Tight)) return;
+
+        Rect uv = sprite.textureRect;
+        Rect texCoords = new Rect(
+            uv.x / sprite.texture.width,
+            uv.y / sprite.texture.height,
+            uv.width / sprite.texture.width,
+            uv.height / sprite.texture.height);
+        GUI.DrawTextureWithTexCoords(rect, sprite.texture, texCoords, true);
     }
 
     private IEnumerator DrawCardsPerformer(DrawCardsGA drawCardsGA)
@@ -278,7 +340,6 @@ public class CardSystem : Singleton<CardSystem>
         Card card = drawPile.Draw();
         if (card == null) yield break;
 
-        RefreshPileViews();
         hand.Add(card);
         CardView cardView = CardViewCreator.Instance.CreateCardView(card, drawPilePoint.position, drawPilePoint.rotation);
         yield return handView.AddCard(cardView);
@@ -288,7 +349,6 @@ public class CardSystem : Singleton<CardSystem>
     {
         drawPile.AddRange(discardPile);
         discardPile.Clear();
-        RefreshPileViews();
     }
 
     private IEnumerator DiscardCard(CardView cardView)
@@ -296,7 +356,6 @@ public class CardSystem : Singleton<CardSystem>
         if (cardView == null || cardView.Card == null) yield break;
 
         discardPile.Add(cardView.Card);
-        RefreshPileViews();
         cardView.transform.DOScale(Vector3.zero, 0.15f);
         Tween tween = cardView.transform.DOMove(discardPilePoint.position, 0.15f);
         yield return tween.WaitForCompletion();

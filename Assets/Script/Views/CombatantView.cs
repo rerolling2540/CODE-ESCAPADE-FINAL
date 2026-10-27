@@ -45,6 +45,8 @@ public class CombatantView : MonoBehaviour
     private float hitDirection;
     private Color restingColor = Color.white;
     private bool healthTextBoundToSlider;
+    private GameObject targetOutlineObject;
+    private SpriteRenderer targetOutlineRenderer;
     private Vector3 FacingAnchor => battleAnimationReady && spriteRenderer != null
         ? spriteRenderer.transform.parent.TransformPoint(visualPosition) : transform.position;
 
@@ -54,7 +56,52 @@ public class CombatantView : MonoBehaviour
         UpdateFacing();
     }
 
-    void LateUpdate() { UpdateFacing(); }
+    void LateUpdate()
+    {
+        UpdateFacing();
+        if (targetOutlineRenderer != null && targetOutlineObject != null && targetOutlineObject.activeSelf && spriteRenderer != null)
+        {
+            targetOutlineRenderer.sprite = spriteRenderer.sprite;
+            targetOutlineRenderer.flipX = spriteRenderer.flipX;
+            targetOutlineRenderer.flipY = spriteRenderer.flipY;
+            targetOutlineRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
+            targetOutlineRenderer.sortingOrder = spriteRenderer.sortingOrder - 1;
+        }
+    }
+
+    public void SetTargetHighlighted(bool highlighted)
+    {
+        if (spriteRenderer == null) return;
+
+        if (!highlighted)
+        {
+            if (targetOutlineObject != null) targetOutlineObject.SetActive(false);
+            return;
+        }
+
+        if (targetOutlineObject == null)
+        {
+            targetOutlineObject = new GameObject("Target Highlight Outline");
+            targetOutlineObject.transform.SetParent(spriteRenderer.transform, false);
+            targetOutlineObject.transform.localPosition = new Vector3(0f, 0f, 0.01f);
+            targetOutlineObject.transform.localRotation = Quaternion.identity;
+            targetOutlineObject.transform.localScale = Vector3.one * 1.1f;
+            targetOutlineRenderer = targetOutlineObject.AddComponent<SpriteRenderer>();
+            targetOutlineRenderer.sharedMaterial = spriteRenderer.sharedMaterial;
+            targetOutlineRenderer.color = new Color(1f, 0.06f, 0.04f, 1f);
+            targetOutlineRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
+            targetOutlineRenderer.maskInteraction = spriteRenderer.maskInteraction;
+            targetOutlineRenderer.drawMode = spriteRenderer.drawMode;
+            targetOutlineRenderer.size = spriteRenderer.size;
+        }
+
+        targetOutlineObject.SetActive(true);
+        targetOutlineRenderer.sprite = spriteRenderer.sprite;
+        targetOutlineRenderer.flipX = spriteRenderer.flipX;
+        targetOutlineRenderer.flipY = spriteRenderer.flipY;
+        targetOutlineRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
+        targetOutlineRenderer.sortingOrder = spriteRenderer.sortingOrder - 1;
+    }
 
     void UpdateFacing()
     {
@@ -346,21 +393,16 @@ public class CombatantView : MonoBehaviour
     public void Damage(int damageAmount)
     {
         int healthBefore = CurrentHealth;
-        int remainingDamage = Mathf.Max(0, damageAmount - Defense);
+        // Positive attacks always get through for at least one point before armor.
+        // This prevents low-level enemies from being completely negated by base defense.
+        int remainingDamage = damageAmount > 0 ? Mathf.Max(1, damageAmount - Defense) : 0;
         int currentArmor = GetStatusEffectStacks(StatusEffectType.ARMOR);
 
-        if (currentArmor > 0)
+        if (currentArmor > 0 && remainingDamage > 0)
         {
-            if (currentArmor >= damageAmount)
-            {
-                RemoveStatusEffect(StatusEffectType.ARMOR, remainingDamage);
-                remainingDamage = 0;
-            }
-            else
-            {
-                RemoveStatusEffect(StatusEffectType.ARMOR, currentArmor);
-                remainingDamage -= currentArmor;
-            }
+            int absorbedDamage = Mathf.Min(currentArmor, remainingDamage);
+            RemoveStatusEffect(StatusEffectType.ARMOR, absorbedDamage);
+            remainingDamage -= absorbedDamage;
         }
 
         if (remainingDamage > 0)
@@ -400,6 +442,9 @@ public class CombatantView : MonoBehaviour
         label.outlineColor = new Color(1f, 0.82f, 0.48f, 1f);
         label.outlineWidth = 0.25f;
         label.sortingOrder = 100;
+        // The popup is parented to this combatant only through its coroutine.
+        // Destroy it independently too, so killing the enemy cannot stop cleanup.
+        Destroy(popup, 1.6f);
         StartCoroutine(AnimateDamageIndicator(popup, label));
     }
 

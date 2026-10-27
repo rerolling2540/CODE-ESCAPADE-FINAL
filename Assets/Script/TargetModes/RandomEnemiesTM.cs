@@ -6,7 +6,12 @@ public class RandomEnemiesTM : TargetMode
 {
     public override List<CombatantView> GetTargets()
     {
-        CombatantView target = EnemySystem.Instance.Enemies[Random.Range(0, EnemySystem.Instance.Enemies.Count)];
-        return new(){target};
+        List<CombatantView> livingEnemies = EnemySystem.Instance?.Enemies
+            ?.FindAll(enemy => enemy != null && enemy.CurrentHealth > 0)
+            .ConvertAll(enemy => (CombatantView)enemy);
+        if (livingEnemies == null || livingEnemies.Count == 0) return new();
+
+        CombatantView target = livingEnemies[Random.Range(0, livingEnemies.Count)];
+        return new() { target };
     }
 }

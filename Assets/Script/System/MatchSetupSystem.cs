@@ -12,6 +12,7 @@ public class MatchSetupSystem : MonoBehaviour
 
     private void Start()
     {
+        BattleSettingsMenu.EnsureCreated();
         BattleAudio.EnsureInstance();
         heroData = SelectedHero.Resolve(heroData);
         BattleUITheme.Apply();
@@ -274,6 +275,8 @@ public class EncounterBattleReturn : MonoBehaviour
             GameSave.EnsureInstance().ContinueGame();
         else SceneManager.LoadScene("MainMenu");
     }
+
+    public void ReturnToLobby() => Return();
 
     void OnGUI()
     {

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
+  m_Name: Precision Shot
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <Description>k__BackingField: Choose one enemy to take 150% Attack Power damage.
+  <Mana>k__BackingField: 2
+  <Image>k__BackingField: {fileID: 8781525044889457999, guid: 014667a93c3eb1940996eeaaff2c9313, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: 301
+  <OtherEffects>k__BackingField: []
+  damageType: 1
+  baseDamage: 0
+  percentDamage: 150
+  damageMultiplier: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 301
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:

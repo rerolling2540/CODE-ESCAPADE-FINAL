@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Cave Squad Encounter
   m_EditorClassIdentifier: Assembly-CSharp::EncounterData
   enemies:
-  - {fileID: 11400000, guid: 841bcec34100402a81f1e0299b99c08e, type: 2}
+  - {fileID: 11400000, guid: 38f3a9a19b7b4605a7b475d5584e1b5a, type: 2}
   - {fileID: 11400000, guid: 0a530db798c141b5b0132a260e1d8770, type: 2}

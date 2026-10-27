@@ -7,6 +7,8 @@ public class AllEnemiesTM : TargetMode
 {
    public override List<CombatantView> GetTargets()
     {
-        return new(EnemySystem.Instance.Enemies);
+        if (EnemySystem.Instance?.Enemies == null) return new();
+        return EnemySystem.Instance.Enemies.FindAll(enemy => enemy != null && enemy.CurrentHealth > 0)
+            .ConvertAll(enemy => (CombatantView)enemy);
     }
 }

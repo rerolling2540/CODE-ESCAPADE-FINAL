@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Splines;
 
 public class HandView : MonoBehaviour
@@ -14,11 +15,8 @@ public class HandView : MonoBehaviour
     {
         if (cardView == null) yield break;
         cards.Add(cardView);
-        // CardViewCreator starts its pop-in tween at zero scale. Capture the
-        // intended final scale instead of that transient value, or every card
-        // becomes permanently invisible when the hand layout cancels the tween.
         originalScales[cardView] = Vector3.one;
-        yield return UpdateCardPositions(0.15f);
+        yield return UpdateCardPositions(0.38f, cardView);
     }
     
     public CardView RemoveCard(Card card)
@@ -41,7 +39,7 @@ public class HandView : MonoBehaviour
         return cards.Where(cardView => cardView.Card == card).FirstOrDefault();
     }
     
-    private IEnumerator UpdateCardPositions(float duration)
+    private IEnumerator UpdateCardPositions(float duration, CardView arrivingCard = null)
     {
         cards.RemoveAll(card => card == null);
         if (cards.Count == 0 || splineContainer == null) yield break;
@@ -55,23 +53,47 @@ public class HandView : MonoBehaviour
 
         for (int i = 0; i < cards.Count; i++)
         {
-            if (originalScales.TryGetValue(cards[i], out Vector3 originalScale))
-                cards[i].transform.localScale = originalScale * scaleFactor;
-        }
-
-        for (int i = 0; i < cards.Count; i++)
-        {
+            CardView card = cards[i];
             float p = firstCardPosition + i * cardSpacing;
             Vector3 splinePosition = splineContainer.transform.TransformPoint(spline.EvaluatePosition(p));
             splinePosition.y += extraLift;
             Vector3 forward = spline.EvaluateTangent(p);
             Vector3 up = spline.EvaluateUpVector(p);
             Quaternion rotation = Quaternion.LookRotation(-up, Vector3.Cross(-up, forward).normalized);
-            cards[i].transform.DOKill();
-            cards[i].transform.DOMove(splinePosition, duration);
-            cards[i].transform.DORotate(rotation.eulerAngles, duration);
+            Vector3 baseScale = originalScales.TryGetValue(card, out Vector3 originalScale)
+                ? originalScale
+                : Vector3.one;
+            Vector3 targetScale = baseScale * scaleFactor;
+
+            card.transform.DOKill();
+            if (card == arrivingCard)
+            {
+                // Keep the drawn card above the pile icon while it flies, then
+                // restore normal card sorting once it settles into the hand.
+                SortingGroup sortingGroup = card.GetComponent<SortingGroup>();
+                if (sortingGroup != null) sortingGroup.sortingOrder = 45;
+
+                Tween arrival = card.transform.DOJump(splinePosition, 0.55f, 1, duration)
+                    .SetEase(Ease.OutCubic);
+                card.transform.DORotate(rotation.eulerAngles, duration)
+                    .SetEase(Ease.OutCubic);
+                card.transform.DOScale(targetScale, duration * 0.72f)
+                    .SetEase(Ease.OutBack);
+
+                yield return arrival.WaitForCompletion();
+
+                if (sortingGroup != null) sortingGroup.sortingOrder = 0;
+            }
+            else
+            {
+                card.transform.DOScale(targetScale, duration).SetEase(Ease.OutQuad);
+                card.transform.DOMove(splinePosition, duration).SetEase(Ease.OutCubic);
+                card.transform.DORotate(rotation.eulerAngles, duration).SetEase(Ease.OutCubic);
+            }
         }
-        yield return new WaitForSeconds(duration);
+
+        if (arrivingCard == null)
+            yield return new WaitForSeconds(duration);
     }
     
 }

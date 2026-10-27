@@ -54,8 +54,7 @@ public class CardData : ScriptableObject
                 break;
         }
 
-        float levelBonus = damageType == DamageType.Flat ? (cardLevel - 1) * 2f : 0f;
-        float rawDamage = (calculatedBase + levelBonus) * damageMultiplier;
+        float rawDamage = calculatedBase * damageMultiplier * CardRefinementRules.Multiplier(cardLevel);
 
         return Mathf.RoundToInt(rawDamage);
     }

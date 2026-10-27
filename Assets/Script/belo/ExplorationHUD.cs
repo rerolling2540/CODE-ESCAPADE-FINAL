@@ -689,8 +689,8 @@ public class ExplorationHUD : MonoBehaviour
 
         GUI.Label(
             new Rect(73, 105, 1050, 32),
-            "Gold Coins: " + inventory.Coins +
-            "     |     Library Tokens: " + inventory.LibraryTokens,
+            "Coins: " + inventory.Coins + "   |   Tokens: " + inventory.LibraryTokens +
+            "   |   Shards: " + inventory.SyntaxShards + "   |   Scraps: " + inventory.LowLogicScraps,
             textStyle
         );
 
@@ -777,7 +777,7 @@ public class ExplorationHUD : MonoBehaviour
                     slot.x + 8, slot.y + 107,
                     slot.width - 16, 22
                 ),
-                "Owned: " + stack.quantity,
+                "Owned: " + stack.quantity + "  |  Lv " + inventory.GetLevel(stack.id),
                 smallStyle
             );
 
@@ -799,7 +799,7 @@ public class ExplorationHUD : MonoBehaviour
             {
                 GUI.Label(
                     new Rect(875, 185, 305, 74),
-                    card.name,
+                    card.name + "  [Lv " + inventory.GetLevel(stack.id) + "]",
                     headingStyle
                 );
 
@@ -817,7 +817,7 @@ public class ExplorationHUD : MonoBehaviour
 
                 Fill(new Rect(875, 450, 305, 1), Brass);
 
-                string description = card.Description ?? "";
+                string description = (card.Description ?? "") + "\n\nCurrent effects:\n" + CardRefinementRules.Describe(card, inventory.GetLevel(stack.id));
 
                 float height = Mathf.Max(
                     145,

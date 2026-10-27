@@ -313,12 +313,13 @@ public class CardSystem : Singleton<CardSystem>
                 {
                     DealDamageGA damageGA = (DealDamageGA)playCardGA.Card.ManualTargetEffect.GetGameAction(
                         targets, HeroSystem.Instance.HeroView, playCardGA.Card.CardData);
+                    CardRefinementRules.RefineAction(damageGA, playCardGA.Card.Level);
                     yield return DamageSystemRunner(damageGA);
                 }
                 else
                 {
                     ActionSystem.Instance.AddReaction(new PerformEffectGA(
-                        playCardGA.Card.ManualTargetEffect, targets, playCardGA.Card.CardData));
+                        playCardGA.Card.ManualTargetEffect, targets, playCardGA.Card.CardData, playCardGA.Card.Level));
                 }
             }
 
@@ -331,12 +332,13 @@ public class CardSystem : Singleton<CardSystem>
                 {
                     DealDamageGA damageGA = (DealDamageGA)effectWrapper.Effect.GetGameAction(
                         targets, HeroSystem.Instance.HeroView, playCardGA.Card.CardData);
+                    CardRefinementRules.RefineAction(damageGA, playCardGA.Card.Level);
                     yield return DamageSystemRunner(damageGA);
                 }
                 else
                 {
                     ActionSystem.Instance.AddReaction(new PerformEffectGA(
-                        effectWrapper.Effect, targets, playCardGA.Card.CardData));
+                        effectWrapper.Effect, targets, playCardGA.Card.CardData, playCardGA.Card.Level));
                 }
             }
         }

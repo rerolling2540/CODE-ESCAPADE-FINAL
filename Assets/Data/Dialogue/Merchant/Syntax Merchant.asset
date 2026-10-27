@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b463fd66034afa2488398f59ca297c5e, type: 3}
+  m_Name: Syntax Merchant
+  m_EditorClassIdentifier: Assembly-CSharp::ActorSO
+  actorName: Syntax Merchant
+  portrait: {fileID: -394235314, guid: 61b5bbc8c9e3f96439dfbf000059c86d, type: 3}

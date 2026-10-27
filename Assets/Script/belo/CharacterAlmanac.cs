@@ -20,18 +20,23 @@ public sealed class CharacterAlmanac : MonoBehaviour
     [Serializable] private sealed class Bank { public Page[] items; }
     
     private List<Page> pages = new List<Page>();
-    private GameObject canvasRoot, launcher, modal, listContent, library, reader;
+    private GameObject canvasRoot, launcher, modal, listContent, library, reader, progressPanel;
     private ScrollRect libraryScroll;
     private Material readableMaterial;
     private TMP_FontAsset readableFont;
-    private TMP_Text title, status, detail, countLabel, revealCaption;
+    private TMP_Text title, status, detail, countLabel, revealCaption, practiceFeedback, progressText;
     private TMP_InputField search;
     private ScrollRect detailScroll;
+    private ScrollRect progressScroll;
     private readonly List<Button> tierButtons = new List<Button>();
+    private readonly Button[] practiceAnswerButtons = new Button[4];
+    private Button startPracticeButton;
     private Page selected;
     private string language, query = "", edition = "Original learning edition";
     private int tier;
     private bool opened, revealed;
+    private bool practiceStarted;
+    private string practiceAttemptId;
     private float previousTimeScale;
     private static CharacterAlmanac openJournal;
     public static bool IsOpen => openJournal != null && openJournal.opened;
@@ -48,6 +53,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
         ReloadLessons();
         language = LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter",0));
         BuildUI();
+        QuestionPerformanceTracker.HistoryChanged += RefreshProgressReport;
         canvasRoot.SetActive(InExploration);
     }
     public void ReloadLessons()
@@ -70,7 +76,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
         if (launcher != null) launcher.SetActive(!opened && !settings && !dialogue && Time.timeScale > 0f);
         if (opened)
         {
-            if (Input.GetKeyDown(KeyCode.Escape)) { if (reader.activeSelf) BackToBooks(); else Close(); }
+            if (Input.GetKeyDown(KeyCode.Escape)) { if (reader.activeSelf || progressPanel.activeSelf) BackToBooks(); else Close(); }
             else if (!search.isFocused && Input.GetKeyDown(KeyCode.L)) Close();
         }
         else if (!settings && !dialogue && Time.timeScale > 0f && Input.GetKeyDown(KeyCode.L)) Open();
@@ -78,6 +84,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     void OnDisable() { Close(); }
     void OnDestroy()
     {
+        QuestionPerformanceTracker.HistoryChanged -= RefreshProgressReport;
         if (canvasRoot != null) { if (Application.isPlaying) Destroy(canvasRoot); else DestroyImmediate(canvasRoot); }
         if (readableMaterial != null) { if (Application.isPlaying) Destroy(readableMaterial); else DestroyImmediate(readableMaterial); }
     }
@@ -141,14 +148,31 @@ public sealed class CharacterAlmanac : MonoBehaviour
     void ShowPage(Page page)
     {
         library.SetActive(false); reader.SetActive(true);
-        selected = page; revealed = false; RenderPage();
+        selected = page; revealed = false; practiceStarted = false; practiceAttemptId = null;
+        practiceFeedback.text = "Read the lesson first, then try the practice.";
+        startPracticeButton.gameObject.SetActive(true);
+        foreach (Button button in practiceAnswerButtons) button.gameObject.SetActive(false);
+        RenderPage();
         detailScroll.verticalNormalizedPosition = 1f;
         UpdateStatus();
     }
     public void BackToBooks()
     {
+        progressPanel.SetActive(false);
         reader.SetActive(false); library.SetActive(true);
         UpdateStatus();
+    }
+    void ShowProgress()
+    {
+        library.SetActive(false); reader.SetActive(false); progressPanel.SetActive(true);
+        RefreshProgressReport();
+        progressScroll.verticalNormalizedPosition = 1f;
+        UpdateStatus();
+    }
+    void RefreshProgressReport()
+    {
+        if (progressPanel != null && progressPanel.activeSelf && progressText != null)
+            progressText.text = QuestionPerformanceTracker.BuildReport(MainMenuSaveSlots.CurrentUserId);
     }
     void MakeBook(Page page, int number)
     {
@@ -175,7 +199,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     {
         if(selected == null) { detail.text = "<b>No matching pages</b>\n\nTry another difficulty or clear your search."; revealCaption.text="No page selected"; return; }
         var p = selected;
-        string answer = revealed ? Section("PRACTICE ANSWER")+Code(p.choices[p.correct_index])+Section("WHY IT WORKS")+Safe(p.explanation) : "\n\n<size=20><i>Trace the practice code, then select Check practice answer below.</i></size>";
+        string answer = revealed ? Section("PRACTICE ANSWER")+Code(p.choices[p.correct_index])+Section("WHY IT WORKS")+Safe(p.explanation) : "\n\n<size=20><i>Trace the practice code, then select Start practice below.</i></size>";
         detail.text = "<size=32><b>"+Safe(Topic(p))+"</b></size>\n<size=19><color=#69421E>"+LanguageName(language)+" · "+TierName(p)+"</color></size>"+
             Section("01  THE IDEA")+Safe(p.meaning)+
             Section("02  HOW TO USE IT")+Safe(p.purpose)+
@@ -183,9 +207,46 @@ public sealed class CharacterAlmanac : MonoBehaviour
             Section("EXPECTED OUTPUT")+Code(p.example_output)+
             Section("FOLLOW THE STEPS")+Safe(p.walkthrough)+
             Section("04  TRY IT YOURSELF")+Safe(p.prompt)+"\n\n"+Code(p.practice_code)+answer;
-        revealCaption.text = revealed ? "Hide practice answer" : "Check practice answer";
+        revealCaption.text = revealed ? "Try practice again" : "Start practice";
     }
-    void UpdateStatus() { if(status!=null) status.text = edition + (reader != null && reader.activeSelf ? "  ·  Back to books [Esc]  ·  Close [L]" : "  ·  Scroll to browse your books  ·  Close [L / Esc]"); }
+    void StartPractice()
+    {
+        if (selected == null || practiceStarted) return;
+        practiceAttemptId = QuestionPerformanceTracker.Begin(selected.id + "-almanac", selected.title,
+            language, selected.difficulty, QuestionPerformanceTracker.GetCurrentPlayerLevel(), "almanac");
+        practiceStarted = true;
+        revealed = false;
+        practiceFeedback.text = "Choose the correct answer:";
+        startPracticeButton.gameObject.SetActive(false);
+        for (int i = 0; i < practiceAnswerButtons.Length; i++)
+        {
+            bool hasChoice = selected.choices != null && i < selected.choices.Length;
+            practiceAnswerButtons[i].gameObject.SetActive(hasChoice);
+            if (hasChoice) practiceAnswerButtons[i].GetComponentInChildren<TMP_Text>().text = ((char)('A' + i)) + ".  " + selected.choices[i];
+        }
+    }
+    void SubmitPracticeAnswer(int index)
+    {
+        if (!practiceStarted || selected == null) return;
+        bool correct = index == selected.correct_index;
+        QuestionPerformanceTracker.Complete(practiceAttemptId, correct);
+        practiceAttemptId = null;
+        practiceStarted = false;
+        revealed = true;
+        practiceFeedback.text = correct ? "Correct. Review the explanation below." : "Not quite. Review the answer and explanation below.";
+        foreach (Button button in practiceAnswerButtons) button.gameObject.SetActive(false);
+        startPracticeButton.gameObject.SetActive(true);
+        revealCaption.text = "Try practice again";
+        RenderPage();
+        detailScroll.verticalNormalizedPosition = 0f;
+    }
+    void UpdateStatus()
+    {
+        if (status == null) return;
+        status.text = progressPanel != null && progressPanel.activeSelf
+            ? "Progress is stored locally and syncs after sign-in.  ·  Back to books [Esc]  ·  Close [L]"
+            : edition + (reader != null && reader.activeSelf ? "  ·  Back to books [Esc]  ·  Close [L]" : "  ·  Scroll to browse your books  ·  Close [L / Esc]");
+    }
 
     void BuildUI()
     {
@@ -215,17 +276,23 @@ public sealed class CharacterAlmanac : MonoBehaviour
         search.onValueChanged.AddListener(value=>{query=value;RefreshList();});
         string[] tiers={"All books","Beginner","Intermediate","Advanced"};
         for(int i=0;i<tiers.Length;i++){int index=i;var button=MakeButton("Difficulty "+tiers[i],library.transform,tiers[i],()=>{tier=index;RefreshList();});Position(button.gameObject,new Vector2(355+i*197,-76),new Vector2(185,42));tierButtons.Add(button);}
-        countLabel=Label("Book Count",library.transform,"",18,Gold);Position(countLabel.gameObject,new Vector2(28,-126),new Vector2(1120,30));
+        countLabel=Label("Book Count",library.transform,"",18,Gold);Position(countLabel.gameObject,new Vector2(28,-126),new Vector2(850,30));
+        var progressButton=MakeButton("Progress Report",library.transform,"Progress report",ShowProgress);Position(progressButton.gameObject,new Vector2(910,-120),new Vector2(220,38));
         libraryScroll=MakeScroll("Bookshelf",library.transform,false);Stretch(libraryScroll.gameObject,24,164,24,48);listContent=libraryScroll.content.gameObject;
         var grid=listContent.AddComponent<UnityEngine.UI.GridLayoutGroup>();grid.cellSize=new Vector2(175,226);grid.spacing=new Vector2(12,16);grid.padding=new RectOffset(12,12,14,14);grid.constraint=UnityEngine.UI.GridLayoutGroup.Constraint.FixedColumnCount;grid.constraintCount=6;grid.childAlignment=TextAnchor.UpperCenter;
         var back=MakeButton("Back To Books",reader.transform,"< Back to books [Esc]",BackToBooks);Position(back.gameObject,new Vector2(24,-76),new Vector2(260,42));
         var readerHint=Label("Reader Hint",reader.transform,"Read, explore the example, then try the practice below.",18,Gold);Position(readerHint.gameObject,new Vector2(305,-80),new Vector2(820,35));
-        detailScroll=MakeScroll("Study Page",reader.transform,false);Stretch(detailScroll.gameObject,24,134,24,104);
+        detailScroll=MakeScroll("Study Page",reader.transform,false);Stretch(detailScroll.gameObject,24,134,24,176);
         detail=detailScroll.content.gameObject.AddComponent<TextMeshProUGUI>();ApplyReadableFont(detail);detail.fontSize=23;detail.color=Ink;detail.richText=true;detail.textWrappingMode=TextWrappingModes.Normal;detail.lineSpacing=6;detail.paragraphSpacing=8;detail.margin=new Vector4(88,26,88,32);detailScroll.content.GetComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
-        var reveal=MakeButton("Reveal Explanation",reader.transform,"Reveal answer & explanation",()=>{if(selected==null)return;revealed=!revealed;RenderPage();});
-        var revealRect=(RectTransform)reveal.transform;revealRect.anchorMin=Vector2.zero;revealRect.anchorMax=new Vector2(1,0);revealRect.offsetMin=new Vector2(24,52);revealRect.offsetMax=new Vector2(-24,96);revealCaption=reveal.GetComponentInChildren<TMP_Text>();
+        practiceFeedback=Label("Practice Feedback",reader.transform,"Read the lesson first, then try the practice.",17,Gold);var pfr=(RectTransform)practiceFeedback.transform;pfr.anchorMin=pfr.anchorMax=new Vector2(.5f,0);pfr.pivot=new Vector2(.5f,0);pfr.anchoredPosition=new Vector2(0,139);pfr.sizeDelta=new Vector2(900,28);practiceFeedback.alignment=TextAlignmentOptions.Center;
+        startPracticeButton=MakeButton("Start Almanac Practice",reader.transform,"Start practice",StartPractice);var startRect=(RectTransform)startPracticeButton.transform;startRect.anchorMin=startRect.anchorMax=new Vector2(.5f,0);startRect.pivot=new Vector2(.5f,0);startRect.anchoredPosition=new Vector2(0,75);startRect.sizeDelta=new Vector2(270,42);revealCaption=startPracticeButton.GetComponentInChildren<TMP_Text>();
+        for(int i=0;i<practiceAnswerButtons.Length;i++){int index=i;var answerButton=MakeButton("Practice answer "+(char)('A'+i),reader.transform,"",()=>SubmitPracticeAnswer(index));var answerRect=(RectTransform)answerButton.transform;answerRect.anchorMin=answerRect.anchorMax=new Vector2(i%2==0?.27f:.73f,0);answerRect.pivot=new Vector2(.5f,0);answerRect.anchoredPosition=new Vector2(0,i<2?86:39);answerRect.sizeDelta=new Vector2(420,40);practiceAnswerButtons[i]=answerButton;answerButton.gameObject.SetActive(false);}
+        progressPanel=new GameObject("Player Progress Report",typeof(RectTransform));progressPanel.transform.SetParent(frame.transform,false);Stretch(progressPanel,0,0,0,0);
+        var progressBack=MakeButton("Back From Progress",progressPanel.transform,"< Back to books",BackToBooks);Position(progressBack.gameObject,new Vector2(24,-76),new Vector2(220,42));
+        progressScroll=MakeScroll("Progress Details",progressPanel.transform,false);Stretch(progressScroll.gameObject,24,134,24,58);
+        progressText=progressScroll.content.gameObject.AddComponent<TextMeshProUGUI>();ApplyReadableFont(progressText);progressText.fontSize=22;progressText.color=Ink;progressText.richText=false;progressText.textWrappingMode=TextWrappingModes.Normal;progressText.lineSpacing=5;progressText.paragraphSpacing=8;progressText.margin=new Vector4(44,28,44,34);progressScroll.content.GetComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
         status=Label("Almanac Status",frame.transform,"Offline edition",16,Gold);var sr=(RectTransform)status.transform;sr.anchorMin=Vector2.zero;sr.anchorMax=new Vector2(1,0);sr.pivot=new Vector2(.5f,0);sr.offsetMin=new Vector2(26,12);sr.offsetMax=new Vector2(-26,40);
-        reader.SetActive(false); modal.SetActive(false);
+        reader.SetActive(false); progressPanel.SetActive(false); modal.SetActive(false);
     }
     void ConfigureLauncher()
     {

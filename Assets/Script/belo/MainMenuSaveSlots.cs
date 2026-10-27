@@ -18,6 +18,7 @@ public class MainMenuSaveSlots : MonoBehaviour
     public static string CurrentAccessToken { get; private set; }
     public static string CurrentRefreshToken { get; private set; }
     public static string CurrentUserEmail { get; private set; }
+    public static string CurrentUserId { get; private set; }
     public static string CurrentSupabaseProjectUrl { get; private set; }
     public static string CurrentSupabasePublishableKey { get; private set; }
     public static bool HasAdminSession =>
@@ -513,6 +514,7 @@ public class MainMenuSaveSlots : MonoBehaviour
                 ? response.user.email
                 : loginEmail;
             authenticatedUserId = response.user != null ? response.user.id : "";
+            CurrentUserId = authenticatedUserId;
             loginComplete = true;
             authStatus = "Signed in successfully.";
             StartCloudSaveSync(response.access_token);
@@ -529,6 +531,7 @@ public class MainMenuSaveSlots : MonoBehaviour
         CurrentAccessToken = null;
         CurrentRefreshToken = null;
         CurrentUserEmail = null;
+        CurrentUserId = null;
         authenticatedUserId = "";
         if (CloudSaveSync.Instance != null) CloudSaveSync.Instance.EndSession();
         loginComplete = false;
@@ -809,6 +812,7 @@ public class MainMenuSaveSlots : MonoBehaviour
                 ? response.user.email
                 : loginEmail;
             authenticatedUserId = response.user != null ? response.user.id : "";
+            CurrentUserId = authenticatedUserId;
             loginComplete = true;
             authStatus = "Email verified. You are now signed in.";
             StartCloudSaveSync(response.access_token);

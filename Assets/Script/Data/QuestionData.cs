@@ -9,6 +9,14 @@ public enum QuestionType
 
 public abstract class QuestionData : ScriptableObject
 {
+    [Header("Question identity and curriculum")]
+    public string questionId;
+    public string topic;
+    public string language;
+    public string difficulty;
+    public int minLevel = 1;
+    public int maxLevel;
+
     public QuestionType questionType;
 
     [TextArea(3, 6)]

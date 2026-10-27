@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -48,6 +50,7 @@ public class CloudSaveSync : MonoBehaviour
         public string p_updated_at;
         public InventoryRpcCard[] p_cards;
     }
+    [Serializable] private class QuestionAttemptRows { public QuestionAttempt[] rows; }
 
     public static CloudSaveSync Instance { get; private set; }
 
@@ -60,6 +63,12 @@ public class CloudSaveSync : MonoBehaviour
     private bool uploadQueued;
     private bool inventorySyncRunning;
     private bool inventoryChangeSyncQueued;
+    private bool inventorySyncNeeded;
+    private bool questionAttemptSyncRunning;
+    private bool questionAttemptSyncQueued;
+    private bool questionHistorySyncNeeded;
+    private Coroutine questionAttemptRetryCoroutine;
+    private Coroutine inventoryRetryCoroutine;
 
     public static CloudSaveSync EnsureInstance()
     {
@@ -80,12 +89,16 @@ public class CloudSaveSync : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         SaveSlots.LocalSaveChanged += OnLocalSaveChanged;
         CharacterInventory.InventoryChanged += OnInventoryChanged;
+        QuestionPerformanceTracker.PendingAttemptsChanged += OnQuestionAttemptsChanged;
     }
 
     void OnDestroy()
     {
         SaveSlots.LocalSaveChanged -= OnLocalSaveChanged;
         CharacterInventory.InventoryChanged -= OnInventoryChanged;
+        QuestionPerformanceTracker.PendingAttemptsChanged -= OnQuestionAttemptsChanged;
+        if (questionAttemptRetryCoroutine != null) StopCoroutine(questionAttemptRetryCoroutine);
+        if (inventoryRetryCoroutine != null) StopCoroutine(inventoryRetryCoroutine);
         if (Instance == this) Instance = null;
     }
 
@@ -96,12 +109,37 @@ public class CloudSaveSync : MonoBehaviour
         accessToken = token;
         userId = accountId;
         sessionReady = false;
+        questionHistorySyncNeeded = true;
+        inventorySyncNeeded = true;
     }
 
     public void EndSession()
     {
         sessionReady = false;
         projectUrl = publishableKey = accessToken = userId = "";
+        questionHistorySyncNeeded = false;
+        inventorySyncNeeded = false;
+        if (questionAttemptRetryCoroutine != null)
+        {
+            StopCoroutine(questionAttemptRetryCoroutine);
+            questionAttemptRetryCoroutine = null;
+        }
+        if (inventoryRetryCoroutine != null)
+        {
+            StopCoroutine(inventoryRetryCoroutine);
+            inventoryRetryCoroutine = null;
+        }
+        QuestionPerformanceTracker.SetSyncStatus("Attempts are saved on this device.");
+    }
+
+    void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus) RetryPendingInventoryNow();
+    }
+
+    void OnApplicationPause(bool paused)
+    {
+        if (!paused) RetryPendingInventoryNow();
     }
 
     public void StartInitialSync(bool hasLocalProgress, Action<string> completed)
@@ -193,8 +231,115 @@ public class CloudSaveSync : MonoBehaviour
         if (sessionReady) yield return SyncCardInventoryRoutine(value => inventoryWarning = value);
         if (!string.IsNullOrEmpty(inventoryWarning))
             Debug.LogWarning(inventoryWarning);
+        if (sessionReady) yield return SyncQuestionAttemptsRoutine();
         completed?.Invoke(string.IsNullOrEmpty(status) ? inventoryWarning :
             status + (string.IsNullOrEmpty(inventoryWarning) ? "" : "\n" + inventoryWarning));
+    }
+
+    void OnQuestionAttemptsChanged()
+    {
+        questionHistorySyncNeeded = true;
+        if (!sessionReady || questionAttemptSyncQueued) return;
+        questionAttemptSyncQueued = true;
+        StartCoroutine(SyncQuestionAttemptsAfterDelay());
+    }
+
+    IEnumerator SyncQuestionAttemptsAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(1f);
+        questionAttemptSyncQueued = false;
+        if (!sessionReady) yield break;
+        yield return SyncQuestionAttemptsRoutine();
+    }
+
+    IEnumerator SyncQuestionAttemptsRoutine()
+    {
+        if (!sessionReady || string.IsNullOrWhiteSpace(userId)) yield break;
+        while (questionAttemptSyncRunning) yield return null;
+        questionAttemptSyncRunning = true;
+
+        List<QuestionAttempt> pending = QuestionPerformanceTracker.PreparePendingForUser(userId);
+        if (pending.Count > 0)
+        {
+            string url = projectUrl + "/rest/v1/player_question_attempts?on_conflict=attempt_id";
+            using (var request = CreateRequest(url, UnityWebRequest.kHttpVerbPOST))
+            {
+                request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(ToJsonArray(pending)));
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+                request.SetRequestHeader("Prefer", "resolution=merge-duplicates,return=minimal");
+                yield return request.SendWebRequest();
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    QuestionPerformanceTracker.SetSyncStatus("Offline or sync failed. Attempts remain saved on this device. Run question_performance_schema.sql if the table is missing. " + GetError(request));
+                    questionAttemptSyncRunning = false;
+                    ScheduleQuestionAttemptRetry();
+                    yield break;
+                }
+            }
+            QuestionPerformanceTracker.MarkSynced(userId, pending.Select(attempt => attempt.attempt_id));
+        }
+
+        const int pageSize = 500;
+        var downloaded = new System.Collections.Generic.List<QuestionAttempt>();
+        for (int offset = 0; ; offset += pageSize)
+        {
+            string query = "?select=attempt_id,user_id,slot_index,question_id,topic,language,difficulty,source,player_level,outcome,presented_at,answered_at,duration_seconds&order=presented_at.asc&limit=" + pageSize;
+            using (var request = CreateRequest(projectUrl + "/rest/v1/player_question_attempts" + query, UnityWebRequest.kHttpVerbGET))
+            {
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Range-Unit", "items");
+                request.SetRequestHeader("Range", offset + "-" + (offset + pageSize - 1));
+                yield return request.SendWebRequest();
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    QuestionPerformanceTracker.SetSyncStatus("Attempts are saved locally; cloud history could not be loaded. Run question_performance_schema.sql if the table is missing. " + GetError(request));
+                    questionAttemptSyncRunning = false;
+                    ScheduleQuestionAttemptRetry();
+                    yield break;
+                }
+                try
+                {
+                    QuestionAttemptRows page = JsonUtility.FromJson<QuestionAttemptRows>("{\"rows\":" + request.downloadHandler.text + "}");
+                    if (page?.rows == null || page.rows.Length == 0) break;
+                    downloaded.AddRange(page.rows);
+                    if (page.rows.Length < pageSize) break;
+                }
+                catch (ArgumentException exception)
+                {
+                    QuestionPerformanceTracker.SetSyncStatus("Cloud history response could not be read: " + exception.Message);
+                    questionAttemptSyncRunning = false;
+                    ScheduleQuestionAttemptRetry();
+                    yield break;
+                }
+            }
+        }
+
+        QuestionPerformanceTracker.MergeRemote(userId, downloaded);
+        questionAttemptSyncRunning = false;
+        questionHistorySyncNeeded = false;
+    }
+
+    void ScheduleQuestionAttemptRetry()
+    {
+        if (sessionReady && questionAttemptRetryCoroutine == null)
+            questionAttemptRetryCoroutine = StartCoroutine(RetryQuestionAttempts());
+    }
+
+    IEnumerator RetryQuestionAttempts()
+    {
+        while (sessionReady && questionHistorySyncNeeded)
+        {
+            yield return new WaitForSecondsRealtime(60f);
+            if (sessionReady && questionHistorySyncNeeded)
+                yield return SyncQuestionAttemptsRoutine();
+        }
+        questionAttemptRetryCoroutine = null;
+    }
+
+    static string ToJsonArray(System.Collections.Generic.IEnumerable<QuestionAttempt> values)
+    {
+        return "[" + string.Join(",", values.Select(JsonUtility.ToJson)) + "]";
     }
 
     void OnLocalSaveChanged()
@@ -206,6 +351,7 @@ public class CloudSaveSync : MonoBehaviour
 
     void OnInventoryChanged()
     {
+        inventorySyncNeeded = true;
         if (!sessionReady || inventoryChangeSyncQueued) return;
         inventoryChangeSyncQueued = true;
         StartCoroutine(SyncInventoryAfterLocalChange());
@@ -220,6 +366,41 @@ public class CloudSaveSync : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(message)) Debug.LogWarning("Cloud card inventory sync failed: " + message);
         });
+    }
+
+    void RetryPendingInventoryNow()
+    {
+        if (!sessionReady || !inventorySyncNeeded || inventoryChangeSyncQueued) return;
+        inventoryChangeSyncQueued = true;
+        StartCoroutine(SyncInventoryAfterLocalChange());
+    }
+
+    void ScheduleInventoryRetry()
+    {
+        if (sessionReady && inventorySyncNeeded && inventoryRetryCoroutine == null)
+            inventoryRetryCoroutine = StartCoroutine(RetryInventorySync());
+    }
+
+    IEnumerator RetryInventorySync()
+    {
+        while (sessionReady && inventorySyncNeeded)
+        {
+            yield return new WaitForSecondsRealtime(30f);
+            if (sessionReady && inventorySyncNeeded)
+                yield return SyncCardInventoryRoutine(message =>
+                {
+                    if (!string.IsNullOrEmpty(message)) Debug.LogWarning("Cloud card inventory retry failed: " + message);
+                });
+        }
+        inventoryRetryCoroutine = null;
+    }
+
+    void InventorySyncFailed(string message, Action<string> completed)
+    {
+        inventorySyncRunning = false;
+        inventorySyncNeeded = true;
+        completed?.Invoke(message);
+        ScheduleInventoryRetry();
     }
 
     IEnumerator UploadAfterDelay()
@@ -258,8 +439,7 @@ public class CloudSaveSync : MonoBehaviour
             yield return request.SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
-                inventorySyncRunning = false;
-                completed?.Invoke("Card inventory table is not ready yet. Run card_inventory_schema.sql in Supabase. " + GetError(request));
+                InventorySyncFailed("Card inventory table is not ready yet. Run card_inventory_schema.sql in Supabase. " + GetError(request), completed);
                 yield break;
             }
             try { stateRows = JsonUtility.FromJson<InventoryStateRows>("{\"rows\":" + request.downloadHandler.text + "}"); }
@@ -274,8 +454,7 @@ public class CloudSaveSync : MonoBehaviour
             yield return request.SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
-                inventorySyncRunning = false;
-                completed?.Invoke("Could not read owned card rows: " + GetError(request));
+                InventorySyncFailed("Could not read owned card rows: " + GetError(request), completed);
                 yield break;
             }
             try { cardRows = JsonUtility.FromJson<InventoryCardRows>("{\"rows\":" + request.downloadHandler.text + "}"); }
@@ -318,8 +497,7 @@ public class CloudSaveSync : MonoBehaviour
                 yield return request.SendWebRequest();
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    inventorySyncRunning = false;
-                    completed?.Invoke("Could not sync owned cards for save slot " + (slot + 1) + ": " + GetError(request));
+                    InventorySyncFailed("Could not sync owned cards for save slot " + (slot + 1) + ": " + GetError(request), completed);
                     yield break;
                 }
             }
@@ -331,12 +509,12 @@ public class CloudSaveSync : MonoBehaviour
             yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), message => saveError = message);
             if (!string.IsNullOrEmpty(saveError))
             {
-                inventorySyncRunning = false;
-                completed?.Invoke("Owned cards downloaded, but the combined save snapshot could not be updated: " + saveError);
+                InventorySyncFailed("Owned cards downloaded, but the combined save snapshot could not be updated: " + saveError, completed);
                 yield break;
             }
         }
         inventorySyncRunning = false;
+        inventorySyncNeeded = false;
         completed?.Invoke("");
     }
 

@@ -11,6 +11,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
     private readonly TMP_Text[] answerLabels = new TMP_Text[4];
     private MultipleChoiceQuestionData question;
     private MultipleChoiceQuestionData[] questionPool;
+    private string currentAttemptId;
     private Action accepted, cancelled;
     private float previousTimeScale;
     private bool open;
@@ -40,6 +41,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         var alternatives = Array.FindAll(questionPool, q => q != question);
         var choices = alternatives.Length > 0 ? alternatives : questionPool;
         question = choices[UnityEngine.Random.Range(0, choices.Length)];
+        currentAttemptId = QuestionPerformanceTracker.Begin(question, "door", "java");
         questionLabel.text = question.questionText;
         codeLabel.text = question.codeSnippet;
         feedback.text = message;
@@ -58,9 +60,13 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         BattleAudio.Play(BattleSound.AnswerSelect);
         if (!question.CheckAnswer(index))
         {
+            QuestionPerformanceTracker.Complete(currentAttemptId, false);
+            currentAttemptId = null;
             PickQuestion("Incorrect. The door remains closed. Try a different question.");
             return;
         }
+        QuestionPerformanceTracker.Complete(currentAttemptId, true);
+        currentAttemptId = null;
         var callback = accepted;
         Close();
         callback?.Invoke();
@@ -69,6 +75,8 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
     public void Cancel()
     {
         if (!open) return;
+        QuestionPerformanceTracker.Abandon(currentAttemptId);
+        currentAttemptId = null;
         var callback = cancelled;
         Close();
         callback?.Invoke();

@@ -37,6 +37,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
     {
         public string id;
         public string language;
+        public string topic;
         public string difficulty;
         public int min_level;
         public int max_level;
@@ -72,6 +73,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
     private int questionTypeIndex;
     private string minLevelInput;
     private string maxLevelInput;
+    private string topicInput;
     private string promptInput;
     private string codeInput;
     private readonly string[] choiceInputs = new string[4];
@@ -206,7 +208,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
         for (int i = 0; i < questions.Count; i++)
         {
             QuestionRecord row = questions[i];
-            string search = (row.id + " " + row.prompt + " " + row.language + " " + row.difficulty)
+            string search = (row.id + " " + row.prompt + " " + row.language + " " + row.difficulty + " " + row.topic)
                 .ToLowerInvariant();
             if (!string.IsNullOrWhiteSpace(filterText) && !search.Contains(filterText.Trim().ToLowerInvariant()))
                 continue;
@@ -214,7 +216,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
             string title = string.IsNullOrWhiteSpace(row.prompt) ? "Untitled question" : row.prompt.Trim();
             if (title.Length > 80) title = title.Substring(0, 77) + "…";
             string subtitle = string.Format("{0}  •  {1}  •  level {2}{3}",
-                row.language, row.difficulty, row.min_level,
+                row.language, row.difficulty + " · " + (string.IsNullOrWhiteSpace(row.topic) ? "general" : row.topic), row.min_level,
                 row.max_level > 0 ? "–" + row.max_level : "+");
             string label = "<b>" + EscapeRichText(title) + "</b>\n<size=13>" +
                            EscapeRichText(row.id + "   " + subtitle + (row.published ? "" : "   DRAFT")) + "</size>";
@@ -255,6 +257,10 @@ public class QuestionDataEditorScreen : MonoBehaviour
             difficultyIndex = selectedDifficulty;
             SetDefaultLevels();
         }
+
+        GUILayout.Space(8);
+        GUILayout.Label("Learning topic  (used in player progress reports)", labelStyle);
+        topicInput = GUILayout.TextField(topicInput ?? "general", fieldStyle, GUILayout.Height(36));
 
         GUILayout.BeginHorizontal();
         GUILayout.BeginVertical(GUILayout.Width(180));
@@ -426,6 +432,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
         idInput = "java-custom-" + Guid.NewGuid().ToString("N").Substring(0, 12);
         promptInput = string.Empty;
         codeInput = string.Empty;
+        topicInput = "general";
         explanationInput = string.Empty;
         correctIndex = 0;
         publishedInput = true;
@@ -453,6 +460,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
         languageIndex = Mathf.Max(0, Array.IndexOf(Languages, row.language));
         difficultyIndex = Mathf.Max(0, Array.IndexOf(Difficulties, row.difficulty));
         questionTypeIndex = Mathf.Max(0, Array.IndexOf(QuestionTypes, row.question_type));
+        topicInput = string.IsNullOrWhiteSpace(row.topic) ? "general" : row.topic;
         minLevelInput = row.min_level.ToString();
         maxLevelInput = row.max_level > 0 ? row.max_level.ToString() : string.Empty;
         promptInput = row.prompt ?? string.Empty;
@@ -482,7 +490,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
         requestInProgress = true;
         SetStatus("Loading questions from Supabase…", false);
         string endpoint = BuildEndpoint();
-        string url = endpoint + "?select=id,language,difficulty,min_level,max_level,question_type,prompt,code_snippet,choices,correct_index,explanation,published&order=id.asc";
+        string url = endpoint + "?select=id,language,topic,difficulty,min_level,max_level,question_type,prompt,code_snippet,choices,correct_index,explanation,published&order=id.asc";
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
             SetHeaders(request);
@@ -617,6 +625,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
         builder.Append('{');
         AppendJsonProperty(builder, "id", id, true);
         AppendJsonProperty(builder, "language", Languages[languageIndex], true);
+        AppendJsonProperty(builder, "topic", string.IsNullOrWhiteSpace(topicInput) ? "general" : topicInput.Trim(), true);
         AppendJsonProperty(builder, "difficulty", Difficulties[difficultyIndex], true);
         builder.Append("\"min_level\":").Append(minLevel).Append(',');
         builder.Append("\"max_level\":").Append(maxLevel > 0 ? maxLevel.ToString() : "null").Append(',');

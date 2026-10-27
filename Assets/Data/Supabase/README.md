@@ -58,3 +58,33 @@ falls back to its authored questions.
 
 The answers are returned to the game client to check them, so this database is
 appropriate for a learning game but is not a secure competitive quiz bank.
+
+The Battle Scene caches the published question bank under
+`Application.persistentDataPath`, keyed by Supabase project. After one
+successful download, those questions remain available offline. When connected,
+Unity refreshes the cache from Supabase in the background and retries after a
+network failure. The bundled `QuestionDatabase` remains the fallback when a
+device has not downloaded the remote bank yet.
+
+## Question performance reports
+
+Run `question_performance_schema.sql` once in the same Supabase project before
+using cross-device reports. It adds a topic column to `question_bank`, assigns
+topics to the seeded Java/C#/Python questions, and creates the private
+`player_question_attempts` table. The migration is safe to re-run. The question
+editor now includes a Learning topic field for new and edited questions.
+
+Attempts are first written to `Application.persistentDataPath` on the device,
+so battle, Demon Door, and Almanac practice still record results offline. When
+the player signs in, guest attempts are attached to that account and pending
+records sync automatically. RLS lets each signed-in user read or write only
+their own history. The Almanac's Progress report shows totals, accuracy,
+completion, and per-topic mastery (at least 5 of the latest 10 responses and
+80% accuracy). Guest reports show only guest attempts on that device.
+
+Player card inventory is also stored locally per save slot. Battle, inventory,
+chest, and merchant features read that local copy while offline. A signed-in
+session queues failed inventory uploads and retries them periodically, and
+when the app regains focus; pending local inventory is sent once Supabase is
+reachable again. The question bank is read-only game content, so it refreshes
+from Supabase rather than uploading player-side edits.

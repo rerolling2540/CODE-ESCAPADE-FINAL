@@ -4,6 +4,7 @@
 create table if not exists public.question_bank (
     id text primary key,
     language text not null check (language in ('java', 'csharp', 'python')),
+    topic text not null default 'general',
     difficulty text not null check (difficulty in ('easy', 'medium', 'hard')),
     min_level integer not null check (min_level >= 1),
     max_level integer,
@@ -19,8 +20,12 @@ create table if not exists public.question_bank (
     constraint question_level_band check (max_level is null or max_level >= min_level)
 );
 
+alter table public.question_bank add column if not exists topic text not null default 'general';
+
 create index if not exists question_bank_lookup_idx
     on public.question_bank (language, min_level, max_level) where published;
+create index if not exists question_bank_topic_lookup_idx
+    on public.question_bank (language, topic, difficulty) where published;
 
 alter table public.question_bank enable row level security;
 drop policy if exists "Published questions are readable" on public.question_bank;
@@ -141,3 +146,37 @@ on conflict (id) do update set
     code_snippet = excluded.code_snippet, choices = excluded.choices,
     correct_index = excluded.correct_index, explanation = excluded.explanation,
     published = true;
+
+-- Topic tags are stable across language versions. Only fill the default so
+-- re-running this seed does not overwrite topics edited in the admin tool.
+update public.question_bank set topic = case
+    when id like '%-e01' then 'output'
+    when id like '%-e02' then 'variables'
+    when id like '%-e03' then 'strings'
+    when id like '%-e04' then 'conditionals'
+    when id like '%-e05' then 'arrays'
+    when id like '%-e06' then 'methods'
+    when id like '%-e07' then 'loops'
+    when id like '%-e08' then 'syntax'
+    when id like '%-e09' then 'comparisons'
+    when id like '%-e10' then 'types'
+    when id like '%-m01' then 'loops'
+    when id like '%-m02' then 'strings'
+    when id like '%-m03' then 'arrays'
+    when id like '%-m04' then 'operators'
+    when id like '%-m05' then 'strings'
+    when id like '%-m06' then 'arrays'
+    when id like '%-m07' then 'methods'
+    when id like '%-m08' then 'conditionals'
+    when id like '%-m09' then 'loops'
+    when id like '%-m10' then 'arrays'
+    when id like '%-h01' or id like '%-h10' then 'recursion'
+    when id like '%-h02' then 'algorithms'
+    when id like '%-h03' or id like '%-h06' or id like '%-h08' then 'collections'
+    when id like '%-h04' then 'objects'
+    when id like '%-h05' then 'exceptions'
+    when id like '%-h07' then 'operators'
+    when id like '%-h09' then 'loops'
+    else topic
+end
+where topic = 'general' and id ~ '^(java|csharp|python)-(e|m|h)[0-9]{2}$';

@@ -14,7 +14,11 @@ For an NPC with a service, implement INPCDialogueProvider on a component attache
 
 NPC/SharedDialogueSettings in Resources references Assets/Prefab/DialogueCanvas.prefab, the original elf canvas. Scenes that already contain the canvas reuse it. A scene without one instantiates the same prefab when an NPC needs dialogue, and ensures a UI EventSystem exists.
 
-The blacksmith prefab is in Assets/Resources/NPC/Blacksmith.prefab. Scene 2 creates one beside the elf at runtime. A placed blacksmith prevents automatic duplication. An optional scene object named Blacksmith Spawn sets an explicit position, with its origin at the floor. This setup preserves unsaved scene edits.
+The blacksmith prefab is in Assets/Resources/NPC/Blacksmith.prefab. Scene 2 contains a saved prefab instance named Blacksmith in its hierarchy. Select and move that root object to place the character; its origin is at the feet. Its position is not changed by a runtime spawner.
+
+Always place new authored NPCs directly in the intended scene hierarchy as movable prefab instances. Save their placement and retain the user's chosen positions. Only use runtime spawning when explicitly requested.
+
+The Syntax Merchant is also a saved scene prefab, located beside the blacksmith. It uses the same dialogue canvas and offers card purchases, spare-card trades, scraps, shards, and title cosmetics. See [Merchant Guide](<Merchant Guide.md>) for prices, stock configuration, and save behavior.
 
 # Refinement rules
 

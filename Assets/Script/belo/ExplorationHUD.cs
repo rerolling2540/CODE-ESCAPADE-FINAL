@@ -689,8 +689,8 @@ public class ExplorationHUD : MonoBehaviour
 
         GUI.Label(
             new Rect(73, 105, 1050, 32),
-            "Gold Coins: " + inventory.Coins +
-            "     |     Library Tokens: " + inventory.LibraryTokens,
+            "Coins: " + inventory.Coins + "   |   Tokens: " + inventory.LibraryTokens +
+            "   |   Shards: " + inventory.SyntaxShards + "   |   Scraps: " + inventory.LowLogicScraps,
             textStyle
         );
 

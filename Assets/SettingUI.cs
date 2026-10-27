@@ -44,7 +44,7 @@ public static class GameControlsGuide
             return settingsPanels.Exists(panel => panel.activeInHierarchy && panel.scene == SceneManager.GetActiveScene());
         }
     }
-    public static bool GameplayOverlayHidden => SettingsOpen || CharacterAlmanac.IsOpen || CardRefinementUI.IsOpen || BattleTutorialGuide.BlocksInput;
+    public static bool GameplayOverlayHidden => SettingsOpen || CharacterAlmanac.IsOpen || CardRefinementUI.IsOpen || SyntaxMerchantUI.IsOpen || BattleTutorialGuide.BlocksInput;
     private static readonly System.Collections.Generic.List<GameObject> mapBlockingPanels = new System.Collections.Generic.List<GameObject>();
     public static void RegisterMapBlocker(GameObject panel)
     {

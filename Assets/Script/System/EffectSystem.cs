@@ -24,7 +24,7 @@ public class EffectSystem : MonoBehaviour
             performEffectGA.CardSource
         );
 
-        ActionSystem.Instance.AddReaction(effectAction);
+        ActionSystem.Instance.AddReaction(CardRefinementRules.RefineAction(effectAction, performEffectGA.CardLevel));
         yield return null;
     }
 

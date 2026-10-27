@@ -7,16 +7,22 @@ public class Npc_Talk : MonoBehaviour
     private Animator anim;
     public Animator interactAnim;
     public DialogueSO dialogueSO;
+    [Tooltip("Used for the NPC name and portrait. All NPCs use DialogueManager's shared canvas.")]
+    public ActorSO actor;
     public bool offersElfQuest;
     private readonly List<DialogueSO> generated = new List<DialogueSO>();
     private bool ownsDialogue;
+    private INPCDialogueProvider provider;
 
     private void Awake()
     {
         anim = GetComponentInChildren<Animator>();
+        provider = GetComponent<INPCDialogueProvider>();
         if (offersElfQuest && FindFirstObjectByType<ElfQuestTracker>() == null)
             new GameObject("Elf Quest Tracker").AddComponent<ElfQuestTracker>();
     }
+
+    void Start() { DialogueManager.EnsureInstance(); }
 
     private void OnEnable()
     {
@@ -27,21 +33,30 @@ public class Npc_Talk : MonoBehaviour
     private void OnDisable()
     {
         if (interactAnim != null) interactAnim.Play("Close");
-        if (ownsDialogue && DialogueManager.Instance != null) DialogueManager.Instance.EndDialogue();
+        if (ownsDialogue && DialogueManager.Instance != null && DialogueManager.Instance.Owner == this) DialogueManager.Instance.EndDialogue();
         ownsDialogue = false;
         ClearGenerated();
     }
 
     private void Update()
     {
-        var manager = DialogueManager.Instance;
+        var manager = DialogueManager.EnsureInstance();
         if (manager == null || GameControlsGuide.MapHidden || manager.isDialogueActive) return;
         bool interact = Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame;
         interact |= Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame;
         if (!interact) return;
+        BeginConversation();
+    }
+
+    public void BeginConversation()
+    {
+        var manager = DialogueManager.EnsureInstance();
+        if (manager == null || manager.isDialogueActive || GameControlsGuide.GameplayOverlayHidden || Time.timeScale <= 0f) return;
         ClearGenerated();
+        var dialogue = provider != null ? provider.BuildDialogue(this) : offersElfQuest ? BuildQuestDialogue() : dialogueSO;
+        if (dialogue == null) return;
         ownsDialogue = true;
-        manager.StartDialogue(offersElfQuest ? BuildQuestDialogue() : dialogueSO);
+        manager.StartDialogue(dialogue, this, actor);
     }
 
     void ClearGenerated()
@@ -50,11 +65,11 @@ public class Npc_Talk : MonoBehaviour
         generated.Clear();
     }
 
-    DialogueSO Node(params string[] lines)
+    public DialogueSO Node(params string[] lines)
     {
         var node = ScriptableObject.CreateInstance<DialogueSO>();
         generated.Add(node);
-        ActorSO speaker = dialogueSO != null && dialogueSO.lines != null && dialogueSO.lines.Length > 0
+        ActorSO speaker = actor != null ? actor : dialogueSO != null && dialogueSO.lines != null && dialogueSO.lines.Length > 0
             ? dialogueSO.lines[0].speaker : null;
         node.lines = new DialogueLine[lines.Length];
         for (int i = 0; i < lines.Length; i++) node.lines[i] = new DialogueLine { speaker = speaker, text = lines[i] };

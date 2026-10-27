@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Npc_Talk))]
 public class NPC : MonoBehaviour
 {   
     public enum NPCState {Default, Idle, Talk}
@@ -9,6 +10,8 @@ public class NPC : MonoBehaviour
 
     public Npc_Talk talk;
     private GUIStyle questBubbleStyle;
+    void Reset() { talk = GetComponent<Npc_Talk>(); }
+    void Awake() { if (talk == null) talk = GetComponent<Npc_Talk>(); }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -27,7 +30,7 @@ public class NPC : MonoBehaviour
     public void SwitchState(NPCState newState)
     {
         currentState = newState;
-        talk.enabled = newState == NPCState.Talk;
+        if (talk != null) talk.enabled = newState == NPCState.Talk;
 
     }
     private void OnTriggerEnter2D(Collider2D collision)

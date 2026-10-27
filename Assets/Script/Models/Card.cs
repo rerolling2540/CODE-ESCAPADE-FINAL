@@ -1,7 +1,6 @@
 
 
 using System.Collections.Generic;
-using UnityEditor.Scripting;
 using UnityEngine;
 
 public class Card
@@ -15,10 +14,13 @@ public class Card
     public Card(CardData cardData)
     {
         Data = cardData;
+        Level = CharacterInventory.SavedCardLevel(cardData);
     }
 
-    public string Title => Data != null ? Data.name : "Missing Card";
-    public string Description => Data != null ? Data.Description : "This card asset is missing.";
+    public int Level { get; }
+
+    public string Title => Data != null ? Data.name + (Level > 1 ? " [Lv " + Level + "]" : "") : "Missing Card";
+    public string Description => Data != null ? Data.Description + (Level > 1 ? "\nRefined effects:\n" + CardRefinementRules.Describe(Data, Level) : "") : "This card asset is missing.";
     public int Mana => Data != null ? Data.Mana : 0;
     public Sprite Image => Data != null ? Data.Image : null;
     public Effect ManualTargetEffect => Data != null ? Data.ManualTargetEffect : null;

@@ -26,6 +26,29 @@ public class CloudSaveSync : MonoBehaviour
         public string updated_at;
     }
 
+    [Serializable] private class InventoryStateRow { public int slot_index; public string updated_at; }
+    [Serializable] private class InventoryStateRows { public InventoryStateRow[] rows; }
+    [Serializable] private class InventoryCardRow
+    {
+        public int slot_index;
+        public string card_key;
+        public int quantity;
+        public int level;
+    }
+    [Serializable] private class InventoryCardRows { public InventoryCardRow[] rows; }
+    [Serializable] private class InventoryRpcCard
+    {
+        public string card_key;
+        public int quantity;
+        public int level;
+    }
+    [Serializable] private class InventoryRpcPayload
+    {
+        public int p_slot_index;
+        public string p_updated_at;
+        public InventoryRpcCard[] p_cards;
+    }
+
     public static CloudSaveSync Instance { get; private set; }
 
     private string projectUrl;
@@ -35,6 +58,8 @@ public class CloudSaveSync : MonoBehaviour
     private bool sessionReady;
     private bool requestRunning;
     private bool uploadQueued;
+    private bool inventorySyncRunning;
+    private bool inventoryChangeSyncQueued;
 
     public static CloudSaveSync EnsureInstance()
     {
@@ -54,11 +79,13 @@ public class CloudSaveSync : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         SaveSlots.LocalSaveChanged += OnLocalSaveChanged;
+        CharacterInventory.InventoryChanged += OnInventoryChanged;
     }
 
     void OnDestroy()
     {
         SaveSlots.LocalSaveChanged -= OnLocalSaveChanged;
+        CharacterInventory.InventoryChanged -= OnInventoryChanged;
         if (Instance == this) Instance = null;
     }
 
@@ -115,15 +142,15 @@ public class CloudSaveSync : MonoBehaviour
                     yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), message =>
                     {
                         sessionReady = string.IsNullOrEmpty(message);
-                        completed?.Invoke(sessionReady
+                        StartCoroutine(FinishInitialSync(sessionReady
                             ? "Guest progress uploaded to this account."
-                            : "Could not upload guest progress: " + message);
+                            : "Could not upload guest progress: " + message, completed));
                     });
                 }
                 else
                 {
                     sessionReady = true;
-                    completed?.Invoke("No cloud save yet. Progress on this device will sync to this account.");
+                    yield return FinishInitialSync("No cloud save yet. Progress on this device will sync to this account.", completed);
                 }
                 yield break;
             }
@@ -132,7 +159,7 @@ public class CloudSaveSync : MonoBehaviour
             {
                 SaveSlots.ApplyCloudSnapshot(cloud);
                 sessionReady = true;
-                completed?.Invoke("Cloud progress downloaded to this device.");
+                yield return FinishInitialSync("Cloud progress downloaded to this device.", completed);
                 yield break;
             }
 
@@ -142,9 +169,9 @@ public class CloudSaveSync : MonoBehaviour
             yield return UploadRoutine(merged, message =>
             {
                 sessionReady = string.IsNullOrEmpty(message);
-                completed?.Invoke(sessionReady
+                StartCoroutine(FinishInitialSync(sessionReady
                     ? "Device and account progress synchronized automatically."
-                    : "Progress was combined locally, but cloud upload failed: " + message);
+                    : "Progress was combined locally, but cloud upload failed: " + message, completed));
             });
             yield break;
         }
@@ -155,8 +182,19 @@ public class CloudSaveSync : MonoBehaviour
         StartCoroutine(UploadRoutine(SaveSlots.CaptureCloudSnapshot(), message =>
         {
             sessionReady = string.IsNullOrEmpty(message);
-            completed?.Invoke(message);
+            if (sessionReady) StartCoroutine(FinishInitialSync("", completed));
+            else completed?.Invoke(message);
         }));
+    }
+
+    IEnumerator FinishInitialSync(string status, Action<string> completed)
+    {
+        string inventoryWarning = "";
+        if (sessionReady) yield return SyncCardInventoryRoutine(value => inventoryWarning = value);
+        if (!string.IsNullOrEmpty(inventoryWarning))
+            Debug.LogWarning(inventoryWarning);
+        completed?.Invoke(string.IsNullOrEmpty(status) ? inventoryWarning :
+            status + (string.IsNullOrEmpty(inventoryWarning) ? "" : "\n" + inventoryWarning));
     }
 
     void OnLocalSaveChanged()
@@ -164,6 +202,24 @@ public class CloudSaveSync : MonoBehaviour
         if (!sessionReady || uploadQueued) return;
         uploadQueued = true;
         StartCoroutine(UploadAfterDelay());
+    }
+
+    void OnInventoryChanged()
+    {
+        if (!sessionReady || inventoryChangeSyncQueued) return;
+        inventoryChangeSyncQueued = true;
+        StartCoroutine(SyncInventoryAfterLocalChange());
+    }
+
+    IEnumerator SyncInventoryAfterLocalChange()
+    {
+        while (inventorySyncRunning && sessionReady) yield return null;
+        inventoryChangeSyncQueued = false;
+        if (!sessionReady) yield break;
+        yield return SyncCardInventoryRoutine(message =>
+        {
+            if (!string.IsNullOrEmpty(message)) Debug.LogWarning("Cloud card inventory sync failed: " + message);
+        });
     }
 
     IEnumerator UploadAfterDelay()
@@ -182,6 +238,115 @@ public class CloudSaveSync : MonoBehaviour
             if (!string.IsNullOrEmpty(message))
                 Debug.LogWarning("Cloud save sync failed: " + message);
         });
+        if (sessionReady)
+            yield return SyncCardInventoryRoutine(message =>
+            {
+                if (!string.IsNullOrEmpty(message)) Debug.LogWarning(message);
+            });
+    }
+
+    IEnumerator SyncCardInventoryRoutine(Action<string> completed)
+    {
+        while (inventorySyncRunning) yield return null;
+        inventorySyncRunning = true;
+        string statesUrl = projectUrl + "/rest/v1/player_card_inventory_slots?user_id=eq." +
+                           UnityWebRequest.EscapeURL(userId) + "&select=slot_index,updated_at";
+        InventoryStateRows stateRows = null;
+        using (var request = CreateRequest(statesUrl, UnityWebRequest.kHttpVerbGET))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                inventorySyncRunning = false;
+                completed?.Invoke("Card inventory table is not ready yet. Run card_inventory_schema.sql in Supabase. " + GetError(request));
+                yield break;
+            }
+            try { stateRows = JsonUtility.FromJson<InventoryStateRows>("{\"rows\":" + request.downloadHandler.text + "}"); }
+            catch (ArgumentException) { }
+        }
+
+        InventoryCardRows cardRows = null;
+        using (var request = CreateRequest(projectUrl + "/rest/v1/player_card_inventory?user_id=eq." +
+                   UnityWebRequest.EscapeURL(userId) + "&select=slot_index,card_key:game_card_key,quantity,level", UnityWebRequest.kHttpVerbGET))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                inventorySyncRunning = false;
+                completed?.Invoke("Could not read owned card rows: " + GetError(request));
+                yield break;
+            }
+            try { cardRows = JsonUtility.FromJson<InventoryCardRows>("{\"rows\":" + request.downloadHandler.text + "}"); }
+            catch (ArgumentException) { }
+        }
+
+        bool appliedRemote = false;
+        for (int slot = 0; slot < SaveSlots.Count; slot++)
+        {
+            InventoryStateRow state = stateRows?.rows != null
+                ? Array.Find(stateRows.rows, row => row != null && row.slot_index == slot) : null;
+            if (state == null || string.IsNullOrWhiteSpace(state.updated_at) || !IsCloudNewer(state.updated_at, SaveSlots.GetSlotModifiedUtc(slot))) continue;
+
+            var remoteCards = new System.Collections.Generic.List<CharacterInventory.CloudCardStack>();
+            if (cardRows?.rows != null)
+                foreach (var row in cardRows.rows)
+                    if (row != null && row.slot_index == slot)
+                        remoteCards.Add(new CharacterInventory.CloudCardStack { card_key = row.card_key, quantity = row.quantity, level = row.level });
+            CharacterInventory.ApplyCloudCards(slot, remoteCards);
+            SaveSlots.ApplyCloudSlotModifiedUtc(slot, state.updated_at);
+            appliedRemote = true;
+        }
+
+        for (int slot = 0; slot < SaveSlots.Count; slot++)
+        {
+            var localCards = CharacterInventory.ReadSavedCards(slot);
+            var payload = new InventoryRpcPayload
+            {
+                p_slot_index = slot,
+                p_updated_at = string.IsNullOrWhiteSpace(SaveSlots.GetSlotModifiedUtc(slot))
+                    ? null : SaveSlots.GetSlotModifiedUtc(slot),
+                p_cards = localCards.ConvertAll(card => new InventoryRpcCard
+                    { card_key = card.card_key, quantity = card.quantity, level = card.level }).ToArray()
+            };
+            using (var request = CreateRequest(projectUrl + "/rest/v1/rpc/replace_player_card_inventory", UnityWebRequest.kHttpVerbPOST))
+            {
+                request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonUtility.ToJson(payload)));
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+                yield return request.SendWebRequest();
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    inventorySyncRunning = false;
+                    completed?.Invoke("Could not sync owned cards for save slot " + (slot + 1) + ": " + GetError(request));
+                    yield break;
+                }
+            }
+        }
+
+        if (appliedRemote)
+        {
+            string saveError = null;
+            yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), message => saveError = message);
+            if (!string.IsNullOrEmpty(saveError))
+            {
+                inventorySyncRunning = false;
+                completed?.Invoke("Owned cards downloaded, but the combined save snapshot could not be updated: " + saveError);
+                yield break;
+            }
+        }
+        inventorySyncRunning = false;
+        completed?.Invoke("");
+    }
+
+    static bool IsCloudNewer(string cloud, string local)
+    {
+        DateTime cloudTime, localTime;
+        bool hasCloud = DateTime.TryParse(cloud, null, System.Globalization.DateTimeStyles.AssumeUniversal, out cloudTime);
+        bool hasLocal = DateTime.TryParse(local, null, System.Globalization.DateTimeStyles.AssumeUniversal, out localTime);
+        if (!hasCloud) return false;
+        return !hasLocal || cloudTime.ToUniversalTime() > localTime.ToUniversalTime();
     }
 
     IEnumerator UploadRoutine(SaveSlots.CloudSnapshot snapshot, Action<string> completed)

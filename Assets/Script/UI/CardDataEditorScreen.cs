@@ -28,6 +28,7 @@ public class CardDataEditorScreen : MonoBehaviour
     private class CardRecord
     {
         public string id;
+        public string game_card_key;
         public string name;
         public string description;
         public int mana;
@@ -41,6 +42,7 @@ public class CardDataEditorScreen : MonoBehaviour
     [Serializable]
     private class CardWriteRecord
     {
+        public string game_card_key;
         public string name;
         public string description;
         public int mana;
@@ -75,6 +77,7 @@ public class CardDataEditorScreen : MonoBehaviour
     private TMP_InputField projectUrlInput;
     private TMP_InputField anonKeyInput;
     private TMP_InputField nameInput;
+    private TMP_InputField gameCardKeyInput;
     private TMP_InputField descriptionInput;
     private TMP_InputField manaInput;
     private TMP_InputField damageTypeInput;
@@ -175,8 +178,11 @@ public class CardDataEditorScreen : MonoBehaviour
             TextAlignmentOptions.Right, new Vector2(690, -20), new Vector2(375, 30), MutedTextColor);
 
         AddText(editPanel, "Name Label", "Name", 16, FontStyles.Bold, TextAlignmentOptions.Left,
-            new Vector2(22, -66), new Vector2(650, 25), TextColor);
-        nameInput = AddInput(editPanel, "Card name", "Card name", new Vector2(20, -94), new Vector2(710, 48));
+            new Vector2(22, -66), new Vector2(420, 25), TextColor);
+        nameInput = AddInput(editPanel, "Card name", "Card name", new Vector2(20, -94), new Vector2(430, 48));
+        AddText(editPanel, "Game Card Key Label", "Inventory key (Unity catalog ID)", 16,
+            FontStyles.Bold, TextAlignmentOptions.Left, new Vector2(480, -66), new Vector2(540, 25), TextColor);
+        gameCardKeyInput = AddInput(editPanel, "Game Card Key", "Required to grant this card", new Vector2(478, -94), new Vector2(272, 48));
 
         AddText(editPanel, "Description Label", "Description", 16, FontStyles.Bold, TextAlignmentOptions.Left,
             new Vector2(22, -153), new Vector2(650, 25), TextColor);
@@ -548,6 +554,11 @@ public class CardDataEditorScreen : MonoBehaviour
             SetStatus("Card name is required.", true);
             return false;
         }
+        if (string.IsNullOrWhiteSpace(gameCardKeyInput.text))
+        {
+            SetStatus("Inventory key is required. Use the matching ID from InventoryCardCatalog (or a chest./merchant. card key).", true);
+            return false;
+        }
         if (!int.TryParse(manaInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int mana) || mana < 0 ||
             !int.TryParse(damageTypeInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int damageType) || damageType < 0 || damageType > 1 ||
             !int.TryParse(baseDamageInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int baseDamage) || baseDamage < 0 ||
@@ -560,6 +571,7 @@ public class CardDataEditorScreen : MonoBehaviour
 
         record = new CardWriteRecord
         {
+            game_card_key = gameCardKeyInput.text.Trim(),
             name = nameInput.text.Trim(),
             description = descriptionInput.text,
             mana = mana,
@@ -603,6 +615,7 @@ public class CardDataEditorScreen : MonoBehaviour
     {
         selectedId = record.id ?? string.Empty;
         selectedIdText.text = "ID: " + selectedId;
+        gameCardKeyInput.text = record.game_card_key ?? string.Empty;
         nameInput.text = record.name ?? string.Empty;
         descriptionInput.text = record.description ?? string.Empty;
         manaInput.text = record.mana.ToString(CultureInfo.InvariantCulture);
@@ -626,6 +639,7 @@ public class CardDataEditorScreen : MonoBehaviour
         selectedId = string.Empty;
         if (selectedIdText != null) selectedIdText.text = "New card";
         if (nameInput != null) nameInput.text = string.Empty;
+        if (gameCardKeyInput != null) gameCardKeyInput.text = string.Empty;
         if (descriptionInput != null) descriptionInput.text = string.Empty;
         if (manaInput != null) manaInput.text = "0";
         if (damageTypeInput != null) damageTypeInput.text = "0";

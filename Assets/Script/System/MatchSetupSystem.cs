@@ -34,7 +34,9 @@ public class MatchSetupSystem : MonoBehaviour
         if (EnemySystem.Instance.Enemies.Count > 0)
             HeroSystem.Instance.HeroView.FaceTowards(EnemySystem.Instance.Enemies[0]);
         gameObject.AddComponent<EncounterBattleReturn>().Configure(caveBattle, encounterId);
-        CardSystem.Instance.Setup(CharacterInventory.WithChestRewards(heroData.Deck));
+        List<CardData> ownedBattleDeck = CharacterInventory.WithChestRewards(heroData.Deck);
+        Debug.Log($"Battle deck created from this save slot's owned inventory: {ownedBattleDeck.Count} card(s). Unowned catalog cards are excluded.");
+        CardSystem.Instance.Setup(ownedBattleDeck);
         PerkSystem.Instance.AddPerk(new Perk(perkData));
         DrawCardsGA drawCardsGA = new(5);
         ActionSystem.Instance.Perform(drawCardsGA);

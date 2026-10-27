@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class CharacterInventory : MonoBehaviour
 {
+    private static CharacterInventory activeInstance;
+    public static event Action InventoryChanged;
     [Serializable] public class CatalogEntry { public string id; public CardData card; }
     [Serializable] public class Stack { public string id; public int quantity; public int level = 1; }
+    [Serializable] public class CloudCardStack { public string card_key; public int quantity; public int level = 1; }
     [Serializable] private class SaveData
     {
         public List<Stack> cards = new List<Stack>();
@@ -75,7 +78,7 @@ public class CharacterInventory : MonoBehaviour
             }
             catch (ArgumentException) { Debug.LogWarning("Inventory save could not be read; restoring starter cards."); }
         }
-        if (!loaded || data.starterCardsVersion < 1)
+        if (!loaded || data.starterCardsVersion < 2)
         {
             bool complete = starterHero != null && starterHero.Deck != null;
             if (starterHero != null && starterHero.Deck != null)
@@ -87,11 +90,21 @@ public class CharacterInventory : MonoBehaviour
                     if ((!loaded || !data.cards.Exists(s => s.id == entry.id)) && !AddCardInternal(card, 1))
                         complete = false;
                 }
-            if (complete) data.starterCardsVersion = 1;
+            if (complete)
+            {
+                data.starterCardsVersion = 2;
+                Debug.Log($"Initialized {starterHero.name} starter inventory with {starterHero.Deck.Count} card(s) in save slot {loadedSlot + 1}.");
+            }
             Save();
         }
         if(Application.isPlaying && GetComponent<playerMovement>() != null && GetComponent<MerchantTitleCosmetic>() == null)
             gameObject.AddComponent<MerchantTitleCosmetic>();
+        if (IsCurrentSlot) activeInstance = this;
+    }
+
+    void OnDestroy()
+    {
+        if (activeInstance == this) activeInstance = null;
     }
 
     public CardData GetCard(string id) => catalog.Find(e => e != null && e.id == id)?.card;
@@ -210,7 +223,7 @@ public class CharacterInventory : MonoBehaviour
 
     public static List<CardData> WithChestRewards(List<CardData> starterDeck)
     {
-        var deck = starterDeck != null ? new List<CardData>(starterDeck) : new List<CardData>();
+        var deck = new List<CardData>();
         if (!PlayerPrefs.HasKey(SaveKey)) return deck;
         SaveData saved;
         try { saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey)); }
@@ -218,20 +231,64 @@ public class CharacterInventory : MonoBehaviour
         if (saved?.cards == null) return deck;
         // Ownership controls playable copies, including purchased cards and consumed duplicates.
         var available=new Dictionary<string,CardData>();
-        var uncatalogued=new List<CardData>();
-        foreach(var card in deck)if(card!=null){string id=SharedId(card);if(!string.IsNullOrEmpty(id))available[id]=card;else uncatalogued.Add(card);}
+        if (starterDeck != null)
+            foreach(var card in starterDeck)if(card!=null){string id=SharedId(card);if(!string.IsNullOrEmpty(id))available[id]=card;}
+        var catalog = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
+        if (catalog != null && catalog.cards != null)
+            foreach (var entry in catalog.cards)
+                if (entry != null && entry.card != null && !string.IsNullOrWhiteSpace(entry.id)) available[entry.id] = entry.card;
         foreach(var card in Resources.LoadAll<CardData>("ChestCards"))available["chest."+card.name]=card;
         var merchant=SyntaxMerchantCatalog.Load();
         if(merchant!=null)foreach(var offer in merchant.offers)
             if(offer!=null&&offer.kind==MerchantItemKind.Card&&offer.card!=null&&offer.AvailableFor(PlayerPrefs.GetInt("SelectedCharacter",0)))available[offer.cardId]=offer.card;
-        var original=new List<CardData>(deck);deck.Clear();deck.AddRange(uncatalogued);
         foreach(var pair in available)
         {
             var stack=saved.cards.Find(s=>s!=null&&s.id==pair.Key);
-            int count=stack!=null?Mathf.Max(0,stack.quantity):original.FindAll(c=>c==pair.Value).Count;
+            int count=stack!=null?Mathf.Max(0,stack.quantity):0;
             for(int i=0;i<count;i++)deck.Add(pair.Value);
         }
         return deck;
+    }
+
+    public static List<CloudCardStack> ReadSavedCards(int slot)
+    {
+        string key = "CodeEscapade.Inventory.v1.Slot." + slot;
+        if (slot < 0 || slot >= SaveSlots.Count || !PlayerPrefs.HasKey(key)) return new List<CloudCardStack>();
+        try
+        {
+            var saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(key));
+            var result = new List<CloudCardStack>();
+            if (saved?.cards == null) return result;
+            foreach (var stack in saved.cards)
+                if (stack != null && !string.IsNullOrWhiteSpace(stack.id) && stack.quantity > 0)
+                    result.Add(new CloudCardStack { card_key = stack.id, quantity = stack.quantity, level = CardRefinementRules.Level(stack.level) });
+            return result;
+        }
+        catch (ArgumentException) { return new List<CloudCardStack>(); }
+    }
+
+    public static void ApplyCloudCards(int slot, List<CloudCardStack> cards)
+    {
+        if (slot < 0 || slot >= SaveSlots.Count) return;
+        string key = "CodeEscapade.Inventory.v1.Slot." + slot;
+        SaveData saved = new SaveData();
+        if (PlayerPrefs.HasKey(key))
+        {
+            try { saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(key)) ?? new SaveData(); }
+            catch (ArgumentException) { saved = new SaveData(); }
+        }
+        saved.cards = new List<Stack>();
+        if (cards != null)
+            foreach (var card in cards)
+                if (card != null && !string.IsNullOrWhiteSpace(card.card_key) && card.quantity > 0)
+                    saved.cards.Add(new Stack { id = card.card_key, quantity = card.quantity, level = CardRefinementRules.Level(card.level) });
+        PlayerPrefs.SetString(key, JsonUtility.ToJson(saved));
+        PlayerPrefs.Save();
+        if (activeInstance != null && activeInstance.loadedSlot == slot)
+        {
+            try { activeInstance.data = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(key)) ?? new SaveData(); }
+            catch (ArgumentException) { activeInstance.data = new SaveData(); }
+        }
     }
 
     bool AddCardInternal(CardData card, int amount)
@@ -283,5 +340,6 @@ public class CharacterInventory : MonoBehaviour
         PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(data));
         PlayerPrefs.Save();
         SaveSlots.NotifyLocalSaveChanged();
+        InventoryChanged?.Invoke();
     }
 }

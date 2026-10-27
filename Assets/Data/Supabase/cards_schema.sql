@@ -4,6 +4,7 @@ create extension if not exists pgcrypto;
 
 create table if not exists public.cards (
     id uuid primary key default gen_random_uuid(),
+    game_card_key text,
     name text not null,
     description text not null default '',
     mana integer not null default 0 check (mana >= 0),

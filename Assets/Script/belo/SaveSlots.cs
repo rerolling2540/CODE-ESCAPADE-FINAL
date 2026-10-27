@@ -42,6 +42,14 @@ public static class SaveSlots
     static string Key(int slot) => "CodeEscapade.Slot." + slot;
     static string ModifiedKey(int slot) => "CodeEscapade.SaveModifiedUtc.Slot." + slot;
     public static string InventoryKey => "CodeEscapade.Inventory.v1.Slot." + Active;
+    public static string GetSlotModifiedUtc(int slot) => slot < 0 || slot >= Count ? "" : PlayerPrefs.GetString(ModifiedKey(slot), "");
+
+    public static void ApplyCloudSlotModifiedUtc(int slot, string modifiedUtc)
+    {
+        if (slot < 0 || slot >= Count || string.IsNullOrWhiteSpace(modifiedUtc)) return;
+        PlayerPrefs.SetString(ModifiedKey(slot), modifiedUtc);
+        PlayerPrefs.Save();
+    }
 
     public static Record Read(int slot)
     {
@@ -68,15 +76,20 @@ public static class SaveSlots
         PlayerPrefs.DeleteKey(Key(slot));
         PlayerPrefs.DeleteKey("CodeEscapade.Inventory.v1.Slot." + slot);
         PlayerPrefs.Save();
-        NotifyLocalSaveChanged();
+        NotifyLocalSlotChanged(slot);
     }
 
     public static void NotifyLocalSaveChanged()
     {
+        NotifyLocalSlotChanged(Active);
+    }
+
+    static void NotifyLocalSlotChanged(int slot)
+    {
         if (applyingCloudSnapshot) return;
 
         string now = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
-        PlayerPrefs.SetString(ModifiedKey(Active), now);
+        if (slot >= 0 && slot < Count) PlayerPrefs.SetString(ModifiedKey(slot), now);
         PlayerPrefs.SetString("CodeEscapade.SaveModifiedUtc", now);
         PlayerPrefs.Save();
         LocalSaveChanged?.Invoke();

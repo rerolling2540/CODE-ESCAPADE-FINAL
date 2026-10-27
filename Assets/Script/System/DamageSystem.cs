@@ -31,7 +31,11 @@ public class DamageSystem : MonoBehaviour
             if (target == null || target.CurrentHealth <= 0) continue;
             int previousHealth = target.CurrentHealth;
             target.Damage(dealDamageGA.GetDamageForTarget(target));
-            if (target.CurrentHealth < previousHealth) BattleBloodEffect.Play(target);
+            if (target.CurrentHealth < previousHealth)
+            {
+                BattleBloodEffect.Play(target);
+                StatusEffectSystem.PlayImpactAnimation(target);
+            }
             BattleAudio.Impact(dealDamageGA, target, previousHealth);
             if (damageVFX != null) Instantiate(damageVFX, target.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.15f);

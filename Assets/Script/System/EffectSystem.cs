@@ -35,7 +35,10 @@ public class EffectSystem : MonoBehaviour
         foreach (CombatantView target in healGA.Targets)
         {
             if (target != null)
+            {
                 target.Heal(healGA.Amount);
+                StatusEffectSystem.PlayHealAnimation(target);
+            }
             yield return null;
         }
     }

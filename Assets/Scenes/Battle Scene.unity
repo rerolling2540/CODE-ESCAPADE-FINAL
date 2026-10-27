@@ -5510,6 +5510,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1131a1164ff3c594098c1c84cf441ddb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusEffectSystem
+  armorVfxTextures:
+  - {fileID: 2800000, guid: b5660c0c634ad484db028c313eff4b98, type: 3}
+  - {fileID: 2800000, guid: baa66e3fd375e8c4a9a0a9f4da1fb87a, type: 3}
+  - {fileID: 2800000, guid: 7c99162a9f755cf4b8392e65467bbc61, type: 3}
+  - {fileID: 2800000, guid: b89ea14dfd3cb414da1d7bbc98ad4dc7, type: 3}
+  - {fileID: 2800000, guid: 3aec1d36575d6f044ae36ba1b647f861, type: 3}
+  - {fileID: 2800000, guid: e13f773d6fb452f499f03a1ffe0922b2, type: 3}
+  - {fileID: 2800000, guid: 14fd3f7634d61fc439d049974d6a3e00, type: 3}
+  - {fileID: 2800000, guid: e47e3687a81136e4b9044c3876c4e079, type: 3}
+  - {fileID: 2800000, guid: 5562e86bff61da24189132784203251d, type: 3}
+  - {fileID: 2800000, guid: 2487bb37f4a573640991cfe00c4de117, type: 3}
+  - {fileID: 2800000, guid: 34a87a1555700e54cbb2152ccadc2037, type: 3}
+  - {fileID: 2800000, guid: 32936250f9894bd45b5c9ff769ed44c2, type: 3}
+  - {fileID: 2800000, guid: 9a526db03aedec34f9b5e8350568360d, type: 3}
+  - {fileID: 2800000, guid: 95855a0be469d6c44a5b0541a85355e1, type: 3}
+  - {fileID: 2800000, guid: e6b558fbcb14b44409fe555d9366c28c, type: 3}
+  - {fileID: 2800000, guid: d2d4baf3e79b01643825e35e7e670a05, type: 3}
+  - {fileID: 2800000, guid: c4bac3c154cc45e45b136c3dc144599f, type: 3}
+  - {fileID: 2800000, guid: 7af13e62ff9002a488659a31d39d1f28, type: 3}
+  burnVfxTextures:
+  - {fileID: 2800000, guid: 9dc459dc215756243adc187ab8ab4e10, type: 3}
+  - {fileID: 2800000, guid: 214e25513f5ce3447a9802557546a49a, type: 3}
+  - {fileID: 2800000, guid: cf378e454527c074ca319be587b8b0bd, type: 3}
+  - {fileID: 2800000, guid: 5810b1fde8315be45a4ceae0d739ec4a, type: 3}
+  - {fileID: 2800000, guid: b440c9fc6ef322d439d2c31eae8e4633, type: 3}
+  healVfxTextures:
+  - {fileID: 2800000, guid: e81c73901f9c63b4684d2d30de50b7ea, type: 3}
+  - {fileID: 2800000, guid: 12c8f1d0142e42245b6e1c1b072683a0, type: 3}
+  - {fileID: 2800000, guid: 7683c1ec938cc32458348ae35ee1d68a, type: 3}
+  - {fileID: 2800000, guid: b8ef2cce1aea1fa459750b06e978c230, type: 3}
+  - {fileID: 2800000, guid: 72fdb9bc7865de946aaed6b31c3961db, type: 3}
+  - {fileID: 2800000, guid: 6b1e912964b5af8449c8e8f8e185dcc1, type: 3}
+  - {fileID: 2800000, guid: fc66bb297580d7049889eb2720dd53ed, type: 3}
+  - {fileID: 2800000, guid: 408f62713a0ffb349af297a98c056e7b, type: 3}
+  - {fileID: 2800000, guid: 1762eae43af840f4e830f10d542eb509, type: 3}
+  - {fileID: 2800000, guid: 0deed92eebe987640b4f6e717b4df33b, type: 3}
+  - {fileID: 2800000, guid: 9547d31dd9249704aafdbbba773f3ffc, type: 3}
+  - {fileID: 2800000, guid: 6e697b9da1208404c9a499689cdde650, type: 3}
+  - {fileID: 2800000, guid: 2f4a78f84aba136469af1b2db85e1986, type: 3}
+  - {fileID: 2800000, guid: 431619e236243ad4bb87951ff5e4b740, type: 3}
+  - {fileID: 2800000, guid: 8517d12eea7f1f643813eb5654e2d0d0, type: 3}
+  - {fileID: 2800000, guid: 5aaee676f5de0ff40a8f2fa987204515, type: 3}
+  impactVfxTextures:
+  - {fileID: 2800000, guid: 3ed8ac86e28e4c941b77ddfea36bf8d2, type: 3}
+  - {fileID: 2800000, guid: 58237f30e0230aa45b4ee7707c8d3522, type: 3}
+  - {fileID: 2800000, guid: 3045e5e99ecca704a9e9cbaf94a73504, type: 3}
+  - {fileID: 2800000, guid: 4b16e21328b46fd4a8c3376e6d29695b, type: 3}
+  - {fileID: 2800000, guid: c47a0cfb58d708b48a952799e7da4f5e, type: 3}
+  - {fileID: 2800000, guid: 140b7ae56745ed5458a2e0c6da430453, type: 3}
+  - {fileID: 2800000, guid: 7fe0c6ee3eae7b64389d6bd86a05d90f, type: 3}
+  vfxFramesPerSecond: 18
 --- !u!1 &1816594474
 GameObject:
   m_ObjectHideFlags: 0

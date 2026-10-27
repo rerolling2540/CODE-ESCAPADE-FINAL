@@ -26,6 +26,7 @@ public class CombatantView : MonoBehaviour
     public int AttackDamageBonus { get; private set; }
     public int AttackPower { get; protected set; } = 30;
     public int Defense { get; private set; }
+    public SpriteRenderer MainSpriteRenderer => spriteRenderer;
     public Vector3 VisualCenter => spriteRenderer != null ? spriteRenderer.bounds.center : transform.position;
     public Bounds VisualBounds => spriteRenderer != null ? spriteRenderer.bounds : new Bounds(transform.position, Vector3.one);
     public bool IsHovering => hovering;

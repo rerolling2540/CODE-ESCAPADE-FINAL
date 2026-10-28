@@ -1,21 +1,26 @@
 using UnityEngine;
 
-/// <summary>Applies one health hit when the player enters a trap's hitbox.</summary>
+/// <summary>Damages the player on contact with a painted hazard or animated trap.</summary>
+[RequireComponent(typeof(Collider2D))]
 public sealed class Map4TrapDamageTrigger : MonoBehaviour
 {
-    private Map4TrapBattleSetup owner;
-    private int damage = 18;
+    [SerializeField, Min(1)] private int damage = 18;
+    [SerializeField, Tooltip("Powered contact removes a full health bar.")]
+    private bool lethalContact;
 
-    public void Initialize(Map4TrapBattleSetup setup, int damageAmount)
+    public void Initialize(int damageAmount)
     {
-        owner = setup;
         damage = Mathf.Max(1, damageAmount);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other) => DamagePlayer(other);
+    private void OnTriggerStay2D(Collider2D other) => DamagePlayer(other);
+
+    private void DamagePlayer(Collider2D other)
     {
-        if (owner == null || other == null) return;
-        if (other.GetComponentInParent<playerMovement>() == null) return;
-        owner.DamagePlayer(damage);
+        if (!isActiveAndEnabled || other == null) return;
+        var player = other.GetComponentInParent<playerMovement>();
+        if (player != null)
+            player.TryTakeDamage(lethalContact ? Mathf.Max(damage, PlayerHealth.MaxHealth) : damage);
     }
 }

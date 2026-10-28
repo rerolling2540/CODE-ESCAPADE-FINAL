@@ -140,7 +140,7 @@ public static class GameControlsGuide
         "Touch an enemy to begin battle.\n\n" +
         "<b><color=#703513>JOURNALS & MENUS</color></b>\n" +
         "<b>M</b>  Show / hide the minimap\n" +
-        "<b>Q or click the Quest Journal header</b>  Minimize / expand quests\n" +
+        "<b>Q or click the Quest Journal arrow</b>  Slide quests open / closed; scroll long objectives\n" +
         "<b>I</b>  Open / close inventory; <b>Esc</b> also closes inventory\n" +
         "<b>L or click Almanac</b>  Open / close the learning almanac during exploration\n" +
         "Click the settings icon to open Settings; use Resume to return\n\n" +

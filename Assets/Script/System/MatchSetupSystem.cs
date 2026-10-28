@@ -17,6 +17,9 @@ public class MatchSetupSystem : MonoBehaviour
         heroData = SelectedHero.Resolve(heroData);
         BattleUITheme.Apply();
         ApplyPlayerHudLayout();
+        // Resolve class HP before HeroView setup, regardless of Start order.
+        var playerStats = HeroSystem.Instance.HeroView.GetComponent<PlayerStats>();
+        if (playerStats != null) playerStats.InitializePlayer();
         HeroSystem.Instance.SetUp(heroData);
         bool caveBattle = CaveEnemyEncounter.PendingEnemies != null && CaveEnemyEncounter.PendingEnemies.Count > 0;
         string encounterId = CaveEnemyEncounter.PendingEncounterId;

@@ -244,6 +244,7 @@ public class CombatantView : MonoBehaviour
         AttackPower = classData.GetAttackPowerForLevel(level);
         Defense = classData.GetDefenseForLevel(level);
 
+        RestorePlayerHealth();
         UpdateHealthUI();
     }
 
@@ -255,7 +256,15 @@ public class CombatantView : MonoBehaviour
         {
             spriteRenderer.sprite = image;
         }
+        RestorePlayerHealth();
         UpdateHealthUI();
+    }
+
+    private void RestorePlayerHealth()
+    {
+        if (!(this is HeroView) || !Application.isPlaying) return;
+        PlayerHealth.ConfigureMaximum(MaxHealth);
+        CurrentHealth = PlayerHealth.CurrentHealth;
     }
 
     protected void EnsureEnemyHealthBar()
@@ -421,6 +430,7 @@ public class CombatantView : MonoBehaviour
         hitDirection = spriteRenderer != null && spriteRenderer.transform.TransformVector(Vector3.right).x * (spriteRenderer.flipX ? -1f : 1f) > 0f ? -1f : 1f;
         UpdateHealthUI();
         int healthDamage = healthBefore - CurrentHealth;
+        if (this is HeroView && Application.isPlaying) PlayerHealth.Set(CurrentHealth, MaxHealth);
         if (healthDamage > 0) ShowDamageIndicator(healthDamage);
         if (CurrentHealth <= 0 && !deathQueued && this is EnemyView enemy && ActionSystem.Instance != null)
         {
@@ -474,6 +484,7 @@ public class CombatantView : MonoBehaviour
         {
             CurrentHealth = MaxHealth;
         }
+        if (this is HeroView && Application.isPlaying) PlayerHealth.Set(CurrentHealth, MaxHealth);
         UpdateHealthUI();
     }
 

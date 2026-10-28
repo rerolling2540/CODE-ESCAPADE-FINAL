@@ -27,6 +27,9 @@ public static class SaveSlots
         public Vector3 position;
         public string savedAt;
         public int elfQuestStage;
+        // A missing health pool in older saves starts at full health.
+        public int currentHealth = -1;
+        public int maxHealth;
         public System.Collections.Generic.List<string> defeatedEncounters = new System.Collections.Generic.List<string>();
     }
     public static int Active

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   <Image>k__BackingField: {fileID: -1256168535239344385, guid: 65e80141de07d10469784dbb290843b3, type: 3}
   <Health>k__BackingField: 85
-  <AttackPower>k__BackingField: 10
+  <AttackPower>k__BackingField: 34
   idleFrames:
   - {fileID: -1256168535239344385, guid: 65e80141de07d10469784dbb290843b3, type: 3}
   - {fileID: 7122812905832702126, guid: 65e80141de07d10469784dbb290843b3, type: 3}

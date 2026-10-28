@@ -6867,7 +6867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
   heroClassData: {fileID: 11400000, guid: 2da917b9e25a7284694217e657d8132f, type: 2}
-  currentLevel: 15
+  currentLevel: 5
   combatantView: {fileID: 2020265580}
 --- !u!1 &7000000000000001000
 GameObject:

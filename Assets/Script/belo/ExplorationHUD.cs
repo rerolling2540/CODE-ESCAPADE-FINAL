@@ -36,6 +36,8 @@ public class ExplorationHUD : MonoBehaviour
     void Start()
     {
         if (GetComponent<CharacterAlmanac>() == null) gameObject.AddComponent<CharacterAlmanac>();
+        if (FindFirstObjectByType<ElfQuestTracker>() == null)
+            new GameObject("Elf Quest Tracker").AddComponent<ElfQuestTracker>();
         GameSave.EnsureInstance();
 
         player = FindFirstObjectByType<playerMovement>();

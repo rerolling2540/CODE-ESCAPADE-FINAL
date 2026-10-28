@@ -7,6 +7,8 @@ public sealed class DemonDoor : MonoBehaviour
     public MultipleChoiceQuestionData entranceQuestion;
     public MultipleChoiceQuestionData[] entranceQuestions;
     public UnityEngine.BoxCollider2D arenaBarrier;
+    [Tooltip("Portal inside the doorway, revealed after the opening animation finishes.")]
+    public GameObject revealedPortal;
     public Sprite closedFrame;
     public Sprite[] glowFrames;
     public Sprite[] openingFrames;
@@ -16,6 +18,11 @@ public sealed class DemonDoor : MonoBehaviour
     private bool entering;
     private bool asking;
     private float floorY;
+
+    void Awake()
+    {
+        if (revealedPortal != null) revealedPortal.SetActive(false);
+    }
 
     void Start()
     {
@@ -75,5 +82,6 @@ public sealed class DemonDoor : MonoBehaviour
                 yield return new WaitForSeconds(1f / Mathf.Max(1f, framesPerSecond));
             }
         if (arenaBarrier != null) arenaBarrier.enabled = false;
+        if (revealedPortal != null) revealedPortal.SetActive(true);
     }
 }

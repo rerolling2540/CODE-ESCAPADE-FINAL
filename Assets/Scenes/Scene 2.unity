@@ -768,7 +768,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &51723522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1000,7 +1000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b4f255b37cbc4de8b1abd5d1517be76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
-  destination: {fileID: 1692790260}
+  destination: {fileID: 1333211420}
   requiredDefeatedEncounters: 0
   hideUntilUnlocked: 0
 --- !u!4 &51723527
@@ -1011,13 +1011,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 51723521}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.007426427, y: 0.0033697353, z: -0.0006453508, w: 0.99996656}
-  m_LocalPosition: {x: 37.46474, y: 1.5334903, z: -2.7059724}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -9.094947e-12, w: 1}
+  m_LocalPosition: {x: -0.0013374338, y: -0.015957681, z: 0}
+  m_LocalScale: {x: 0.5155886, y: 0.3530433, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1502384993}
-  m_Father: {fileID: 1566197788}
+  m_Father: {fileID: 698617809}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &59715362
 PrefabInstance:
@@ -9864,11 +9864,13 @@ Transform:
   m_GameObject: {fileID: 698617803}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 473.0926, y: -31.0748, z: 0}
-  m_LocalScale: {x: 1.9395308, y: 2.8325136, z: 1}
+  m_LocalPosition: {x: 472.9597, y: -31.0748, z: 0}
+  m_LocalScale: {x: 2.2219265, y: 2.8325136, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 938740745}
+  - {fileID: 51723527}
+  - {fileID: 1833396694}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &698617810
@@ -9911,6 +9913,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 56f93a1dc23086a45a1ae3438a15ff93, type: 2}
   - {fileID: 11400000, guid: 84e565e998c15dc44abc60305d9193ed, type: 2}
   arenaBarrier: {fileID: 938740744}
+  revealedPortal: {fileID: 51723521}
   closedFrame: {fileID: -7342041184709251701, guid: f60ac19e22b7dd149bf8d2f4b50dded7, type: 3}
   glowFrames:
   - {fileID: 4452734027222299919, guid: f60ac19e22b7dd149bf8d2f4b50dded7, type: 3}
@@ -18596,7 +18599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b4f255b37cbc4de8b1abd5d1517be76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
-  destination: {fileID: 116174064}
+  destination: {fileID: 1833396694}
   requiredDefeatedEncounters: 0
   hideUntilUnlocked: 0
 --- !u!4 &1050808180
@@ -25549,6 +25552,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonPressEffect
   pressedScale: 0.9
+--- !u!1 &1333211419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1333211420}
+  m_Layer: 0
+  m_Name: enter to boss
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1333211420
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1333211419}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 493.59, y: -31.683596, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1333557208
 GameObject:
   m_ObjectHideFlags: 0
@@ -32362,7 +32396,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 628683372}
-  - {fileID: 51723527}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0.851, y: -0.386, z: 0.071}
 --- !u!1 &1573207139
@@ -55337,6 +55370,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8863490829336004629, guid: 0af7958a0cdae2043b88741c48ab1657, type: 3}
+      propertyPath: m_SortingOrder
+      value: -2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -56449,6 +56486,37 @@ RectTransform:
   m_AnchoredPosition: {x: 299.11865, y: -37.115242}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1833396693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1833396694}
+  m_Layer: 0
+  m_Name: Demon Door - Return Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1833396694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833396693}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.99013734, y: -0.21494049, z: 0}
+  m_LocalScale: {x: 0.45005992, y: 0.35304332, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 698617809}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1834098872
 GameObject:
   m_ObjectHideFlags: 0
@@ -269295,6 +269363,7 @@ SceneRoots:
   - {fileID: 887800011}
   - {fileID: 887800021}
   - {fileID: 1692790260}
+  - {fileID: 1333211420}
   - {fileID: 116174064}
   - {fileID: 1621679249}
   - {fileID: 1566197788}

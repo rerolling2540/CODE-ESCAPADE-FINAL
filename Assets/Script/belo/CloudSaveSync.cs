@@ -115,6 +115,15 @@ public class CloudSaveSync : MonoBehaviour
 
     public void EndSession()
     {
+        StopAllCoroutines();
+        questionAttemptRetryCoroutine = null;
+        inventoryRetryCoroutine = null;
+        questionAttemptSyncQueued = false;
+        questionAttemptSyncRunning = false;
+        inventoryChangeSyncQueued = false;
+        inventorySyncRunning = false;
+        uploadQueued = false;
+        requestRunning = false;
         sessionReady = false;
         projectUrl = publishableKey = accessToken = userId = "";
         questionHistorySyncNeeded = false;
@@ -142,12 +151,18 @@ public class CloudSaveSync : MonoBehaviour
         if (!paused) RetryPendingInventoryNow();
     }
 
-    public void StartInitialSync(bool hasLocalProgress, Action<string> completed)
+    public void StartInitialSync(
+        bool hasLocalProgress,
+        SaveSlots.CloudSnapshot guestBootstrap,
+        Action<string> completed)
     {
-        StartCoroutine(InitialSyncRoutine(hasLocalProgress, completed));
+        StartCoroutine(InitialSyncRoutine(hasLocalProgress, guestBootstrap, completed));
     }
 
-    IEnumerator InitialSyncRoutine(bool hasLocalProgress, Action<string> completed)
+    IEnumerator InitialSyncRoutine(
+        bool hasLocalProgress,
+        SaveSlots.CloudSnapshot guestBootstrap,
+        Action<string> completed)
     {
         using (var request = CreateRequest(
                    projectUrl + "/rest/v1/player_saves?user_id=eq." + userId + "&select=save_data",
@@ -175,14 +190,32 @@ public class CloudSaveSync : MonoBehaviour
 
             if (cloud == null)
             {
-                if (hasLocalProgress)
+                bool includeGuestProgress = SaveSlots.HasProgress(guestBootstrap);
+                if (hasLocalProgress || includeGuestProgress)
                 {
-                    yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), message =>
+                    SaveSlots.CloudSnapshot snapshot = hasLocalProgress
+                        ? SaveSlots.CaptureCloudSnapshot()
+                        : guestBootstrap;
+
+                    if (hasLocalProgress && includeGuestProgress)
+                    {
+                        snapshot = SaveSlots.MergeCloudSnapshots(snapshot, guestBootstrap);
+                    }
+
+                    if (includeGuestProgress || !hasLocalProgress)
+                    {
+                        SaveSlots.ApplyCloudSnapshot(snapshot);
+                    }
+
+                    yield return UploadRoutine(snapshot, message =>
                     {
                         sessionReady = string.IsNullOrEmpty(message);
+                        if (sessionReady) SaveSlots.MarkActiveProfileBootstrapComplete();
                         StartCoroutine(FinishInitialSync(sessionReady
-                            ? "Guest progress uploaded to this account."
-                            : "Could not upload guest progress: " + message, completed));
+                            ? includeGuestProgress
+                                ? "Guest progress was copied to this account. The guest save stays on this device."
+                                : "Account progress uploaded from this device."
+                            : "Could not upload account progress: " + message, completed));
                     });
                 }
                 else
@@ -192,6 +225,8 @@ public class CloudSaveSync : MonoBehaviour
                 }
                 yield break;
             }
+
+            SaveSlots.MarkActiveProfileBootstrapComplete();
 
             if (!hasLocalProgress)
             {

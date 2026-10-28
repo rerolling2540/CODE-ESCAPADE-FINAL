@@ -1,0 +1,3 @@
+const { FileBlob, PresentationFile } = await import('file:///C:/Users/ACER/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/@oai/artifact-tool/dist/artifact_tool.mjs');
+const p=await PresentationFile.importPptx(await FileBlob.load('C:/Users/ACER/Downloads/Presentation1 (2).pptx'));
+for(const id of ['im/ozy5sf69','im/etgnm5o7','im/vilcru9k','im/x43et4rq','im/zqd03a5o','im/kn61ozmd','im/qd0f2hk3','im/94nqhsbu','im/8je9ona9','im/9c3eho7u','im/8budoj6p','im/7alcfep4']){const x=p.resolve(id); console.log(id, JSON.stringify({keys:Object.keys(x), frame:x.frame, crop:x.crop, fit:x.fit, alt:x.alt, prompt:x.prompt, geometry:x.geometry, borderRadius:x.borderRadius, rotation:x.rotation, src:x.src, name:x.name}));}

@@ -42,6 +42,18 @@ public class MainMenuSaveSlots : MonoBehaviour
     }
 
     [System.Serializable]
+    private class RecoveryRequest
+    {
+        public string email;
+    }
+
+    [System.Serializable]
+    private class PasswordUpdateRequest
+    {
+        public string password;
+    }
+
+    [System.Serializable]
     private class AuthResponse
     {
         public string access_token;
@@ -77,6 +89,8 @@ public class MainMenuSaveSlots : MonoBehaviour
     private bool loginOpen;
     private bool registerMode;
     private bool waitingForEmailCode;
+    private bool forgotPasswordMode;
+    private bool waitingForRecoveryCode;
     private bool authRequestInProgress;
     private bool loginComplete;
     private bool confirmOverwrite;
@@ -84,6 +98,14 @@ public class MainMenuSaveSlots : MonoBehaviour
     private string loginEmail = "";
     private string loginPassword = "";
     private string confirmPassword = "";
+    private string recoveryCode = "";
+    private string recoveryAccessToken = "";
+    private string resetPassword = "";
+    private string confirmResetPassword = "";
+    private bool showLoginPassword;
+    private bool showConfirmPassword;
+    private bool showResetPassword;
+    private bool showConfirmResetPassword;
     private string emailCode = "";
     private string authStatus = "";
     private CloudSaveSync cloudSaveSync;
@@ -122,7 +144,10 @@ public class MainMenuSaveSlots : MonoBehaviour
     private Texture2D dangerHoverTexture;
     private Texture2D backdropTexture;
     private Texture2D inputTexture;
+    private Texture2D eyeIconTexture;
+    private Texture2D eyeSlashIconTexture;
     private GUIStyle inputStyle;
+    private GUIStyle eyeToggleStyle;
     private GUIStyle fieldLabelStyle;
 
     private readonly Color gold =
@@ -138,6 +163,10 @@ public class MainMenuSaveSlots : MonoBehaviour
     {
         CurrentSupabaseProjectUrl = supabaseProjectUrl;
         CurrentSupabasePublishableKey = supabasePublishableKey;
+        if (string.IsNullOrWhiteSpace(CurrentUserId))
+        {
+            SaveSlots.RestoreGuestForNewSession();
+        }
         GameSave.EnsureInstance();
 
         GameObject loginObject = GameObject.Find("Login");
@@ -180,6 +209,59 @@ public class MainMenuSaveSlots : MonoBehaviour
         return texture;
     }
 
+    Texture2D MakeEyeTexture(bool crossedOut)
+    {
+        const int width = 32;
+        const int height = 24;
+        Texture2D texture = new Texture2D(
+            width,
+            height,
+            TextureFormat.RGBA32,
+            false
+        );
+        texture.name = crossedOut ? "PasswordEyeHidden" : "PasswordEye";
+        texture.filterMode = FilterMode.Bilinear;
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.hideFlags = HideFlags.HideAndDontSave;
+
+        Color[] pixels = new Color[width * height];
+        float centerX = (width - 1) * 0.5f;
+        float centerY = (height - 1) * 0.5f;
+        float halfWidth = width * 0.5f - 3f;
+        float halfHeight = height * 0.5f - 3f;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float nx = Mathf.Abs((x - centerX) / halfWidth);
+                float ny = Mathf.Abs((y - centerY) / halfHeight);
+                float eyeEdge = 0.78f * Mathf.Sqrt(
+                    Mathf.Max(0f, 1f - nx * nx)
+                );
+                bool outline = nx <= 1f &&
+                               ny <= eyeEdge &&
+                               eyeEdge - ny <= 0.19f;
+
+                float pupilX = (x - centerX) / 3.2f;
+                float pupilY = (y - centerY) / 3.8f;
+                bool pupil = pupilX * pupilX + pupilY * pupilY <= 1f;
+                bool slash = crossedOut &&
+                             x >= 5 && x <= 27 &&
+                             Mathf.Abs(y - (height - 1 - x * 0.72f)) < 1.15f;
+
+                if (outline || pupil || slash)
+                {
+                    pixels[y * width + x] = paleGold;
+                }
+            }
+        }
+
+        texture.SetPixels(pixels);
+        texture.Apply();
+        return texture;
+    }
+
     void CreateUIStyles()
     {
         panelTexture = MakeTexture(
@@ -219,6 +301,9 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         inputTexture = MakeTexture(
             new Color(0.055f, 0.045f, 0.032f, 1f));
+
+        eyeIconTexture = MakeEyeTexture(false);
+        eyeSlashIconTexture = MakeEyeTexture(true);
 
         titleStyle = new GUIStyle(GUI.skin.label);
         titleStyle.fontSize = 30;
@@ -281,6 +366,14 @@ public class MainMenuSaveSlots : MonoBehaviour
         inputStyle.normal.textColor = paleGold;
         inputStyle.focused.textColor = Color.white;
         inputStyle.border = new RectOffset(2, 2, 2, 2);
+
+        eyeToggleStyle = new GUIStyle(GUI.skin.button);
+        eyeToggleStyle.padding = new RectOffset(2, 2, 2, 2);
+        eyeToggleStyle.normal.background = inputTexture;
+        eyeToggleStyle.hover.background = buttonTexture;
+        eyeToggleStyle.active.background = buttonHoverTexture;
+        eyeToggleStyle.focused.background = inputTexture;
+        eyeToggleStyle.border = new RectOffset(2, 2, 2, 2);
 
         fieldLabelStyle = new GUIStyle(GUI.skin.label);
         fieldLabelStyle.fontSize = 14;
@@ -428,9 +521,18 @@ public class MainMenuSaveSlots : MonoBehaviour
         loginOpen = true;
         registerMode = false;
         waitingForEmailCode = false;
+        forgotPasswordMode = false;
+        waitingForRecoveryCode = false;
         authRequestInProgress = false;
         loginPassword = "";
         confirmPassword = "";
+        recoveryCode = "";
+        resetPassword = "";
+        confirmResetPassword = "";
+        showLoginPassword = false;
+        showConfirmPassword = false;
+        showResetPassword = false;
+        showConfirmResetPassword = false;
         emailCode = "";
         loginComplete = !string.IsNullOrWhiteSpace(CurrentAccessToken);
         authStatus = "";
@@ -441,11 +543,198 @@ public class MainMenuSaveSlots : MonoBehaviour
 
     void SwitchAuthMode()
     {
-        if (authRequestInProgress || waitingForEmailCode || loginComplete) return;
+        if (authRequestInProgress || waitingForEmailCode || forgotPasswordMode || loginComplete) return;
 
         registerMode = !registerMode;
         confirmPassword = "";
+        showLoginPassword = false;
+        showConfirmPassword = false;
         authStatus = "";
+    }
+
+    void OpenForgotPassword()
+    {
+        if (authRequestInProgress || loginComplete) return;
+        registerMode = false;
+        waitingForEmailCode = false;
+        forgotPasswordMode = true;
+        waitingForRecoveryCode = false;
+        recoveryCode = "";
+        recoveryAccessToken = "";
+        loginPassword = "";
+        showLoginPassword = false;
+        resetPassword = "";
+        confirmResetPassword = "";
+        showResetPassword = false;
+        showConfirmResetPassword = false;
+        authStatus = "Enter the email address for your account.";
+    }
+
+    void ReturnToLogin()
+    {
+        if (authRequestInProgress) return;
+        forgotPasswordMode = false;
+        waitingForRecoveryCode = false;
+        recoveryCode = "";
+        recoveryAccessToken = "";
+        loginPassword = "";
+        showLoginPassword = false;
+        resetPassword = "";
+        confirmResetPassword = "";
+        showResetPassword = false;
+        showConfirmResetPassword = false;
+        authStatus = "";
+    }
+
+    void RequestPasswordReset()
+    {
+        loginEmail = loginEmail.Trim();
+        if (!IsValidEmail(loginEmail))
+        {
+            authStatus = "Enter a valid email address.";
+            return;
+        }
+
+        if (!TryGetAuthEndpoint(out string endpoint)) return;
+        recoveryAccessToken = "";
+        authRequestInProgress = true;
+        authStatus = "Sending a password reset code...";
+        authRequest = StartCoroutine(PasswordResetRequestRoutine(endpoint));
+    }
+
+    IEnumerator PasswordResetRequestRoutine(string authEndpoint)
+    {
+        var payload = new RecoveryRequest { email = loginEmail };
+        using (var request = new UnityWebRequest(
+                   authEndpoint + "/recover",
+                   UnityWebRequest.kHttpVerbPOST))
+        {
+            request.uploadHandler = new UploadHandlerRaw(
+                Encoding.UTF8.GetBytes(JsonUtility.ToJson(payload)));
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("apikey", supabasePublishableKey.Trim());
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json");
+            yield return request.SendWebRequest();
+
+            authRequestInProgress = false;
+            authRequest = null;
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                authStatus = ReadAuthError(request.downloadHandler.text, request.error);
+                yield break;
+            }
+        }
+
+        waitingForRecoveryCode = true;
+        authStatus = "If an account exists for this email, a reset code was sent. Check your inbox and spam folder.";
+    }
+
+    void SubmitPasswordReset()
+    {
+        recoveryCode = KeepDigits(recoveryCode, 10);
+        if (string.IsNullOrWhiteSpace(recoveryAccessToken) && recoveryCode.Length < 6)
+        {
+            authStatus = "Enter the complete recovery code from your email.";
+            return;
+        }
+        if (string.IsNullOrEmpty(resetPassword))
+        {
+            authStatus = "Enter a new password.";
+            return;
+        }
+        if (resetPassword != confirmResetPassword)
+        {
+            authStatus = "The new passwords do not match.";
+            return;
+        }
+        if (!TryGetAuthEndpoint(out string endpoint)) return;
+
+        authRequestInProgress = true;
+        authStatus = "Verifying your code and updating the password...";
+        authRequest = StartCoroutine(PasswordResetRoutine(endpoint));
+    }
+
+    IEnumerator PasswordResetRoutine(string authEndpoint)
+    {
+        string recoveryToken = recoveryAccessToken;
+        if (string.IsNullOrWhiteSpace(recoveryToken))
+        {
+            var verifyPayload = new VerifySignupRequest
+            {
+                email = loginEmail,
+                token = recoveryCode,
+                type = "recovery"
+            };
+            AuthResponse recoverySession;
+            using (var verifyRequest = new UnityWebRequest(
+                       authEndpoint + "/verify",
+                       UnityWebRequest.kHttpVerbPOST))
+            {
+                verifyRequest.uploadHandler = new UploadHandlerRaw(
+                    Encoding.UTF8.GetBytes(JsonUtility.ToJson(verifyPayload)));
+                verifyRequest.downloadHandler = new DownloadHandlerBuffer();
+                verifyRequest.SetRequestHeader("apikey", supabasePublishableKey.Trim());
+                verifyRequest.SetRequestHeader("Content-Type", "application/json");
+                verifyRequest.SetRequestHeader("Accept", "application/json");
+                yield return verifyRequest.SendWebRequest();
+
+                if (verifyRequest.result != UnityWebRequest.Result.Success)
+                {
+                    authRequestInProgress = false;
+                    authRequest = null;
+                    authStatus = ReadAuthError(verifyRequest.downloadHandler.text, verifyRequest.error);
+                    yield break;
+                }
+
+                recoverySession = ParseAuthResponse(verifyRequest.downloadHandler.text);
+            }
+
+            if (recoverySession == null || string.IsNullOrWhiteSpace(recoverySession.access_token))
+            {
+                authRequestInProgress = false;
+                authRequest = null;
+                authStatus = "The recovery code was accepted, but Supabase did not return a reset session.";
+                yield break;
+            }
+
+            recoveryToken = recoverySession.access_token;
+            recoveryAccessToken = recoveryToken;
+        }
+
+        var updatePayload = new PasswordUpdateRequest { password = resetPassword };
+        using (var updateRequest = new UnityWebRequest(
+                   authEndpoint + "/user",
+                   "PUT"))
+        {
+            updateRequest.uploadHandler = new UploadHandlerRaw(
+                Encoding.UTF8.GetBytes(JsonUtility.ToJson(updatePayload)));
+            updateRequest.downloadHandler = new DownloadHandlerBuffer();
+            updateRequest.SetRequestHeader("apikey", supabasePublishableKey.Trim());
+            updateRequest.SetRequestHeader("Authorization", "Bearer " + recoveryToken);
+            updateRequest.SetRequestHeader("Content-Type", "application/json");
+            updateRequest.SetRequestHeader("Accept", "application/json");
+            yield return updateRequest.SendWebRequest();
+
+            authRequestInProgress = false;
+            authRequest = null;
+            if (updateRequest.result != UnityWebRequest.Result.Success)
+            {
+                authStatus = ReadAuthError(updateRequest.downloadHandler.text, updateRequest.error);
+                yield break;
+            }
+        }
+
+        forgotPasswordMode = false;
+        waitingForRecoveryCode = false;
+        recoveryCode = "";
+        recoveryAccessToken = "";
+        resetPassword = "";
+        confirmResetPassword = "";
+        loginPassword = "";
+        showResetPassword = false;
+        showConfirmResetPassword = false;
+        authStatus = "Password updated. You can now log in with your new password.";
     }
 
     void SubmitLogin()
@@ -528,18 +817,30 @@ public class MainMenuSaveSlots : MonoBehaviour
         bool canRevoke = !string.IsNullOrWhiteSpace(accessToken) &&
                          TryGetAuthEndpoint(out endpoint);
 
+        if (!string.IsNullOrWhiteSpace(CurrentUserId))
+        {
+            if (CloudSaveSync.Instance != null) CloudSaveSync.Instance.EndSession();
+            SaveSlots.SaveActiveProfileSnapshot();
+            SaveSlots.ActivateGuestProfile();
+        }
+
         CurrentAccessToken = null;
         CurrentRefreshToken = null;
         CurrentUserEmail = null;
         CurrentUserId = null;
         authenticatedUserId = "";
-        if (CloudSaveSync.Instance != null) CloudSaveSync.Instance.EndSession();
         loginComplete = false;
         registerMode = false;
         waitingForEmailCode = false;
+        forgotPasswordMode = false;
+        waitingForRecoveryCode = false;
         loginPassword = "";
         confirmPassword = "";
         emailCode = "";
+        recoveryCode = "";
+        recoveryAccessToken = "";
+        resetPassword = "";
+        confirmResetPassword = "";
         authStatus = "You have been logged out. Log in again or register an account.";
 
         if (canRevoke)
@@ -585,6 +886,8 @@ public class MainMenuSaveSlots : MonoBehaviour
 
     void StartCloudSaveSync(string accessToken)
     {
+        SaveSlots.CloudSnapshot guestBootstrap =
+            SaveSlots.ActivateAccountProfile(authenticatedUserId);
         cloudSaveSync = CloudSaveSync.EnsureInstance();
         cloudSaveSync.BeginSession(
             supabaseProjectUrl,
@@ -595,7 +898,10 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         authRequestInProgress = true;
         authStatus = "Checking your account save...";
-        cloudSaveSync.StartInitialSync(SaveSlots.HasLocalProgress(), status =>
+        cloudSaveSync.StartInitialSync(
+            SaveSlots.HasLocalProgress(),
+            guestBootstrap,
+            status =>
         {
             authStatus = status;
             authRequestInProgress = false;
@@ -876,6 +1182,16 @@ public class MainMenuSaveSlots : MonoBehaviour
         authRequestInProgress = false;
         loginPassword = "";
         confirmPassword = "";
+        forgotPasswordMode = false;
+        waitingForRecoveryCode = false;
+        recoveryCode = "";
+        recoveryAccessToken = "";
+        resetPassword = "";
+        confirmResetPassword = "";
+        showLoginPassword = false;
+        showConfirmPassword = false;
+        showResetPassword = false;
+        showConfirmResetPassword = false;
 
         for (int i = 0; i < groups.Count; i++)
         {
@@ -1016,6 +1332,52 @@ public class MainMenuSaveSlots : MonoBehaviour
         }
     }
 
+    string DrawPasswordField(Rect rect, string value, ref bool revealPassword)
+    {
+        DrawRect(rect, inputTexture);
+
+        const float eyeAreaWidth = 46f;
+        Rect textRect = new Rect(
+            rect.x,
+            rect.y,
+            rect.width - eyeAreaWidth,
+            rect.height
+        );
+
+        value = revealPassword
+            ? GUI.TextField(textRect, value, inputStyle)
+            : GUI.PasswordField(textRect, value, '*', inputStyle);
+
+        Rect eyeButtonRect = new Rect(
+            rect.xMax - eyeAreaWidth + 2f,
+            rect.y + 2f,
+            eyeAreaWidth - 4f,
+            rect.height - 4f
+        );
+        if (GUI.Button(eyeButtonRect, GUIContent.none, eyeToggleStyle))
+        {
+            PlayClickSound();
+            revealPassword = !revealPassword;
+        }
+
+        Texture2D icon = revealPassword
+            ? eyeSlashIconTexture
+            : eyeIconTexture;
+        GUI.DrawTexture(
+            new Rect(
+                eyeButtonRect.center.x - 12f,
+                eyeButtonRect.center.y - 9f,
+                24f,
+                18f
+            ),
+            icon,
+            ScaleMode.ScaleToFit,
+            true
+        );
+
+        return value;
+    }
+
     void DrawConfirmation(
         string heading,
         string message,
@@ -1064,20 +1426,26 @@ public class MainMenuSaveSlots : MonoBehaviour
         GUI.Label(
             new Rect(270, 84, 740, 48),
             loginComplete ? "SIGNED IN" :
-                (waitingForEmailCode ? "VERIFY YOUR EMAIL" :
-                    (registerMode ? "CREATE YOUR ACCOUNT" : "LOG IN")),
+                (forgotPasswordMode
+                    ? waitingForRecoveryCode ? "RESET PASSWORD" : "FORGOT PASSWORD"
+                    : (waitingForEmailCode ? "VERIFY YOUR EMAIL" :
+                        (registerMode ? "CREATE YOUR ACCOUNT" : "LOG IN"))),
             titleStyle
         );
 
         GUI.Label(
             new Rect(300, 137, 680, 32),
-            waitingForEmailCode
-                ? "A six-digit signup code was sent to " + loginEmail
-                : (loginComplete
+            loginComplete
                     ? "You are signed in to this account."
-                    : registerMode
-                    ? "Create an account with your email and a password."
-                    : "Enter the email and password for your existing account."),
+                    : forgotPasswordMode
+                        ? waitingForRecoveryCode
+                            ? "Enter the code from your email and choose a new password."
+                            : "Enter your account email to receive a password reset code."
+                        : waitingForEmailCode
+                            ? "A six-digit signup code was sent to " + loginEmail
+                            : registerMode
+                                ? "Create an account with your email and a password."
+                                : "Enter the email and password for your existing account.",
             subtitleStyle
         );
 
@@ -1086,6 +1454,7 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         if (loginComplete)
         {
+            bool adminAccount = IsAdminAccount();
             GUI.Label(
                 new Rect(350, 212, 580, 28),
                 "ACCOUNT EMAIL",
@@ -1111,28 +1480,30 @@ public class MainMenuSaveSlots : MonoBehaviour
             );
 
             DrawActionButton(
-                new Rect(180, 430, 210, 52),
+                adminAccount
+                    ? new Rect(277, 430, 160, 52)
+                    : new Rect(350, 430, 270, 52),
                 "LOG OUT",
                 Logout,
                 true
             );
 
-            if (IsAdminAccount())
+            if (adminAccount)
             {
                 DrawActionButton(
-                    new Rect(405, 430, 220, 52),
+                    new Rect(447, 430, 170, 52),
                     "CARD EDITOR",
                     OpenAdminCardEditor
                 );
 
                 DrawActionButton(
-                    new Rect(650, 430, 270, 52),
+                    new Rect(627, 430, 220, 52),
                     "QUESTION EDITOR",
                     OpenAdminQuestionEditor
                 );
 
                 DrawActionButton(
-                    new Rect(930, 430, 190, 52),
+                    new Rect(857, 430, 160, 52),
                     "CLOSE",
                     Close
                 );
@@ -1143,6 +1514,76 @@ public class MainMenuSaveSlots : MonoBehaviour
                     new Rect(650, 430, 270, 52),
                     "CLOSE",
                     Close
+                );
+            }
+        }
+        else if (forgotPasswordMode)
+        {
+            if (waitingForRecoveryCode)
+            {
+                GUI.Label(new Rect(350, 188, 580, 24), "EMAIL CODE", fieldLabelStyle);
+                recoveryCode = KeepDigits(GUI.TextField(
+                    new Rect(350, 214, 580, 46),
+                    recoveryCode,
+                    10,
+                    inputStyle
+                ), 10);
+
+                GUI.Label(new Rect(350, 270, 580, 24), "NEW PASSWORD", fieldLabelStyle);
+                resetPassword = DrawPasswordField(
+                    new Rect(350, 296, 580, 46),
+                    resetPassword,
+                    ref showResetPassword
+                );
+
+                GUI.Label(new Rect(350, 352, 580, 24), "CONFIRM NEW PASSWORD", fieldLabelStyle);
+                confirmResetPassword = DrawPasswordField(
+                    new Rect(350, 378, 580, 46),
+                    confirmResetPassword,
+                    ref showConfirmResetPassword
+                );
+
+                DrawActionButton(
+                    new Rect(350, 454, 270, 52),
+                    "UPDATE PASSWORD",
+                    SubmitPasswordReset
+                );
+                DrawActionButton(
+                    new Rect(650, 454, 270, 52),
+                    "BACK",
+                    ReturnToLogin
+                );
+
+                GUIStyle resendStyle = new GUIStyle(GUI.skin.label)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = 15
+                };
+                resendStyle.normal.textColor = paleGold;
+                if (GUI.Button(new Rect(350, 512, 570, 28), "Didn't receive a code? Send again", resendStyle))
+                {
+                    PlayClickSound();
+                    RequestPasswordReset();
+                }
+            }
+            else
+            {
+                GUI.Label(new Rect(350, 218, 580, 24), "ACCOUNT EMAIL", fieldLabelStyle);
+                loginEmail = GUI.TextField(
+                    new Rect(350, 246, 580, 46),
+                    loginEmail,
+                    inputStyle
+                );
+
+                DrawActionButton(
+                    new Rect(350, 330, 270, 52),
+                    "SEND RESET CODE",
+                    RequestPasswordReset
+                );
+                DrawActionButton(
+                    new Rect(650, 330, 270, 52),
+                    "BACK TO LOG IN",
+                    ReturnToLogin
                 );
             }
         }
@@ -1183,21 +1624,19 @@ public class MainMenuSaveSlots : MonoBehaviour
             );
 
             GUI.Label(new Rect(350, 273, 580, 24), "PASSWORD", fieldLabelStyle);
-            loginPassword = GUI.PasswordField(
+            loginPassword = DrawPasswordField(
                 new Rect(350, 299, 580, 46),
                 loginPassword,
-                '*',
-                inputStyle
+                ref showLoginPassword
             );
 
             if (registerMode)
             {
                 GUI.Label(new Rect(350, 356, 580, 24), "CONFIRM PASSWORD", fieldLabelStyle);
-                confirmPassword = GUI.PasswordField(
+                confirmPassword = DrawPasswordField(
                     new Rect(350, 382, 580, 46),
                     confirmPassword,
-                    '*',
-                    inputStyle
+                    ref showConfirmPassword
                 );
 
                 DrawActionButton(
@@ -1235,6 +1674,19 @@ public class MainMenuSaveSlots : MonoBehaviour
                 PlayClickSound();
                 SwitchAuthMode();
             }
+
+            if (!registerMode)
+            {
+                if (GUI.Button(
+                    new Rect(350, 540, 570, 30),
+                    "Forgot password?",
+                    switchStyle
+                ))
+                {
+                    PlayClickSound();
+                    OpenForgotPassword();
+                }
+            }
         }
 
         GUI.enabled = oldEnabled;
@@ -1242,21 +1694,23 @@ public class MainMenuSaveSlots : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(authStatus))
         {
             GUI.Label(
-                new Rect(290, 548, 700, 42),
+                new Rect(290, 578, 700, 42),
                 authStatus,
                 subtitleStyle
             );
         }
     }
 
-    static string KeepDigits(string value)
+    static string KeepDigits(string value) => KeepDigits(value, 6);
+
+    static string KeepDigits(string value, int maxDigits)
     {
-        var digits = new StringBuilder(6);
+        var digits = new StringBuilder(maxDigits);
         foreach (char character in value)
         {
             if (character < '0' || character > '9') continue;
             digits.Append(character);
-            if (digits.Length == 6) break;
+            if (digits.Length == maxDigits) break;
         }
 
         return digits.ToString();
@@ -1435,6 +1889,8 @@ public class MainMenuSaveSlots : MonoBehaviour
         DestroyTexture(dangerHoverTexture);
         DestroyTexture(backdropTexture);
         DestroyTexture(inputTexture);
+        DestroyTexture(eyeIconTexture);
+        DestroyTexture(eyeSlashIconTexture);
     }
 
     void DestroyTexture(Texture2D texture)

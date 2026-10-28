@@ -13,6 +13,7 @@ public class MatchSetupSystem : MonoBehaviour
     private void Start()
     {
         BattleSettingsMenu.EnsureCreated();
+        PlayerDeathFlow.EnsureInstance();
         BattleAudio.EnsureInstance();
         heroData = SelectedHero.Resolve(heroData);
         BattleUITheme.Apply();
@@ -187,6 +188,7 @@ public static class BattleUITheme
         foreach (var slider in Object.FindObjectsByType<UnityEngine.UI.Slider>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (slider.fillRect == null) continue;
+            if (slider.GetComponentInParent<ExplorationHealthHud>() != null) continue;
             var image = slider.fillRect.GetComponent<UnityEngine.UI.Image>();
             if (image != null) image.color = slider.name.ToLowerInvariant().Contains("timer") ? Brass : new Color(0.7f, 0.1f, 0.075f);
         }
@@ -215,7 +217,7 @@ public class BattleEndTurnState : MonoBehaviour
     {
         bool resolving = ActionSystem.Instance != null && ActionSystem.Instance.IsPerforming;
         bool answering = question != null && question.isActiveAndEnabled;
-        button.interactable = !resolving && !answering && !BattleTutorialGuide.BlocksInput && !EncounterBattleReturn.BattleEnded;
+        button.interactable = !PlayerDeathFlow.IsActive && !resolving && !answering && !BattleTutorialGuide.BlocksInput && !EncounterBattleReturn.BattleEnded;
         if (label != null) label.text = EncounterBattleReturn.BattleEnded ? "Battle Complete" :
             answering ? "Answer Question" : resolving ? "Resolving..." : "End Turn";
     }
@@ -229,20 +231,29 @@ public class EncounterBattleReturn : MonoBehaviour
     private bool hadEnemies;
     private bool victory;
     private string encounterId;
+    private RectTransform playerHealthPanel;
 
     public void Configure(bool fromCave, string id)
     {
         caveBattle = fromCave;
         encounterId = id;
+        var healthHud = FindFirstObjectByType<ExplorationHealthHud>(FindObjectsInactive.Include);
+        if (healthHud != null) playerHealthPanel = healthHud.transform.Find("Player Health Panel") as RectTransform;
         hadEnemies = EnemySystem.Instance.Enemies.Count > 0;
         BattleEnded = false;
     }
 
     void Update()
     {
-        if (returning || BattleEnded || !hadEnemies || EnemySystem.Instance == null ||
+        if (PlayerDeathFlow.IsActive || returning || BattleEnded || !hadEnemies || EnemySystem.Instance == null ||
             ActionSystem.Instance == null || ActionSystem.Instance.IsPerforming) return;
         bool heroDefeated = HeroSystem.Instance != null && HeroSystem.Instance.HeroView.CurrentHealth <= 0;
+        if (heroDefeated)
+        {
+            BattleEnded = true;
+            PlayerDeathFlow.BeginBattleDeath(HeroSystem.Instance.HeroView);
+            return;
+        }
         if (EnemySystem.Instance.Enemies.Count == 0 || heroDefeated)
         {
             victory = !heroDefeated && EnemySystem.Instance.Enemies.Count == 0;
@@ -296,7 +307,14 @@ public class EncounterBattleReturn : MonoBehaviour
         {
             bool previousEnabled = GUI.enabled;
             GUI.enabled = ActionSystem.Instance != null && !ActionSystem.Instance.IsPerforming;
-            if (BattleUITheme.DrawRetreatButton(new Rect(20, 20, 230, 42))) Return();
+            float retreatY = 20f;
+            if (playerHealthPanel != null)
+            {
+                var corners = new Vector3[4];
+                playerHealthPanel.GetWorldCorners(corners);
+                retreatY = Screen.height - RectTransformUtility.WorldToScreenPoint(null, corners[0]).y + 12f;
+            }
+            if (BattleUITheme.DrawRetreatButton(new Rect(20, retreatY, 230, 42))) Return();
             GUI.enabled = previousEnabled;
         }
     }

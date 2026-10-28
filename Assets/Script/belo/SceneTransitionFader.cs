@@ -9,6 +9,7 @@ public sealed class SceneTransitionFader : MonoBehaviour
     private static SceneTransitionFader instance;
     private Image overlay;
     private bool transitioning;
+    public static bool IsTransitioning => instance != null && instance.transitioning;
 
     public static void Load(string sceneName)
     {

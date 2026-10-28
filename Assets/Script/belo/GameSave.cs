@@ -41,10 +41,24 @@ public class GameSave : MonoBehaviour
         if (player != null) SaveGame(player.transform);
     }
 
+    public bool CanSaveCurrentPlayer => pendingRestore == null && !PlayerDeathFlow.IsActive &&
+        PlayerHealth.IsInitialized && PlayerHealth.CurrentHealth > 0 &&
+        CharacterAlmanac.IsExplorationScene(SceneManager.GetActiveScene().name) &&
+        FindFirstObjectByType<playerMovement>() != null;
+
+    public bool ManualSave()
+    {
+        if (!CanSaveCurrentPlayer) return false;
+        SaveCurrentPlayer();
+        nextAutoSave = Time.unscaledTime + 15f;
+        return true;
+    }
+
     public void SaveGame(Transform player)
     {
         string scene = SceneManager.GetActiveScene().name;
-        if (player == null || (scene != "Scene 2" && scene != "Scene3" && scene != "Scene4" && scene != "map 4") || pendingRestore != null) return;
+        if (player == null || PlayerDeathFlow.IsActive || PlayerHealth.CurrentHealth <= 0 ||
+            (scene != "Scene 2" && scene != "Scene3" && scene != "Scene4" && scene != "map 4") || pendingRestore != null) return;
         var saved = SaveSlots.Read(SaveSlots.Active) ?? new SaveSlots.Record();
         PlayerHealth.CopyTo(saved);
         saved.scene = scene;

@@ -75,6 +75,7 @@ public class TwoWayPortal : MonoBehaviour
             {
                 player.position = destination.position;
             }
+            PlayerDeathFlow.RecordCheckpoint(new Vector3(destination.position.x, destination.position.y, player.position.z));
         }
 
         yield return new WaitForSeconds(0.5f);

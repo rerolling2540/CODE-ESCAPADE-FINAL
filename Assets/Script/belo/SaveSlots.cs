@@ -30,6 +30,9 @@ public static class SaveSlots
         // A missing health pool in older saves starts at full health.
         public int currentHealth = -1;
         public int maxHealth;
+        public bool hasCheckpoint;
+        public string checkpointScene;
+        public Vector3 checkpointPosition;
         public System.Collections.Generic.List<string> defeatedEncounters = new System.Collections.Generic.List<string>();
     }
     public static int Active

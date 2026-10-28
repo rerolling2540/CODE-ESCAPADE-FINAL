@@ -73,7 +73,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -87,7 +87,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -111,7 +111,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -136,287 +136,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_0
+      name: ArcherDeath_0
       rect:
         serializedVersion: 2
-        x: 68
-        y: 47
-        width: 27
-        height: 44
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 160
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3263889}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3bb706eb516678590800000000000000
-      internalID: -7672051196628010061
+      spriteID: c2c841b2b37280b4ba970a7f0309c8c0
+      internalID: 1882114432
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_1
+      name: ArcherDeath_1
       rect:
         serializedVersion: 2
-        x: 228
-        y: 47
-        width: 31
-        height: 44
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 160
+        y: 0
+        width: 160
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3263889}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 221717f22428ddfb0800000000000000
-      internalID: -4621394421836844766
+      spriteID: 18b30ee99ad699743ac55b64ccef6e4c
+      internalID: 1262040519
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_2
+      name: ArcherDeath_2
       rect:
         serializedVersion: 2
-        x: 385
-        y: 47
-        width: 31
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 320
+        y: 0
+        width: 160
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3263889}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 51e3f2fd2df9b8720800000000000000
-      internalID: 2849546917278334485
+      spriteID: d6e95ae859ed65d4d9394430815c4eb0
+      internalID: -34796251
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_3
+      name: ArcherDeath_3
       rect:
         serializedVersion: 2
-        x: 546
-        y: 68
-        width: 10
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 480
+        y: 0
+        width: 160
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3263889}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6a1475b4c9af63e70800000000000000
-      internalID: 9094732046707147174
+      spriteID: 2cd6531902d44ed4b8748c25fa5ed81a
+      internalID: 424567242
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_4
+      name: ArcherDeath_4
       rect:
         serializedVersion: 2
-        x: 548
-        y: 55
-        width: 26
-        height: 41
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 640
+        y: 0
+        width: 160
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3263889}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: efe268cbdc68c44c0800000000000000
-      internalID: -4301915325856338178
+      spriteID: d4c5b966477497640b95c9f74028e1a6
+      internalID: -290999247
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_5
+      name: ArcherDeath_5
       rect:
         serializedVersion: 2
-        x: 707
-        y: 73
-        width: 9
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 800
+        y: 0
+        width: 160
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3263889}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b4d355a3dd27a2090800000000000000
-      internalID: -8058502288734077621
+      spriteID: 370eca4b140f2e848baf7325ffbf25ad
+      internalID: -1706503023
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_6
+      name: ArcherDeath_6
       rect:
         serializedVersion: 2
-        x: 711
-        y: 66
-        width: 34
-        height: 31
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 960
+        y: 0
+        width: 160
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3263889}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4204422d9c51a8470800000000000000
-      internalID: 8397548411743911972
+      spriteID: b323b887e55bd55469a8ab2d864246e4
+      internalID: -433327465
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_7
+      name: ArcherDeath_7
       rect:
         serializedVersion: 2
-        x: 870
-        y: 74
-        width: 20
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1120
+        y: 0
+        width: 160
+        height: 144
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3263889}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9ab8ebfa14df86a40800000000000000
-      internalID: 5361813814947777449
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_8
-      rect:
-        serializedVersion: 2
-        x: 889
-        y: 77
-        width: 10
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c6e3c13b8c5970be0800000000000000
-      internalID: -1511074460728541588
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_9
-      rect:
-        serializedVersion: 2
-        x: 1031
-        y: 83
-        width: 25
-        height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1778ec969718bc9a0800000000000000
-      internalID: -6211728902561298575
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_10
-      rect:
-        serializedVersion: 2
-        x: 568
-        y: 59
-        width: 9
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3eff3f0c4dbc2a3e0800000000000000
-      internalID: -2043847166242062365
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_11
-      rect:
-        serializedVersion: 2
-        x: 710
-        y: 60
-        width: 7
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: faea2a1771fd9a8e0800000000000000
-      internalID: -1681567694062440785
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ElfDeath001-Sheet-export_12
-      rect:
-        serializedVersion: 2
-        x: 726
-        y: 62
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 718891823b2f4d640800000000000000
-      internalID: 5103971129003444247
+      spriteID: d2cf18d5afdc3974d8778b0bb457758f
+      internalID: 330104729
       vertices: []
       indices: 
       edges: []
@@ -425,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 9490e9da74d75c742af82771df4e4e46
     internalID: 0
     vertices: []
     indices: 
@@ -435,19 +325,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ElfDeath001-Sheet-export_0: -7672051196628010061
-      ElfDeath001-Sheet-export_1: -4621394421836844766
-      ElfDeath001-Sheet-export_10: -2043847166242062365
-      ElfDeath001-Sheet-export_11: -1681567694062440785
-      ElfDeath001-Sheet-export_12: 5103971129003444247
-      ElfDeath001-Sheet-export_2: 2849546917278334485
-      ElfDeath001-Sheet-export_3: 9094732046707147174
-      ElfDeath001-Sheet-export_4: -4301915325856338178
-      ElfDeath001-Sheet-export_5: -8058502288734077621
-      ElfDeath001-Sheet-export_6: 8397548411743911972
-      ElfDeath001-Sheet-export_7: 5361813814947777449
-      ElfDeath001-Sheet-export_8: -1511074460728541588
-      ElfDeath001-Sheet-export_9: -6211728902561298575
+      ArcherDeath_0: 1882114432
+      ArcherDeath_1: 1262040519
+      ArcherDeath_2: -34796251
+      ArcherDeath_3: 424567242
+      ArcherDeath_4: -290999247
+      ArcherDeath_5: -1706503023
+      ArcherDeath_6: -433327465
+      ArcherDeath_7: 330104729
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

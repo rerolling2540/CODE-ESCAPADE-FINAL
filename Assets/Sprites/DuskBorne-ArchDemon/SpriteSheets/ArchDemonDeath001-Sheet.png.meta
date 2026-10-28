@@ -76,7 +76,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -90,7 +90,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -114,7 +114,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -139,309 +139,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_0
+      name: MageDeath_0
       rect:
         serializedVersion: 2
-        x: 41
-        y: 48
-        width: 43
-        height: 62
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3671875}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 10301d20fd0bcaf60800000000000000
-      internalID: 8047001106075681537
+      spriteID: 11efd8fcf9b0951458eb8aa498ddf262
+      internalID: -1814754854
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_1
+      name: MageDeath_1
       rect:
         serializedVersion: 2
-        x: 170
-        y: 48
-        width: 43
-        height: 61
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 128
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3671875}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6c82472475b2ac690800000000000000
-      internalID: -7581199368947750714
+      spriteID: 970b7afd9d710094a802505660b36f5e
+      internalID: -1679846392
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_2
+      name: MageDeath_2
       rect:
         serializedVersion: 2
-        x: 303
-        y: 50
-        width: 36
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 256
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3671875}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b243e5ec6f05a9760800000000000000
-      internalID: 7465368353274475563
+      spriteID: fd2aa71d42aab414dbba4fd9f93af6b8
+      internalID: 1717452449
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_3
+      name: MageDeath_3
       rect:
         serializedVersion: 2
-        x: 324
-        y: 94
-        width: 10
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 384
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3671875}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c0e462e7ba42c5130800000000000000
-      internalID: 3556758124690296332
+      spriteID: baf5b598bd28ace418049e8443e035e2
+      internalID: -1709052651
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_4
+      name: MageDeath_4
       rect:
         serializedVersion: 2
-        x: 437
-        y: 58
-        width: 26
-        height: 41
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 512
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3671875}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 2ee85aa4931b9b2c0800000000000000
-      internalID: -4415303100036444446
+      spriteID: 7d1f76e35c525f24ca13008f4e7fffd5
+      internalID: 1447034326
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_5
+      name: MageDeath_5
       rect:
         serializedVersion: 2
-        x: 568
-        y: 69
-        width: 34
-        height: 31
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 640
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3671875}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d6e49b8171cbc14b0800000000000000
-      internalID: -5468289040149557651
+      spriteID: f41a8f8322daa834491523b7471fd604
+      internalID: 1165888273
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_6
+      name: MageDeath_6
       rect:
         serializedVersion: 2
-        x: 695
-        y: 77
-        width: 20
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 768
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3671875}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 0c0fcb294cc47a890800000000000000
-      internalID: -7446899051674668864
+      spriteID: 9f75411f1d2fa3b408bf84411061f9c4
+      internalID: -1568945771
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_7
+      name: MageDeath_7
       rect:
         serializedVersion: 2
-        x: 824
-        y: 86
-        width: 25
-        height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 896
+        y: 0
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3671875}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c01845dad21efc340800000000000000
-      internalID: 4886371707018051852
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_8
-      rect:
-        serializedVersion: 2
-        x: 435
-        y: 71
-        width: 10
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 32d926d6da119be20800000000000000
-      internalID: 3366741632998350115
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_9
-      rect:
-        serializedVersion: 2
-        x: 564
-        y: 76
-        width: 9
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 635958a3d5f0be040800000000000000
-      internalID: 4677849531042600246
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_10
-      rect:
-        serializedVersion: 2
-        x: 714
-        y: 80
-        width: 10
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 37cb04a8aad5902f0800000000000000
-      internalID: -1006170054695273357
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_11
-      rect:
-        serializedVersion: 2
-        x: 457
-        y: 62
-        width: 9
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bb969e0785ab6a4a0800000000000000
-      internalID: -6582368916341167685
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_12
-      rect:
-        serializedVersion: 2
-        x: 567
-        y: 63
-        width: 7
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9c43a569eb6b01150800000000000000
-      internalID: 5841369646382068937
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ArchDemonDeath001-Sheet_13
-      rect:
-        serializedVersion: 2
-        x: 583
-        y: 65
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4a1bb4b7105d11ba0800000000000000
-      internalID: -6119876216279551580
+      spriteID: 427b4d7b10e10f6439e099c4a0ba84af
+      internalID: -1443418160
       vertices: []
       indices: 
       edges: []
@@ -450,7 +318,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: fc9a83ff84b2f584a946d0128862e499
     internalID: 0
     vertices: []
     indices: 
@@ -460,20 +328,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ArchDemonDeath001-Sheet_0: 8047001106075681537
-      ArchDemonDeath001-Sheet_1: -7581199368947750714
-      ArchDemonDeath001-Sheet_10: -1006170054695273357
-      ArchDemonDeath001-Sheet_11: -6582368916341167685
-      ArchDemonDeath001-Sheet_12: 5841369646382068937
-      ArchDemonDeath001-Sheet_13: -6119876216279551580
-      ArchDemonDeath001-Sheet_2: 7465368353274475563
-      ArchDemonDeath001-Sheet_3: 3556758124690296332
-      ArchDemonDeath001-Sheet_4: -4415303100036444446
-      ArchDemonDeath001-Sheet_5: -5468289040149557651
-      ArchDemonDeath001-Sheet_6: -7446899051674668864
-      ArchDemonDeath001-Sheet_7: 4886371707018051852
-      ArchDemonDeath001-Sheet_8: 3366741632998350115
-      ArchDemonDeath001-Sheet_9: 4677849531042600246
+      MageDeath_0: -1814754854
+      MageDeath_1: -1679846392
+      MageDeath_2: 1717452449
+      MageDeath_3: -1709052651
+      MageDeath_4: 1447034326
+      MageDeath_5: 1165888273
+      MageDeath_6: -1568945771
+      MageDeath_7: -1443418160
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

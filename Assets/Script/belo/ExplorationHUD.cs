@@ -17,8 +17,12 @@ public class ExplorationHUD : MonoBehaviour
     private Bounds worldBounds;
 
     private bool showMap = true;
+    private Vector2 minimapPosition = new Vector2(918f,16f);
+    private Vector2 mapDragOffset;
+    private bool draggingMap;
     private bool inventoryOpen;
-    public bool IsMapVisible => showMap && !inventoryOpen && !GameControlsGuide.MapHidden;
+    public bool IsMapVisible => showMap && !inventoryOpen && !GameControlsGuide.MapHidden &&
+        !SceneTransitionFader.IsTransitioning && CharacterAlmanac.IsExplorationScene(SceneManager.GetActiveScene().name);
     private float previousTimeScale = 1f;
 
     private int selected = -1;
@@ -35,6 +39,8 @@ public class ExplorationHUD : MonoBehaviour
 
     void Start()
     {
+        minimapPosition = new Vector2(PlayerPrefs.GetFloat("CodeEscapade.Minimap.X",918f),PlayerPrefs.GetFloat("CodeEscapade.Minimap.Y",16f));
+        ClampMinimap();
         if (GetComponent<CharacterAlmanac>() == null) gameObject.AddComponent<CharacterAlmanac>();
         if (FindFirstObjectByType<ElfQuestTracker>() == null)
             new GameObject("Elf Quest Tracker").AddComponent<ElfQuestTracker>();
@@ -55,6 +61,7 @@ public class ExplorationHUD : MonoBehaviour
     {
         if (player == null)
             player = FindFirstObjectByType<playerMovement>();
+        UpdateMinimapDrag();
         if (GameControlsGuide.GameplayOverlayHidden) return;
 
         if (!inventoryOpen && !GameControlsGuide.MapHidden && Input.GetKeyDown(KeyCode.M))
@@ -117,6 +124,7 @@ public class ExplorationHUD : MonoBehaviour
 
     void OnDisable()
     {
+        EndMapDrag();
         CloseInventory();
     }
 
@@ -428,7 +436,7 @@ public class ExplorationHUD : MonoBehaviour
 
     void OnGUI()
     {
-        if (GameControlsGuide.GameplayOverlayHidden) return;
+        if (GameControlsGuide.GameplayOverlayHidden) { EndMapDrag(); return; }
         InitStyles();
 
         Matrix4x4 oldMatrix = GUI.matrix;
@@ -452,9 +460,11 @@ public class ExplorationHUD : MonoBehaviour
         {
             if (IsMapVisible)
                 DrawMinimap();
+            else EndMapDrag();
         }
         else
         {
+            EndMapDrag();
             DrawInventory();
         }
 
@@ -463,16 +473,17 @@ public class ExplorationHUD : MonoBehaviour
 
     void DrawMinimap()
     {
-        Frame(new Rect(16, 16, 250, 202));
+        float mapX = minimapPosition.x, mapY = minimapPosition.y;
+        Frame(new Rect(mapX, mapY, 250, 202));
 
         // Larger map title only
         GUI.Label(
-            new Rect(32, 27, 218, 30),
+            new Rect(mapX + 16, mapY + 11, 218, 30),
             "Traveller's Map  [M]",
             mapTitleStyle
         );
 
-        Rect mapRect = new Rect(32, 62, 218, 128);
+        Rect mapRect = new Rect(mapX + 16, mapY + 46, 218, 128);
 
         GUI.BeginGroup(mapRect);
 
@@ -583,6 +594,7 @@ public class ExplorationHUD : MonoBehaviour
         }
 
         GUI.EndGroup();
+        GUI.Label(new Rect(mapX+16,mapY+179,218,20),"Drag title to move",smallStyle);
 
         // Larger, darker legend only
         //GUI.Label(
@@ -590,6 +602,42 @@ public class ExplorationHUD : MonoBehaviour
            // "Blue: you   Gold: signboards",
             //mapLegendStyle
         //);
+    }
+
+    void ClampMinimap()
+    {
+        minimapPosition.x=Mathf.Clamp(minimapPosition.x,0f,1280f-250f);
+        minimapPosition.y=Mathf.Clamp(minimapPosition.y,0f,720f-202f);
+    }
+
+    void UpdateMinimapDrag()
+    {
+        var mouse=UnityEngine.InputSystem.Mouse.current;
+        if(!IsMapVisible||mouse==null) { EndMapDrag(); return; }
+        float scale=Mathf.Min(Screen.width/1280f,Screen.height/720f);
+        Vector2 screenPoint=mouse.position.ReadValue();
+        Vector2 point=new Vector2(
+            (screenPoint.x-(Screen.width-1280f*scale)/2f)/scale,
+            (Screen.height-screenPoint.y-(Screen.height-720f*scale)/2f)/scale);
+        var title=new Rect(minimapPosition.x,minimapPosition.y,250,42);
+        if(mouse.leftButton.wasPressedThisFrame&&title.Contains(point))
+        {
+            draggingMap=true; mapDragOffset=point-minimapPosition;
+        }
+        if(draggingMap&&mouse.leftButton.isPressed)
+        {
+            minimapPosition=point-mapDragOffset; ClampMinimap();
+        }
+        if(draggingMap&&mouse.leftButton.wasReleasedThisFrame) EndMapDrag();
+    }
+
+    void EndMapDrag()
+    {
+        if(!draggingMap)return;
+        draggingMap=false;
+        PlayerPrefs.SetFloat("CodeEscapade.Minimap.X",minimapPosition.x);
+        PlayerPrefs.SetFloat("CodeEscapade.Minimap.Y",minimapPosition.y);
+        PlayerPrefs.Save();
     }
 
     void DrawQuestNpcs(Rect mapRect, Vector2 centre, Vector2 window)

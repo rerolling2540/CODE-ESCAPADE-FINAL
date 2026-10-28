@@ -28,6 +28,10 @@ public static class PlayerHealth
 
     public static int MaxHealth => Mathf.Max(1, Read().maxHealth);
     public static int CurrentHealth => Mathf.Clamp(Read().currentHealth, 0, MaxHealth);
+    public static bool IsInitialized
+    {
+        get { var health = Read(); return health.maxHealth > 0 && health.currentHealth >= 0; }
+    }
 
     public static void EnsureInitialized(int maximum)
     {

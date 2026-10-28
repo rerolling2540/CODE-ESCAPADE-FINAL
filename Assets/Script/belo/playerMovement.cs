@@ -66,6 +66,7 @@ public class playerMovement : MonoBehaviour
         smokeEffects = GetComponent<CharacterSmokeEffects>();
         if (smokeEffects == null) smokeEffects = gameObject.AddComponent<CharacterSmokeEffects>();
         smokeEffects.Initialize(spriteRenderer, GetComponent<CapsuleCollider2D>());
+        PlayerDeathFlow.EnsureInstance();
     }
 
     void Update()

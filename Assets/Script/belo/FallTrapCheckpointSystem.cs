@@ -101,6 +101,7 @@ public sealed class FallTrapCheckpointSystem : MonoBehaviour
 
     public void HandleTrapContact(Collider2D other)
     {
+        if (PlayerDeathFlow.IsActive) return;
         if (respawnAt >= 0f) return;
         playerMovement victim = other != null ? other.GetComponentInParent<playerMovement>() : null;
         if (victim == null) return;
@@ -113,6 +114,7 @@ public sealed class FallTrapCheckpointSystem : MonoBehaviour
 
     private void Update()
     {
+        if (PlayerDeathFlow.IsActive) return;
         if (player == null)
         {
             player = FindFirstObjectByType<playerMovement>();
@@ -144,6 +146,9 @@ public sealed class FallTrapCheckpointSystem : MonoBehaviour
         player = movement;
         startPosition = movement.transform.position;
         checkpointPosition = startPosition;
+        var saved = SaveSlots.Read(SaveSlots.Active);
+        if (saved != null && saved.hasCheckpoint && saved.checkpointScene == gameObject.scene.name)
+            checkpointPosition = saved.checkpointPosition;
         hasStart = true;
     }
 
@@ -163,6 +168,7 @@ public sealed class FallTrapCheckpointSystem : MonoBehaviour
     private void ActivateCheckpoint(int number)
     {
         checkpointPosition = player.transform.position;
+        PlayerDeathFlow.RecordCheckpoint(player.transform.position);
         if (number == 1) firstCheckpointReached = true;
         else secondCheckpointReached = true;
         ShowCheckpointMarker(checkpointPosition);

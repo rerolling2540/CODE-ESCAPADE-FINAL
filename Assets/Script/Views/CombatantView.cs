@@ -11,6 +11,7 @@ public class CombatantView : MonoBehaviour
     [Header("UI & Visual References")]
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private Slider healthSlider;
+    [SerializeField] private bool preserveHealthHudLayout;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private StatusEffectsUI statusEffectsUI;
 
@@ -360,7 +361,7 @@ public class CombatantView : MonoBehaviour
     {
         BindHealthTextToSlider();
         // 1. Dynamic Health Bar Width Scaling
-        if (healthBarRect != null && baseHealth > 0)
+        if (!preserveHealthHudLayout && healthBarRect != null && baseHealth > 0)
         {
             float healthRatio = (float)MaxHealth / baseHealth;
             float newWidth = Mathf.Min(baseWidth * healthRatio, maxWidth);
@@ -384,7 +385,7 @@ public class CombatantView : MonoBehaviour
 
     private void BindHealthTextToSlider()
     {
-        if (healthTextBoundToSlider || healthText == null || healthSlider == null) return;
+        if (preserveHealthHudLayout || healthTextBoundToSlider || healthText == null || healthSlider == null) return;
         RectTransform label = healthText.rectTransform;
         label.SetParent(healthSlider.transform, false);
         label.anchorMin = Vector2.zero;

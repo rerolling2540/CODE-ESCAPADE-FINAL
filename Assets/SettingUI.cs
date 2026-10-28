@@ -10,14 +10,17 @@ public class SettingsUI : MonoBehaviour
 
     public void OpenSettings()
     {
+        foreach (var hud in FindObjectsByType<ExplorationHUD>(FindObjectsSortMode.None)) hud.CloseInventoryFromButton();
         GameControlsGuide.EnsureSettings(settingsPanel);
         settingsPanel.SetActive(true);
         Time.timeScale = 0f;
+        SettingsUiVisibility.RefreshNow();
     }
 
     public void CloseSettings()
     {
         settingsPanel.SetActive(false);
+        SettingsUiVisibility.RefreshNow();
         Time.timeScale = 1f;
     }
 
@@ -44,7 +47,19 @@ public static class GameControlsGuide
             return settingsPanels.Exists(panel => panel.activeInHierarchy && panel.scene == SceneManager.GetActiveScene());
         }
     }
-    public static bool GameplayOverlayHidden => SettingsOpen || CharacterAlmanac.IsOpen || CardRefinementUI.IsOpen || SyntaxMerchantUI.IsOpen || BattleTutorialGuide.BlocksInput;
+    public static bool IsSettingsBranch(Transform branch) => settingsPanels.Exists(panel =>
+        panel != null && panel.activeInHierarchy && panel.scene == SceneManager.GetActiveScene() &&
+        (panel.transform == branch || panel.transform.IsChildOf(branch)));
+    public static bool IsSettingsContent(Transform branch) => settingsPanels.Exists(panel =>
+        panel != null && panel.activeInHierarchy && panel.scene == SceneManager.GetActiveScene() &&
+        (panel.transform == branch || branch.IsChildOf(panel.transform)));
+    public static void RegisterSettings(GameObject panel)
+    {
+        if (panel == null) return;
+        if (!settingsPanels.Contains(panel)) settingsPanels.Add(panel);
+        if (Application.isPlaying) SettingsUiVisibility.EnsureInstance();
+    }
+    public static bool GameplayOverlayHidden => PlayerDeathFlow.IsActive || SettingsOpen || CharacterAlmanac.IsOpen || CardRefinementUI.IsOpen || SyntaxMerchantUI.IsOpen || BattleTutorialGuide.BlocksInput;
     private static readonly System.Collections.Generic.List<GameObject> mapBlockingPanels = new System.Collections.Generic.List<GameObject>();
     public static void RegisterMapBlocker(GameObject panel)
     {
@@ -202,7 +217,9 @@ public static class GameControlsGuide
     public static void EnsureSettings(GameObject panel)
     {
         if (panel == null) return;
-        if (!settingsPanels.Contains(panel)) settingsPanels.Add(panel);
+        if (Application.isPlaying)
+            foreach (var hud in Object.FindObjectsByType<ExplorationHUD>(FindObjectsSortMode.None)) hud.CloseInventoryFromButton();
+        RegisterSettings(panel);
         if (panel.transform.Find("Controls Guide Button") != null) return;
         var template = panel.GetComponentInChildren<TMPro.TMP_Text>(true);
         var lobby = panel.transform.Find("Lobby") as RectTransform;
@@ -240,6 +257,23 @@ public static class GameControlsGuide
             if (guide == null) guide = BuildPanel(panel.transform, template);
             guide.SetActive(true); guide.transform.SetAsLastSibling();
         });
+        if (lobby != null && (CharacterAlmanac.IsExplorationScene(panel.scene.name) || panel.scene.name == "Battle Scene"))
+        {
+            var saveObject = Object.Instantiate(lobby.gameObject, panel.transform);
+            saveObject.name = "Save Game Button";
+            var saveButton = saveObject.GetComponent<UnityEngine.UI.Button>();
+            saveButton.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+            var label = saveObject.GetComponentInChildren<TMPro.TMP_Text>(true);
+            if (label != null) label.text = "SAVE GAME";
+            var saveRect = (RectTransform)saveObject.transform;
+            float width = Mathf.Min(200f, lobby.rect.width);
+            foreach (var action in new[] { lobby, saveRect, rect }) action.sizeDelta = new Vector2(width,lobby.rect.height);
+            lobby.anchoredPosition = new Vector2(-(width + 16f),lobby.anchoredPosition.y);
+            saveRect.anchoredPosition = new Vector2(0,lobby.anchoredPosition.y);
+            rect.anchoredPosition = new Vector2(width + 16f,lobby.anchoredPosition.y);
+            var feedback = saveObject.AddComponent<SettingsSaveButton>();
+            feedback.Configure(saveButton,label);
+        }
     }
 
     static UnityEngine.UI.Button Button(Transform parent, string name, string caption, TMPro.TMP_Text template)

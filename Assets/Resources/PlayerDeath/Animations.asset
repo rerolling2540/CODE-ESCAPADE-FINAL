@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d50432b1e4ef31f42823f82e86eee304, type: 3}
+  m_Name: Animations
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeathAnimations
+  warrior:
+  - {fileID: 4739410361002896916, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 8803923152949617137, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 7405160166243886877, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: -6930562774783334623, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 5847282133147261615, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 3256854589360385887, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 2663064787322560717, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: -7761232957135373661, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: -718568859206869386, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 8259480690542273036, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 4069662938972889761, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  archer:
+  - {fileID: 1882114432, guid: 083065329a3acee46b54040efb6f5ea1, type: 3}
+  - {fileID: 1262040519, guid: 083065329a3acee46b54040efb6f5ea1, type: 3}
+  - {fileID: -34796251, guid: 083065329a3acee46b54040efb6f5ea1, type: 3}
+  - {fileID: 424567242, guid: 083065329a3acee46b54040efb6f5ea1, type: 3}
+  - {fileID: -290999247, guid: 083065329a3acee46b54040efb6f5ea1, type: 3}
+  - {fileID: -1706503023, guid: 083065329a3acee46b54040efb6f5ea1, type: 3}
+  - {fileID: -433327465, guid: 083065329a3acee46b54040efb6f5ea1, type: 3}
+  - {fileID: 330104729, guid: 083065329a3acee46b54040efb6f5ea1, type: 3}
+  mage:
+  - {fileID: -1814754854, guid: cad8f69152b74cc4cb3c3217e163a8c9, type: 3}
+  - {fileID: -1679846392, guid: cad8f69152b74cc4cb3c3217e163a8c9, type: 3}
+  - {fileID: 1717452449, guid: cad8f69152b74cc4cb3c3217e163a8c9, type: 3}
+  - {fileID: -1709052651, guid: cad8f69152b74cc4cb3c3217e163a8c9, type: 3}
+  - {fileID: 1447034326, guid: cad8f69152b74cc4cb3c3217e163a8c9, type: 3}
+  - {fileID: 1165888273, guid: cad8f69152b74cc4cb3c3217e163a8c9, type: 3}
+  - {fileID: -1568945771, guid: cad8f69152b74cc4cb3c3217e163a8c9, type: 3}
+  - {fileID: -1443418160, guid: cad8f69152b74cc4cb3c3217e163a8c9, type: 3}
+  framesPerSecond: 10
+  villageScene: Scene 2
+  villagePosition: {x: 160, y: -0.70385355, z: 0}

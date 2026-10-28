@@ -1,12 +1,14 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class PortalNextScene : MonoBehaviour
 {
     public string nextSceneName = "NextScene";
     public AudioClip portalSound;
     [Min(0)] public int requiredDefeatedEncounters;
+    public bool hideUntilUnlocked = true;
 
     [Range(0f, 1f)]
     public float soundVolume = 1f;
@@ -19,7 +21,11 @@ public class PortalNextScene : MonoBehaviour
 
     private void Start()
     {
-        portalVisuals = GetComponentsInChildren<Renderer>(true);
+        // A child portal keeps its own visibility and unlock requirement.
+        portalVisuals = GetComponentsInChildren<Renderer>(true)
+            .Where(r => r.GetComponentInParent<PortalNextScene>() == this &&
+                (r.GetComponentInParent<TwoWayPortal>() == null ||
+                 r.GetComponentInParent<TwoWayPortal>().gameObject == gameObject)).ToArray();
         originalVisualStates = new bool[portalVisuals.Length];
         for (int i = 0; i < portalVisuals.Length; i++)
             originalVisualStates[i] = portalVisuals[i].enabled;
@@ -52,7 +58,7 @@ public class PortalNextScene : MonoBehaviour
     private void RefreshPortalVisibility()
     {
         if (portalVisuals == null) return;
-        bool unlocked = HasRequiredVictories();
+        bool unlocked = !hideUntilUnlocked || HasRequiredVictories();
         for (int i = 0; i < portalVisuals.Length; i++)
             if (portalVisuals[i] != null)
                 portalVisuals[i].enabled = originalVisualStates[i] && unlocked;

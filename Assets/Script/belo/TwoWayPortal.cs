@@ -1,11 +1,13 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class TwoWayPortal : MonoBehaviour
 {
     public Transform destination;
     [Min(0)] public int requiredDefeatedEncounters;
+    public bool hideUntilUnlocked = true;
 
     private static bool isTeleporting = false;
     private Renderer[] portalVisuals;
@@ -15,7 +17,11 @@ public class TwoWayPortal : MonoBehaviour
 
     private void Start()
     {
-        portalVisuals = GetComponentsInChildren<Renderer>(true);
+        // Nested portals are independent routes; never hide another portal's artwork.
+        portalVisuals = GetComponentsInChildren<Renderer>(true)
+            .Where(r => r.GetComponentInParent<TwoWayPortal>() == this &&
+                (r.GetComponentInParent<PortalNextScene>() == null ||
+                 r.GetComponentInParent<PortalNextScene>().gameObject == gameObject)).ToArray();
         originalVisualStates = new bool[portalVisuals.Length];
         for (int i = 0; i < portalVisuals.Length; i++)
             originalVisualStates[i] = portalVisuals[i].enabled;
@@ -49,7 +55,7 @@ public class TwoWayPortal : MonoBehaviour
         if (portalVisuals == null) return;
         for (int i = 0; i < portalVisuals.Length; i++)
             if (portalVisuals[i] != null)
-                portalVisuals[i].enabled = originalVisualStates[i] && requiredVictoriesMet;
+                portalVisuals[i].enabled = originalVisualStates[i] && (!hideUntilUnlocked || requiredVictoriesMet);
     }
 
     private IEnumerator Teleport(Transform player)

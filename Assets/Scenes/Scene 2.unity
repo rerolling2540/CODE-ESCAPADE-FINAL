@@ -1002,6 +1002,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1692790260}
   requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!4 &51723527
 Transform:
   m_ObjectHideFlags: 0
@@ -7705,7 +7706,7 @@ Transform:
   m_GameObject: {fileID: 401013680}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.43, y: -0.82, z: 0}
+  m_LocalPosition: {x: 1.61, y: 1.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9165,7 +9166,7 @@ Transform:
   m_GameObject: {fileID: 606382705}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 113.909996, y: -0.9740002, z: -10}
+  m_LocalPosition: {x: 266.58, y: -0.23400024, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18597,6 +18598,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 116174064}
   requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!4 &1050808180
 Transform:
   m_ObjectHideFlags: 0
@@ -23121,11 +23123,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 114.7
+      value: 267.37
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.4
+      value: -0.66
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -23217,7 +23219,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7076337099082640491, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23872,6 +23874,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1853031098}
   requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!4 &1229592074
 Transform:
   m_ObjectHideFlags: 0
@@ -26768,6 +26771,7 @@ GameObject:
   - component: {fileID: 1435540834}
   - component: {fileID: 1435540833}
   - component: {fileID: 1435540832}
+  - component: {fileID: 1435540838}
   m_Layer: 0
   m_Name: portal1
   m_TagString: Untagged
@@ -27007,7 +27011,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1055496915}
-  requiredDefeatedEncounters: 5
+  requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!4 &1435540837
 Transform:
   m_ObjectHideFlags: 0
@@ -27024,6 +27029,21 @@ Transform:
   - {fileID: 1085621988}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1435540838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435540831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ab571efcd7b45398e62d84a54ddc1e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalInteraction
+  entryPrompt: '[E] Enter portal'
+  unavailablePrompt: 
+  playEntrySound: 1
 --- !u!1 &1438627707
 GameObject:
   m_ObjectHideFlags: 0
@@ -32327,6 +32347,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 116174064}
   requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!4 &1566197788
 Transform:
   m_ObjectHideFlags: 0
@@ -32744,6 +32765,7 @@ GameObject:
   - component: {fileID: 1621679246}
   - component: {fileID: 1621679245}
   - component: {fileID: 1621679244}
+  - component: {fileID: 1621679250}
   m_Layer: 0
   m_Name: portal1 (2)
   m_TagString: Untagged
@@ -32983,7 +33005,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1692790260}
-  requiredDefeatedEncounters: 1
+  requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!4 &1621679249
 Transform:
   m_ObjectHideFlags: 0
@@ -33000,6 +33023,21 @@ Transform:
   - {fileID: 158943030}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1621679250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621679243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ab571efcd7b45398e62d84a54ddc1e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalInteraction
+  entryPrompt: '[E] Enter portal'
+  unavailablePrompt: 
+  playEntrySound: 1
 --- !u!1 &1622415398
 GameObject:
   m_ObjectHideFlags: 0
@@ -56011,12 +56049,12 @@ Transform:
   m_GameObject: {fileID: 1810036624}
   serializedVersion: 2
   m_LocalRotation: {x: 0.007426427, y: -0.0033697353, z: 0.0006453508, w: 0.99996656}
-  m_LocalPosition: {x: -5.04, y: 17.5, z: 1.99}
+  m_LocalPosition: {x: 290.77, y: 0.78, z: 1.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 938621873}
-  m_Father: {fileID: 1974170101}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0.851, y: -0.386, z: 0.071}
 --- !u!114 &1810036626
 MonoBehaviour:
@@ -56268,6 +56306,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 401013681}
   requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!1 &1815957671
 GameObject:
   m_ObjectHideFlags: 0
@@ -265771,11 +265810,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4594753920082053267, guid: ed4fc1d945ed5844fb44d068b3b68682, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 287.62
+      value: 286.52
       objectReference: {fileID: 0}
     - target: {fileID: 4594753920082053267, guid: ed4fc1d945ed5844fb44d068b3b68682, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -16.92
+      value: -16.99
       objectReference: {fileID: 0}
     - target: {fileID: 4594753920082053267, guid: ed4fc1d945ed5844fb44d068b3b68682, type: 3}
       propertyPath: m_LocalPosition.z
@@ -266231,7 +266270,7 @@ Transform:
   m_GameObject: {fileID: 1941604557}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.75, y: 17.85, z: 0}
+  m_LocalPosition: {x: 12.35, y: 17.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -266332,6 +266371,7 @@ GameObject:
   - component: {fileID: 1974170098}
   - component: {fileID: 1974170097}
   - component: {fileID: 1974170096}
+  - component: {fileID: 1974170102}
   m_Layer: 0
   m_Name: portal forest in
   m_TagString: Untagged
@@ -266571,7 +266611,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1941604558}
-  requiredDefeatedEncounters: 5
+  requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!4 &1974170101
 Transform:
   m_ObjectHideFlags: 0
@@ -266581,16 +266622,30 @@ Transform:
   m_GameObject: {fileID: 1974170095}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 296.33, y: -16.67, z: 0}
+  m_LocalPosition: {x: 277.48, y: -16.82, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1172883211}
-  - {fileID: 1810036625}
   - {fileID: 401013681}
   - {fileID: 1941604558}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1974170102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974170095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ab571efcd7b45398e62d84a54ddc1e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalInteraction
+  entryPrompt: '[E] Enter portal'
+  unavailablePrompt: 
+  playEntrySound: 1
 --- !u!1 &1975620951
 GameObject:
   m_ObjectHideFlags: 0
@@ -267626,7 +267681,7 @@ Transform:
   m_GameObject: {fileID: 2095482350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 113.909996, y: -0.9740002, z: -10}
+  m_LocalPosition: {x: 266.58, y: -0.23400024, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -268059,6 +268114,7 @@ MonoBehaviour:
   nextSceneName: Scene3
   portalSound: {fileID: 8300000, guid: 6ce2b62cb039c4ef582058ea11872be0, type: 3}
   requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
   soundVolume: 1
 --- !u!82 &2105141801
 AudioSource:
@@ -268276,6 +268332,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 0}
   requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 0
 --- !u!4 &2105141805
 Transform:
   m_ObjectHideFlags: 0
@@ -269227,6 +269284,7 @@ SceneRoots:
   - {fileID: 887740001}
   - {fileID: 887769001}
   - {fileID: 1435540837}
+  - {fileID: 1810036625}
   - {fileID: 1974170101}
   - {fileID: 1229592074}
   - {fileID: 1853031098}

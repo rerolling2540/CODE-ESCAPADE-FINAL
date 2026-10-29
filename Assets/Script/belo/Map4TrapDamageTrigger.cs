@@ -7,6 +7,21 @@ public sealed class Map4TrapDamageTrigger : MonoBehaviour
     [SerializeField, Min(1)] private int damage = 18;
     [SerializeField, Tooltip("Powered contact removes a full health bar.")]
     private bool lethalContact;
+    private TrapPackAnimation trapAnimation;
+    [SerializeField, Min(0f), Tooltip("Required overlap in world units before contact hurts. Zero accepts any overlap.")]
+    private float minimumOverlapDepth;
+    private Collider2D[] damageHitboxes;
+
+    public bool CanDealDamage
+    {
+        get
+        {
+            if (!isActiveAndEnabled) return false;
+            // Also handles generated traps that add the animation after this component.
+            if (trapAnimation == null) trapAnimation = GetComponent<TrapPackAnimation>();
+            return trapAnimation == null || trapAnimation.IsDamageActive;
+        }
+    }
 
     public void Initialize(int damageAmount)
     {
@@ -18,9 +33,23 @@ public sealed class Map4TrapDamageTrigger : MonoBehaviour
 
     private void DamagePlayer(Collider2D other)
     {
-        if (!isActiveAndEnabled || other == null) return;
+        if (!CanDealDamage || other == null) return;
+        if (minimumOverlapDepth > 0f && !HasDamagingOverlap(other)) return;
         var player = other.GetComponentInParent<playerMovement>();
         if (player != null)
             player.TryTakeDamage(lethalContact ? Mathf.Max(damage, PlayerHealth.MaxHealth) : damage);
+    }
+
+    private bool HasDamagingOverlap(Collider2D other)
+    {
+        if (damageHitboxes == null) damageHitboxes = GetComponents<Collider2D>();
+        foreach (var hitbox in damageHitboxes)
+        {
+            if (hitbox == null || !hitbox.enabled || !hitbox.isTrigger) continue;
+            ColliderDistance2D contact = hitbox.Distance(other);
+            if (contact.isValid && contact.isOverlapped && contact.distance <= -minimumOverlapDepth)
+                return true;
+        }
+        return false;
     }
 }

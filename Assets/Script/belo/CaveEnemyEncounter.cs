@@ -12,6 +12,10 @@ public class CaveEnemyEncounter : MonoBehaviour
     [Min(0f)] public float patrolSpeed = 1.2f;
     [Min(0.5f)] public float overworldHeight = 1.9f;
     [Min(0.5f)] public float patrolRadius = 3f;
+    [Tooltip("Keep the size and position authored in the scene when the encounter starts.")]
+    public bool preserveAuthoredTransform;
+    [Tooltip("Keep the sprite's authored facing direction while patrolling or idling.")]
+    public bool lockFacingDirection;
     public static List<EnemyData> PendingEnemies;
     public static string PendingEncounterId;
     private static string suppressedEncounter;
@@ -35,11 +39,12 @@ public class CaveEnemyEncounter : MonoBehaviour
         if (enemy != null && enemy.Image != null)
         {
             visual.sprite = enemy.Image;
-            transform.localScale = Vector3.one * (overworldHeight / Mathf.Max(0.1f, enemy.Image.bounds.size.y));
+            if (!preserveAuthoredTransform)
+                transform.localScale = Vector3.one * (overworldHeight / Mathf.Max(0.1f, enemy.Image.bounds.size.y));
             if (enemy.battleMaterial != null) visual.sharedMaterial = enemy.battleMaterial;
         }
         // Anchor the enlarged sprite to the actual cave floor.
-        if (FindGround((Vector2)transform.position + Vector2.up, 8f, out var floor))
+        if (!preserveAuthoredTransform && FindGround((Vector2)transform.position + Vector2.up, 8f, out var floor))
         {
             float offset = visual.sprite != null ? -visual.sprite.bounds.min.y * transform.localScale.y : 0f;
             transform.position = new Vector3(transform.position.x, floor.point.y + offset + (flying ? 1.1f : 0.03f), transform.position.z);
@@ -96,7 +101,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         if (body == null || enteringBattle) return;
         if (patrolSpeed <= 0f)
         {
-            if (player != null) visual.flipX = player.transform.position.x < transform.position.x;
+            if (!lockFacingDirection && player != null) visual.flipX = player.transform.position.x < transform.position.x;
             return;
         }
         float ahead = body.position.x + direction * 0.7f;
@@ -110,7 +115,7 @@ public class CaveEnemyEncounter : MonoBehaviour
                     hit.collider.GetComponentInParent<playerMovement>() == null) turn = true;
         }
         if (turn) direction = -direction;
-        visual.flipX = direction < 0f;
+        if (!lockFacingDirection) visual.flipX = direction < 0f;
         Vector2 next = body.position + Vector2.right * (direction * patrolSpeed * Time.fixedDeltaTime);
         if (flying) next.y = restingPosition.y + Mathf.Sin(Time.time * 2f) * 0.15f;
         body.MovePosition(next);

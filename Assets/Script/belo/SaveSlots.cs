@@ -50,6 +50,7 @@ public static class SaveSlots
         public int maxHealth;
         public bool hasCheckpoint;
         public System.Collections.Generic.List<string> solvedTrapSwitches = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> solvedPortalQuestions = new System.Collections.Generic.List<string>();
         public string checkpointScene;
         public Vector3 checkpointPosition;
         public System.Collections.Generic.List<string> defeatedEncounters = new System.Collections.Generic.List<string>();

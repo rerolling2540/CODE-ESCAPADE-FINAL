@@ -40,7 +40,11 @@ public sealed class Map4TrapDamageTrigger : MonoBehaviour
         if (minimumOverlapDepth > 0f && !HasDamagingOverlap(other)) return;
         var player = other.GetComponentInParent<playerMovement>();
         if (player != null && player.TryTakeDamage(lethalContact ? Mathf.Max(damage, PlayerHealth.MaxHealth) : damage))
+        {
             PlayDamageSound();
+            var poison = GetComponent<PoisonSpikeHazard>();
+            if (poison != null && poison.isActiveAndEnabled) poison.Infect(player);
+        }
     }
 
     private void PlayDamageSound()

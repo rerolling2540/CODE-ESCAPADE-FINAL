@@ -34,9 +34,14 @@ public class MatchSetupSystem : MonoBehaviour
     {
         BattleHudMedieval.ResetEpMeter();
         BattleSettingsMenu.EnsureCreated();
+        PlayerDeathFlow.EnsureInstance();
         BattleAudio.EnsureInstance();
         heroData = SelectedHero.Resolve(heroData);
         BattleUITheme.Apply();
+        ApplyPlayerHudLayout();
+        // Resolve class HP before HeroView setup, regardless of Start order.
+        var playerStats = HeroSystem.Instance.HeroView.GetComponent<PlayerStats>();
+        if (playerStats != null) playerStats.InitializePlayer();
         HeroSystem.Instance.SetUp(heroData);
         ApplyPlayerHudLayout(ResolveHudPortrait(), HeroSystem.Instance.HeroView);
         bool caveBattle = CaveEnemyEncounter.PendingEnemies != null && CaveEnemyEncounter.PendingEnemies.Count > 0;
@@ -63,6 +68,26 @@ public class MatchSetupSystem : MonoBehaviour
         DrawCardsGA drawCardsGA = new(5);
         ActionSystem.Instance.Perform(drawCardsGA);
         if (BattleTutorialGuide.IsTutorialEncounter(encounterId)) gameObject.AddComponent<BattleTutorialGuide>();
+    }
+
+    private static void ApplyPlayerHudLayout()
+    {
+        var portraitFrame = GameObject.Find("PortraitFrame");
+        var portraitIcon = GameObject.Find("PortraitIcon");
+        if (portraitFrame == null || portraitIcon == null) return;
+
+        if (portraitFrame.GetComponent<RectMask2D>() == null)
+            portraitFrame.AddComponent<RectMask2D>();
+
+        RectTransform frame = portraitFrame.GetComponent<RectTransform>();
+        RectTransform image = portraitIcon.GetComponent<RectTransform>();
+        image.anchorMin = new Vector2(0f, 1f);
+        image.anchorMax = new Vector2(1f, 1f);
+        image.pivot = new Vector2(0.5f, 1f);
+        image.anchoredPosition = Vector2.zero;
+        image.sizeDelta = new Vector2(0f, frame.rect.height * 2.6f);
+        var portrait = portraitIcon.GetComponent<Image>();
+        if (portrait != null) portrait.preserveAspect = false;
     }
 
     private IEnumerator StarfallSkillPerformer(StarfallSkillGA action)
@@ -701,7 +726,7 @@ public static class BattleUITheme
         GUI.DrawTexture(new Rect(rect.x + 4, rect.y + 4, rect.width - 8, rect.height - 8), Texture2D.whiteTexture);
         GUI.color = previous;
         var style = new GUIStyle(GUI.skin.label) { fontSize = 28, alignment = TextAnchor.MiddleCenter, wordWrap = true };
-        style.normal.textColor = Parchment;
+        style.normal.textColor = Parchment; UiTextColors.Stable(style);
         GUI.Label(new Rect(rect.x + 15, rect.y + 12, rect.width - 30, rect.height - 24), text, style);
     }
 
@@ -711,7 +736,7 @@ public static class BattleUITheme
         Color previousContent = GUI.contentColor;
         GUI.backgroundColor = Wood;
         GUI.contentColor = Parchment;
-        bool clicked = GUI.Button(rect, "Retreat to the cave");
+        bool clicked = GUI.Button(rect, "Retreat");
         GUI.backgroundColor = previousBackground;
         GUI.contentColor = previousContent;
         return clicked;
@@ -778,6 +803,7 @@ public static class BattleUITheme
         foreach (var slider in Object.FindObjectsByType<UnityEngine.UI.Slider>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (slider.fillRect == null) continue;
+            if (slider.GetComponentInParent<ExplorationHealthHud>() != null) continue;
             var image = slider.fillRect.GetComponent<UnityEngine.UI.Image>();
             if (image != null) image.color = slider.name.ToLowerInvariant().Contains("timer") ? Brass : new Color(0.7f, 0.1f, 0.075f);
         }
@@ -806,7 +832,7 @@ public class BattleEndTurnState : MonoBehaviour
     {
         bool resolving = ActionSystem.Instance != null && ActionSystem.Instance.IsPerforming;
         bool answering = question != null && question.isActiveAndEnabled;
-        button.interactable = !resolving && !answering && !BattleTutorialGuide.BlocksInput && !EncounterBattleReturn.BattleEnded;
+        button.interactable = !PlayerDeathFlow.IsActive && !resolving && !answering && !BattleTutorialGuide.BlocksInput && !EncounterBattleReturn.BattleEnded;
         if (label != null) label.text = EncounterBattleReturn.BattleEnded ? "Battle Complete" :
             answering ? "Answer Question" : resolving ? "Resolving..." : "End Turn";
     }
@@ -820,20 +846,32 @@ public class EncounterBattleReturn : MonoBehaviour
     private bool hadEnemies;
     private bool victory;
     private string encounterId;
+    private RectTransform playerHealthPanel;
+    private int encounterExperience, awardedExperience;
 
     public void Configure(bool fromCave, string id)
     {
         caveBattle = fromCave;
+        encounterExperience=0;
+        foreach(var enemy in EnemySystem.Instance.Enemies)if(enemy!=null)encounterExperience+=enemy.ExperienceReward;
         encounterId = id;
+        var healthHud = FindFirstObjectByType<ExplorationHealthHud>(FindObjectsInactive.Include);
+        if (healthHud != null) playerHealthPanel = healthHud.transform.Find("Player Health Panel") as RectTransform;
         hadEnemies = EnemySystem.Instance.Enemies.Count > 0;
         BattleEnded = false;
     }
 
     void Update()
     {
-        if (returning || BattleEnded || !hadEnemies || EnemySystem.Instance == null ||
+        if (PlayerDeathFlow.IsActive || returning || BattleEnded || !hadEnemies || EnemySystem.Instance == null ||
             ActionSystem.Instance == null || ActionSystem.Instance.IsPerforming) return;
         bool heroDefeated = HeroSystem.Instance != null && HeroSystem.Instance.HeroView.CurrentHealth <= 0;
+        if (heroDefeated)
+        {
+            BattleEnded = true;
+            PlayerDeathFlow.BeginBattleDeath(HeroSystem.Instance.HeroView);
+            return;
+        }
         if (EnemySystem.Instance.Enemies.Count == 0 || heroDefeated)
         {
             victory = !heroDefeated && EnemySystem.Instance.Enemies.Count == 0;
@@ -842,13 +880,7 @@ public class EncounterBattleReturn : MonoBehaviour
             if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
             if (victory && caveBattle && !string.IsNullOrEmpty(encounterId))
             {
-                var saved = SaveSlots.Read(SaveSlots.Active);
-                if (saved != null)
-                {
-                    if (saved.defeatedEncounters == null) saved.defeatedEncounters = new List<string>();
-                    if (!saved.defeatedEncounters.Contains(encounterId)) saved.defeatedEncounters.Add(encounterId);
-                    SaveSlots.Write(saved);
-                }
+                awardedExperience=PlayerProgression.AwardEncounter(encounterId,encounterExperience);
             }
             StartCoroutine(EndBattle());
         }
@@ -881,14 +913,7 @@ public class EncounterBattleReturn : MonoBehaviour
         if (BattleEnded)
         {
             BattleUITheme.DrawResultPanel(new Rect(Screen.width / 2f - 240, Screen.height / 2f - 65, 480, 130),
-                victory ? "VICTORY\nReturning from battle..." : "DEFEAT\nReturning from battle...");
-        }
-        else if (caveBattle && !QuestionUI.IsQuestionActive)
-        {
-            bool previousEnabled = GUI.enabled;
-            GUI.enabled = ActionSystem.Instance != null && !ActionSystem.Instance.IsPerforming;
-            if (BattleUITheme.DrawRetreatButton(new Rect(20, 20, 230, 42))) Return();
-            GUI.enabled = previousEnabled;
+                victory ? "VICTORY  +"+awardedExperience+" XP\nLevel "+PlayerProgression.Level+" / Returning from battle..." : "DEFEAT\nReturning from battle...");
         }
     }
 

@@ -21,10 +21,10 @@ public class HeroView : CombatantView
         try
         {
             float side = VisualCenter.x <= target.VisualCenter.x ? -1f : 1f;
-            float spacing = target.VisualBounds.extents.x * 0.6f + VisualBounds.extents.x * 0.55f + 0.2f;
+            float spacing = target.BattleBodyBounds.extents.x * 0.6f + BattleBodyBounds.extents.x * 0.55f + 0.2f;
             Vector3 destination = attackOrigin;
             destination.x += target.VisualCenter.x + side * spacing - VisualCenter.x;
-            destination.y += target.VisualBounds.min.y - VisualBounds.min.y;
+            destination.y += target.BattleGroundY - BattleGroundY;
             float duration = Mathf.Clamp(Vector3.Distance(attackOrigin, destination) / 28f, 0.14f, 0.3f);
             yield return PlayBattleTravel(destination, duration, battleData.battleDashFrames);
             if (CurrentHealth <= 0 || target == null || target.CurrentHealth <= 0) yield break;

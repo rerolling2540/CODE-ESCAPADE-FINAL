@@ -67,11 +67,11 @@ public class StoryScene : MonoBehaviour
         if (heading == null)
         {
             heading = new GUIStyle(GUI.skin.label) { fontSize = 38, fontStyle = FontStyle.Bold, wordWrap = true };
-            heading.normal.textColor = gold;
+            heading.normal.textColor = gold; UiTextColors.Stable(heading);
             body = new GUIStyle(GUI.skin.label) { fontSize = 25, wordWrap = true };
-            body.normal.textColor = new Color(0.9f, 0.89f, 0.83f);
+            body.normal.textColor = new Color(0.9f, 0.89f, 0.83f); UiTextColors.Stable(body);
             small = new GUIStyle(GUI.skin.label) { fontSize = 16, alignment = TextAnchor.MiddleLeft };
-            small.normal.textColor = gold;
+            small.normal.textColor = gold; UiTextColors.Stable(small);
             button = new GUIStyle(GUI.skin.button) { fontSize = 19, fontStyle = FontStyle.Bold };
         }
         var previousMatrix = GUI.matrix;

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 322fe90c027f9604f802ba53ea59cbfb, type: 3}
+  m_Name: Hurt
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterHurtFrames
+  warrior:
+  - {fileID: 456946378823254976, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: -6998019777905318313, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 1240805322172666571, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 8298387396569154617, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  archer: {fileID: 2800000, guid: 1b95718c563684a409c7729da71eea29, type: 3}
+  mage: {fileID: 2800000, guid: dd562b6c83fed384baf5c1fe2cc91850, type: 3}

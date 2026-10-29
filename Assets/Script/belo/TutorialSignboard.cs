@@ -73,7 +73,9 @@ public class TutorialSignboard : MonoBehaviour
         if (promptStyle == null)
         {
             promptStyle = new GUIStyle(GUI.skin.box) { fontSize = 20, alignment = TextAnchor.MiddleCenter };
-            promptStyle.normal.textColor = new Color(1f, 0.9f, 0.68f);
+            promptStyle.normal.textColor = new Color(1f, 0.9f, 0.68f); UiTextColors.Stable(promptStyle);
+            MedievalNotice.Apply(promptStyle);
+            promptStyle.padding=new RectOffset(12,12,6,6);
         }
         Matrix4x4 previousMatrix = GUI.matrix;
         float scale = Mathf.Min(Screen.width / 1280f, Screen.height / 720f);

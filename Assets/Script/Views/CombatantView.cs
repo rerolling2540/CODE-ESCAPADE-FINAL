@@ -11,6 +11,7 @@ public class CombatantView : MonoBehaviour
     [Header("UI & Visual References")]
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private Slider healthSlider;
+    [SerializeField] private bool preserveHealthHudLayout;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private StatusEffectsUI statusEffectsUI;
 
@@ -28,7 +29,23 @@ public class CombatantView : MonoBehaviour
     public int Defense { get; private set; }
     public StatusEffectsUI StatusEffectsUI => statusEffectsUI;
     public SpriteRenderer MainSpriteRenderer => spriteRenderer;
-    public Vector3 VisualCenter => spriteRenderer != null ? spriteRenderer.bounds.center : transform.position;
+    public Vector3 VisualCenter => BattleBodyBounds.center;
+    // Attack placement must not depend on transparent frame padding, a weapon
+    // swing, or a hurt pose. These anchors follow the combatant root instead.
+    public Bounds BattleBodyBounds
+    {
+        get
+        {
+            if(!battleAnimationReady||restingSprite==null||spriteRenderer==null)
+                return spriteRenderer!=null?spriteRenderer.bounds:new Bounds(transform.position,Vector3.one);
+            var parent=spriteRenderer.transform.parent;
+            var localCenter=new Vector3(visualPosition.x,footY-restingSprite.bounds.min.y*visualScale.y,visualPosition.z)+Vector3.Scale(restingSprite.bounds.center,visualScale);
+            Vector3 size=Vector3.Scale(restingSprite.bounds.size,Vector3.Scale(visualScale,parent.lossyScale));
+            return new Bounds(parent.TransformPoint(localCenter),new Vector3(Mathf.Abs(size.x),Mathf.Abs(size.y),Mathf.Abs(size.z)));
+        }
+    }
+    public float BattleGroundY => battleAnimationReady&&spriteRenderer!=null ?
+        spriteRenderer.transform.parent.TransformPoint(new Vector3(visualPosition.x,footY,visualPosition.z)).y : VisualBounds.min.y;
     public Bounds VisualBounds => spriteRenderer != null ? spriteRenderer.bounds : new Bounds(transform.position, Vector3.one);
     public bool IsHovering => hovering;
 
@@ -151,6 +168,12 @@ public class CombatantView : MonoBehaviour
 
     void Update()
     {
+        if(this is HeroView&&CurrentHealth>0&&Time.time<hurtAnimationUntil&&heroHurtFrames!=null)
+        {
+            SetBattleFrame(heroHurtFrames[Mathf.Min(heroHurtFrames.Length-1,Mathf.FloorToInt((Time.time-hurtAnimationStart)*10f))],1f,
+                hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f, hurtUsesFootPivot);
+            return;
+        }
         if (spriteRenderer != null && battleAnimationReady)
             spriteRenderer.color = Time.time < hitTime ? Color.Lerp(restingColor, Color.white, 0.7f) : restingColor;
         if (!battleAnimationReady || attacking || CurrentHealth <= 0) return;
@@ -162,7 +185,7 @@ public class CombatantView : MonoBehaviour
         SetBattleFrame(frame, breath, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
     }
 
-    void SetBattleFrame(Sprite frame, float breath, float lift)
+    void SetBattleFrame(Sprite frame, float breath, float lift, bool useFootPivot = false)
     {
         if (spriteRenderer == null || frame == null) return;
         spriteRenderer.sprite = frame;
@@ -171,7 +194,7 @@ public class CombatantView : MonoBehaviour
         float recoil = Mathf.Max(0f, (hitTime - Time.time) / 0.18f);
         float axis = spriteRenderer.transform.parent.TransformVector(Vector3.right).x;
         spriteRenderer.transform.localPosition = new Vector3(visualPosition.x + hitDirection * Mathf.Sign(axis) * Mathf.Sin(recoil * Mathf.PI) * 0.12f,
-            footY - frame.bounds.min.y * visualScale.y * breath + lift, visualPosition.z);
+            footY - (useFootPivot ? 0f : frame.bounds.min.y) * visualScale.y * breath + lift, visualPosition.z);
     }
 
     public IEnumerator PlayAttackAnimation()
@@ -257,6 +280,7 @@ public class CombatantView : MonoBehaviour
         AttackPower = classData.GetAttackPowerForLevel(level);
         Defense = classData.GetDefenseForLevel(level);
 
+        RestorePlayerHealth();
         UpdateHealthUI();
     }
 
@@ -268,7 +292,15 @@ public class CombatantView : MonoBehaviour
         {
             spriteRenderer.sprite = image;
         }
+        RestorePlayerHealth();
         UpdateHealthUI();
+    }
+
+    private void RestorePlayerHealth()
+    {
+        if (!(this is HeroView) || !Application.isPlaying) return;
+        PlayerHealth.ConfigureMaximum(MaxHealth);
+        CurrentHealth = PlayerHealth.CurrentHealth;
     }
 
     protected void EnsureEnemyHealthBar()
@@ -364,7 +396,7 @@ public class CombatantView : MonoBehaviour
     {
         BindHealthTextToSlider();
         // 1. Dynamic Health Bar Width Scaling
-        if (healthBarRect != null && baseHealth > 0)
+        if (!preserveHealthHudLayout && healthBarRect != null && baseHealth > 0)
         {
             float healthRatio = (float)MaxHealth / baseHealth;
             float newWidth = Mathf.Min(baseWidth * healthRatio, maxWidth);
@@ -388,7 +420,7 @@ public class CombatantView : MonoBehaviour
 
     private void BindHealthTextToSlider()
     {
-        if (healthTextBoundToSlider || healthText == null || healthSlider == null) return;
+        if (preserveHealthHudLayout || healthTextBoundToSlider || healthText == null || healthSlider == null) return;
         RectTransform label = healthText.rectTransform;
         label.SetParent(healthSlider.transform, false);
         label.anchorMin = Vector2.zero;
@@ -411,6 +443,9 @@ public class CombatantView : MonoBehaviour
         healthTextBoundToSlider = true;
     }
 
+    private Sprite[] heroHurtFrames;
+    private bool hurtUsesFootPivot;
+    private float hurtAnimationStart,hurtAnimationUntil;
     public void Damage(int damageAmount)
     {
         int healthBefore = CurrentHealth;
@@ -441,6 +476,22 @@ public class CombatantView : MonoBehaviour
         hitDirection = spriteRenderer != null && spriteRenderer.transform.TransformVector(Vector3.right).x * (spriteRenderer.flipX ? -1f : 1f) > 0f ? -1f : 1f;
         UpdateHealthUI();
         int healthDamage = healthBefore - CurrentHealth;
+        if (this is HeroView && healthDamage > 0 && CurrentHealth > 0 && spriteRenderer != null && restingSprite != null)
+        {
+            var bank = Resources.Load<CharacterHurtFrames>("PlayerDeath/Hurt");
+            if (bank != null)
+            {
+                int character = PlayerPrefs.GetInt("SelectedCharacter", 0);
+                hurtUsesFootPivot = character == SelectedHero.ArcherIndex || character == SelectedHero.MageIndex;
+                heroHurtFrames = bank.Frames(character, restingSprite.pixelsPerUnit);
+                if (heroHurtFrames != null && heroHurtFrames.Length > 0)
+                {
+                    hurtAnimationStart = Time.time;
+                    hurtAnimationUntil = Time.time + heroHurtFrames.Length / 10f;
+                }
+            }
+        }
+        if (this is HeroView && Application.isPlaying) PlayerHealth.Set(CurrentHealth, MaxHealth);
         if (healthDamage > 0)
         {
             ShowDamageIndicator(healthDamage);
@@ -499,6 +550,7 @@ public class CombatantView : MonoBehaviour
         {
             CurrentHealth = MaxHealth;
         }
+        if (this is HeroView && Application.isPlaying) PlayerHealth.Set(CurrentHealth, MaxHealth);
         UpdateHealthUI();
     }
 

@@ -21,6 +21,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     
     private List<Page> pages = new List<Page>();
     private GameObject canvasRoot, launcher, modal, listContent, library, reader, progressPanel;
+    [SerializeField] private UnityEngine.UI.Button sceneLauncher;
     private ScrollRect libraryScroll;
     private Material readableMaterial;
     private TMP_FontAsset readableFont;
@@ -65,11 +66,11 @@ public sealed class CharacterAlmanac : MonoBehaviour
         if (opened && detail != null) RefreshList();
     }
     void OnEnable() { if (canvasRoot != null) ReloadLessons(); }
-    public static bool IsExplorationScene(string name) => name == "Scene 2" || name == "Scene3" || name == "Scene4";
+    public static bool IsExplorationScene(string name) => name == "Scene 2" || name == "Scene3" || name == "Scene4" || name == "map 4";
     private bool InExploration => IsExplorationScene(SceneManager.GetActiveScene().name) && gameObject.scene == SceneManager.GetActiveScene();
     void Update()
     {
-        if (!InExploration) { Close(); if (canvasRoot != null) canvasRoot.SetActive(false); return; }
+        if (!InExploration) { Close(); if (canvasRoot != null) canvasRoot.SetActive(false); if (launcher != null) launcher.SetActive(false); return; }
         if (canvasRoot != null && !canvasRoot.activeSelf) canvasRoot.SetActive(true);
         bool settings = GameControlsGuide.SettingsOpen;
         bool dialogue = DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive;
@@ -85,6 +86,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     void OnDestroy()
     {
         QuestionPerformanceTracker.HistoryChanged -= RefreshProgressReport;
+        if (sceneLauncher != null) sceneLauncher.onClick.RemoveListener(Open);
         if (canvasRoot != null) { if (Application.isPlaying) Destroy(canvasRoot); else DestroyImmediate(canvasRoot); }
         if (readableMaterial != null) { if (Application.isPlaying) Destroy(readableMaterial); else DestroyImmediate(readableMaterial); }
     }
@@ -96,7 +98,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
         previousTimeScale = Time.timeScale;
         opened = true; openJournal = this;
         Time.timeScale = 0f;
-        modal.SetActive(true); launcher.SetActive(false);
+        modal.SetActive(true); if (launcher != null) launcher.SetActive(false);
         RefreshList();
         BackToBooks();
     }
@@ -262,8 +264,9 @@ public sealed class CharacterAlmanac : MonoBehaviour
         canvasRoot.transform.SetParent(transform,false);
         var canvas = canvasRoot.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder=250;
         var scaler = canvasRoot.GetComponent<CanvasScaler>(); scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize; scaler.referenceResolution=new Vector2(1280,720); scaler.screenMatchMode=CanvasScaler.ScreenMatchMode.Expand;
-        launcher = MakeButton("Almanac Button",canvasRoot.transform,"Almanac [L]",Open).gameObject;
-        ConfigureLauncher();
+        // Keep the scene-authored button and its RectTransform exactly where the designer placed it.
+        launcher = sceneLauncher != null ? sceneLauncher.gameObject : null;
+        if (sceneLauncher != null) sceneLauncher.onClick.AddListener(Open);
         modal = Panel("Almanac Overlay",canvasRoot.transform,new Color(.025f,.015f,.01f,.88f),false); Stretch(modal,0,0,0,0);
         var frame=Panel("Scholar's Almanac",modal.transform,Color.white,false);frame.GetComponent<Image>().sprite=GameControlsGuide.Frame(false);frame.GetComponent<Image>().type=Image.Type.Sliced;Stretch(frame,35,25,35,25);
         title = Label("Almanac Title",frame.transform,"",25,Gold); Position(title.gameObject,new Vector2(28,-18),new Vector2(960,42));
@@ -293,12 +296,6 @@ public sealed class CharacterAlmanac : MonoBehaviour
         progressText=progressScroll.content.gameObject.AddComponent<TextMeshProUGUI>();ApplyReadableFont(progressText);progressText.fontSize=22;progressText.color=Ink;progressText.richText=false;progressText.textWrappingMode=TextWrappingModes.Normal;progressText.lineSpacing=5;progressText.paragraphSpacing=8;progressText.margin=new Vector4(44,28,44,34);progressScroll.content.GetComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
         status=Label("Almanac Status",frame.transform,"Offline edition",16,Gold);var sr=(RectTransform)status.transform;sr.anchorMin=Vector2.zero;sr.anchorMax=new Vector2(1,0);sr.pivot=new Vector2(.5f,0);sr.offsetMin=new Vector2(26,12);sr.offsetMax=new Vector2(-26,40);
         reader.SetActive(false); progressPanel.SetActive(false); modal.SetActive(false);
-    }
-    void ConfigureLauncher()
-    {
-        if(launcher==null)return;var rect=(RectTransform)launcher.transform;
-        rect.anchorMin=rect.anchorMax=Vector2.one;rect.pivot=new Vector2(.5f,.5f);
-        rect.anchoredPosition=new Vector2(-240,-40);rect.sizeDelta=new Vector2(180,48);
     }
     static GameObject Panel(string name,Transform parent,Color color,bool paper)
     {

@@ -16,6 +16,7 @@ public class EnemyData : ScriptableObject
     public Sprite[] attackFrames;
     [Min(1f)] public float battleFramesPerSecond = 12f;
     public bool hovering;
+    [Min(0)] public int experienceReward = 25;
     public Material battleMaterial;
     [Header("Attack Behaviour")]
     public EnemyAttackStyle attackStyle = EnemyAttackStyle.Melee;

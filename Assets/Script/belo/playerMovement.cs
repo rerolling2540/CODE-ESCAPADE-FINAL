@@ -26,6 +26,11 @@ public class playerMovement : MonoBehaviour
     [Min(0.1f)] public float runAnimationSpeed = 1.35f;
     [Min(0f)] public float groundAnimationGrace = 0.06f;
 
+    [Header("Damage Reaction")]
+    public AnimationClip hurtAnimation;
+    [Min(0.1f)] public float damageCooldown = 0.8f;
+    public bool IsHurt => Time.time < hurtUntil;
+
     private float movement;
     private bool isGrounded;
     private int airJumpsRemaining = 1;
@@ -40,6 +45,12 @@ public class playerMovement : MonoBehaviour
     private float dashDirection;
     private bool runningPose;
     private bool hasBeenAirborne;
+    private float hurtUntil = float.NegativeInfinity;
+    private float nextDamageTime = float.NegativeInfinity;
+    private bool hasHurtState;
+    private Sprite[] damageFrames;
+    private float damageAnimationStart;
+    private Color restingColor = Color.white;
 
     void Start()
     {
@@ -51,15 +62,32 @@ public class playerMovement : MonoBehaviour
         else if (archerAppearance || SelectedHero.IsArcher)
             spriteRenderer = SelectedHero.ApplyArcher(this, spriteRenderer);
         if (spriteRenderer != null) facingRight = !spriteRenderer.flipX;
+        if (spriteRenderer != null) restingColor = spriteRenderer.color;
+        if(archerAppearance||mageAppearance||SelectedHero.IsArcher||SelectedHero.IsMage)
+        {
+            var bank=Resources.Load<CharacterHurtFrames>("PlayerDeath/Hurt");
+            int character=mageAppearance||SelectedHero.IsMage?2:1;
+            if(bank!=null&&spriteRenderer!=null)damageFrames=bank.Frames(character,spriteRenderer.sprite.pixelsPerUnit);
+        }
+        hasHurtState = animator != null && animator.HasState(0, Animator.StringToHash("Hurt"));
 
         smokeEffects = GetComponent<CharacterSmokeEffects>();
         if (smokeEffects == null) smokeEffects = gameObject.AddComponent<CharacterSmokeEffects>();
         smokeEffects.Initialize(spriteRenderer, GetComponent<CapsuleCollider2D>());
+        PlayerDeathFlow.EnsureInstance();
+        FirstEncounterGuide.EnsureInstance();
     }
 
     void Update()
     {
         if (Time.timeScale <= 0f) return;
+        if (hasHurtState) animator.SetBool("Hurt", IsHurt);
+        if (IsHurt)
+        {
+            movement = 0f;
+            UpdateAnimation();
+            return;
+        }
         if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive)
         {
             movement = 0f;
@@ -86,7 +114,7 @@ public class playerMovement : MonoBehaviour
             if (spriteRenderer != null) spriteRenderer.flipX = !facingRight;
         }
 
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space))
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
             && (isGrounded || airJumpsRemaining > 0))
             Jump();
 
@@ -122,6 +150,12 @@ public class playerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (rb == null) return;
+        if (IsHurt)
+        {
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            return;
+        }
         float horizontalSpeed = movement * moveSpeed;
         if (isDashing)
         {
@@ -134,6 +168,41 @@ public class playerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(
             horizontalSpeed,
             rb.linearVelocity.y);
+    }
+
+    public bool TryTakeDamage(int amount)
+    {
+        if (amount <= 0 || Time.timeScale <= 0f || Time.time < nextDamageTime ||
+            PlayerHealth.CurrentHealth <= 0 || !isActiveAndEnabled) return false;
+        if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) return false;
+
+        PlayerHealth.Damage(amount);
+        damageAnimationStart=Time.time;
+        float duration = hurtAnimation != null ? Mathf.Max(0.1f, hurtAnimation.length) : 0.4f;
+        if(damageFrames!=null)duration=damageFrames.Length/10f;
+        hurtUntil = Time.time + duration;
+        nextDamageTime = Time.time + Mathf.Max(damageCooldown, duration);
+        movement = 0f;
+        isDashing = false;
+        dashTimer = 0f;
+        if (rb != null) rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        UpdateAnimation();
+        if (hasHurtState)
+        {
+            animator.SetBool("Hurt", true);
+            animator.Play("Hurt", 0, 0f);
+        }
+        return true;
+    }
+
+    void LateUpdate()
+    {
+        if (spriteRenderer == null) return;
+        if(!PlayerDeathFlow.IsActive&&PlayerHealth.CurrentHealth>0&&IsHurt&&damageFrames!=null&&damageFrames.Length>0)
+            spriteRenderer.sprite=damageFrames[Mathf.Min(damageFrames.Length-1,Mathf.FloorToInt((Time.time-damageAnimationStart)*10f))];
+        // Also gives the archer and mage a visible hit response using their own artwork.
+        bool flash = Time.time < nextDamageTime && Mathf.FloorToInt((nextDamageTime - Time.time) * 12f) % 2 == 0;
+        spriteRenderer.color = flash ? Color.Lerp(restingColor, new Color(1f, 0.2f, 0.15f), 0.75f) : restingColor;
     }
 
     void Jump()
@@ -214,6 +283,9 @@ public class playerMovement : MonoBehaviour
 
     void OnDisable()
     {
+        if (hasHurtState && animator != null) animator.SetBool("Hurt", false);
+        if (spriteRenderer != null) spriteRenderer.color = restingColor;
+        hurtUntil = nextDamageTime = float.NegativeInfinity;
         groundContacts.Clear();
         isGrounded = false;
         lastGroundedTime = float.NegativeInfinity;

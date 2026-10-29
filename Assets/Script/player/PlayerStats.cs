@@ -4,13 +4,13 @@ public class PlayerStats : MonoBehaviour
 {
     [Header("Class & Level Configuration")]
     [SerializeField] private HeroClassData heroClassData;
-    [SerializeField] private int currentLevel = 1;
+    [SerializeField] private int currentLevel = 5;
 
     [Header("Component Reference")]
     [SerializeField] private CombatantView combatantView;
 
     public HeroClassData HeroClass => heroClassData;
-    public int CurrentLevel => Mathf.Max(1, currentLevel);
+    public int CurrentLevel => Application.isPlaying?PlayerProgression.Level:Mathf.Max(1,currentLevel);
 
     private void Awake()
     {
@@ -35,13 +35,14 @@ public class PlayerStats : MonoBehaviour
 
         if (heroClassData != null && combatantView != null)
         {
-            combatantView.InitializeClass(heroClassData, currentLevel);
+            combatantView.InitializeClass(heroClassData, CurrentLevel);
         }
     }
 
     public void LevelUp()
     {
-        currentLevel++;
+        if(Application.isPlaying)PlayerProgression.GainExperience(PlayerProgression.RequiredExperience(CurrentLevel)-PlayerProgression.Experience);
+        else currentLevel++;
         InitializePlayer();
     }
 

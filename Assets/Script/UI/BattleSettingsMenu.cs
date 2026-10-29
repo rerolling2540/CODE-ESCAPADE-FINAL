@@ -239,6 +239,7 @@ public sealed class BattleSettingsMenu : MonoBehaviour
     public void OpenSettings()
     {
         if (panel == null) return;
+        GameControlsGuide.EnsureSettings(panel);
         previousTimeScale = Time.timeScale;
         panel.SetActive(true);
         panel.transform.SetAsLastSibling();

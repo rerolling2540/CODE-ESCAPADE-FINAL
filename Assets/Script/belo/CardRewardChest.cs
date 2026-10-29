@@ -74,7 +74,7 @@ public class CardRewardChest : MonoBehaviour
             visual.sprite = frames[i];
             yield return new WaitForSeconds(0.12f);
         }
-        messageUntil = Time.unscaledTime + 6f;
+        messageUntil = Time.unscaledTime + 8f;
     }
 
     void OnGUI()
@@ -85,24 +85,30 @@ public class CardRewardChest : MonoBehaviour
         if (promptStyle == null)
         {
             promptStyle = new GUIStyle(GUI.skin.box) { fontSize = 18, alignment = TextAnchor.MiddleCenter };
-            promptStyle.normal.textColor = new Color(1f, 0.85f, 0.35f);
+            promptStyle.normal.textColor = new Color(1f, 0.85f, 0.35f); UiTextColors.Stable(promptStyle);
             rewardStyle = new GUIStyle(promptStyle) { wordWrap = true, fontSize = 20, padding = new RectOffset(16, 16, 10, 10) };
+            MedievalNotice.Apply(promptStyle);
+            MedievalNotice.Apply(rewardStyle);
+            promptStyle.fontStyle=FontStyle.Bold;
+            rewardStyle.richText=true;
         }
         var oldMatrix = GUI.matrix;
         var oldColor = GUI.color;
-        GUI.matrix = Matrix4x4.identity;
+        float scale=Mathf.Clamp(Screen.height/720f,.75f,2f);
+        GUI.matrix = Matrix4x4.Scale(Vector3.one*scale);
         GUI.color = Color.white;
         if (Time.unscaledTime < messageUntil)
         {
-            float width = Mathf.Min(520f, Screen.width - 32f);
-            GUI.Box(new Rect((Screen.width - width) / 2f, 30f, width, 130f),
-                "New card: " + reward.name + "\n" + reward.Description + "\nAdded to your collection and battle deck.", rewardStyle);
+            float width = Mathf.Min(560f, Screen.width/scale - 32f);
+            string message="<b>CARD DISCOVERED</b>\n<b>"+reward.name+"</b>\n\n"+reward.Description+"\n\nAdded to your collection and battle deck.";
+            float height=Mathf.Max(180f,rewardStyle.CalcHeight(new GUIContent(message),width));
+            GUI.Box(new Rect((Screen.width/scale-width)/2f,28f,width,height),message,rewardStyle);
         }
         else
         {
             Vector3 screen = Camera.main.WorldToScreenPoint(visual.bounds.center + Vector3.up * 1.1f);
             if (screen.z > 0)
-                GUI.Box(new Rect(screen.x - 95f, Screen.height - screen.y - 18f, 190f, 36f), "[E] Open chest", promptStyle);
+                GUI.Box(new Rect(screen.x/scale-125f,(Screen.height-screen.y)/scale-30f,250f,56f), "[E] Open chest", promptStyle);
         }
         GUI.color = oldColor;
         GUI.matrix = oldMatrix;

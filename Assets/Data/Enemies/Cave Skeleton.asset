@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   <Image>k__BackingField: {fileID: 21300000, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
   <Health>k__BackingField: 55
-  <AttackPower>k__BackingField: 8
+  <AttackPower>k__BackingField: 30
   idleFrames:
   - {fileID: 21300000, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
   - {fileID: 21300002, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
@@ -22,6 +22,7 @@ MonoBehaviour:
   - {fileID: 21300006, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
   - {fileID: 21300008, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
   - {fileID: 21300010, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
+  walkFrames: []
   attackFrames:
   - {fileID: 21300012, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
   - {fileID: 21300014, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
@@ -30,7 +31,10 @@ MonoBehaviour:
   - {fileID: 21300020, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
   - {fileID: 21300022, guid: f9cdb68927184f6b989fc8d559b14e65, type: 3}
   battleFramesPerSecond: 10
+  hovering: 0
+  experienceReward: 45
   battleMaterial: {fileID: 2100000, guid: 4ea48b11d6674c9e85aaab1d32c4bd17, type: 2}
+  attackStyle: 0
   projectileFrames:
   - {fileID: 21390000, guid: 8536edb28694f6140b35fda0e9ca9ea6, type: 3}
   - {fileID: 21390002, guid: 8536edb28694f6140b35fda0e9ca9ea6, type: 3}
@@ -44,5 +48,3 @@ MonoBehaviour:
   projectileSpeed: 10
   projectileFrameRate: 18
   projectileArc: 0
-
-  attackStyle: 0

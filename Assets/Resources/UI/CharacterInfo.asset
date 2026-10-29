@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40fce49f3da40d04bb2dd538d7f92575, type: 3}
+  m_Name: CharacterInfo
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterInfoData
+  battleClass: {fileID: 11400000, guid: 2da917b9e25a7284694217e657d8132f, type: 2}
+  battleLevel: 5
+  heroes:
+  - {fileID: 11400000, guid: afccaf16a67bb1a49945154d3c1a298c, type: 2}
+  - {fileID: 11400000, guid: c983e44c698f4d98a80424c041066c48, type: 2}
+  - {fileID: 11400000, guid: 18109ef36fbd4f9e9afeade23edb0eb3, type: 2}
+  portraits:
+  - {fileID: 2800000, guid: e1d77e982b174b34ca23c9e79a4fd6a0, type: 3}
+  - {fileID: 2800000, guid: 5a4ae7e288051be4e84939b71c1a0a03, type: 3}
+  - {fileID: 2800000, guid: 95d1ff1524b8ee54492c0c404dcd4353, type: 3}

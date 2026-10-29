@@ -15,14 +15,16 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
     private Action accepted, cancelled;
     private float previousTimeScale;
     private bool open;
+    private bool trapPuzzle;
     private ExplorationHUD[] hiddenHuds;
 
-    public static void Show(MultipleChoiceQuestionData[] data, Action onAccepted, Action onCancelled)
+    public static void Show(MultipleChoiceQuestionData[] data, Action onAccepted, Action onCancelled, bool forTrap = false)
     {
         var pool = data == null ? Array.Empty<MultipleChoiceQuestionData>() : Array.FindAll(data, q => q != null);
         if (pool.Length == 0) { onCancelled?.Invoke(); return; }
         if (instance == null) Create();
         instance.questionPool = pool;
+        instance.trapPuzzle=forTrap;
         instance.accepted = onAccepted;
         instance.cancelled = onCancelled;
         instance.previousTimeScale = Time.timeScale;
@@ -31,7 +33,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         foreach (var hud in instance.hiddenHuds) hud.enabled = false;
         Time.timeScale = 0f;
         instance.gameObject.SetActive(true);
-        instance.PickQuestion("Answer correctly to open the door, then walk into the boss chamber.");
+        instance.PickQuestion(forTrap ? "Solve the coding puzzle to permanently disable this trap." : "Answer correctly to open the door, then walk into the boss chamber.");
         BattleAudio.EnsureInstance();
         BattleAudio.Play(BattleSound.QuestionOpen);
     }
@@ -62,7 +64,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         {
             QuestionPerformanceTracker.Complete(currentAttemptId, false);
             currentAttemptId = null;
-            PickQuestion("Incorrect. The door remains closed. Try a different question.");
+            PickQuestion(trapPuzzle ? "Incorrect. The trap is still active. Try a different question." : "Incorrect. The door remains closed. Try a different question.");
             return;
         }
         QuestionPerformanceTracker.Complete(currentAttemptId, true);

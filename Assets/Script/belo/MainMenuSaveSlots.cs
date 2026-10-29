@@ -309,25 +309,25 @@ public class MainMenuSaveSlots : MonoBehaviour
         titleStyle.fontSize = 30;
         titleStyle.fontStyle = FontStyle.Bold;
         titleStyle.alignment = TextAnchor.MiddleCenter;
-        titleStyle.normal.textColor = paleGold;
+        titleStyle.normal.textColor = paleGold; UiTextColors.Stable(titleStyle);
 
         subtitleStyle = new GUIStyle(GUI.skin.label);
         subtitleStyle.fontSize = 15;
         subtitleStyle.alignment = TextAnchor.MiddleCenter;
         subtitleStyle.wordWrap = true;
-        subtitleStyle.normal.textColor = muted;
+        subtitleStyle.normal.textColor = muted; UiTextColors.Stable(subtitleStyle);
 
         slotTitleStyle = new GUIStyle(GUI.skin.label);
         slotTitleStyle.fontSize = 19;
         slotTitleStyle.fontStyle = FontStyle.Bold;
         slotTitleStyle.alignment = TextAnchor.MiddleLeft;
-        slotTitleStyle.normal.textColor = paleGold;
+        slotTitleStyle.normal.textColor = paleGold; UiTextColors.Stable(slotTitleStyle);
 
         slotDetailStyle = new GUIStyle(GUI.skin.label);
         slotDetailStyle.fontSize = 12;
         slotDetailStyle.alignment = TextAnchor.MiddleLeft;
         slotDetailStyle.wordWrap = true;
-        slotDetailStyle.normal.textColor = muted;
+        slotDetailStyle.normal.textColor = muted; UiTextColors.Stable(slotDetailStyle);
 
         buttonStyle = CreateButtonStyle(
             buttonTexture,
@@ -347,7 +347,7 @@ public class MainMenuSaveSlots : MonoBehaviour
         confirmBodyStyle = new GUIStyle(subtitleStyle);
         confirmBodyStyle.fontSize = 15;
         confirmBodyStyle.normal.textColor =
-            new Color(0.90f, 0.86f, 0.78f);
+            new Color(0.90f, 0.86f, 0.78f); UiTextColors.Stable(confirmBodyStyle);
 
         footerStyle = new GUIStyle(subtitleStyle);
         footerStyle.fontSize = 11;
@@ -356,14 +356,14 @@ public class MainMenuSaveSlots : MonoBehaviour
         statusStyle.fontSize = 10;
         statusStyle.fontStyle = FontStyle.Bold;
         statusStyle.alignment = TextAnchor.MiddleRight;
-        statusStyle.normal.textColor = gold;
+        statusStyle.normal.textColor = gold; UiTextColors.Stable(statusStyle);
 
         inputStyle = new GUIStyle(GUI.skin.textField);
         inputStyle.fontSize = 18;
         inputStyle.padding = new RectOffset(12, 12, 8, 8);
         inputStyle.normal.background = inputTexture;
         inputStyle.focused.background = inputTexture;
-        inputStyle.normal.textColor = paleGold;
+        inputStyle.normal.textColor = paleGold; UiTextColors.Stable(inputStyle);
         inputStyle.focused.textColor = Color.white;
         inputStyle.border = new RectOffset(2, 2, 2, 2);
 
@@ -378,7 +378,7 @@ public class MainMenuSaveSlots : MonoBehaviour
         fieldLabelStyle = new GUIStyle(GUI.skin.label);
         fieldLabelStyle.fontSize = 14;
         fieldLabelStyle.fontStyle = FontStyle.Bold;
-        fieldLabelStyle.normal.textColor = paleGold;
+        fieldLabelStyle.normal.textColor = paleGold; UiTextColors.Stable(fieldLabelStyle);
     }
 
     GUIStyle CreateButtonStyle(
@@ -399,8 +399,8 @@ public class MainMenuSaveSlots : MonoBehaviour
         style.active.background = hover;
         style.focused.background = normal;
 
-        style.normal.textColor = textColor;
-        style.hover.textColor = Color.white;
+        style.normal.textColor = textColor; UiTextColors.Stable(style);
+        style.hover.textColor = style.normal.textColor;
         style.active.textColor = Color.white;
         style.focused.textColor = textColor;
 
@@ -1665,7 +1665,7 @@ public class MainMenuSaveSlots : MonoBehaviour
                 alignment = TextAnchor.MiddleCenter,
                 fontSize = 16
             };
-            switchStyle.normal.textColor = paleGold;
+            switchStyle.normal.textColor = paleGold; UiTextColors.Stable(switchStyle);
             string switchLabel = registerMode
                 ? "Already have an account? Log in"
                 : "Need an account? Register";

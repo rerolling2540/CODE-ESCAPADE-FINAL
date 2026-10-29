@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   <Image>k__BackingField: {fileID: -1256168535239344385, guid: 65e80141de07d10469784dbb290843b3, type: 3}
   <Health>k__BackingField: 85
-  <AttackPower>k__BackingField: 10
+  <AttackPower>k__BackingField: 34
   idleFrames:
   - {fileID: -1256168535239344385, guid: 65e80141de07d10469784dbb290843b3, type: 3}
   - {fileID: 7122812905832702126, guid: 65e80141de07d10469784dbb290843b3, type: 3}
@@ -42,6 +42,7 @@ MonoBehaviour:
   - {fileID: 2822036503257444444, guid: 70359e26165670d4797f169563571ef2, type: 3}
   battleFramesPerSecond: 12
   hovering: 0
+  experienceReward: 50
   battleMaterial: {fileID: 0}
   attackStyle: 0
   projectileFrames: []

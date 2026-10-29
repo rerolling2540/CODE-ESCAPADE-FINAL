@@ -84,12 +84,12 @@ public static class GameControlsGuide
             guideWoodStyle.normal.background=Frame(false).texture;
             guidePaperStyle=new GUIStyle(guideWoodStyle);guidePaperStyle.normal.background=Frame(true).texture;
             guideHeadingStyle=new GUIStyle(GUI.skin.label){fontSize=28,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter,wordWrap=true};
-            guideHeadingStyle.normal.textColor=new Color(1,.86f,.54f);
+            guideHeadingStyle.normal.textColor=new Color(1,.86f,.54f); UiTextColors.Stable(guideHeadingStyle);
             guideCaptionStyle=new GUIStyle(guideHeadingStyle){fontSize=14};
-            guideBodyStyle=new GUIStyle(GUI.skin.label){fontSize=22,wordWrap=true,padding=new RectOffset()};guideBodyStyle.normal.textColor=Ink;
+            guideBodyStyle=new GUIStyle(GUI.skin.label){fontSize=22,wordWrap=true,padding=new RectOffset()};guideBodyStyle.normal.textColor=Ink; UiTextColors.Stable(guideBodyStyle);
             guideButtonStyle=new GUIStyle(GUI.skin.button){fontSize=21,fontStyle=FontStyle.Bold,border=new RectOffset(10,10,10,10)};
             guideButtonStyle.normal.background=guideButtonStyle.hover.background=guideButtonStyle.active.background=Frame(false).texture;
-            guideButtonStyle.normal.textColor=new Color(1,.86f,.54f);guideButtonStyle.hover.textColor=Color.white;
+            guideButtonStyle.normal.textColor=new Color(1,.86f,.54f); UiTextColors.Stable(guideButtonStyle);guideButtonStyle.hover.textColor = guideButtonStyle.normal.textColor;
         }
         Color old=GUI.color;
         try

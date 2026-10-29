@@ -73,10 +73,10 @@ public class EnemySystem : Singleton<EnemySystem>
             {
                 // Approach the player's front, accounting for sprite offsets and size.
                 float side = attacker.VisualCenter.x >= hero.VisualCenter.x ? 1f : -1f;
-                float spacing = hero.VisualBounds.extents.x + attacker.VisualBounds.extents.x * 0.55f + 0.15f;
+                float spacing = hero.BattleBodyBounds.extents.x + attacker.BattleBodyBounds.extents.x * 0.55f + 0.15f;
                 Vector3 destination = startPosition;
                 destination.x += hero.VisualCenter.x + side * spacing - attacker.VisualCenter.x;
-                destination.y += hero.VisualBounds.min.y - attacker.VisualBounds.min.y;
+                destination.y += hero.BattleGroundY - attacker.BattleGroundY;
                 float approachDuration = Mathf.Clamp(Vector3.Distance(startPosition, destination) / 14f, 0.22f, 0.45f);
                 movement = attacker.transform.DOMove(destination, approachDuration).SetEase(Ease.InOutSine);
                 yield return movement.WaitForCompletion();

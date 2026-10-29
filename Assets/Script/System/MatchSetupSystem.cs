@@ -111,7 +111,7 @@ public static class BattleUITheme
         GUI.DrawTexture(new Rect(rect.x + 4, rect.y + 4, rect.width - 8, rect.height - 8), Texture2D.whiteTexture);
         GUI.color = previous;
         var style = new GUIStyle(GUI.skin.label) { fontSize = 28, alignment = TextAnchor.MiddleCenter, wordWrap = true };
-        style.normal.textColor = Parchment;
+        style.normal.textColor = Parchment; UiTextColors.Stable(style);
         GUI.Label(new Rect(rect.x + 15, rect.y + 12, rect.width - 30, rect.height - 24), text, style);
     }
 
@@ -121,7 +121,7 @@ public static class BattleUITheme
         Color previousContent = GUI.contentColor;
         GUI.backgroundColor = Wood;
         GUI.contentColor = Parchment;
-        bool clicked = GUI.Button(rect, "Retreat to the cave");
+        bool clicked = GUI.Button(rect, "Retreat");
         GUI.backgroundColor = previousBackground;
         GUI.contentColor = previousContent;
         return clicked;
@@ -302,20 +302,6 @@ public class EncounterBattleReturn : MonoBehaviour
         {
             BattleUITheme.DrawResultPanel(new Rect(Screen.width / 2f - 240, Screen.height / 2f - 65, 480, 130),
                 victory ? "VICTORY\nReturning from battle..." : "DEFEAT\nReturning from battle...");
-        }
-        else if (caveBattle && !QuestionUI.IsQuestionActive)
-        {
-            bool previousEnabled = GUI.enabled;
-            GUI.enabled = ActionSystem.Instance != null && !ActionSystem.Instance.IsPerforming;
-            float retreatY = 20f;
-            if (playerHealthPanel != null)
-            {
-                var corners = new Vector3[4];
-                playerHealthPanel.GetWorldCorners(corners);
-                retreatY = Screen.height - RectTransformUtility.WorldToScreenPoint(null, corners[0]).y + 12f;
-            }
-            if (BattleUITheme.DrawRetreatButton(new Rect(20, retreatY, 230, 42))) Return();
-            GUI.enabled = previousEnabled;
         }
     }
 

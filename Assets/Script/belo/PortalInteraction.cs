@@ -106,7 +106,9 @@ public class PortalInteraction : MonoBehaviour
         if (buttonStyle == null)
         {
             buttonStyle = new GUIStyle(GUI.skin.button) { fontSize = 18, fontStyle = FontStyle.Bold };
-            buttonStyle.normal.textColor = new Color(1f, 0.85f, 0.35f);
+            buttonStyle.normal.textColor = new Color(1f, 0.85f, 0.35f); UiTextColors.Stable(buttonStyle);
+            MedievalNotice.Apply(buttonStyle);
+            buttonStyle.padding=new RectOffset(10,10,4,4);
         }
         var oldMatrix = GUI.matrix;
         var oldColor = GUI.color;

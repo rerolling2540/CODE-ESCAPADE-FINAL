@@ -20,7 +20,14 @@ public class ExplorationHUD : MonoBehaviour
     private Vector2 minimapPosition = new Vector2(918f,16f);
     private Vector2 mapDragOffset;
     private bool draggingMap;
+    private bool resizingMap;
+    private float minimapScale=1f;
+    private Vector2 resizeStart;
+    private float resizeStartScale;
+    private Texture2D resizeIcon;
     private bool inventoryOpen;
+    private bool characterInfoOpen;
+    private CharacterInfoData characterInfo;
     public bool IsMapVisible => showMap && !inventoryOpen && !GameControlsGuide.MapHidden &&
         !SceneTransitionFader.IsTransitioning && CharacterAlmanac.IsExplorationScene(SceneManager.GetActiveScene().name);
     private float previousTimeScale = 1f;
@@ -39,6 +46,9 @@ public class ExplorationHUD : MonoBehaviour
 
     void Start()
     {
+        characterInfo=Resources.Load<CharacterInfoData>("UI/CharacterInfo");
+        resizeIcon=CreateResizeIcon();
+        minimapScale=Mathf.Clamp(PlayerPrefs.GetFloat("CodeEscapade.Minimap.Scale",1f),0.7f,2.2f);
         minimapPosition = new Vector2(PlayerPrefs.GetFloat("CodeEscapade.Minimap.X",918f),PlayerPrefs.GetFloat("CodeEscapade.Minimap.Y",16f));
         ClampMinimap();
         if (GetComponent<CharacterAlmanac>() == null) gameObject.AddComponent<CharacterAlmanac>();
@@ -292,7 +302,7 @@ public class ExplorationHUD : MonoBehaviour
             if (medievalFont != null)
                 style.font = medievalFont;
 
-            style.normal.textColor = Ink;
+            style.normal.textColor = Ink; UiTextColors.Stable(style);
         }
 
         // MAP-ONLY TEXT STYLES
@@ -319,8 +329,8 @@ public class ExplorationHUD : MonoBehaviour
         }
 
         // Dark text with a light outline for extra readability
-        mapTitleStyle.normal.textColor = new Color(0.06f, 0.025f, 0.005f, 1f);
-        mapLegendStyle.normal.textColor = new Color(0.06f, 0.025f, 0.005f, 1f);
+        mapTitleStyle.normal.textColor = new Color(0.06f, 0.025f, 0.005f, 1f); UiTextColors.Stable(mapTitleStyle);
+        mapLegendStyle.normal.textColor = new Color(0.06f, 0.025f, 0.005f, 1f); UiTextColors.Stable(mapLegendStyle);
 
         mapTitleStyle.hover.textColor = mapTitleStyle.normal.textColor;
         mapLegendStyle.hover.textColor = mapLegendStyle.normal.textColor;
@@ -473,7 +483,9 @@ public class ExplorationHUD : MonoBehaviour
 
     void DrawMinimap()
     {
-        float mapX = minimapPosition.x, mapY = minimapPosition.y;
+        Matrix4x4 mapMatrix=GUI.matrix;
+        GUI.matrix=mapMatrix*Matrix4x4.TRS(minimapPosition,Quaternion.identity,Vector3.one*minimapScale);
+        float mapX = 0, mapY = 0;
         Frame(new Rect(mapX, mapY, 250, 202));
 
         // Larger map title only
@@ -594,7 +606,10 @@ public class ExplorationHUD : MonoBehaviour
         }
 
         GUI.EndGroup();
-        GUI.Label(new Rect(mapX+16,mapY+179,218,20),"Drag title to move",smallStyle);
+        float handle=26f/minimapScale;
+        var grip=new Rect(250-handle,202+2f/minimapScale,handle,handle);
+        if(resizeIcon!=null)GUI.DrawTexture(grip,resizeIcon,ScaleMode.ScaleToFit,true);
+        GUI.matrix=mapMatrix;
 
         // Larger, darker legend only
         //GUI.Label(
@@ -606,8 +621,29 @@ public class ExplorationHUD : MonoBehaviour
 
     void ClampMinimap()
     {
-        minimapPosition.x=Mathf.Clamp(minimapPosition.x,0f,1280f-250f);
-        minimapPosition.y=Mathf.Clamp(minimapPosition.y,0f,720f-202f);
+        minimapPosition.x=Mathf.Clamp(minimapPosition.x,0f,1280f-250f*minimapScale);
+        minimapPosition.y=Mathf.Clamp(minimapPosition.y,0f,720f-202f*minimapScale-30f);
+    }
+
+    static Texture2D CreateResizeIcon()
+    {
+        const int size=32;
+        var texture=new Texture2D(size,size,TextureFormat.RGBA32,false){filterMode=FilterMode.Point};
+        var pixels=new Color[size*size];
+        System.Func<float,float,bool> arrow=(x,y)=>
+            (y>=5&&y<=10&&Mathf.Abs(x)<=2)||(y>=9&&y<=14&&Mathf.Abs(x)<=14-y);
+        System.Func<int,int,bool> shape=(x,y)=>{
+            float a=x-15.5f,b=y-15.5f;
+            return arrow(a,b)||arrow(-a,-b)||arrow(b,-a)||arrow(-b,a);
+        };
+        for(int y=0;y<size;y++)for(int x=0;x<size;x++)
+        {
+            bool inside=shape(x,y),edge=false;
+            for(int dy=-1;dy<=1;dy++)for(int dx=-1;dx<=1;dx++)edge|=shape(x+dx,y+dy);
+            pixels[y*size+x]=inside?(y%8<2?new Color(.45f,.88f,.8f):new Color(.18f,.67f,.6f)):
+                edge?new Color(.035f,.09f,.09f,1):Color.clear;
+        }
+        texture.SetPixels(pixels);texture.Apply();return texture;
     }
 
     void UpdateMinimapDrag()
@@ -619,22 +655,32 @@ public class ExplorationHUD : MonoBehaviour
         Vector2 point=new Vector2(
             (screenPoint.x-(Screen.width-1280f*scale)/2f)/scale,
             (Screen.height-screenPoint.y-(Screen.height-720f*scale)/2f)/scale);
-        var title=new Rect(minimapPosition.x,minimapPosition.y,250,42);
-        if(mouse.leftButton.wasPressedThisFrame&&title.Contains(point))
+        var mapBounds=new Rect(minimapPosition.x,minimapPosition.y,250*minimapScale,202*minimapScale);
+        var handle=new Rect(mapBounds.xMax-28,mapBounds.yMax,28,30);
+        if(mouse.leftButton.wasPressedThisFrame&&(mapBounds.Contains(point)||handle.Contains(point)))
         {
-            draggingMap=true; mapDragOffset=point-minimapPosition;
+            resizingMap=handle.Contains(point);draggingMap=!resizingMap;
+            resizeStart=point;resizeStartScale=minimapScale;mapDragOffset=point-minimapPosition;
+        }
+        if(resizingMap&&mouse.leftButton.isPressed)
+        {
+            Vector2 delta=point-resizeStart;
+            float maximum=Mathf.Min(2.2f,(1280f-minimapPosition.x)/250f,(720f-minimapPosition.y-30f)/202f);
+            minimapScale=Mathf.Clamp(resizeStartScale+Vector2.Dot(delta,new Vector2(250,202))/(250f*250f+202f*202f),0.7f,maximum);
+            ClampMinimap();
         }
         if(draggingMap&&mouse.leftButton.isPressed)
         {
             minimapPosition=point-mapDragOffset; ClampMinimap();
         }
-        if(draggingMap&&mouse.leftButton.wasReleasedThisFrame) EndMapDrag();
+        if((draggingMap||resizingMap)&&!mouse.leftButton.isPressed) EndMapDrag();
     }
 
     void EndMapDrag()
     {
-        if(!draggingMap)return;
-        draggingMap=false;
+        if(!draggingMap&&!resizingMap)return;
+        draggingMap=resizingMap=false;
+        PlayerPrefs.SetFloat("CodeEscapade.Minimap.Scale",minimapScale);
         PlayerPrefs.SetFloat("CodeEscapade.Minimap.X",minimapPosition.x);
         PlayerPrefs.SetFloat("CodeEscapade.Minimap.Y",minimapPosition.y);
         PlayerPrefs.Save();
@@ -697,15 +743,42 @@ public class ExplorationHUD : MonoBehaviour
             {
                 Rect badge = new Rect(point.x + 4f, point.y - 24f, 18f, 22f);
                 Fill(badge, Ink);
-                questMarkerStyle.normal.textColor = markerColor;
+                questMarkerStyle.normal.textColor = markerColor; UiTextColors.Stable(questMarkerStyle);
                 GUI.Label(badge, new GUIContent(stage == 0 ? "!" : "?",
                     stage == 0 ? "Quest available" : highlighted ? "Reward ready" : "Quest accepted"), questMarkerStyle);
             }
         }
     }
 
+    void DrawCharacterInfo()
+    {
+        Fill(new Rect(0,0,1280,720),new Color(0.035f,0.025f,0.015f,0.68f));
+        Frame(new Rect(40,25,1200,670));
+        GUI.Label(new Rect(70,52,680,48),"Character Information",headingStyle);
+        if(MedievalButton(new Rect(795,52,210,42),"Card Collection"))characterInfoOpen=false;
+        if(MedievalButton(new Rect(1020,52,185,42),"Close [I / Esc]")){CloseInventory();return;}
+        if(characterInfo==null){GUI.Label(new Rect(80,160,800,50),"Character data unavailable.",textStyle);return;}
+        int index=Mathf.Clamp(PlayerPrefs.GetInt("SelectedCharacter",0),0,2);
+        string[] titles={"WARRIOR","ARCHER","MAGE"};
+        string[] languages={"Java","C#","Python"};
+        var stats=FindFirstObjectByType<PlayerStats>();
+        int level=stats!=null?stats.CurrentLevel:characterInfo.battleLevel;
+        var heroClass=stats!=null&&stats.HeroClass!=null?stats.HeroClass:characterInfo.battleClass;
+        var hero=characterInfo.heroes[index];
+        Frame(new Rect(75,145,360,470));
+        if(characterInfo.portraits[index]!=null)GUI.DrawTexture(new Rect(100,175,310,330),characterInfo.portraits[index],ScaleMode.ScaleToFit,true);
+        GUI.Label(new Rect(110,540,300,45),titles[index],headingStyle);
+        GUI.Label(new Rect(480,155,680,50),titles[index]+"  /  LEVEL "+level,headingStyle);
+        Fill(new Rect(480,218,700,2),Brass);
+        string details="Health: "+PlayerHealth.CurrentHealth+" / "+PlayerHealth.MaxHealth;
+        if(heroClass!=null)details+="\n\nAttack Power: "+heroClass.GetAttackPowerForLevel(level)+"\n\nAttack Bonus: "+heroClass.GetAttackBonusForLevel(level)+"\n\nDefense: "+heroClass.GetDefenseForLevel(level);
+        details+="\n\nStarting Deck: "+(hero!=null&&hero.Deck!=null?hero.Deck.Count:0)+" cards";
+        GUI.Label(new Rect(485,245,680,370),details,textStyle);
+    }
+
     void DrawInventory()
     {
+        if(characterInfoOpen){DrawCharacterInfo();return;}
         if (inventory == null)
         {
             GUI.Label(
@@ -721,6 +794,7 @@ public class ExplorationHUD : MonoBehaviour
         );
 
         Frame(new Rect(40, 25, 1200, 670));
+        if(MedievalButton(new Rect(795,52,210,42),"Character Info"))characterInfoOpen=true;
 
         GUI.Label(
             new Rect(70, 52, 760, 48),

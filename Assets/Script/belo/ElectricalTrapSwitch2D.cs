@@ -16,12 +16,30 @@ public sealed class ElectricalTrapSwitch2D : MonoBehaviour
     private playerMovement player;
     private float readyAt;
     public bool IsPowered { get; private set; }
+    [SerializeField] private MultipleChoiceQuestionData[] puzzleQuestions;
+    private bool solved, asking;
+    private string saveId;
 
-    void Start() { SetPowered(startsPowered); }
+    void Start()
+    {
+        saveId=gameObject.scene.path;
+        // Root sibling order changes when the selected hero is restored after
+        // battle. Scene and authored names stay stable across those reloads.
+        for(Transform part=transform;part!=null;part=part.parent)saveId+="/"+part.name;
+        var saved=SaveSlots.Read(SaveSlots.Active);
+        solved=saved?.solvedTrapSwitches!=null&&saved.solvedTrapSwitches.Exists(id=>
+            id!=null&&System.Text.RegularExpressions.Regex.Replace(id,@"#\d+(?=/|$)","")==saveId);
+        if(solved&&!saved.solvedTrapSwitches.Contains(saveId))
+        {
+            saved.solvedTrapSwitches.Add(saveId);
+            SaveSlots.Write(saved);
+        }
+        SetPowered(!solved&&startsPowered);
+    }
 
     private bool CanInteract()
     {
-        if (GameControlsGuide.MapHidden || Time.timeScale <= 0f || Time.unscaledTime < readyAt) return false;
+        if (solved || asking || GameControlsGuide.MapHidden || Time.timeScale <= 0f || Time.unscaledTime < readyAt) return false;
         if (player == null) player = FindFirstObjectByType<playerMovement>();
         if (player == null) return false;
         var body = player.GetComponent<Collider2D>();
@@ -35,7 +53,7 @@ public sealed class ElectricalTrapSwitch2D : MonoBehaviour
         if (interactionPrompt != null)
         {
             interactionPrompt.gameObject.SetActive(nearby);
-            interactionPrompt.text = IsPowered ? "[E] Disable electricity" : "[E] Enable electricity";
+            interactionPrompt.text = "[E] Solve trap puzzle";
         }
         bool pressed = Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame;
         pressed |= Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame;
@@ -45,13 +63,25 @@ public sealed class ElectricalTrapSwitch2D : MonoBehaviour
     public bool TryInteract()
     {
         if (!CanInteract()) return false;
-        SetPowered(!IsPowered);
+        var questions=QuestionSystem.Instance!=null?QuestionSystem.Instance.GetQuestionsForCurrentPlayer():null;
+        if(questions==null||questions.Length==0)questions=puzzleQuestions;
+        if(questions==null||questions.Length==0)return false;
+        asking=true;
+        DoorJavaQuestionPanel.Show(questions,()=>{
+            if(this==null)return;
+            asking=false;solved=true;SetPowered(false);
+            var saved=SaveSlots.Read(SaveSlots.Active)??new SaveSlots.Record{character=PlayerPrefs.GetInt("SelectedCharacter",0)};
+            if(saved.solvedTrapSwitches==null)saved.solvedTrapSwitches=new System.Collections.Generic.List<string>();
+            if(!saved.solvedTrapSwitches.Contains(saveId))saved.solvedTrapSwitches.Add(saveId);
+            SaveSlots.Write(saved);
+        },()=>{if(this!=null)asking=false;},true);
         readyAt = Time.unscaledTime + 0.3f;
         return true;
     }
 
     public void SetPowered(bool powered)
     {
+        if(solved)powered=false;
         IsPowered = powered;
         if (controlledTraps != null)
             foreach (var trap in controlledTraps)

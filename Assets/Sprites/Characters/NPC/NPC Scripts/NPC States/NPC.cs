@@ -75,7 +75,7 @@ public class NPC : MonoBehaviour
         GUI.color = new Color(0.08f, 0.035f, 0.015f);
         GUI.DrawTexture(new Rect(bubbleRect.x + 2f, bubbleRect.y + 2f, 28f, 32f), Texture2D.whiteTexture);
         GUI.color = Color.white;
-        questBubbleStyle.normal.textColor = color;
+        questBubbleStyle.normal.textColor = color; UiTextColors.Stable(questBubbleStyle);
         GUI.Label(bubbleRect, stage == 0 ? "!" : "?", questBubbleStyle);
         GUI.color = oldColor;
         GUI.matrix = oldMatrix;

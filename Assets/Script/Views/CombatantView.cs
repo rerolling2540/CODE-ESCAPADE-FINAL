@@ -29,6 +29,7 @@ public class CombatantView : MonoBehaviour
     public int Defense { get; private set; }
     public StatusEffectsUI StatusEffectsUI => statusEffectsUI;
     public SpriteRenderer MainSpriteRenderer => spriteRenderer;
+    public RectTransform HealthSliderRect => healthSlider != null ? healthSlider.GetComponent<RectTransform>() : null;
     public Vector3 VisualCenter => BattleBodyBounds.center;
     // Attack placement must not depend on transparent frame padding, a weapon
     // swing, or a hurt pose. These anchors follow the combatant root instead.
@@ -58,6 +59,33 @@ public class CombatantView : MonoBehaviour
         baseHealth = Mathf.Max(1, MaxHealth);
         // Let the bar grow with max HP while keeping it inside the compact HUD.
         maxWidth = Mathf.Max(baseWidth, Mathf.Min(maxWidth, 480f));
+
+        // The battle HUD reuses the health slider from the old exploration HUD.
+        // Move its label with the slider so hiding that old panel cannot leave
+        // an orphaned HP label behind or place the text outside the new bar.
+        if (healthText != null)
+        {
+            RectTransform label = healthText.rectTransform;
+            label.SetParent(barRect, false);
+            label.anchorMin = Vector2.zero;
+            label.anchorMax = Vector2.one;
+            label.pivot = new Vector2(0.5f, 0.5f);
+            label.anchoredPosition = Vector2.zero;
+            label.sizeDelta = Vector2.zero;
+            label.SetAsLastSibling();
+            healthText.alignment = TextAlignmentOptions.Center;
+            healthText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            healthText.verticalAlignment = VerticalAlignmentOptions.Middle;
+            healthText.enableAutoSizing = true;
+            healthText.fontSizeMin = 12f;
+            healthText.fontSizeMax = 18f;
+            healthText.enableWordWrapping = false;
+            healthText.margin = Vector4.zero;
+            healthText.color = Color.white;
+            healthText.raycastTarget = false;
+            healthTextBoundToSlider = true;
+        }
+
         UpdateHealthUI();
     }
 

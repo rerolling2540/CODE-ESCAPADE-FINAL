@@ -72,9 +72,17 @@ public class MatchSetupSystem : MonoBehaviour
 
     private static void ApplyPlayerHudLayout()
     {
-        var portraitFrame = GameObject.Find("PortraitFrame");
-        var portraitIcon = GameObject.Find("PortraitIcon");
-        if (portraitFrame == null || portraitIcon == null) return;
+        var hudObject = GameObject.Find("PlaayerHUD");
+        if (hudObject == null) return;
+
+        Transform portraitFrameTransform = FindDescendant(hudObject.transform, "PortraitFrame");
+        Transform portraitIconTransform = FindDescendant(hudObject.transform, "PortraitIcon");
+        if (portraitFrameTransform == null || portraitIconTransform == null) return;
+
+        var portraitFrame = portraitFrameTransform.gameObject;
+        var portraitIcon = portraitIconTransform.gameObject;
+        portraitFrame.SetActive(true);
+        portraitIcon.SetActive(true);
 
         if (portraitFrame.GetComponent<RectMask2D>() == null)
             portraitFrame.AddComponent<RectMask2D>();
@@ -88,6 +96,20 @@ public class MatchSetupSystem : MonoBehaviour
         image.sizeDelta = new Vector2(0f, frame.rect.height * 2.6f);
         var portrait = portraitIcon.GetComponent<Image>();
         if (portrait != null) portrait.preserveAspect = false;
+    }
+
+    private static Transform FindDescendant(Transform root, string objectName)
+    {
+        if (root == null) return null;
+        if (root.name == objectName) return root;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform match = FindDescendant(root.GetChild(i), objectName);
+            if (match != null) return match;
+        }
+
+        return null;
     }
 
     private IEnumerator StarfallSkillPerformer(StarfallSkillGA action)
@@ -117,9 +139,14 @@ public class MatchSetupSystem : MonoBehaviour
 
     private static void ApplyPlayerHudLayout(Sprite portrait, HeroView hero)
     {
-        var portraitFrame = GameObject.Find("PortraitFrame");
-        if (portraitFrame != null && portraitFrame.GetComponent<UnityEngine.UI.RectMask2D>() == null)
-            portraitFrame.AddComponent<UnityEngine.UI.RectMask2D>();
+        GameObject hudObject = GameObject.Find("PlaayerHUD");
+        Transform portraitFrame = hudObject != null ? FindDescendant(hudObject.transform, "PortraitFrame") : null;
+        if (portraitFrame != null)
+        {
+            portraitFrame.gameObject.SetActive(true);
+            if (portraitFrame.GetComponent<UnityEngine.UI.RectMask2D>() == null)
+                portraitFrame.gameObject.AddComponent<UnityEngine.UI.RectMask2D>();
+        }
 
         BattleHudMedieval.Apply(portrait, hero);
     }
@@ -201,6 +228,7 @@ public static class BattleHudMedieval
     {
         GameObject hudObject = GameObject.Find("PlaayerHUD");
         if (hudObject == null) return;
+        hudObject.SetActive(true);
 
         // Build the EP meter independently so the combat resource still works
         // if the optional medieval HUD frame atlas cannot be loaded.
@@ -230,15 +258,18 @@ public static class BattleHudMedieval
         hudImage.raycastTarget = false;
 
         ApplyPortrait(hudRect, portrait);
-        ApplyHealthBar(hudRect);
+        RectTransform playerHealthBar = hero != null ? hero.HealthSliderRect : null;
+        ApplyHealthBar(hudRect, playerHealthBar);
         if (hero != null)
-        {
-            var playerHealthBar = GameObject.Find("healthSlider");
-            hero.ConfigureHudHealthBar(playerHealthBar != null ? playerHealthBar.GetComponent<RectTransform>() : null);
-        }
+            hero.ConfigureHudHealthBar(playerHealthBar);
         ApplyManaBubbles();
         ApplyPlayerStatusIcons(hudRect, hero);
         RemoveCoinBalance(hudRect);
+
+        // This prefab was authored for exploration. Its other labels, XP bar,
+        // and panel should not remain visible behind the battle-specific HUD.
+        GameObject legacyHud = GameObject.Find("Battle Player Health HUD");
+        if (legacyHud != null) legacyHud.SetActive(false);
     }
 
     private static Sprite Slice(string spriteName, Rect rect, Vector4 border)
@@ -249,11 +280,30 @@ public static class BattleHudMedieval
         return sprite;
     }
 
+    private static Transform FindDescendant(Transform root, string objectName)
+    {
+        if (root == null) return null;
+        if (root.name == objectName) return root;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform match = FindDescendant(root.GetChild(i), objectName);
+            if (match != null) return match;
+        }
+
+        return null;
+    }
+
     private static void ApplyPortrait(RectTransform hudRect, Sprite portrait)
     {
-        GameObject frameObject = GameObject.Find("PortraitFrame");
-        GameObject iconObject = GameObject.Find("PortraitIcon");
-        if (frameObject == null || iconObject == null) return;
+        Transform frameTransform = FindDescendant(hudRect, "PortraitFrame");
+        Transform iconTransform = FindDescendant(hudRect, "PortraitIcon");
+        if (frameTransform == null || iconTransform == null) return;
+
+        GameObject frameObject = frameTransform.gameObject;
+        GameObject iconObject = iconTransform.gameObject;
+        frameObject.SetActive(true);
+        iconObject.SetActive(true);
 
         var frameRect = frameObject.GetComponent<RectTransform>();
         var frameImage = frameObject.GetComponent<UnityEngine.UI.Image>();
@@ -284,21 +334,22 @@ public static class BattleHudMedieval
         icon.raycastTarget = false;
     }
 
-    private static void ApplyHealthBar(RectTransform hudRect)
+    private static void ApplyHealthBar(RectTransform hudRect, RectTransform sliderRect)
     {
-        GameObject sliderObject = GameObject.Find("healthSlider");
+        GameObject sliderObject = sliderRect != null ? sliderRect.gameObject : null;
+        if (sliderObject != null) sliderObject.SetActive(true);
         var slider = sliderObject != null ? sliderObject.GetComponent<UnityEngine.UI.Slider>() : null;
         if (slider == null) return;
 
-        var sliderRect = slider.GetComponent<RectTransform>();
-        sliderRect.SetParent(hudRect, false);
-        sliderRect.anchorMin = sliderRect.anchorMax = new Vector2(0, 1);
-        sliderRect.pivot = new Vector2(0, 1);
+        var barRect = slider.GetComponent<RectTransform>();
+        barRect.SetParent(hudRect, false);
+        barRect.anchorMin = barRect.anchorMax = new Vector2(0, 1);
+        barRect.pivot = new Vector2(0, 1);
         // Keep the bar at a fixed panel width. The hero's health ratio changes
         // the fill amount only, never the overall bar size.
-        sliderRect.anchoredPosition = new Vector2(10, -8);
-        sliderRect.sizeDelta = new Vector2(320, 28);
-        sliderRect.localScale = Vector3.one;
+        barRect.anchoredPosition = new Vector2(10, -8);
+        barRect.sizeDelta = new Vector2(320, 28);
+        barRect.localScale = Vector3.one;
         slider.interactable = false;
 
         var backgroundTransform = slider.transform.Find("Background") as RectTransform;

@@ -6,10 +6,10 @@ public class PerkSystem : Singleton<PerkSystem>
     [SerializeField] private PerksUI perksUI;
     private readonly List<Perk> perks = new();
 
-    public void AddPerk(Perk perk)
+    public void AddPerk(Perk perk, bool showIcon = true)
     {
         perks.Add(perk);
-        perksUI.AddPerkUI(perk);
+        if (showIcon) perksUI.AddPerkUI(perk);
         perk.OnAdd();
     }
 

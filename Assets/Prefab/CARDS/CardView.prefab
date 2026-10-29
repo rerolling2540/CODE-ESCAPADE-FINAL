@@ -508,6 +508,7 @@ MonoBehaviour:
   dropLayer:
     serializedVersion: 2
     m_Bits: 64
+  cardFrame: {fileID: 9059203621873666563, guid: e590d49eb630e5549adf1f449470f68a, type: 3}
 --- !u!210 &4350997148257358498
 SortingGroup:
   m_ObjectHideFlags: 0

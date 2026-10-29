@@ -6,7 +6,22 @@ public static class SaveSlots
 {
     public const int Count = 3;
     public static event Action LocalSaveChanged;
+    public static event Action ProfileChanged;
     private static bool applyingCloudSnapshot;
+    private static bool profileContextInitialized;
+    private static string activeProfileId = "";
+    private const string ActiveProfileKey = "CodeEscapade.ActiveProfile.v1";
+    private const string ProfileSnapshotPrefix = "CodeEscapade.Profile.v1.";
+    private const string ProfileBootstrapPrefix = "CodeEscapade.ProfileBootstrap.v1.";
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RestoreGuestProfileBeforeSceneLoad()
+    {
+        if (!string.IsNullOrWhiteSpace(MainMenuSaveSlots.CurrentUserId)) return;
+        profileContextInitialized = false;
+        activeProfileId = "";
+        RestoreGuestForNewSession();
+    }
 
     [Serializable]
     public class CloudSnapshot
@@ -50,6 +65,183 @@ public static class SaveSlots
     static string ModifiedKey(int slot) => "CodeEscapade.SaveModifiedUtc.Slot." + slot;
     public static string InventoryKey => "CodeEscapade.Inventory.v1.Slot." + Active;
     public static string GetSlotModifiedUtc(int slot) => slot < 0 || slot >= Count ? "" : PlayerPrefs.GetString(ModifiedKey(slot), "");
+
+    /// <summary>
+    /// At a fresh app session, put the last signed-in profile back into its
+    /// local cache and restore the guest save set for play without signing in.
+    /// </summary>
+    public static void RestoreGuestForNewSession()
+    {
+        if (profileContextInitialized) return;
+
+        string previousProfile = PlayerPrefs.GetString(ActiveProfileKey, "");
+        if (!string.IsNullOrWhiteSpace(previousProfile) && previousProfile != "guest")
+        {
+            activeProfileId = previousProfile;
+            StoreProfileSnapshot(previousProfile, CaptureCloudSnapshot());
+            activeProfileId = "";
+            profileContextInitialized = true;
+
+            CloudSnapshot guestSnapshot;
+            ApplyCloudSnapshot(TryLoadProfileSnapshot("", out guestSnapshot)
+                ? guestSnapshot
+                : EmptySnapshot());
+        }
+        else
+        {
+            activeProfileId = "";
+            profileContextInitialized = true;
+            PersistCurrentProfileSnapshot();
+        }
+
+        PlayerPrefs.SetString(ActiveProfileKey, "guest");
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Switch the live save keys to an account's local cache. Returns the
+    /// guest snapshot only for a first local account activation, so cloud sync
+    /// can migrate guest progress only when that account has no cloud save.
+    /// </summary>
+    public static CloudSnapshot ActivateAccountProfile(string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId)) return null;
+        EnsureProfileContextInitialized();
+        if (string.Equals(activeProfileId, userId, StringComparison.Ordinal)) return null;
+
+        PersistCurrentProfileSnapshot();
+        bool hasAccountCache = TryLoadProfileSnapshot(userId, out CloudSnapshot accountSnapshot);
+        string bootstrapKey = ProfileBootstrapKey(userId);
+        if (!hasAccountCache) PlayerPrefs.SetInt(bootstrapKey, 1);
+        bool allowGuestBootstrap = !hasAccountCache || PlayerPrefs.GetInt(bootstrapKey, 0) == 1;
+        CloudSnapshot guestBootstrap = null;
+        if (allowGuestBootstrap)
+        {
+            if (!string.IsNullOrEmpty(activeProfileId))
+            {
+                TryLoadProfileSnapshot("", out guestBootstrap);
+            }
+            else
+            {
+                guestBootstrap = CaptureCloudSnapshot();
+            }
+        }
+
+        activeProfileId = userId;
+        PlayerPrefs.SetString(ActiveProfileKey, userId);
+        CloudSnapshot initialAccountSnapshot = hasAccountCache
+            ? accountSnapshot
+            : EmptySnapshot();
+        if (!hasAccountCache && guestBootstrap != null)
+        {
+            initialAccountSnapshot.activeSlot = Mathf.Clamp(
+                guestBootstrap.activeSlot,
+                0,
+                Count - 1
+            );
+            initialAccountSnapshot.selectedCharacter = guestBootstrap.selectedCharacter;
+        }
+        ApplyCloudSnapshot(initialAccountSnapshot);
+        return guestBootstrap;
+    }
+
+    public static void MarkActiveProfileBootstrapComplete()
+    {
+        if (string.IsNullOrWhiteSpace(activeProfileId)) return;
+        PlayerPrefs.DeleteKey(ProfileBootstrapKey(activeProfileId));
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>Save the current account cache and restore the device guest saves.</summary>
+    public static void ActivateGuestProfile()
+    {
+        EnsureProfileContextInitialized();
+        PersistCurrentProfileSnapshot();
+        if (string.IsNullOrEmpty(activeProfileId)) return;
+
+        CloudSnapshot guestSnapshot;
+        bool hasGuestCache = TryLoadProfileSnapshot("", out guestSnapshot);
+        activeProfileId = "";
+        PlayerPrefs.SetString(ActiveProfileKey, "guest");
+        ApplyCloudSnapshot(hasGuestCache ? guestSnapshot : EmptySnapshot());
+    }
+
+    public static void SaveActiveProfileSnapshot()
+    {
+        EnsureProfileContextInitialized();
+        PersistCurrentProfileSnapshot();
+    }
+
+    private static void EnsureProfileContextInitialized()
+    {
+        if (profileContextInitialized) return;
+        string savedProfile = PlayerPrefs.GetString(ActiveProfileKey, "");
+        activeProfileId = savedProfile == "guest" ? "" : savedProfile;
+        profileContextInitialized = true;
+    }
+
+    private static string ProfileSnapshotKey(string profileId)
+    {
+        string scope = string.IsNullOrWhiteSpace(profileId)
+            ? "guest"
+            : profileId.Trim().ToLowerInvariant().Replace("/", "_").Replace("\\", "_");
+        return ProfileSnapshotPrefix + scope;
+    }
+
+    private static string ProfileBootstrapKey(string profileId)
+    {
+        string scope = string.IsNullOrWhiteSpace(profileId)
+            ? "guest"
+            : profileId.Trim().ToLowerInvariant().Replace("/", "_").Replace("\\", "_");
+        return ProfileBootstrapPrefix + scope;
+    }
+
+    private static bool TryLoadProfileSnapshot(string profileId, out CloudSnapshot snapshot)
+    {
+        snapshot = null;
+        string key = ProfileSnapshotKey(profileId);
+        if (!PlayerPrefs.HasKey(key)) return false;
+        try
+        {
+            snapshot = JsonUtility.FromJson<CloudSnapshot>(PlayerPrefs.GetString(key));
+            if (snapshot == null) return false;
+            if (snapshot.slots == null) snapshot.slots = new string[Count];
+            if (snapshot.inventories == null) snapshot.inventories = new string[Count];
+            if (snapshot.slotModifiedUtc == null) snapshot.slotModifiedUtc = new string[Count];
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            snapshot = null;
+            return false;
+        }
+    }
+
+    private static void StoreProfileSnapshot(string profileId, CloudSnapshot snapshot)
+    {
+        if (snapshot == null) return;
+        PlayerPrefs.SetString(ProfileSnapshotKey(profileId), JsonUtility.ToJson(snapshot));
+        PlayerPrefs.Save();
+    }
+
+    private static void PersistCurrentProfileSnapshot()
+    {
+        if (!profileContextInitialized || applyingCloudSnapshot) return;
+        StoreProfileSnapshot(activeProfileId, CaptureCloudSnapshot());
+    }
+
+    private static CloudSnapshot EmptySnapshot()
+    {
+        return new CloudSnapshot
+        {
+            activeSlot = 0,
+            selectedCharacter = 0,
+            modifiedUtc = "",
+            slots = new string[Count],
+            inventories = new string[Count],
+            slotModifiedUtc = new string[Count]
+        };
+    }
 
     public static void ApplyCloudSlotModifiedUtc(int slot, string modifiedUtc)
     {
@@ -99,13 +291,25 @@ public static class SaveSlots
         if (slot >= 0 && slot < Count) PlayerPrefs.SetString(ModifiedKey(slot), now);
         PlayerPrefs.SetString("CodeEscapade.SaveModifiedUtc", now);
         PlayerPrefs.Save();
+        PersistCurrentProfileSnapshot();
         LocalSaveChanged?.Invoke();
     }
 
     public static bool HasLocalProgress()
     {
         for (int i = 0; i < Count; i++)
-            if (Read(i) != null) return true;
+            if (Read(i) != null || PlayerPrefs.HasKey("CodeEscapade.Inventory.v1.Slot." + i)) return true;
+        return false;
+    }
+
+    public static bool HasProgress(CloudSnapshot snapshot)
+    {
+        if (snapshot == null) return false;
+        for (int i = 0; i < Count; i++)
+        {
+            if (!string.IsNullOrEmpty(GetAt(snapshot.slots, i)) ||
+                !string.IsNullOrEmpty(GetAt(snapshot.inventories, i))) return true;
+        }
         return false;
     }
 
@@ -222,6 +426,9 @@ public static class SaveSlots
         {
             applyingCloudSnapshot = false;
         }
+
+        PersistCurrentProfileSnapshot();
+        ProfileChanged?.Invoke();
     }
     public static void MigrateLegacy()
     {

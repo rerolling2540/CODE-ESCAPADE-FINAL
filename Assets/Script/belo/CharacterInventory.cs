@@ -38,6 +38,7 @@ public class CharacterInventory : MonoBehaviour
 
     void Awake()
     {
+        SaveSlots.ProfileChanged += HandleSaveProfileChanged;
         loadedSlot = SaveSlots.Active;
         starterHero = SelectedHero.Resolve(starterHero);
         var sharedCatalog = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
@@ -104,7 +105,38 @@ public class CharacterInventory : MonoBehaviour
 
     void OnDestroy()
     {
+        SaveSlots.ProfileChanged -= HandleSaveProfileChanged;
         if (activeInstance == this) activeInstance = null;
+    }
+
+    void HandleSaveProfileChanged()
+    {
+        loadedSlot = SaveSlots.Active;
+        data = new SaveData();
+        if (PlayerPrefs.HasKey(SaveKey))
+        {
+            try
+            {
+                SaveData saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey));
+                if (saved != null)
+                {
+                    data = saved;
+                    if (data.cards == null) data.cards = new List<Stack>();
+                    if (data.openedChests == null) data.openedChests = new List<string>();
+                    if (data.ownedCosmetics == null) data.ownedCosmetics = new List<string>();
+                    data.cards.RemoveAll(stack => stack == null || stack.quantity <= 0);
+                    foreach (var stack in data.cards)
+                        stack.level = CardRefinementRules.Level(stack.level);
+                }
+            }
+            catch (ArgumentException)
+            {
+                Debug.LogWarning("Inventory save could not be read after switching save profiles.");
+            }
+        }
+
+        if (IsCurrentSlot) activeInstance = this;
+        InventoryChanged?.Invoke();
     }
 
     public CardData GetCard(string id) => catalog.Find(e => e != null && e.id == id)?.card;

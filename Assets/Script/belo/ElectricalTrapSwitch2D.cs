@@ -19,16 +19,43 @@ public sealed class ElectricalTrapSwitch2D : MonoBehaviour
     [SerializeField] private MultipleChoiceQuestionData[] puzzleQuestions;
     private bool solved, asking;
     private string saveId;
+    [SerializeField, HideInInspector] private string circuitId;
+    [SerializeField, HideInInspector] private string legacySaveId;
+
+    private string LegacySaveId()
+    {
+        string id = gameObject.scene.path;
+        for (Transform part = transform; part != null; part = part.parent) id += "/" + part.name;
+        return id;
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (Application.isPlaying || !gameObject.scene.IsValid() ||
+            string.IsNullOrEmpty(gameObject.scene.path) ||
+            UnityEditor.SceneManagement.EditorSceneManager.IsPreviewScene(gameObject.scene)) return;
+        var objectId = UnityEditor.GlobalObjectId.GetGlobalObjectIdSlow(this);
+        if (objectId.targetObjectId == 0) return;
+        string id = objectId.ToString();
+        if (circuitId == id) return;
+        // Existing switches migrate their own progress. A copied switch gets a new
+        // circuit identity without inheriting the source switch's solved state.
+        legacySaveId = string.IsNullOrEmpty(circuitId) ? LegacySaveId() : string.Empty;
+        circuitId = id;
+        UnityEditor.EditorUtility.SetDirty(this);
+        if (UnityEditor.PrefabUtility.IsPartOfPrefabInstance(this))
+            UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(this);
+    }
+#endif
 
     void Start()
     {
-        saveId=gameObject.scene.path;
-        // Root sibling order changes when the selected hero is restored after
-        // battle. Scene and authored names stay stable across those reloads.
-        for(Transform part=transform;part!=null;part=part.parent)saveId+="/"+part.name;
+        saveId = string.IsNullOrEmpty(circuitId) ? LegacySaveId() : gameObject.scene.path + "/circuit/" + circuitId;
         var saved=SaveSlots.Read(SaveSlots.Active);
         solved=saved?.solvedTrapSwitches!=null&&saved.solvedTrapSwitches.Exists(id=>
-            id!=null&&System.Text.RegularExpressions.Regex.Replace(id,@"#\d+(?=/|$)","")==saveId);
+            id == saveId || (!string.IsNullOrEmpty(legacySaveId) && id != null &&
+            System.Text.RegularExpressions.Regex.Replace(id,@"#\d+(?=/|$)","") == legacySaveId));
         if(solved&&!saved.solvedTrapSwitches.Contains(saveId))
         {
             saved.solvedTrapSwitches.Add(saveId);

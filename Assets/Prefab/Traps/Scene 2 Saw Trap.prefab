@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 7839786504437304451}
   - component: {fileID: 5283734086770349773}
   - component: {fileID: 6446901194463340227}
+  - component: {fileID: 4412827027126864609}
+  - component: {fileID: 2639158940115673290}
   m_Layer: 0
   m_Name: Scene 2 Saw Trap
   m_TagString: Untagged
@@ -153,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map4TrapDamageTrigger
   damage: 18
+  lethalContact: 0
 --- !u!114 &6446901194463340227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,4 +185,125 @@ MonoBehaviour:
   - {fileID: 715086011, guid: e84d27018ef0a41239537be4e3655dec, type: 3}
   - {fileID: 130612306, guid: e84d27018ef0a41239537be4e3655dec, type: 3}
   - {fileID: -1084097334, guid: e84d27018ef0a41239537be4e3655dec, type: 3}
+  idleSprite: {fileID: 0}
   framesPerSecond: 12
+  firstDamageFrame: 0
+  lastDamageFrame: -1
+  fitDamageHitboxToSprite: 0
+--- !u!82 &4412827027126864609
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8414134626570970729}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: -1212281405035324423, guid: a4a3126c949844d32894b50c64c9b3c7, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.4
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 160
+  DopplerLevel: 0
+  MinDistance: 1.25
+  MaxDistance: 4
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &2639158940115673290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8414134626570970729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6efb8671bd4744b12b6151360f2347e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrapSoundEffects
+  activationSounds:
+  - {fileID: 8300000, guid: 901787ed963bd604a86dec84cc215d8f, type: 3}
+  - {fileID: 8300000, guid: 8cfee04e07b510a42a20cec19ca47967, type: 3}
+  - {fileID: 8300000, guid: 28b7f177bbdfddd48a3da53a5811d8f0, type: 3}
+  volume: 0.4
+  repeatInterval: 0.8
+  fullVolumeDistance: 1.25
+  hearingDistance: 4

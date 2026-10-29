@@ -11,6 +11,9 @@ public sealed class Map4TrapDamageTrigger : MonoBehaviour
     [SerializeField, Min(0f), Tooltip("Required overlap in world units before contact hurts. Zero accepts any overlap.")]
     private float minimumOverlapDepth;
     private Collider2D[] damageHitboxes;
+    [SerializeField] private AudioClip damageSound;
+    [SerializeField, Range(0f, 1f)] private float damageSoundVolume = 0.65f;
+    [SerializeField] private AudioSource damageAudioSource;
 
     public bool CanDealDamage
     {
@@ -36,8 +39,23 @@ public sealed class Map4TrapDamageTrigger : MonoBehaviour
         if (!CanDealDamage || other == null) return;
         if (minimumOverlapDepth > 0f && !HasDamagingOverlap(other)) return;
         var player = other.GetComponentInParent<playerMovement>();
-        if (player != null)
-            player.TryTakeDamage(lethalContact ? Mathf.Max(damage, PlayerHealth.MaxHealth) : damage);
+        if (player != null && player.TryTakeDamage(lethalContact ? Mathf.Max(damage, PlayerHealth.MaxHealth) : damage))
+            PlayDamageSound();
+    }
+
+    private void PlayDamageSound()
+    {
+        if (damageSound == null) return;
+        if (damageAudioSource == null) damageAudioSource = gameObject.AddComponent<AudioSource>();
+        damageAudioSource.playOnAwake = false;
+        damageAudioSource.loop = false;
+        // A painted tilemap can span the level; the hit happens at the player, not its origin.
+        damageAudioSource.spatialBlend = 0f;
+        damageAudioSource.volume = damageSoundVolume;
+        damageAudioSource.priority = 64;
+        GameAudio.Route(damageAudioSource, false);
+        damageAudioSource.clip = damageSound;
+        damageAudioSource.Play();
     }
 
     private bool HasDamagingOverlap(Collider2D other)

@@ -5503,6 +5503,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Battle Player Health HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 1050146857210338640, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4319714392537806509, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_Enabled
       value: 0

@@ -30,6 +30,8 @@ public sealed class ExplorationHealthHud : MonoBehaviour
 
     private void Refresh()
     {
+        var progressionClass=PlayerProgression.Class??heroClass;
+        if(progressionClass!=null)PlayerHealth.ConfigureMaximum(progressionClass.GetHealthForLevel(PlayerProgression.Level));
         int maximum = PlayerHealth.MaxHealth;
         int health = PlayerHealth.CurrentHealth;
         if (health == lastHealth && maximum == lastMaximum) return;

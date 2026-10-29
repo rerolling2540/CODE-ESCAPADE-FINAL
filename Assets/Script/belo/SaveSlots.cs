@@ -38,6 +38,9 @@ public static class SaveSlots
     {
         public string scene = "Scene 2";
         public int character;
+        public int level;
+        public int experience;
+        public System.Collections.Generic.List<string> seenTutorialTips = new System.Collections.Generic.List<string>();
         public bool hasPosition;
         public Vector3 position;
         public string savedAt;
@@ -267,7 +270,7 @@ public static class SaveSlots
     {
         PlayerPrefs.DeleteKey(InventoryKey);
         PlayerPrefs.SetInt("SelectedCharacter", character);
-        Write(new Record { character = character });
+        Write(new Record { character = character, level = 5 });
     }
     public static void Delete(int slot)
     {

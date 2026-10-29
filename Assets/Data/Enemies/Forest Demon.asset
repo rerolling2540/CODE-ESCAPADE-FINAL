@@ -41,6 +41,7 @@ MonoBehaviour:
   - {fileID: 3161286735664444143, guid: 3d0cdbc103a759c4b99a019997561301, type: 3}
   battleFramesPerSecond: 12
   hovering: 0
+  experienceReward: 65
   battleMaterial: {fileID: 0}
   attackStyle: 0
   projectileFrames: []

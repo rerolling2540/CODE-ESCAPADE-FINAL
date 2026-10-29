@@ -145,7 +145,7 @@ public static class GameControlsGuide
     public const string Text =
         "<b><color=#703513>TRAVEL</color></b>\n" +
         "<b>A / D or Left / Right</b>  Move\n" +
-        "<b>W / Space</b>  Jump; press again in the air to double-jump\n" +
+        "<b>W / Up Arrow / Space</b>  Jump; press again in the air to double-jump\n" +
         "<b>Left Shift</b>  Dash\n\n" +
         "<b><color=#703513>EXPLORE & INTERACT</color></b>\n" +
         "<b>E</b>  Talk to NPCs, read signs, open nearby chests, and enter available portals\n" +
@@ -274,6 +274,34 @@ public static class GameControlsGuide
             var feedback = saveObject.AddComponent<SettingsSaveButton>();
             feedback.Configure(saveButton,label);
         }
+        var tips=Button(panel.transform,"Tutorial Tips Button","TUTORIAL TIPS",template);
+        if(lobby!=null)
+        {
+            var image=tips.GetComponent<UnityEngine.UI.Image>();
+            var original=lobby.GetComponent<UnityEngine.UI.Image>();
+            if(original!=null){image.sprite=original.sprite;image.type=original.type;}
+            var caption=tips.GetComponentInChildren<TMPro.TMP_Text>();
+            var source=lobby.GetComponentInChildren<TMPro.TMP_Text>();
+            if(source!=null){caption.font=source.font;caption.color=source.color;}
+        }
+        GameObject tipsPanel=null;
+        tips.onClick.AddListener(()=>{
+            if(tipsPanel==null)tipsPanel=BuildPanel(panel.transform,template,true);
+            tipsPanel.SetActive(true);tipsPanel.transform.SetAsLastSibling();
+        });
+        var actions=new System.Collections.Generic.List<RectTransform>();
+        if(lobby!=null)actions.Add(lobby);
+        var saveAction=panel.transform.Find("Save Game Button") as RectTransform;
+        if(saveAction!=null)actions.Add(saveAction);
+        actions.Add(rect);actions.Add((RectTransform)tips.transform);
+        float baseY=lobby!=null?lobby.anchoredPosition.y:-182;
+        float actionWidth=Mathf.Min(230f,((RectTransform)panel.transform).rect.width*.36f);
+        for(int i=0;i<actions.Count;i++)
+        {
+            var action=actions[i];action.anchorMin=action.anchorMax=action.pivot=new Vector2(.5f,.5f);
+            action.sizeDelta=new Vector2(actionWidth,60);
+            action.anchoredPosition=new Vector2((i%2==0?-1:1)*(actionWidth+20)/2,baseY+(i/2)*74);
+        }
     }
 
     static UnityEngine.UI.Button Button(Transform parent, string name, string caption, TMPro.TMP_Text template)
@@ -291,7 +319,7 @@ public static class GameControlsGuide
         return button;
     }
 
-    static GameObject BuildPanel(Transform parent, TMPro.TMP_Text template)
+    static GameObject BuildPanel(Transform parent, TMPro.TMP_Text template, bool tutorialTips=false)
     {
         var go=new GameObject("Settings Controls Guide",typeof(RectTransform),typeof(UnityEngine.UI.Image));go.transform.SetParent(parent,false);
         var rect=(RectTransform)go.transform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=new Vector2(8,8);rect.offsetMax=new Vector2(-8,-8);
@@ -303,6 +331,13 @@ public static class GameControlsGuide
         var text=title.GetComponent<TMPro.TextMeshProUGUI>();if(template!=null)text.font=template.font;
         var body=(RectTransform)title.transform;body.anchorMin=Vector2.zero;body.anchorMax=Vector2.one;body.offsetMin=new Vector2(20,44);body.offsetMax=new Vector2(-20,-80);
         MakeScrollable(text);
+        if(tutorialTips)
+        {
+            go.name="Settings Tutorial Tips";
+            headingText.text="THE TRAVELLER'S TIPS";
+            var content=text.GetComponent<UnityEngine.UI.ScrollRect>().content.GetComponent<TMPro.TMP_Text>();
+            content.text=FirstEncounterGuide.ReferenceText;
+        }
         var hint=new GameObject("Scroll Hint",typeof(RectTransform),typeof(TMPro.TextMeshProUGUI));hint.transform.SetParent(go.transform,false);
         var hintRect=(RectTransform)hint.transform;hintRect.anchorMin=Vector2.zero;hintRect.anchorMax=new Vector2(1,0);hintRect.pivot=new Vector2(0.5f,0);hintRect.offsetMin=new Vector2(20,12);hintRect.offsetMax=new Vector2(-20,36);
         var hintText=hint.GetComponent<TMPro.TextMeshProUGUI>();if(template!=null)hintText.font=template.font;hintText.text="Scroll to read the complete guide";hintText.fontSize=16;hintText.color=new Color(0.93f,0.80f,0.55f);hintText.alignment=TMPro.TextAlignmentOptions.Center;hintText.raycastTarget=false;

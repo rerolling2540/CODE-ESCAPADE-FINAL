@@ -762,7 +762,7 @@ public class ExplorationHUD : MonoBehaviour
         string[] titles={"WARRIOR","ARCHER","MAGE"};
         string[] languages={"Java","C#","Python"};
         var stats=FindFirstObjectByType<PlayerStats>();
-        int level=stats!=null?stats.CurrentLevel:characterInfo.battleLevel;
+        int level=PlayerProgression.Level;
         var heroClass=stats!=null&&stats.HeroClass!=null?stats.HeroClass:characterInfo.battleClass;
         var hero=characterInfo.heroes[index];
         Frame(new Rect(75,145,360,470));
@@ -770,7 +770,7 @@ public class ExplorationHUD : MonoBehaviour
         GUI.Label(new Rect(110,540,300,45),titles[index],headingStyle);
         GUI.Label(new Rect(480,155,680,50),titles[index]+"  /  LEVEL "+level,headingStyle);
         Fill(new Rect(480,218,700,2),Brass);
-        string details="Health: "+PlayerHealth.CurrentHealth+" / "+PlayerHealth.MaxHealth;
+        string details="XP: "+PlayerProgression.Experience+" / "+PlayerProgression.RequiredExperience(level)+"\n\nHealth: "+PlayerHealth.CurrentHealth+" / "+PlayerHealth.MaxHealth;
         if(heroClass!=null)details+="\n\nAttack Power: "+heroClass.GetAttackPowerForLevel(level)+"\n\nAttack Bonus: "+heroClass.GetAttackBonusForLevel(level)+"\n\nDefense: "+heroClass.GetDefenseForLevel(level);
         details+="\n\nStarting Deck: "+(hero!=null&&hero.Deck!=null?hero.Deck.Count:0)+" cards";
         GUI.Label(new Rect(485,245,680,370),details,textStyle);

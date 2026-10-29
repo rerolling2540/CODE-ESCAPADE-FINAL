@@ -75,6 +75,7 @@ public class playerMovement : MonoBehaviour
         if (smokeEffects == null) smokeEffects = gameObject.AddComponent<CharacterSmokeEffects>();
         smokeEffects.Initialize(spriteRenderer, GetComponent<CapsuleCollider2D>());
         PlayerDeathFlow.EnsureInstance();
+        FirstEncounterGuide.EnsureInstance();
     }
 
     void Update()
@@ -113,7 +114,7 @@ public class playerMovement : MonoBehaviour
             if (spriteRenderer != null) spriteRenderer.flipX = !facingRight;
         }
 
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space))
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
             && (isGrounded || airJumpsRemaining > 0))
             Jump();
 

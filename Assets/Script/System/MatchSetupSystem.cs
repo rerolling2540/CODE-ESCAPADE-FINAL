@@ -232,10 +232,13 @@ public class EncounterBattleReturn : MonoBehaviour
     private bool victory;
     private string encounterId;
     private RectTransform playerHealthPanel;
+    private int encounterExperience, awardedExperience;
 
     public void Configure(bool fromCave, string id)
     {
         caveBattle = fromCave;
+        encounterExperience=0;
+        foreach(var enemy in EnemySystem.Instance.Enemies)if(enemy!=null)encounterExperience+=enemy.ExperienceReward;
         encounterId = id;
         var healthHud = FindFirstObjectByType<ExplorationHealthHud>(FindObjectsInactive.Include);
         if (healthHud != null) playerHealthPanel = healthHud.transform.Find("Player Health Panel") as RectTransform;
@@ -262,13 +265,7 @@ public class EncounterBattleReturn : MonoBehaviour
             if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
             if (victory && caveBattle && !string.IsNullOrEmpty(encounterId))
             {
-                var saved = SaveSlots.Read(SaveSlots.Active);
-                if (saved != null)
-                {
-                    if (saved.defeatedEncounters == null) saved.defeatedEncounters = new List<string>();
-                    if (!saved.defeatedEncounters.Contains(encounterId)) saved.defeatedEncounters.Add(encounterId);
-                    SaveSlots.Write(saved);
-                }
+                awardedExperience=PlayerProgression.AwardEncounter(encounterId,encounterExperience);
             }
             StartCoroutine(EndBattle());
         }
@@ -301,7 +298,7 @@ public class EncounterBattleReturn : MonoBehaviour
         if (BattleEnded)
         {
             BattleUITheme.DrawResultPanel(new Rect(Screen.width / 2f - 240, Screen.height / 2f - 65, 480, 130),
-                victory ? "VICTORY\nReturning from battle..." : "DEFEAT\nReturning from battle...");
+                victory ? "VICTORY  +"+awardedExperience+" XP\nLevel "+PlayerProgression.Level+" / Returning from battle..." : "DEFEAT\nReturning from battle...");
         }
     }
 

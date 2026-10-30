@@ -1,8 +1,11 @@
 using UnityEngine;
 
+public enum PlayerDamageCause { Other, Trap, Poison, Lightning }
+
 /// <summary>One health pool per save slot, shared by exploration and battle.</summary>
 public static class PlayerHealth
 {
+    public static PlayerDamageCause LastDamageCause { get; private set; }
     private static SaveSlots.Record previewHealth;
     private static int previewSlot = -1;
 
@@ -11,6 +14,7 @@ public static class PlayerHealth
     {
         previewHealth = null;
         previewSlot = -1;
+        LastDamageCause = PlayerDamageCause.Other;
     }
 
     private static SaveSlots.Record Read()
@@ -56,13 +60,16 @@ public static class PlayerHealth
         current = Mathf.Clamp(current, 0, maximum);
         var saved = Read();
         if (saved.currentHealth == current && saved.maxHealth == maximum) return;
+        if (current > 0 && saved.currentHealth <= 0) LastDamageCause = PlayerDamageCause.Other;
         saved.currentHealth = current;
         saved.maxHealth = maximum;
         if (SaveSlots.Read(SaveSlots.Active) != null) SaveSlots.Write(saved);
     }
 
-    public static void Damage(int amount)
+    public static void Damage(int amount, PlayerDamageCause cause = PlayerDamageCause.Other)
     {
+        if (amount <= 0 || CurrentHealth <= 0) return;
+        LastDamageCause = cause;
         Set(CurrentHealth - Mathf.Max(0, amount), MaxHealth);
     }
 

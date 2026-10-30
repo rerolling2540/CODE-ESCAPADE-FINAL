@@ -17,7 +17,7 @@ public class EnemyView : CombatantView
         if (attackText != null) attackText.gameObject.SetActive(false);
         SetUpBase(enemyData.Health, enemyData.Image);
         SetBattleMaterial(enemyData.battleMaterial);
-        EnlargeEnemyVisual();
+        EnlargeEnemyVisual(2.8f * Mathf.Max(0.1f, enemyData.battleVisualScale));
         EnsureEnemyHealthBar();
         ConfigureBattleAnimation(enemyData.idleFrames, enemyData.attackFrames, enemyData.battleFramesPerSecond, true, enemyData.hovering);
     }

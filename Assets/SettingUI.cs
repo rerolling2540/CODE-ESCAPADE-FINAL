@@ -230,7 +230,11 @@ public static class GameControlsGuide
             }
             return;
         }
-        if (panel.transform.Find("Controls Guide Button") != null) return;
+        if (panel.transform.Find("Controls Guide Button") != null)
+        {
+            StyleSettingsActions(panel);
+            return;
+        }
         var template = panel.GetComponentInChildren<TMPro.TMP_Text>(true);
         var lobby = panel.transform.Find("Lobby") as RectTransform;
         UnityEngine.UI.Button button;
@@ -324,6 +328,35 @@ public static class GameControlsGuide
             var action=actions[i];action.anchorMin=action.anchorMax=action.pivot=new Vector2(.5f,.5f);
             action.sizeDelta=new Vector2(actionWidth,mainMenu?46:60);
             action.anchoredPosition=new Vector2((i%2==0?-1:1)*(actionWidth+20)/2,baseY+(i/2)*74);
+        }
+        StyleSettingsActions(panel);
+    }
+
+    public static void StyleSettingsActions(GameObject panel)
+    {
+        if (panel == null) return;
+        var lobby = panel.transform.Find("Lobby");
+        var source = lobby != null ? lobby.GetComponentInChildren<TMPro.TMP_Text>(true) : null;
+        if (source == null) return;
+        foreach (string name in new[] { "Lobby", "Controls Guide Button", "Tutorial Tips Button", "Save Game Button" })
+        {
+            var action = panel.transform.Find(name);
+            if (action == null) continue;
+            var label = action.GetComponentInChildren<TMPro.TMP_Text>(true);
+            if (label == null) continue;
+            label.font = source.font;
+            label.fontSharedMaterial = source.fontSharedMaterial;
+            label.fontStyle = TMPro.FontStyles.Bold;
+            label.fontSize = 22;
+            label.enableAutoSizing = false;
+            label.color = new Color(1f, .88f, .61f);
+            label.alignment = TMPro.TextAlignmentOptions.Center;
+            label.raycastTarget = false;
+            var rect = label.rectTransform;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = new Vector2(8, 4);
+            rect.offsetMax = new Vector2(-8, -4);
         }
     }
 

@@ -412,11 +412,11 @@ public class CombatantView : MonoBehaviour
         UpdateHealthUI();
     }
 
-    protected void EnlargeEnemyVisual()
+    protected void EnlargeEnemyVisual(float targetHeight = 2.8f)
     {
         if (spriteRenderer == null || spriteRenderer.sprite == null) return;
         float height = spriteRenderer.bounds.size.y;
-        if (height > 0.01f) spriteRenderer.transform.localScale *= 2.8f / height;
+        if (height > 0.01f) spriteRenderer.transform.localScale *= targetHeight / height;
         // Keep the target collider aligned with the enlarged figure.
         Bounds bounds = spriteRenderer.bounds;
         Vector3 min = transform.InverseTransformPoint(bounds.min);

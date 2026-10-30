@@ -61,7 +61,7 @@ public class PortalInteraction : MonoBehaviour
 
     bool CanEnter()
     {
-        if (Time.timeScale <= 0f || GameControlsGuide.MapHidden || Time.unscaledTime < readyAt || enteredFrame == Time.frameCount ||
+        if (Time.timeScale <= 0f || GameControlsGuide.GameplayOverlayHidden || GameControlsGuide.MapHidden || Time.unscaledTime < readyAt || enteredFrame == Time.frameCount ||
             (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) || !HasRoute()) return false;
         var player = NearbyPlayer();
         if (player == null) return false;
@@ -105,7 +105,7 @@ public class PortalInteraction : MonoBehaviour
 
     void OnGUI()
     {
-        if (GameControlsGuide.MapHidden) return;
+        if (GameControlsGuide.GameplayOverlayHidden || GameControlsGuide.MapHidden) return;
         bool canEnter = CanEnter();
         bool showLocked = !HasRoute() && NearbyPlayer() != null && !string.IsNullOrEmpty(unavailablePrompt) &&
             Time.timeScale > 0f && (DialogueManager.Instance == null || !DialogueManager.Instance.isDialogueActive);
@@ -117,20 +117,29 @@ public class PortalInteraction : MonoBehaviour
         if (buttonStyle == null)
         {
             buttonStyle = new GUIStyle(GUI.skin.button) { fontSize = 18, fontStyle = FontStyle.Bold };
-            buttonStyle.normal.textColor = new Color(1f, 0.85f, 0.35f); UiTextColors.Stable(buttonStyle);
             MedievalNotice.Apply(buttonStyle);
+            buttonStyle.normal.textColor = new Color(0.035f, 0.02f, 0.01f, 1f);
+            UiTextColors.Stable(buttonStyle);
             buttonStyle.padding=new RectOffset(10,10,4,4);
         }
+        buttonStyle.fontSize = showLocked ? 26 : 18;
+        buttonStyle.wordWrap = showLocked;
         var oldMatrix = GUI.matrix;
         var oldColor = GUI.color;
         GUI.matrix = Matrix4x4.identity;
         GUI.color = Color.white;
-        float width = showLocked ? 300f : 170f;
+        float width = Mathf.Min(showLocked ? 580f : 170f, Mathf.Max(1f, Screen.width - 8f));
+        float height = showLocked ? 72f : 40f;
         Rect button = new Rect(Mathf.Clamp(screen.x - width * 0.5f, 4f, Mathf.Max(4f, Screen.width - width - 4f)),
-            Mathf.Clamp(Screen.height - screen.y - 20f, 4f, Mathf.Max(4f, Screen.height - 44f)), width, 40f);
+            Mathf.Clamp(Screen.height - screen.y - height * 0.5f, 4f, Mathf.Max(4f, Screen.height - height - 4f)), width, height);
         bool oldEnabled = GUI.enabled;
-        GUI.enabled = oldEnabled && canEnter;
-        if (GUI.Button(button, canEnter ? entryPrompt : unavailablePrompt, buttonStyle)) TryEnter();
+        if (showLocked)
+            GUI.Label(button, unavailablePrompt, buttonStyle);
+        else
+        {
+            GUI.enabled = oldEnabled && canEnter;
+            if (GUI.Button(button, entryPrompt, buttonStyle)) TryEnter();
+        }
         GUI.enabled = oldEnabled;
         GUI.color = oldColor;
         GUI.matrix = oldMatrix;

@@ -72,8 +72,14 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         {
             QuestionPerformanceTracker.Complete(currentAttemptId, false);
             currentAttemptId = null;
-            PickQuestion(portalPuzzle ? "Incorrect. The portal stays closed. Try a different question." :
-                trapPuzzle ? "Incorrect. The trap is still active. Try a different question." : "Incorrect. The door remains closed. Try a different question.");
+            if (trapPuzzle || portalPuzzle)
+            {
+                // Resume gameplay and reset the switch/portal's asking state before the strike.
+                Cancel();
+                QuestionLightningStrike.Spawn();
+                return;
+            }
+            PickQuestion("Incorrect. The door remains closed. Try a different question.");
             return;
         }
         QuestionPerformanceTracker.Complete(currentAttemptId, true);

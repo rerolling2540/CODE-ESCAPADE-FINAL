@@ -13,6 +13,7 @@ public sealed class PlayerDeathFlow : MonoBehaviour
     private PlayerDeathAnimations animations;
     private GameObject menu, deathVisual;
     private playerMovement player;
+    private PlayerDamageCause deathCause;
     public bool IsChoosing => choosing;
 
     public static void EnsureInstance()
@@ -96,6 +97,7 @@ public sealed class PlayerDeathFlow : MonoBehaviour
         Time.timeScale = 0f;
         if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) DialogueManager.Instance.EndDialogue();
         var movement = subject.GetComponent<playerMovement>();
+        deathCause = movement != null ? PlayerHealth.LastDamageCause : PlayerDamageCause.Other;
         if (movement != null) movement.enabled = false;
         var body = subject.GetComponent<Rigidbody2D>();
         if (body != null) body.linearVelocity = Vector2.zero;
@@ -219,8 +221,8 @@ public sealed class PlayerDeathFlow : MonoBehaviour
         var panel = Box("Death Panel", menu.transform, Vector2.zero, new Vector2(760,380), new Color(0.12f,0.065f,0.04f));
         var outline = panel.gameObject.AddComponent<UnityEngine.UI.Outline>();
         outline.effectColor = new Color(0.75f,0.52f,0.22f); outline.effectDistance = new Vector2(3,-3);
-        Text("Title", panel, new Vector2(0,115), new Vector2(680,70), "YOU HAVE FALLEN", 42, new Color(0.9f,0.3f,0.22f));
-        Text("Description", panel, new Vector2(0,38), new Vector2(680,70), "Checkpoint returns to your last saved point.\nYour health will be fully restored.", 23, new Color(1f,0.9f,0.7f));
+        Text("Title", panel, new Vector2(0,115), new Vector2(680,70), "YOU DIED", 42, new Color(0.9f,0.3f,0.22f));
+        Text("Description", panel, new Vector2(0,38), new Vector2(680,70), DeathDescription(deathCause), 23, new Color(1f,0.9f,0.7f));
         var checkpoint = Button("Return to Checkpoint", panel, new Vector2(-175,-85), ReturnToCheckpoint);
         Button("Return to Village", panel, new Vector2(175,-85), ReturnToVillage);
         if (UnityEngine.EventSystems.EventSystem.current == null)
@@ -229,6 +231,14 @@ public sealed class PlayerDeathFlow : MonoBehaviour
             events.transform.SetParent(menu.transform,false);
         }
         UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(checkpoint.gameObject);
+    }
+
+    private static string DeathDescription(PlayerDamageCause cause)
+    {
+        string reason = cause == PlayerDamageCause.Trap ? "A trap claimed your life." :
+            cause == PlayerDamageCause.Poison ? "The poison claimed your life." :
+            cause == PlayerDamageCause.Lightning ? "Lightning struck you down." : "Your journey isn't over.";
+        return reason + "\nReturn to safety with your health fully restored.";
     }
 
     static RectTransform Box(string name, Transform parent, Vector2 position, Vector2 size, Color color)

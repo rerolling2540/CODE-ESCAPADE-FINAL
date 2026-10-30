@@ -67,6 +67,8 @@ public sealed class PlayerDeathFlow : MonoBehaviour
     public static void RecordCheckpoint(Vector3 position)
     {
         if (IsActive || PlayerHealth.CurrentHealth <= 0) return;
+        var movement=FindFirstObjectByType<playerMovement>();
+        if(movement==null||!SafeCheckpoint.IsSafe(movement,position))return;
         var saved = SaveSlots.Read(SaveSlots.Active);
         if (saved == null) return;
         saved.hasCheckpoint = true;
@@ -198,7 +200,7 @@ public sealed class PlayerDeathFlow : MonoBehaviour
         dying = choosing = false;
         observedScene = -1;
         Time.timeScale = 1f;
-        GameSave.EnsureInstance().ContinueGame();
+        GameSave.EnsureInstance().ContinueFromCheckpoint();
     }
 
     void ShowChoices()

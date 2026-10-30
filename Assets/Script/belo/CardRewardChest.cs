@@ -15,6 +15,7 @@ public class CardRewardChest : MonoBehaviour
     private CharacterInventory inventory;
     private playerMovement player;
     private bool opened;
+    public bool IsOpened => opened;
     private float messageUntil;
     private GUIStyle promptStyle, rewardStyle;
 

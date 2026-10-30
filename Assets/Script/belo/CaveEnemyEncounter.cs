@@ -133,6 +133,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         if (character == null || !Application.CanStreamedLevelBeLoaded("Battle Scene")) return;
         enteringBattle = true;
         suppressedEncounter = gameObject.name;
+        GameSave.EnsureInstance().RememberBattleReturn(character.transform);
         GameSave.EnsureInstance().SaveGame(character.transform);
         List<EnemyData> squad = battleEncounter != null ? battleEncounter.CreateEnemySquad() : null;
         PendingEnemies = squad != null && squad.Count > 0 ? squad : new List<EnemyData> { enemy };

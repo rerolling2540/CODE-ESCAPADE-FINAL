@@ -8,6 +8,13 @@ public class GameSave : MonoBehaviour
     private SaveSlots.Record pendingRestore;
     private float nextAutoSave;
     private bool freshTutorialStart;
+    private bool safeRecovery;
+    private string battleReturnScene;
+    private Vector3 battleReturnPosition;
+    public void RememberBattleReturn(Transform player)
+    {battleReturnScene=SceneManager.GetActiveScene().name;battleReturnPosition=player.position;}
+    public void ReturnFromBattle()=>LoadSaved(false,true);
+    public void ContinueFromCheckpoint()=>LoadSaved(true,false);
 
     public static GameSave EnsureInstance()
     {
@@ -61,22 +68,29 @@ public class GameSave : MonoBehaviour
             (scene != "Scene 2" && scene != "Scene3" && scene != "Scene4" && scene != "map 4") || pendingRestore != null) return;
         var saved = SaveSlots.Read(SaveSlots.Active) ?? new SaveSlots.Record();
         PlayerHealth.CopyTo(saved);
-        saved.scene = scene;
-        saved.hasPosition = true;
-        saved.position = player.position;
+        var movement=player.GetComponent<playerMovement>();
+        if(movement!=null&&SafeCheckpoint.IsSafe(movement,player.position))
+        {saved.scene=scene;saved.hasPosition=true;saved.position=player.position;}
+        else if(!saved.hasPosition){saved.scene=scene;}
         saved.character = PlayerPrefs.GetInt("SelectedCharacter", 0);
         SaveSlots.Write(saved);
     }
 
     public void ContinueGame()
+    {LoadSaved(false,false);}
+
+    private void LoadSaved(bool recoverSafely,bool fromBattle)
     {
         var saved = SaveSlots.Read(SaveSlots.Active);
+        if(fromBattle&&saved!=null&&!string.IsNullOrEmpty(battleReturnScene))
+        {saved.scene=battleReturnScene;saved.position=battleReturnPosition;saved.hasPosition=true;battleReturnScene=null;}
         if (saved == null || !Application.CanStreamedLevelBeLoaded(saved.scene))
         {
             Debug.LogWarning("The selected save slot is empty or its scene is unavailable.");
             return;
         }
         pendingRestore = saved;
+        safeRecovery=recoverSafely;
         freshTutorialStart = false;
         PlayerPrefs.SetInt("SelectedCharacter", saved.character);
         Time.timeScale = 1f;
@@ -109,9 +123,19 @@ public class GameSave : MonoBehaviour
             }
             if (player != null)
             {
-                player.transform.position = saved.position;
+                Vector3 destination=saved.position;
+                if(safeRecovery&&!SafeCheckpoint.TryFind(player,saved.position,out destination)&&
+                    !SafeCheckpoint.TryFind(player,player.transform.position,out destination))
+                {
+                    var village=Resources.Load<PlayerDeathAnimations>("PlayerDeath/Animations");
+                    if(village!=null&&saved.scene!=village.villageScene)
+                    {saved.scene=village.villageScene;saved.position=village.villagePosition;SaveSlots.Write(saved);SceneManager.LoadScene(saved.scene);yield break;}
+                    destination=player.transform.position;
+                }
+                if(safeRecovery){saved.position=destination;SaveSlots.Write(saved);}
+                player.transform.position = destination;
                 var body = player.GetComponent<Rigidbody2D>();
-                if (body != null) { body.position = saved.position; body.linearVelocity = Vector2.zero; }
+                if (body != null) { body.position = destination; body.linearVelocity = Vector2.zero; }
                 Physics2D.SyncTransforms();
             }
             else Debug.LogError("Could not find a player to restore the save position.");

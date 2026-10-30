@@ -16,6 +16,7 @@ public sealed class DemonDoor : MonoBehaviour
 
     private SpriteRenderer visual;
     private bool entering;
+    public bool IsOpened => entering;
     private bool asking;
     private float floorY;
 

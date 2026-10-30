@@ -61,7 +61,7 @@ public class PortalInteraction : MonoBehaviour
 
     bool CanEnter()
     {
-        if (GameControlsGuide.MapHidden || Time.unscaledTime < readyAt || enteredFrame == Time.frameCount ||
+        if (Time.timeScale <= 0f || GameControlsGuide.MapHidden || Time.unscaledTime < readyAt || enteredFrame == Time.frameCount ||
             (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) || !HasRoute()) return false;
         var player = NearbyPlayer();
         if (player == null) return false;
@@ -85,6 +85,17 @@ public class PortalInteraction : MonoBehaviour
         if (!CanEnter()) return;
         var route = routes.Find(r => r.available());
         var player = NearbyPlayer();
+        enteredFrame = Time.frameCount;
+        readyAt = Time.unscaledTime + 0.75f;
+        var questions = GetComponent<PortalQuestionGate>();
+        if (questions != null && questions.isActiveAndEnabled)
+            questions.RequestEntry(() => CompleteEntry(route, player));
+        else CompleteEntry(route, player);
+    }
+
+    void CompleteEntry(Route route, Transform player)
+    {
+        if (!isActiveAndEnabled || player == null || !route.available()) return;
         enteredFrame = Time.frameCount;
         readyAt = Time.unscaledTime + 0.75f;
         if (playEntrySound) PortalEntrySound.PlayFor(gameObject);

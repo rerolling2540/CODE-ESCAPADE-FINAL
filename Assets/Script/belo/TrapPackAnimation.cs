@@ -56,6 +56,8 @@ public sealed class TrapPackAnimation : MonoBehaviour
         }
     }
 
+    public void RestartPlayback() => Initialize(frames, framesPerSecond);
+
     private void Update()
     {
         if (frames == null || frames.Length < 2 || spriteRenderer == null) return;

@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Cave Bat
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 652205706, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  <Health>k__BackingField: 35
+  <AttackPower>k__BackingField: 28
+  idleFrames:
+  - {fileID: 652205706, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: 1809391278, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -485265874, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: 2144309848, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: 360176935, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -383106408, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -741084999, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -1124952462, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: 21147689, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: 1962768821, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -1111663179, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -1300635343, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: 139666353, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -1967874514, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -543938647, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  - {fileID: -1180998540, guid: 8b4a45e4c2b2d4feaa21421e34ddc68d, type: 3}
+  walkFrames:
+  - {fileID: -1258649075, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: 2094325527, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: -1436705826, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: 1864498257, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: -1466232051, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: 2087120799, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: 1098682048, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: -986735457, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: 946659582, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: -133028645, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: 956755435, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  - {fileID: 237966587, guid: 5ad95eb09addd48f9880fa576578e609, type: 3}
+  attackFrames:
+  - {fileID: -1475904962, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: 2137910456, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: -635257077, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: 1305067982, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: 1939778359, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: 305034088, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: 910743758, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: 1387073682, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: -479670074, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: -1598077072, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: -1059253322, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  - {fileID: 398220251, guid: 6e90004a9bca74ceb9828b8f01553ffc, type: 3}
+  battleFramesPerSecond: 8
+  hovering: 1
+  experienceReward: 35
+  battleMaterial: {fileID: 0}
+  attackStyle: 0
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

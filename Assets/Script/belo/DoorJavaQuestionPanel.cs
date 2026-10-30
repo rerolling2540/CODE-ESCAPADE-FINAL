@@ -16,15 +16,22 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
     private float previousTimeScale;
     private bool open;
     private bool trapPuzzle;
+    private bool portalPuzzle;
+    private TMP_Text titleLabel, cancelLabel;
+    public static bool IsOpen => instance != null && instance.open;
     private ExplorationHUD[] hiddenHuds;
 
-    public static void Show(MultipleChoiceQuestionData[] data, Action onAccepted, Action onCancelled, bool forTrap = false)
+    public static void Show(MultipleChoiceQuestionData[] data, Action onAccepted, Action onCancelled, bool forTrap = false, bool forPortal = false)
     {
+        if (IsOpen) { onCancelled?.Invoke(); return; }
         var pool = data == null ? Array.Empty<MultipleChoiceQuestionData>() : Array.FindAll(data, q => q != null);
         if (pool.Length == 0) { onCancelled?.Invoke(); return; }
         if (instance == null) Create();
         instance.questionPool = pool;
         instance.trapPuzzle=forTrap;
+        instance.portalPuzzle = forPortal;
+        instance.titleLabel.text = forPortal ? "PORTAL CODE CHALLENGE" : "THE DEMON'S CODE CHALLENGE";
+        instance.cancelLabel.text = forPortal ? "Leave portal [Esc]" : "Leave door [Esc]";
         instance.accepted = onAccepted;
         instance.cancelled = onCancelled;
         instance.previousTimeScale = Time.timeScale;
@@ -33,7 +40,8 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         foreach (var hud in instance.hiddenHuds) hud.enabled = false;
         Time.timeScale = 0f;
         instance.gameObject.SetActive(true);
-        instance.PickQuestion(forTrap ? "Solve the coding puzzle to permanently disable this trap." : "Answer correctly to open the door, then walk into the boss chamber.");
+        instance.PickQuestion(forPortal ? "Answer correctly to unlock and enter this portal." :
+            forTrap ? "Solve the coding puzzle to permanently disable this trap." : "Answer correctly to open the door, then walk into the boss chamber.");
         BattleAudio.EnsureInstance();
         BattleAudio.Play(BattleSound.QuestionOpen);
     }
@@ -43,7 +51,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         var alternatives = Array.FindAll(questionPool, q => q != question);
         var choices = alternatives.Length > 0 ? alternatives : questionPool;
         question = choices[UnityEngine.Random.Range(0, choices.Length)];
-        currentAttemptId = QuestionPerformanceTracker.Begin(question, "door", "java");
+        currentAttemptId = QuestionPerformanceTracker.Begin(question, portalPuzzle ? "portal" : "door", "java");
         questionLabel.text = question.questionText;
         codeLabel.text = question.codeSnippet;
         feedback.text = message;
@@ -64,7 +72,8 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         {
             QuestionPerformanceTracker.Complete(currentAttemptId, false);
             currentAttemptId = null;
-            PickQuestion(trapPuzzle ? "Incorrect. The trap is still active. Try a different question." : "Incorrect. The door remains closed. Try a different question.");
+            PickQuestion(portalPuzzle ? "Incorrect. The portal stays closed. Try a different question." :
+                trapPuzzle ? "Incorrect. The trap is still active. Try a different question." : "Incorrect. The door remains closed. Try a different question.");
             return;
         }
         QuestionPerformanceTracker.Complete(currentAttemptId, true);
@@ -130,7 +139,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         var panel = Box("Question Panel", root.transform, Vector2.zero, new Vector2(960, 600), new Color(0.13f, 0.085f, 0.06f));
         var border = panel.gameObject.AddComponent<UnityEngine.UI.Outline>();
         border.effectColor = new Color(0.73f, 0.52f, 0.22f); border.effectDistance = new Vector2(3, -3);
-        Label("Title", panel, new Vector2(0, 248), new Vector2(850, 46), "THE DEMON'S CODE CHALLENGE", 30);
+        instance.titleLabel = Label("Title", panel, new Vector2(0, 248), new Vector2(850, 46), "THE DEMON'S CODE CHALLENGE", 30);
         instance.questionLabel = Label("Question", panel, new Vector2(0, 174), new Vector2(850, 84), "", 26);
         var code = Box("Code", panel, new Vector2(0, 85), new Vector2(840, 70), new Color(0.035f, 0.03f, 0.025f));
         instance.codeLabel = Label("Java Code", code, Vector2.zero, new Vector2(800, 62), "", 27);
@@ -144,7 +153,9 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
             button.onClick.AddListener(() => instance.SelectAnswer(choice));
         }
         instance.feedback = Label("Feedback", panel, new Vector2(0, -169), new Vector2(840, 78), "", 22);
-        Button("Cancel", panel, new Vector2(0, -250), new Vector2(260, 48), "Leave door [Esc]").onClick.AddListener(instance.Cancel);
+        var cancelButton = Button("Cancel", panel, new Vector2(0, -250), new Vector2(260, 48), "Leave door [Esc]");
+        cancelButton.onClick.AddListener(instance.Cancel);
+        instance.cancelLabel = cancelButton.GetComponentInChildren<TMP_Text>();
         if (UnityEngine.EventSystems.EventSystem.current == null)
         {
             var events = new GameObject("Door Question EventSystem", typeof(UnityEngine.EventSystems.EventSystem));

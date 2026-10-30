@@ -54,9 +54,7 @@ public static class QuestionPerformanceTracker
         if (string.IsNullOrEmpty(language)) language = CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
         string questionId = NonEmpty(question.questionId, question.name);
         string topic = NonEmpty(question.topic, topicFallback);
-        string code = question is MultipleChoiceQuestionData multipleChoice ? multipleChoice.codeSnippet :
-            question is FillInBlankQuestionData fillInBlank ? fillInBlank.codeWithBlank : "";
-        if (string.IsNullOrEmpty(topic)) topic = InferTopic(questionId, question.questionText, code);
+        if (string.IsNullOrEmpty(topic) || topic == "general") topic = QuestionCurriculum.Topic(question);
         int currentLevel = GetCurrentPlayerLevel();
 
         var attempt = new QuestionAttempt
@@ -65,10 +63,10 @@ public static class QuestionPerformanceTracker
             user_id = userId,
             slot_index = SaveSlots.Active,
             question_id = questionId,
-            topic = NormalizeTopic(topic),
+            topic = QuestionCurriculum.Topic(topic, questionId),
             language = NormalizeLanguage(language),
             difficulty = NonEmpty(question.difficulty, DifficultyForLevel(currentLevel)),
-            source = string.IsNullOrWhiteSpace(source) ? "battle" : source.Trim().ToLowerInvariant(),
+            source = NormalizeSource(source, "battle"),
             player_level = currentLevel,
             outcome = "in_progress",
             presented_at = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
@@ -94,10 +92,10 @@ public static class QuestionPerformanceTracker
             user_id = userId,
             slot_index = SaveSlots.Active,
             question_id = string.IsNullOrWhiteSpace(questionId) ? "almanac-practice" : questionId,
-            topic = NormalizeTopic(topic),
+            topic = QuestionCurriculum.Topic(topic, questionId),
             language = NormalizeLanguage(language),
             difficulty = string.IsNullOrWhiteSpace(difficulty) ? DifficultyForLevel(playerLevel) : difficulty,
-            source = string.IsNullOrWhiteSpace(source) ? "almanac" : source.Trim().ToLowerInvariant(),
+            source = NormalizeSource(source, "almanac"),
             player_level = Mathf.Max(1, playerLevel),
             outcome = "in_progress",
             presented_at = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
@@ -175,15 +173,16 @@ public static class QuestionPerformanceTracker
         {
             if (remote == null || string.IsNullOrEmpty(remote.attempt_id)) continue;
             remote.user_id = userId;
+            bool canonicalized = Canonicalize(remote);
             if (localById.TryGetValue(remote.attempt_id, out LocalQuestionAttempt local))
             {
                 local.attempt = remote;
                 local.owner_user_id = userId;
-                local.synced = true;
+                local.synced = !canonicalized;
             }
             else
             {
-                var item = new LocalQuestionAttempt { attempt = remote, owner_user_id = userId, synced = true };
+                var item = new LocalQuestionAttempt { attempt = remote, owner_user_id = userId, synced = !canonicalized };
                 attempts.Add(item);
                 localById[remote.attempt_id] = item;
             }
@@ -205,6 +204,23 @@ public static class QuestionPerformanceTracker
         return attempts.Where(item => item?.attempt != null &&
              item.owner_user_id == (userId ?? "") && item.attempt.outcome != "in_progress")
             .Select(item => item.attempt).ToList();
+    }
+
+    public static List<QuestionAttempt> GetLearningHistory(string language, int slot)
+    {
+        string key = NormalizeLanguage(language);
+        return GetAttemptsForContext(MainMenuSaveSlots.CurrentUserId).Where(a =>
+            a.slot_index == slot && NormalizeLanguage(a.language) == key).ToList();
+    }
+
+    public static string RecommendedTopic(string language, int slot)
+    {
+        return GetLearningHistory(language, slot).Where(AdaptiveQuestionSelector.Resolved)
+            .GroupBy(a => QuestionCurriculum.Topic(a.topic, a.question_id))
+            .Select(g => new { Topic = g.Key, Progress = AdaptiveQuestionSelector.Summarize(g) })
+            .Where(g => g.Progress.NeedsReview && g.Progress.RecentMistakes >= 2)
+            .OrderBy(g => g.Progress.Accuracy).ThenBy(g => g.Topic, StringComparer.Ordinal)
+            .Select(g => g.Topic).FirstOrDefault();
     }
 
     public static string BuildReport(string userId)
@@ -230,11 +246,12 @@ public static class QuestionPerformanceTracker
             "Accuracy: " + accuracy.ToString("0.#") + "%    Completion: " + completion.ToString("0.#") + "%",
             "",
             "TOPIC MASTERY",
-            "Mastery = at least 5 of the latest 10 attempts and 80% accuracy."
+            "Mastery = 5+ of the latest 10 responses, 3 different questions, and 80% accuracy.",
+            "Repeated answers alone do not demonstrate topic mastery."
         };
 
         var groups = records.Where(item => item.outcome != "abandoned")
-            .GroupBy(item => NormalizeLanguage(item.language) + "|" + (string.IsNullOrWhiteSpace(item.topic) ? "general" : item.topic))
+            .GroupBy(item => NormalizeLanguage(item.language) + "|" + QuestionCurriculum.Topic(item.topic, item.question_id))
             .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase);
         bool any = false;
         foreach (var group in groups)
@@ -245,14 +262,22 @@ public static class QuestionPerformanceTracker
             if (topicResolved == 0) continue;
             any = true;
             float topicAccuracy = 100f * topicCorrect / topicResolved;
-            bool mastered = topicResolved >= 5 && topicAccuracy >= 80f;
+            var progress = AdaptiveQuestionSelector.Summarize(latest);
+            bool mastered = progress.Mastered;
             string[] keyParts = group.Key.Split('|');
             lines.Add("");
             lines.Add(LanguageDisplay(keyParts[0]) + " · " + TitleCase(keyParts.Length > 1 ? keyParts[1] : "general") +
-                "  ·  " + topicResolved + " recent responses  ·  " + topicAccuracy.ToString("0.#") + "%  ·  " + (mastered ? "MASTERED" : "Keep practicing"));
+                "  ·  " + topicResolved + " responses / " + progress.DifferentQuestions + " different questions  ·  " + topicAccuracy.ToString("0.#") + "%  ·  " + (mastered ? "MASTERED" : progress.NeedsReview ? "Review recommended" : "Keep practicing"));
             lines.Add("  " + string.Join(" / ", latest.Take(5).Select(item => "Lv " + item.player_level + " · " + TitleCase(item.outcome))));
         }
         if (!any) lines.Add("\nAnswer questions in battles, at doors, or in Almanac practice to build your report.");
+        string language = CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
+        string recommended = RecommendedTopic(language, SaveSlots.Active);
+        int learningTier = AdaptiveQuestionSelector.LearningTier(GetLearningHistory(language, SaveSlots.Active), GetCurrentPlayerLevel());
+        lines.Add("\nCURRENT HERO / SAVE SLOT " + (SaveSlots.Active + 1));
+        lines.Add("Learning pace: " + TitleCase(QuestionCurriculum.Difficulty(learningTier)) + ". Earlier topics may appear for review.");
+        if (recommended != null) lines.Add("Study suggestion: review " + TitleCase(recommended) + " using Recommended book.");
+        lines.Add("The report above combines account history; question adaptation uses this hero's language and save slot.");
         lines.Add("\n" + syncStatus);
         if (string.IsNullOrEmpty(userId)) lines.Add("\nGuest history stays on this device until you sign in.");
         return string.Join("\n", lines);
@@ -265,54 +290,14 @@ public static class QuestionPerformanceTracker
     }
 
     private static string DifficultyForLevel(int level) => level <= 5 ? "easy" : level <= 15 ? "medium" : "hard";
-    private static string NormalizeLanguage(string value) => string.IsNullOrWhiteSpace(value) ? "java" : value.Trim().ToLowerInvariant();
+    private static string NormalizeLanguage(string value) => string.IsNullOrWhiteSpace(value) ? "java" : QuestionCurriculum.Language(value);
+    // Portal and trap puzzles share the existing door bucket so deployed schemas need no migration.
+    private static string NormalizeSource(string value, string fallback) => string.IsNullOrWhiteSpace(value) ? fallback :
+        value.Trim().ToLowerInvariant() == "portal" || value.Trim().ToLowerInvariant() == "trap" ? "door" : value.Trim().ToLowerInvariant();
     private static string LanguageDisplay(string value) => value == "csharp" ? "C#" : value == "python" ? "Python" : "Java";
-    private static string NormalizeTopic(string value) => string.IsNullOrWhiteSpace(value) ? "general" : value.Trim().ToLowerInvariant().Replace(" ", "_").Replace("|", "_");
     private static string NonEmpty(string first, string second) => !string.IsNullOrWhiteSpace(first) ? first.Trim() : (second ?? "").Trim();
     private static string TitleCase(string value) => CultureInfo.InvariantCulture.TextInfo.ToTitleCase((value ?? "").Replace('_', ' '));
     private static DateTime ParseTime(string value) => DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var time) ? time.ToUniversalTime() : DateTime.MinValue;
-
-    private static string InferTopic(string id, string prompt, string code)
-    {
-        string suffix = (id ?? "").ToLowerInvariant();
-        if (suffix.EndsWith("-e01")) return "output";
-        if (suffix.EndsWith("-e02")) return "variables";
-        if (suffix.EndsWith("-e03")) return "strings";
-        if (suffix.EndsWith("-e04")) return "conditionals";
-        if (suffix.EndsWith("-e05")) return "arrays";
-        if (suffix.EndsWith("-e06")) return "methods";
-        if (suffix.EndsWith("-e07")) return "loops";
-        if (suffix.EndsWith("-e08")) return "syntax";
-        if (suffix.EndsWith("-e09")) return "comparisons";
-        if (suffix.EndsWith("-e10")) return "types";
-        if (suffix.EndsWith("-m01")) return "loops";
-        if (suffix.EndsWith("-m02")) return "strings";
-        if (suffix.EndsWith("-m03")) return "arrays";
-        if (suffix.EndsWith("-m04")) return "operators";
-        if (suffix.EndsWith("-m05")) return "strings";
-        if (suffix.EndsWith("-m06")) return "arrays";
-        if (suffix.EndsWith("-m07")) return "methods";
-        if (suffix.EndsWith("-m08")) return "conditionals";
-        if (suffix.EndsWith("-m09")) return "loops";
-        if (suffix.EndsWith("-m10")) return "arrays";
-        if (suffix.EndsWith("-h01") || suffix.EndsWith("-h10")) return "recursion";
-        if (suffix.EndsWith("-h02")) return "algorithms";
-        if (suffix.EndsWith("-h03") || suffix.EndsWith("-h06") || suffix.EndsWith("-h08")) return "collections";
-        if (suffix.EndsWith("-h04")) return "objects";
-        if (suffix.EndsWith("-h05")) return "exceptions";
-        if (suffix.EndsWith("-h07")) return "operators";
-        if (suffix.EndsWith("-h09")) return "loops";
-
-        string text = ((prompt ?? "") + " " + (code ?? "")).ToLowerInvariant();
-        if (text.Contains("variable") || text.Contains("declare") || text.Contains("assignment") ||
-            text.Contains("assigned") || text.Contains("initialize")) return "variables";
-        if (text.Contains("loop") || text.Contains("for ") || text.Contains("foreach")) return "loops";
-        if (text.Contains("array") || text.Contains("list") || text.Contains("index")) return "arrays";
-        if (text.Contains("string") || text.Contains("text")) return "strings";
-        if (text.Contains("method") || text.Contains("function") || text.Contains("return")) return "methods";
-        if (text.Contains("recursion")) return "recursion";
-        return "general";
-    }
 
     private static void EnsureLoaded()
     {
@@ -324,14 +309,35 @@ public static class QuestionPerformanceTracker
             if (!File.Exists(path)) return;
             AttemptFile file = JsonUtility.FromJson<AttemptFile>(File.ReadAllText(path));
             if (file?.items != null) attempts.AddRange(file.items.Where(item => item?.attempt != null));
+            bool changed = false;
+            foreach (var item in attempts)
+            {
+                if (!Canonicalize(item.attempt)) continue;
+                item.synced = false;
+                changed = true;
+            }
             foreach (var item in attempts.Where(item => item.attempt.outcome == "in_progress"))
             {
                 item.attempt.outcome = "abandoned";
                 item.attempt.answered_at = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
                 item.synced = false;
+                changed = true;
             }
+            if (changed) Save();
         }
         catch (Exception exception) { Debug.LogWarning("Could not read local question history: " + exception.Message); }
+    }
+
+    private static bool Canonicalize(QuestionAttempt attempt)
+    {
+        string topic = QuestionCurriculum.Topic(attempt.topic, attempt.question_id);
+        string language = NormalizeLanguage(attempt.language);
+        string source = NormalizeSource(attempt.source, "battle");
+        bool changed = topic != attempt.topic || language != attempt.language || source != attempt.source;
+        attempt.topic = topic;
+        attempt.language = language;
+        attempt.source = source;
+        return changed;
     }
 
     private static void TrimAndSave()

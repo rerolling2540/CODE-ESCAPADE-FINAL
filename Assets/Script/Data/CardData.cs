@@ -14,6 +14,10 @@ public enum DamageType
 [CreateAssetMenu(menuName = "Data/Card")]
 public class CardData : ScriptableObject
 {
+    [Header("Question difficulty bounds (1 beginner, 2 intermediate, 3 advanced)")]
+    [Range(1, 3)] public int minimumQuestionTier = 1;
+    [Range(1, 3)] public int maximumQuestionTier = 3;
+
     [field: SerializeField] public string Description { get; private set; }
     [field: SerializeField] public int Mana { get; private set; }
     [field: SerializeField] public Sprite Image { get; private set; }

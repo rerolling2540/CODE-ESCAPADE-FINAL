@@ -79,8 +79,12 @@ so battle, Demon Door, and Almanac practice still record results offline. When
 the player signs in, guest attempts are attached to that account and pending
 records sync automatically. RLS lets each signed-in user read or write only
 their own history. The Almanac's Progress report shows totals, accuracy,
-completion, and per-topic mastery (at least 5 of the latest 10 responses and
-80% accuracy). Guest reports show only guest attempts on that device.
+completion, and per-topic mastery (at least 5 of the latest 10 responses,
+3 different questions, and 80% accuracy). Guest reports show only guest attempts on that device.
+
+Adaptive question selection and the Almanac's Recommended book use the current
+language and save slot. See [Adaptive Learning](Adaptive%20Learning.md) for
+progression, review rules, offline content and authoring card difficulty bounds.
 
 Player card inventory is also stored locally per save slot. Battle, inventory,
 chest, and merchant features read that local copy while offline. A signed-in

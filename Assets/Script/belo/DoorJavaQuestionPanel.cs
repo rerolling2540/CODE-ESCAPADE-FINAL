@@ -48,10 +48,12 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
 
     void PickQuestion(string message)
     {
-        var alternatives = Array.FindAll(questionPool, q => q != question);
-        var choices = alternatives.Length > 0 ? alternatives : questionPool;
-        question = choices[UnityEngine.Random.Range(0, choices.Length)];
-        currentAttemptId = QuestionPerformanceTracker.Begin(question, portalPuzzle ? "portal" : "door", "java");
+        var selected = QuestionSystem.SelectForCurrentPlayer(questionPool,
+            avoidId: question != null ? QuestionCurriculum.Id(question) : null) as MultipleChoiceQuestionData;
+        if (selected == null) { Cancel(); return; }
+        question = selected;
+        currentAttemptId = QuestionPerformanceTracker.Begin(question, portalPuzzle ? "portal" : "door",
+            QuestionCurriculum.Language(question), QuestionCurriculum.Topic(question));
         questionLabel.text = question.questionText;
         codeLabel.text = question.codeSnippet;
         feedback.text = message;
@@ -110,6 +112,8 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
 
     void OnDestroy()
     {
+        QuestionPerformanceTracker.Abandon(currentAttemptId);
+        currentAttemptId = null;
         if (open) { Time.timeScale = previousTimeScale; RestoreHud(); }
         if (instance == this) instance = null;
     }

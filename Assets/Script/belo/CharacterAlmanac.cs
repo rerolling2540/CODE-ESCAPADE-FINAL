@@ -12,7 +12,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
 {
     [Serializable] public sealed class Page
     {
-        public string id, language, difficulty, title, meaning, purpose, prompt, code_snippet, example_output, walkthrough, practice_code, explanation;
+        public string id, language, difficulty, topic, title, meaning, purpose, prompt, code_snippet, example_output, walkthrough, practice_code, explanation;
         public string[] choices;
         public int correct_index, min_level, max_level;
         public bool Valid => !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(meaning) && !string.IsNullOrEmpty(purpose) && !string.IsNullOrEmpty(prompt) && choices != null && correct_index >= 0 && correct_index < choices.Length;
@@ -32,6 +32,8 @@ public sealed class CharacterAlmanac : MonoBehaviour
     private readonly List<Button> tierButtons = new List<Button>();
     private readonly Button[] practiceAnswerButtons = new Button[4];
     private Button startPracticeButton;
+    private Button recommendedBookButton;
+    private Button progressStudyButton;
     private Page selected;
     private string language, query = "", edition = "Original learning edition";
     private int tier;
@@ -59,6 +61,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     }
     public void ReloadLessons()
     {
+        EndPractice();
         var snapshot = Resources.Load<TextAsset>("LearningAlmanac/OriginalLessons");
         if (snapshot != null) ReadBank(snapshot.text);
         edition = "Original learning edition";
@@ -104,6 +107,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     }
     public void Close()
     {
+        EndPractice();
         if (!opened) return;
         opened = false;
         if (openJournal == this) openJournal = null;
@@ -142,13 +146,15 @@ public sealed class CharacterAlmanac : MonoBehaviour
             var page = filtered[i];
             MakeBook(page, languagePages.IndexOf(page) + 1);
         }
-        countLabel.text = filtered.Count == 0 ? "No books found. Clear your search or choose another difficulty." : filtered.Count + " topic books · " + LanguageName(language) + "   /   Select a book to read";
+        countLabel.text = filtered.Count == 0 ? "No books found. Try another search." : filtered.Count + " topic books · " + LanguageName(language) + "   /   Select a book";
         libraryScroll.verticalNormalizedPosition = 1f;
         for(int i=0;i<tierButtons.Count;i++) tierButtons[i].GetComponent<Image>().color = i==tier ? new Color(1f,.86f,.59f) : Color.white;
         UpdateStatus();
+        RefreshProgressReport();
     }
     void ShowPage(Page page)
     {
+        EndPractice();
         library.SetActive(false); reader.SetActive(true);
         selected = page; revealed = false; practiceStarted = false; practiceAttemptId = null;
         practiceFeedback.text = "Read the lesson first, then try the practice.";
@@ -160,12 +166,14 @@ public sealed class CharacterAlmanac : MonoBehaviour
     }
     public void BackToBooks()
     {
+        EndPractice();
         progressPanel.SetActive(false);
         reader.SetActive(false); library.SetActive(true);
         UpdateStatus();
     }
     void ShowProgress()
     {
+        EndPractice();
         library.SetActive(false); reader.SetActive(false); progressPanel.SetActive(true);
         RefreshProgressReport();
         progressScroll.verticalNormalizedPosition = 1f;
@@ -175,6 +183,44 @@ public sealed class CharacterAlmanac : MonoBehaviour
     {
         if (progressPanel != null && progressPanel.activeSelf && progressText != null)
             progressText.text = QuestionPerformanceTracker.BuildReport(MainMenuSaveSlots.CurrentUserId);
+        bool available = FindRecommendedPage() != null;
+        RefreshStudyButton(recommendedBookButton, available);
+        RefreshStudyButton(progressStudyButton, available);
+        UpdateStatus();
+    }
+
+    static void RefreshStudyButton(Button button, bool available)
+    {
+        if (button == null) return;
+        button.interactable = available;
+        var caption = button.GetComponentInChildren<TMP_Text>();
+        caption.text = available ? "Recommended book" : "No review needed yet";
+        caption.color = available ? Gold : new Color(.65f, .59f, .46f);
+        caption.enableAutoSizing = true;
+        caption.fontSizeMin = 14;
+        caption.fontSizeMax = 18;
+    }
+
+    void EndPractice()
+    {
+        string attempt = practiceAttemptId;
+        practiceAttemptId = null;
+        practiceStarted = false;
+        QuestionPerformanceTracker.Abandon(attempt);
+    }
+
+    Page FindRecommendedPage()
+    {
+        string topic = QuestionPerformanceTracker.RecommendedTopic(language, SaveSlots.Active);
+        if (topic == null) return null;
+        return pages.Where(p => p.language == language && QuestionCurriculum.Topic(p.topic, p.id) == topic)
+            .OrderBy(p => QuestionCurriculum.Tier(p.difficulty)).ThenBy(p => p.id, StringComparer.Ordinal).FirstOrDefault();
+    }
+
+    void OpenRecommendedBook()
+    {
+        var page = FindRecommendedPage();
+        if (page != null) ShowPage(page);
     }
     void MakeBook(Page page, int number)
     {
@@ -214,7 +260,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     void StartPractice()
     {
         if (selected == null || practiceStarted) return;
-        practiceAttemptId = QuestionPerformanceTracker.Begin(selected.id + "-almanac", selected.title,
+        practiceAttemptId = QuestionPerformanceTracker.Begin(selected.id + "-almanac", QuestionCurriculum.Topic(selected.topic, selected.id),
             language, selected.difficulty, QuestionPerformanceTracker.GetCurrentPlayerLevel(), "almanac");
         practiceStarted = true;
         revealed = false;
@@ -245,6 +291,13 @@ public sealed class CharacterAlmanac : MonoBehaviour
     void UpdateStatus()
     {
         if (status == null) return;
+        if (reader != null && !reader.activeSelf && recommendedBookButton != null)
+        {
+            status.text = recommendedBookButton.interactable
+                ? "Recommended book: review a topic needing practice.  ·  Close [L / Esc]"
+                : "No review needed yet. Keep answering questions; a book is suggested after repeated mistakes.  ·  Close [L / Esc]";
+            return;
+        }
         status.text = progressPanel != null && progressPanel.activeSelf
             ? "Progress is stored locally and syncs after sign-in.  ·  Back to books [Esc]  ·  Close [L]"
             : edition + (reader != null && reader.activeSelf ? "  ·  Back to books [Esc]  ·  Close [L]" : "  ·  Scroll to browse your books  ·  Close [L / Esc]");
@@ -279,7 +332,8 @@ public sealed class CharacterAlmanac : MonoBehaviour
         search.onValueChanged.AddListener(value=>{query=value;RefreshList();});
         string[] tiers={"All books","Beginner","Intermediate","Advanced"};
         for(int i=0;i<tiers.Length;i++){int index=i;var button=MakeButton("Difficulty "+tiers[i],library.transform,tiers[i],()=>{tier=index;RefreshList();});Position(button.gameObject,new Vector2(355+i*197,-76),new Vector2(185,42));tierButtons.Add(button);}
-        countLabel=Label("Book Count",library.transform,"",18,Gold);Position(countLabel.gameObject,new Vector2(28,-126),new Vector2(850,30));
+        countLabel=Label("Book Count",library.transform,"",18,Gold);Position(countLabel.gameObject,new Vector2(28,-126),new Vector2(590,30));
+        recommendedBookButton=MakeButton("Recommended Book",library.transform,"Recommended book",OpenRecommendedBook);Position(recommendedBookButton.gameObject,new Vector2(640,-120),new Vector2(250,38));
         var progressButton=MakeButton("Progress Report",library.transform,"Progress report",ShowProgress);Position(progressButton.gameObject,new Vector2(910,-120),new Vector2(220,38));
         libraryScroll=MakeScroll("Bookshelf",library.transform,false);Stretch(libraryScroll.gameObject,24,164,24,48);listContent=libraryScroll.content.gameObject;
         var grid=listContent.AddComponent<UnityEngine.UI.GridLayoutGroup>();grid.cellSize=new Vector2(175,226);grid.spacing=new Vector2(12,16);grid.padding=new RectOffset(12,12,14,14);grid.constraint=UnityEngine.UI.GridLayoutGroup.Constraint.FixedColumnCount;grid.constraintCount=6;grid.childAlignment=TextAnchor.UpperCenter;
@@ -292,6 +346,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
         for(int i=0;i<practiceAnswerButtons.Length;i++){int index=i;var answerButton=MakeButton("Practice answer "+(char)('A'+i),reader.transform,"",()=>SubmitPracticeAnswer(index));var answerRect=(RectTransform)answerButton.transform;answerRect.anchorMin=answerRect.anchorMax=new Vector2(i%2==0?.27f:.73f,0);answerRect.pivot=new Vector2(.5f,0);answerRect.anchoredPosition=new Vector2(0,i<2?86:39);answerRect.sizeDelta=new Vector2(420,40);practiceAnswerButtons[i]=answerButton;answerButton.gameObject.SetActive(false);}
         progressPanel=new GameObject("Player Progress Report",typeof(RectTransform));progressPanel.transform.SetParent(frame.transform,false);Stretch(progressPanel,0,0,0,0);
         var progressBack=MakeButton("Back From Progress",progressPanel.transform,"< Back to books",BackToBooks);Position(progressBack.gameObject,new Vector2(24,-76),new Vector2(220,42));
+        progressStudyButton=MakeButton("Review Recommended Topic",progressPanel.transform,"Recommended book",()=>{var page=FindRecommendedPage();if(page!=null){progressPanel.SetActive(false);ShowPage(page);}});Position(progressStudyButton.gameObject,new Vector2(860,-76),new Vector2(270,42));
         progressScroll=MakeScroll("Progress Details",progressPanel.transform,false);Stretch(progressScroll.gameObject,24,134,24,58);
         progressText=progressScroll.content.gameObject.AddComponent<TextMeshProUGUI>();ApplyReadableFont(progressText);progressText.fontSize=22;progressText.color=Ink;progressText.richText=false;progressText.textWrappingMode=TextWrappingModes.Normal;progressText.lineSpacing=5;progressText.paragraphSpacing=8;progressText.margin=new Vector4(44,28,44,34);progressScroll.content.GetComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
         status=Label("Almanac Status",frame.transform,"Offline edition",16,Gold);var sr=(RectTransform)status.transform;sr.anchorMin=Vector2.zero;sr.anchorMax=new Vector2(1,0);sr.pivot=new Vector2(.5f,0);sr.offsetMin=new Vector2(26,12);sr.offsetMax=new Vector2(-26,40);

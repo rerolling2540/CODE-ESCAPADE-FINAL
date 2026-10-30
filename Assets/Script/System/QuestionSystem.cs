@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -30,9 +31,10 @@ public class QuestionSystem : Singleton<QuestionSystem>
         public int max_level;
     }
 
-    private readonly List<QuestionRow> runtimeQuestionRows = new List<QuestionRow>();
     private readonly List<MultipleChoiceQuestionData> runtimeQuestions = new List<MultipleChoiceQuestionData>();
+    private static List<MultipleChoiceQuestionData> bundledQuestions;
     private bool remoteLoadFinished;
+    private string activeAttemptId;
 
     private void Start()
     {
@@ -46,7 +48,14 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private void OnDisable()
     {
+        EndAttempt();
         ActionSystem.DetachPerformer<QuestionGA>();
+    }
+
+    private void EndAttempt()
+    {
+        QuestionPerformanceTracker.Abandon(activeAttemptId);
+        activeAttemptId = null;
     }
 
     private IEnumerator PerformQuestion(QuestionGA action)
@@ -63,6 +72,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
         bool isDone = false;
         bool isCorrect = false;
         string attemptId = QuestionPerformanceTracker.Begin(action.Question, "battle");
+        activeAttemptId = attemptId;
 
         questionUI.SetupAndShow(
             action.Question,
@@ -70,6 +80,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
             {
                 isCorrect = action.Question.CheckAnswer(selectedIndex);
                 QuestionPerformanceTracker.Complete(attemptId, isCorrect);
+                activeAttemptId = null;
                 isDone = true;
             },
             onTimeOut: () =>
@@ -77,16 +88,18 @@ public class QuestionSystem : Singleton<QuestionSystem>
                 Debug.Log("Time ran out on Pop Quiz!");
                 isCorrect = false;
                 QuestionPerformanceTracker.TimeOut(attemptId);
+                activeAttemptId = null;
                 isDone = true;
             },
             playedCard: action.PlayedCard
         );
 
         // Pause the ActionSystem until answered or timed out
-        while (!isDone)
+        while (!isDone && activeAttemptId == attemptId)
         {
             yield return null;
         }
+        if (!isDone) yield break;
 
         // Send answer result back to whoever queued the action
         BattleAudio.Play(isCorrect ? BattleSound.Correct : BattleSound.Wrong);
@@ -115,12 +128,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
         // Wait for the bank request so card questions use the published database bank.
         while (!remoteLoadFinished) yield return null;
 
-        int level = GetPlayerLevel();
-        string language = GetPlayerLanguage();
-        MultipleChoiceQuestionData[] eligible = GetRemoteQuestions(language, level);
-        QuestionData selected = eligible.Length > 0
-            ? eligible[UnityEngine.Random.Range(0, eligible.Length)]
-            : database != null ? database.GetRandomQuestion() : null;
+        QuestionData selected = SelectForCurrentPlayer(GetQuestionPool(), playedCard);
 
         if (selected == null)
         {
@@ -143,25 +151,60 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     public MultipleChoiceQuestionData[] GetQuestionsForCurrentPlayer()
     {
-        return GetRemoteQuestions(GetPlayerLanguage(), GetPlayerLevel());
+        string language = GetPlayerLanguage();
+        int level = GetPlayerLevel();
+        return GetQuestionPool().OfType<MultipleChoiceQuestionData>()
+            .Where(q => QuestionCurriculum.Language(q) == language && q.minLevel <= level).ToArray();
     }
 
-    private MultipleChoiceQuestionData[] GetRemoteQuestions(string language, int level)
+    private IEnumerable<QuestionData> GetQuestionPool()
     {
-        var matches = new List<MultipleChoiceQuestionData>();
-        for (int i = 0; i < runtimeQuestions.Count; i++)
+        if (runtimeQuestions.Count > 0) return runtimeQuestions;
+        return database != null && database.questions != null ? database.questions : Array.Empty<QuestionData>();
+    }
+
+    public static QuestionData SelectForCurrentPlayer(IEnumerable<QuestionData> pool, Card playedCard = null, string avoidId = null)
+    {
+        string language = CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
+        var player = FindFirstObjectByType<PlayerStats>();
+        if (player != null && player.HeroClass != null)
+            language = player.HeroClass.LanguageClass == HeroLanguageClass.CSharp ? "csharp" :
+                player.HeroClass.LanguageClass == HeroLanguageClass.Python ? "python" : "java";
+        var card = playedCard?.CardData;
+        var available = (pool ?? Array.Empty<QuestionData>()).Where(q => q != null).ToList();
+        // Scene-authored legacy doors may only contain Java questions. Use the matching bundled language instead.
+        if (!available.Any(q => QuestionCurriculum.Language(q) == language)) available = GetBundledQuestions().Cast<QuestionData>().ToList();
+        return AdaptiveQuestionSelector.Select(available, language, QuestionPerformanceTracker.GetCurrentPlayerLevel(),
+            QuestionPerformanceTracker.GetLearningHistory(language, SaveSlots.Active), UnityEngine.Random.value, avoidId,
+            card != null ? card.minimumQuestionTier : 1, card != null ? card.maximumQuestionTier : 3);
+    }
+
+    private static List<MultipleChoiceQuestionData> GetBundledQuestions()
+    {
+        if (bundledQuestions != null && bundledQuestions.All(q => q != null)) return bundledQuestions;
+        bundledQuestions = new List<MultipleChoiceQuestionData>();
+        var asset = Resources.Load<TextAsset>("QuestionBanks/StarterQuestions");
+        if (asset == null) return bundledQuestions;
+        var rows = JsonUtility.FromJson<QuestionRows>("{\"items\":" + asset.text + "}").items;
+        foreach (var row in rows ?? Array.Empty<QuestionRow>())
         {
-            var question = runtimeQuestions[i];
-            if (question == null) continue;
-            QuestionRow row = runtimeQuestionRows[i];
-            if (row.language == language && row.min_level <= level && (row.max_level == 0 || row.max_level >= level))
-                matches.Add(question);
+            if (row.choices == null || row.choices.Length < 2 || row.correct_index < 0 || row.correct_index >= row.choices.Length) continue;
+            var question = ScriptableObject.CreateInstance<MultipleChoiceQuestionData>();
+            question.name = question.questionId = row.id;
+            question.language = row.language; question.topic = QuestionCurriculum.Topic(row.topic, row.id);
+            question.difficulty = row.difficulty; question.minLevel = row.min_level; question.maxLevel = row.max_level;
+            question.questionText = row.prompt; question.codeSnippet = row.code_snippet;
+            question.options = row.choices; question.correctAnswerIndex = row.correct_index; question.timeLimitInSeconds = 25f;
+            bundledQuestions.Add(question);
         }
-        return matches.ToArray();
+        return bundledQuestions;
     }
 
     private IEnumerator LoadRemoteQuestions()
     {
+        // Same authored seed questions as the SQL bank; supports a first offline launch in every language.
+        var starterBank = Resources.Load<TextAsset>("QuestionBanks/StarterQuestions");
+        if (starterBank != null) ApplyQuestionRows(starterBank.text);
         string root = string.IsNullOrWhiteSpace(supabaseProjectUrl) ? "" : supabaseProjectUrl.Trim().TrimEnd('/');
         string key = string.IsNullOrWhiteSpace(supabasePublishableKey) ? "" : supabasePublishableKey.Trim();
         string cachePath = GetQuestionCachePath(root);
@@ -203,6 +246,8 @@ public class QuestionSystem : Singleton<QuestionSystem>
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     string responseJson = request.downloadHandler.text;
+                    // An active popup must retain its ScriptableObject until its answer is resolved.
+                    while (!string.IsNullOrEmpty(activeAttemptId)) yield return null;
                     int loadedCount = ApplyQuestionRows(responseJson);
                     if (loadedCount > 0)
                     {
@@ -248,7 +293,6 @@ public class QuestionSystem : Singleton<QuestionSystem>
             QuestionRow[] rows = JsonUtility.FromJson<QuestionRows>("{\"items\":" + json + "}").items;
             if (rows == null || rows.Length == 0) return 0;
 
-            var parsedRows = new List<QuestionRow>();
             var parsedQuestions = new List<MultipleChoiceQuestionData>();
             foreach (QuestionRow row in rows)
             {
@@ -268,16 +312,13 @@ public class QuestionSystem : Singleton<QuestionSystem>
                 asset.correctAnswerIndex = row.correct_index;
                 asset.timeLimitInSeconds = 25f;
                 parsedQuestions.Add(asset);
-                parsedRows.Add(row);
             }
 
             if (parsedQuestions.Count == 0) return 0;
             foreach (var oldQuestion in runtimeQuestions)
                 if (oldQuestion != null) Destroy(oldQuestion);
             runtimeQuestions.Clear();
-            runtimeQuestionRows.Clear();
             runtimeQuestions.AddRange(parsedQuestions);
-            runtimeQuestionRows.AddRange(parsedRows);
             return runtimeQuestions.Count;
         }
         catch (Exception exception)
@@ -301,7 +342,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
     private string GetPlayerLanguage()
     {
         PlayerStats player = FindFirstObjectByType<PlayerStats>();
-        if (player == null || player.HeroClass == null) return "java";
+        if (player == null || player.HeroClass == null) return CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
         switch (player.HeroClass.LanguageClass)
         {
             case HeroLanguageClass.CSharp: return "csharp";
@@ -312,12 +353,12 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private int GetPlayerLevel()
     {
-        PlayerStats player = FindFirstObjectByType<PlayerStats>();
-        return player == null ? 1 : player.CurrentLevel;
+        return QuestionPerformanceTracker.GetCurrentPlayerLevel();
     }
 
     private void OnDestroy()
     {
+        EndAttempt();
         foreach (var question in runtimeQuestions)
             if (question != null) Destroy(question);
     }

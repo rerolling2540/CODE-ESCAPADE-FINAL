@@ -19,7 +19,8 @@
       "correct_index": 0,
       "explanation": "The output statement displays the text between the quotation marks, without printing the quotation marks themselves.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "syntax"
     },
     {
       "id": "lesson-java-00-intro-02",
@@ -40,7 +41,8 @@
       "correct_index": 0,
       "explanation": "Output preserves the comma, spaces, and exclamation mark inside the string. The surrounding quotation marks are not displayed.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "output"
     },
     {
       "id": "lesson-java-00-intro-03",
@@ -61,7 +63,8 @@
       "correct_index": 0,
       "explanation": "The unquoted expression is calculated as 6. The quoted string is displayed exactly as 4 + 2. The two statements produce two output lines.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "output"
     },
     {
       "id": "lesson-java-00-intro-04",
@@ -82,7 +85,8 @@
       "correct_index": 0,
       "explanation": "The comment is ignored. The first output statement displays Open the gate, and the second displays Enter the village on the next line.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "syntax"
     },
     {
       "id": "lesson-csharp-00-intro-01",
@@ -103,7 +107,8 @@
       "correct_index": 0,
       "explanation": "The output statement displays the text between the quotation marks, without printing the quotation marks themselves.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "syntax"
     },
     {
       "id": "lesson-csharp-00-intro-02",
@@ -124,7 +129,8 @@
       "correct_index": 0,
       "explanation": "Output preserves the comma, spaces, and exclamation mark inside the string. The surrounding quotation marks are not displayed.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "output"
     },
     {
       "id": "lesson-csharp-00-intro-03",
@@ -145,7 +151,8 @@
       "correct_index": 0,
       "explanation": "The unquoted expression is calculated as 6. The quoted string is displayed exactly as 4 + 2. The two statements produce two output lines.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "output"
     },
     {
       "id": "lesson-csharp-00-intro-04",
@@ -166,7 +173,8 @@
       "correct_index": 0,
       "explanation": "The comment is ignored. The first output statement displays Open the gate, and the second displays Enter the village on the next line.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "syntax"
     },
     {
       "id": "lesson-python-00-intro-01",
@@ -187,7 +195,8 @@
       "correct_index": 0,
       "explanation": "The output statement displays the text between the quotation marks, without printing the quotation marks themselves.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "syntax"
     },
     {
       "id": "lesson-python-00-intro-02",
@@ -208,7 +217,8 @@
       "correct_index": 0,
       "explanation": "Output preserves the comma, spaces, and exclamation mark inside the string. The surrounding quotation marks are not displayed.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "output"
     },
     {
       "id": "lesson-python-00-intro-03",
@@ -229,7 +239,8 @@
       "correct_index": 0,
       "explanation": "The unquoted expression is calculated as 6. The quoted string is displayed exactly as 4 + 2. The two statements produce two output lines.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "output"
     },
     {
       "id": "lesson-python-00-intro-04",
@@ -250,7 +261,8 @@
       "correct_index": 0,
       "explanation": "The comment is ignored. The first output statement displays Open the gate, and the second displays Enter the village on the next line.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "syntax"
     },
     {
       "id": "lesson-java-01",
@@ -270,7 +282,8 @@
       "correct_index": 0,
       "explanation": "The new assignment stores 11 - 3, so the final value is 8.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "variables"
     },
     {
       "id": "lesson-java-02",
@@ -290,7 +303,8 @@
       "correct_index": 0,
       "explanation": "Multiply 9 by 3 to get 27, then add 2.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "operators"
     },
     {
       "id": "lesson-java-03",
@@ -310,7 +324,8 @@
       "correct_index": 0,
       "explanation": "The literal provides the words, colon, and space; the variable supplies Citadel.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "strings"
     },
     {
       "id": "lesson-java-04",
@@ -330,7 +345,8 @@
       "correct_index": 0,
       "explanation": "Four is less than six, so the requirement fails.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "comparisons"
     },
     {
       "id": "lesson-java-05",
@@ -350,7 +366,8 @@
       "correct_index": 0,
       "explanation": "The key condition succeeds, but the energy comparison fails. AND requires both.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "conditionals"
     },
     {
       "id": "lesson-java-06",
@@ -370,7 +387,8 @@
       "correct_index": 0,
       "explanation": "Index 2 selects the third position, containing 26.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "arrays"
     },
     {
       "id": "lesson-java-07",
@@ -390,7 +408,8 @@
       "correct_index": 0,
       "explanation": "The supplied arguments are added and returned as 15.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "methods"
     },
     {
       "id": "lesson-java-08",
@@ -410,7 +429,8 @@
       "correct_index": 0,
       "explanation": "The range starts at 4 and excludes 7, so three values are printed.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "loops"
     },
     {
       "id": "lesson-java-09",
@@ -430,7 +450,8 @@
       "correct_index": 0,
       "explanation": "Eight is doubled, and 16 replaces the old value.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "variables"
     },
     {
       "id": "lesson-java-10",
@@ -450,7 +471,8 @@
       "correct_index": 0,
       "explanation": "Twelve does not meet the threshold, so the else block prints Wait.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "conditionals"
     },
     {
       "id": "lesson-java-11",
@@ -470,7 +492,8 @@
       "correct_index": 0,
       "explanation": "The loop adds 2 + 3 + 4 + 5 to make 14.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-java-12",
@@ -490,7 +513,8 @@
       "correct_index": 0,
       "explanation": "Positions 1 through 3 contain R, A, and G.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "strings"
     },
     {
       "id": "lesson-java-13",
@@ -510,7 +534,8 @@
       "correct_index": 0,
       "explanation": "The size is two. The loop visits indexes 0 and 1.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-java-14",
@@ -530,7 +555,8 @@
       "correct_index": 0,
       "explanation": "The updates produce 12 and then 8.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "operators"
     },
     {
       "id": "lesson-java-15",
@@ -550,7 +576,8 @@
       "correct_index": 0,
       "explanation": "Uppercase R differs from lowercase r in this comparison.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "strings"
     },
     {
       "id": "lesson-java-16",
@@ -570,7 +597,8 @@
       "correct_index": 0,
       "explanation": "All five positions count, even though their stored values repeat.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "arrays"
     },
     {
       "id": "lesson-java-17",
@@ -590,7 +618,8 @@
       "correct_index": 0,
       "explanation": "Swapping the inputs calculates 4 * 2 + 6 instead.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "methods"
     },
     {
       "id": "lesson-java-18",
@@ -610,7 +639,8 @@
       "correct_index": 0,
       "explanation": "Six groups of five use thirty coins. One remains.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "operators"
     },
     {
       "id": "lesson-java-19",
@@ -630,7 +660,8 @@
       "correct_index": 0,
       "explanation": "The loop visits 3 through 6 but skips printing at 5.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-java-20",
@@ -650,7 +681,8 @@
       "correct_index": 0,
       "explanation": "The first element is read as eight. Adding five produces 13, which replaces the third element.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "arrays"
     },
     {
       "id": "lesson-java-21",
@@ -670,7 +702,8 @@
       "correct_index": 0,
       "explanation": "Five doublings from one produce 2, 4, 8, 16, and 32.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "recursion"
     },
     {
       "id": "lesson-java-22",
@@ -690,7 +723,8 @@
       "correct_index": 0,
       "explanation": "Thirty-one is the final value in this five-element collection. Its zero-based index is four.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "algorithms"
     },
     {
       "id": "lesson-java-23",
@@ -710,7 +744,8 @@
       "correct_index": 0,
       "explanation": "The four add calls store key, coin, gem, and scroll. bag.size() therefore returns 4.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-java-24",
@@ -730,7 +765,8 @@
       "correct_index": 0,
       "explanation": "The power fields contain four and nine. The custom comparison therefore returns false.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "objects"
     },
     {
       "id": "lesson-java-25",
@@ -750,7 +786,8 @@
       "correct_index": 0,
       "explanation": "The divisor is three, so the division succeeds and the handler is skipped.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "exceptions"
     },
     {
       "id": "lesson-java-26",
@@ -770,7 +807,8 @@
       "correct_index": 0,
       "explanation": "The integer elements at positions zero and two contain seven and fifteen. Their sum is 22.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-java-27",
@@ -790,7 +828,8 @@
       "correct_index": 0,
       "explanation": "The grouped addition produces eight; multiplying by four gives 32.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "operators"
     },
     {
       "id": "lesson-java-28",
@@ -810,7 +849,8 @@
       "correct_index": 0,
       "explanation": "The first pop discards keep. bridge is then on top and is returned by the second pop.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-java-29",
@@ -830,7 +870,8 @@
       "correct_index": 0,
       "explanation": "The divisions produce one, three, and four. The sum is eight.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "operators"
     },
     {
       "id": "lesson-java-30",
@@ -850,7 +891,8 @@
       "correct_index": 0,
       "explanation": "The arguments are 10, 7, 4, 1, and -2. Four non-base calls add one before the stopping call returns zero.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "recursion"
     },
     {
       "id": "lesson-csharp-01",
@@ -870,7 +912,8 @@
       "correct_index": 0,
       "explanation": "The new assignment stores 11 - 3, so the final value is 8.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "variables"
     },
     {
       "id": "lesson-csharp-02",
@@ -890,7 +933,8 @@
       "correct_index": 0,
       "explanation": "Multiply 9 by 3 to get 27, then add 2.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "operators"
     },
     {
       "id": "lesson-csharp-03",
@@ -910,7 +954,8 @@
       "correct_index": 0,
       "explanation": "The literal provides the words, colon, and space; the variable supplies Citadel.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "strings"
     },
     {
       "id": "lesson-csharp-04",
@@ -930,7 +975,8 @@
       "correct_index": 0,
       "explanation": "Four is less than six, so the requirement fails.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "comparisons"
     },
     {
       "id": "lesson-csharp-05",
@@ -950,7 +996,8 @@
       "correct_index": 0,
       "explanation": "The key condition succeeds, but the energy comparison fails. AND requires both.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "conditionals"
     },
     {
       "id": "lesson-csharp-06",
@@ -970,7 +1017,8 @@
       "correct_index": 0,
       "explanation": "Index 2 selects the third position, containing 26.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "arrays"
     },
     {
       "id": "lesson-csharp-07",
@@ -990,7 +1038,8 @@
       "correct_index": 0,
       "explanation": "The supplied arguments are added and returned as 15.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "methods"
     },
     {
       "id": "lesson-csharp-08",
@@ -1010,7 +1059,8 @@
       "correct_index": 0,
       "explanation": "The range starts at 4 and excludes 7, so three values are printed.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "loops"
     },
     {
       "id": "lesson-csharp-09",
@@ -1030,7 +1080,8 @@
       "correct_index": 0,
       "explanation": "Eight is doubled, and 16 replaces the old value.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "variables"
     },
     {
       "id": "lesson-csharp-10",
@@ -1050,7 +1101,8 @@
       "correct_index": 0,
       "explanation": "Twelve does not meet the threshold, so the else block prints Wait.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "conditionals"
     },
     {
       "id": "lesson-csharp-11",
@@ -1070,7 +1122,8 @@
       "correct_index": 0,
       "explanation": "The loop adds 2 + 3 + 4 + 5 to make 14.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-csharp-12",
@@ -1090,7 +1143,8 @@
       "correct_index": 0,
       "explanation": "Positions 1 through 3 contain R, A, and G.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "strings"
     },
     {
       "id": "lesson-csharp-13",
@@ -1110,7 +1164,8 @@
       "correct_index": 0,
       "explanation": "The size is two. The loop visits indexes 0 and 1.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-csharp-14",
@@ -1130,7 +1185,8 @@
       "correct_index": 0,
       "explanation": "The updates produce 12 and then 8.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "operators"
     },
     {
       "id": "lesson-csharp-15",
@@ -1150,7 +1206,8 @@
       "correct_index": 0,
       "explanation": "Uppercase R differs from lowercase r in this comparison.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "strings"
     },
     {
       "id": "lesson-csharp-16",
@@ -1170,7 +1227,8 @@
       "correct_index": 0,
       "explanation": "All five positions count, even though their stored values repeat.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "arrays"
     },
     {
       "id": "lesson-csharp-17",
@@ -1190,7 +1248,8 @@
       "correct_index": 0,
       "explanation": "Swapping the inputs calculates 4 * 2 + 6 instead.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "methods"
     },
     {
       "id": "lesson-csharp-18",
@@ -1210,7 +1269,8 @@
       "correct_index": 0,
       "explanation": "Six groups of five use thirty coins. One remains.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "operators"
     },
     {
       "id": "lesson-csharp-19",
@@ -1230,7 +1290,8 @@
       "correct_index": 0,
       "explanation": "The loop visits 3 through 6 but skips printing at 5.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-csharp-20",
@@ -1250,7 +1311,8 @@
       "correct_index": 0,
       "explanation": "The first element is read as eight. Adding five produces 13, which replaces the third element.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "arrays"
     },
     {
       "id": "lesson-csharp-21",
@@ -1270,7 +1332,8 @@
       "correct_index": 0,
       "explanation": "Five doublings from one produce 2, 4, 8, 16, and 32.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "recursion"
     },
     {
       "id": "lesson-csharp-22",
@@ -1290,7 +1353,8 @@
       "correct_index": 0,
       "explanation": "Thirty-one is the final value in this five-element collection. Its zero-based index is four.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "algorithms"
     },
     {
       "id": "lesson-csharp-23",
@@ -1310,7 +1374,8 @@
       "correct_index": 0,
       "explanation": "The list starts with key. Three Add calls add coin, gem, and scroll, so bag.Count is 4.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-csharp-24",
@@ -1330,7 +1395,8 @@
       "correct_index": 0,
       "explanation": "The power fields contain four and nine. The custom comparison therefore returns false.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "objects"
     },
     {
       "id": "lesson-csharp-25",
@@ -1350,7 +1416,8 @@
       "correct_index": 0,
       "explanation": "The divisor is three, so the division succeeds and the handler is skipped.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "exceptions"
     },
     {
       "id": "lesson-csharp-26",
@@ -1370,7 +1437,8 @@
       "correct_index": 0,
       "explanation": "The integer elements at positions zero and two contain seven and fifteen. Their sum is 22.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-csharp-27",
@@ -1390,7 +1458,8 @@
       "correct_index": 0,
       "explanation": "The grouped addition produces eight; multiplying by four gives 32.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "operators"
     },
     {
       "id": "lesson-csharp-28",
@@ -1410,7 +1479,8 @@
       "correct_index": 0,
       "explanation": "The first pop discards keep. bridge is then on top and is returned by the second pop.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-csharp-29",
@@ -1430,7 +1500,8 @@
       "correct_index": 0,
       "explanation": "The divisions produce one, three, and four. The sum is eight.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "operators"
     },
     {
       "id": "lesson-csharp-30",
@@ -1450,7 +1521,8 @@
       "correct_index": 0,
       "explanation": "The arguments are 10, 7, 4, 1, and -2. Four non-base calls add one before the stopping call returns zero.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "recursion"
     },
     {
       "id": "lesson-python-01",
@@ -1470,7 +1542,8 @@
       "correct_index": 0,
       "explanation": "The new assignment stores 11 - 3, so the final value is 8.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "variables"
     },
     {
       "id": "lesson-python-02",
@@ -1490,7 +1563,8 @@
       "correct_index": 0,
       "explanation": "Multiply 9 by 3 to get 27, then add 2.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "operators"
     },
     {
       "id": "lesson-python-03",
@@ -1510,7 +1584,8 @@
       "correct_index": 0,
       "explanation": "The literal provides the words, colon, and space; the variable supplies Citadel.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "strings"
     },
     {
       "id": "lesson-python-04",
@@ -1530,7 +1605,8 @@
       "correct_index": 0,
       "explanation": "Four is less than six, so the requirement fails.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "comparisons"
     },
     {
       "id": "lesson-python-05",
@@ -1550,7 +1626,8 @@
       "correct_index": 0,
       "explanation": "The key condition succeeds, but the energy comparison fails. AND requires both.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "conditionals"
     },
     {
       "id": "lesson-python-06",
@@ -1570,7 +1647,8 @@
       "correct_index": 0,
       "explanation": "Index 2 selects the third position, containing 26.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "arrays"
     },
     {
       "id": "lesson-python-07",
@@ -1590,7 +1668,8 @@
       "correct_index": 0,
       "explanation": "The supplied arguments are added and returned as 15.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "methods"
     },
     {
       "id": "lesson-python-08",
@@ -1610,7 +1689,8 @@
       "correct_index": 0,
       "explanation": "The range starts at 4 and excludes 7, so three values are printed.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "loops"
     },
     {
       "id": "lesson-python-09",
@@ -1630,7 +1710,8 @@
       "correct_index": 0,
       "explanation": "Eight is doubled, and 16 replaces the old value.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "variables"
     },
     {
       "id": "lesson-python-10",
@@ -1650,7 +1731,8 @@
       "correct_index": 0,
       "explanation": "Twelve does not meet the threshold, so the else block prints Wait.",
       "min_level": 1,
-      "max_level": 5
+      "max_level": 5,
+      "topic": "conditionals"
     },
     {
       "id": "lesson-python-11",
@@ -1670,7 +1752,8 @@
       "correct_index": 0,
       "explanation": "The loop adds 2 + 3 + 4 + 5 to make 14.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-python-12",
@@ -1690,7 +1773,8 @@
       "correct_index": 0,
       "explanation": "Positions 1 through 3 contain R, A, and G.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "strings"
     },
     {
       "id": "lesson-python-13",
@@ -1710,7 +1794,8 @@
       "correct_index": 0,
       "explanation": "The size is two. The loop visits indexes 0 and 1.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-python-14",
@@ -1730,7 +1815,8 @@
       "correct_index": 0,
       "explanation": "The updates produce 12 and then 8.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "operators"
     },
     {
       "id": "lesson-python-15",
@@ -1750,7 +1836,8 @@
       "correct_index": 0,
       "explanation": "Uppercase R differs from lowercase r in this comparison.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "strings"
     },
     {
       "id": "lesson-python-16",
@@ -1770,7 +1857,8 @@
       "correct_index": 0,
       "explanation": "All five positions count, even though their stored values repeat.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "arrays"
     },
     {
       "id": "lesson-python-17",
@@ -1790,7 +1878,8 @@
       "correct_index": 0,
       "explanation": "Swapping the inputs calculates 4 * 2 + 6 instead.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "methods"
     },
     {
       "id": "lesson-python-18",
@@ -1810,7 +1899,8 @@
       "correct_index": 0,
       "explanation": "Six groups of five use thirty coins. One remains.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "operators"
     },
     {
       "id": "lesson-python-19",
@@ -1830,7 +1920,8 @@
       "correct_index": 0,
       "explanation": "The loop visits 3 through 6 but skips printing at 5.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "loops"
     },
     {
       "id": "lesson-python-20",
@@ -1850,7 +1941,8 @@
       "correct_index": 0,
       "explanation": "The first element is read as eight. Adding five produces 13, which replaces the third element.",
       "min_level": 6,
-      "max_level": 15
+      "max_level": 15,
+      "topic": "arrays"
     },
     {
       "id": "lesson-python-21",
@@ -1870,7 +1962,8 @@
       "correct_index": 0,
       "explanation": "Five doublings from one produce 2, 4, 8, 16, and 32.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "recursion"
     },
     {
       "id": "lesson-python-22",
@@ -1890,7 +1983,8 @@
       "correct_index": 0,
       "explanation": "Thirty-one is the final value in this five-element collection. Its zero-based index is four.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "algorithms"
     },
     {
       "id": "lesson-python-23",
@@ -1910,7 +2004,8 @@
       "correct_index": 0,
       "explanation": "The list starts with key. Appending coin and gem leaves three items, so len(bag) is 3.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-python-24",
@@ -1930,7 +2025,8 @@
       "correct_index": 0,
       "explanation": "The power fields contain four and nine. The custom comparison therefore returns false.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "objects"
     },
     {
       "id": "lesson-python-25",
@@ -1950,7 +2046,8 @@
       "correct_index": 0,
       "explanation": "The divisor is three, so the division succeeds and the handler is skipped.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "exceptions"
     },
     {
       "id": "lesson-python-26",
@@ -1970,7 +2067,8 @@
       "correct_index": 0,
       "explanation": "Only two and eight satisfy the even-number condition. Adding one to each creates [3, 9].",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-python-27",
@@ -1990,7 +2088,8 @@
       "correct_index": 0,
       "explanation": "The grouped addition produces eight; multiplying by four gives 32.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "operators"
     },
     {
       "id": "lesson-python-28",
@@ -2010,7 +2109,8 @@
       "correct_index": 0,
       "explanation": "The first pop discards keep. bridge is then on top and is returned by the second pop.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "collections"
     },
     {
       "id": "lesson-python-29",
@@ -2030,7 +2130,8 @@
       "correct_index": 0,
       "explanation": "The divisions produce one, three, and four. The sum is eight.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "operators"
     },
     {
       "id": "lesson-python-30",
@@ -2050,7 +2151,8 @@
       "correct_index": 0,
       "explanation": "The arguments are 10, 7, 4, 1, and -2. Four non-base calls add one before the stopping call returns zero.",
       "min_level": 16,
-      "max_level": 0
+      "max_level": 0,
+      "topic": "recursion"
     }
   ]
 }

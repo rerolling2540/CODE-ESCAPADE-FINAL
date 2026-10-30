@@ -1,0 +1,1712 @@
+[
+  {
+    "id": "java-e01",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What does this print?",
+    "code_snippet": "System.out.println(2 + 3);",
+    "choices": [
+      "5",
+      "23",
+      "6",
+      "Compilation error"
+    ],
+    "correct_index": 0,
+    "explanation": "The integer values are added.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e02",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "fill_blank",
+    "prompt": "Fill the blank with the whole-number type.",
+    "code_snippet": "___ score = 12;",
+    "choices": [
+      "int",
+      "String",
+      "boolean",
+      "double"
+    ],
+    "correct_index": 0,
+    "explanation": "int stores whole-number values.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e03",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "String name = \"Ada\";\nSystem.out.println(\"Hi \" + name);",
+    "choices": [
+      "Hi Ada",
+      "Hi name",
+      "Ada Hi",
+      "Compilation error"
+    ],
+    "correct_index": 0,
+    "explanation": "The + operator joins the string and name.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e04",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "missing_code",
+    "prompt": "Which operator checks whether age equals 18?",
+    "code_snippet": "if (age ___ 18) { ... }",
+    "choices": [
+      "==",
+      "=",
+      "!=",
+      "<="
+    ],
+    "correct_index": 0,
+    "explanation": "== compares values; = assigns.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e05",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int[] nums = {4, 8};\nSystem.out.println(nums[0]);",
+    "choices": [
+      "4",
+      "8",
+      "0",
+      "Compilation error"
+    ],
+    "correct_index": 0,
+    "explanation": "The first array element is at index 0.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e06",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "missing_code",
+    "prompt": "Choose the keyword that makes this method return a value.",
+    "code_snippet": "static int doubleIt(int n) { ___ n * 2; }",
+    "choices": [
+      "return",
+      "break",
+      "void",
+      "new"
+    ],
+    "correct_index": 0,
+    "explanation": "return sends the computed value back to the caller.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e07",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What characters are printed?",
+    "code_snippet": "for (int i = 0; i < 3; i++) System.out.print(i);",
+    "choices": [
+      "012",
+      "123",
+      "03",
+      "0123"
+    ],
+    "correct_index": 0,
+    "explanation": "The loop visits i values 0, 1, and 2.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e08",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "fix_code",
+    "prompt": "Choose the correction for this missing semicolon.",
+    "code_snippet": "int lives = 3",
+    "choices": [
+      "int lives = 3;",
+      "int lives == 3;",
+      "int = lives 3;",
+      "int lives : 3;"
+    ],
+    "correct_index": 0,
+    "explanation": "Java statements end with a semicolon.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e09",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "System.out.println(7 > 4);",
+    "choices": [
+      "true",
+      "false",
+      "7",
+      "4"
+    ],
+    "correct_index": 0,
+    "explanation": "7 is greater than 4, so the boolean result is true.",
+    "topic": "general"
+  },
+  {
+    "id": "java-e10",
+    "language": "java",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "multiple_choice",
+    "prompt": "Which type stores true or false?",
+    "code_snippet": "",
+    "choices": [
+      "boolean",
+      "int",
+      "String",
+      "char"
+    ],
+    "correct_index": 0,
+    "explanation": "boolean is Java’s true/false type.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m01",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is the final value of sum?",
+    "code_snippet": "int sum = 0;\nfor (int n : new int[]{2, 4, 6}) sum += n;\nSystem.out.println(sum);",
+    "choices": [
+      "12",
+      "6",
+      "10",
+      "246"
+    ],
+    "correct_index": 0,
+    "explanation": "The loop accumulates 2 + 4 + 6.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m02",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What does this print?",
+    "code_snippet": "String word = \"code\";\nSystem.out.println(word.substring(1, 3));",
+    "choices": [
+      "od",
+      "co",
+      "ode",
+      "code"
+    ],
+    "correct_index": 0,
+    "explanation": "substring includes the start index and excludes the end index.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m03",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "missing_code",
+    "prompt": "Fill the condition to visit indexes 0 through 2 safely.",
+    "code_snippet": "for (int i = 0; i ___ values.length; i++)",
+    "choices": [
+      "<",
+      "<=",
+      ">",
+      "=="
+    ],
+    "correct_index": 0,
+    "explanation": "The last valid index is length - 1, so use < length.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m04",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int x = 5;\nSystem.out.println(x++);\nSystem.out.println(x);",
+    "choices": [
+      "5 then 6",
+      "6 then 6",
+      "5 then 5",
+      "6 then 7"
+    ],
+    "correct_index": 0,
+    "explanation": "Post-increment yields the old value, then increments x.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m05",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "fix_code",
+    "prompt": "Which line safely checks whether text is the word \"yes\"?",
+    "code_snippet": "if (text == \"yes\") { ... }",
+    "choices": [
+      "if (text.equals(\"yes\")) { ... }",
+      "if (text = \"yes\") { ... }",
+      "if (text.compare(\"yes\")) { ... }",
+      "if (text != \"yes\") { ... }"
+    ],
+    "correct_index": 0,
+    "explanation": "Use String.equals to compare Java string contents.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m06",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int[] a = {3, 1, 4};\nSystem.out.println(a.length);",
+    "choices": [
+      "3",
+      "4",
+      "2",
+      "1"
+    ],
+    "correct_index": 0,
+    "explanation": "The array contains three elements.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m07",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "fill_blank",
+    "prompt": "Fill in the return type for this method.",
+    "code_snippet": "___ add(int a, int b) { return a + b; }",
+    "choices": [
+      "int",
+      "void",
+      "String",
+      "boolean"
+    ],
+    "correct_index": 0,
+    "explanation": "The method returns the result of integer addition.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m08",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int n = 9;\nif (n % 2 == 0) System.out.println(\"even\"); else System.out.println(\"odd\");",
+    "choices": [
+      "odd",
+      "even",
+      "9",
+      "Nothing"
+    ],
+    "correct_index": 0,
+    "explanation": "9 divided by 2 has remainder 1.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m09",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "missing_code",
+    "prompt": "Which keyword skips to the next loop iteration?",
+    "code_snippet": "if (i == 2) ___;",
+    "choices": [
+      "continue",
+      "break",
+      "return",
+      "throw"
+    ],
+    "correct_index": 0,
+    "explanation": "continue skips the remaining body and advances the loop.",
+    "topic": "general"
+  },
+  {
+    "id": "java-m10",
+    "language": "java",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int[] a = {1, 2};\na[1] = a[0] + 5;\nSystem.out.println(a[1]);",
+    "choices": [
+      "6",
+      "5",
+      "3",
+      "2"
+    ],
+    "correct_index": 0,
+    "explanation": "a[1] becomes 1 + 5.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h01",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What value is returned by this recursion?",
+    "code_snippet": "static int f(int n) { return n <= 1 ? 1 : n * f(n - 1); }\nSystem.out.println(f(4));",
+    "choices": [
+      "24",
+      "16",
+      "10",
+      "4"
+    ],
+    "correct_index": 0,
+    "explanation": "The recursive product is 4 × 3 × 2 × 1.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h02",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "What is the time complexity of binary search on a sorted array?",
+    "code_snippet": "",
+    "choices": [
+      "O(log n)",
+      "O(n)",
+      "O(n log n)",
+      "O(1) always"
+    ],
+    "correct_index": 0,
+    "explanation": "Each step halves the remaining search interval.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h03",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "List<Integer> xs = new ArrayList<>(List.of(1, 2));\nxs.add(3);\nSystem.out.println(xs.size());",
+    "choices": [
+      "3",
+      "2",
+      "4",
+      "Compilation error"
+    ],
+    "correct_index": 0,
+    "explanation": "Adding one element increases the list size from 2 to 3.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h04",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "fix_code",
+    "prompt": "How should this code compare two objects by value?",
+    "code_snippet": "if (a == b) { /* equal contents? */ }",
+    "choices": [
+      "Use a.equals(b)",
+      "Use a = b",
+      "Use a.compare(b) == true",
+      "Use a !== b"
+    ],
+    "correct_index": 0,
+    "explanation": "For most Java objects, equals checks logical equality.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h05",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "try { int x = 10 / 0; } catch (ArithmeticException e) { System.out.println(\"caught\"); }",
+    "choices": [
+      "caught",
+      "0",
+      "10",
+      "Program prints nothing"
+    ],
+    "correct_index": 0,
+    "explanation": "Integer division by zero throws ArithmeticException, which is caught.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h06",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "missing_code",
+    "prompt": "Fill in the generic type parameter for a list of strings.",
+    "code_snippet": "List<___> names = new ArrayList<>();",
+    "choices": [
+      "String",
+      "int",
+      "void",
+      "boolean"
+    ],
+    "correct_index": 0,
+    "explanation": "Java generics use reference types such as String.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h07",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int x = 2;\nSystem.out.println(x * (x + 3));",
+    "choices": [
+      "10",
+      "7",
+      "13",
+      "12"
+    ],
+    "correct_index": 0,
+    "explanation": "2 × (2 + 3) equals 10.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h08",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "Which data structure is designed for last-in, first-out access?",
+    "code_snippet": "",
+    "choices": [
+      "Stack",
+      "Queue",
+      "HashMap",
+      "TreeSet"
+    ],
+    "correct_index": 0,
+    "explanation": "A stack removes the most recently added item first.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h09",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int[] a = {2, 4, 6};\nint total = 0;\nfor (int v : a) total += v / 2;\nSystem.out.println(total);",
+    "choices": [
+      "6",
+      "12",
+      "5",
+      "3"
+    ],
+    "correct_index": 0,
+    "explanation": "Integer divisions give 1 + 2 + 3 = 6.",
+    "topic": "general"
+  },
+  {
+    "id": "java-h10",
+    "language": "java",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "What must a recursive method have to eventually stop calling itself?",
+    "code_snippet": "",
+    "choices": [
+      "A base case",
+      "A static field",
+      "A for loop",
+      "A constructor"
+    ],
+    "correct_index": 0,
+    "explanation": "A base case stops recursion.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e01",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What does this print?",
+    "code_snippet": "Console.WriteLine(2 + 3);",
+    "choices": [
+      "5",
+      "23",
+      "6",
+      "Compiler error"
+    ],
+    "correct_index": 0,
+    "explanation": "The integer values are added.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e02",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "fill_blank",
+    "prompt": "Fill the blank with the whole-number type.",
+    "code_snippet": "___ score = 12;",
+    "choices": [
+      "int",
+      "string",
+      "bool",
+      "double"
+    ],
+    "correct_index": 0,
+    "explanation": "int stores whole-number values.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e03",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "string name = \"Ada\";\nConsole.WriteLine(\"Hi \" + name);",
+    "choices": [
+      "Hi Ada",
+      "Hi name",
+      "Ada Hi",
+      "Compiler error"
+    ],
+    "correct_index": 0,
+    "explanation": "The + operator joins the string and name.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e04",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "missing_code",
+    "prompt": "Which operator checks whether age equals 18?",
+    "code_snippet": "if (age ___ 18) { ... }",
+    "choices": [
+      "==",
+      "=",
+      "!=",
+      "<="
+    ],
+    "correct_index": 0,
+    "explanation": "== compares values; = assigns.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e05",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int[] nums = { 4, 8 };\nConsole.WriteLine(nums[0]);",
+    "choices": [
+      "4",
+      "8",
+      "0",
+      "Compiler error"
+    ],
+    "correct_index": 0,
+    "explanation": "The first array element is at index 0.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e06",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "missing_code",
+    "prompt": "Choose the keyword that sends this result back.",
+    "code_snippet": "static int DoubleIt(int n) { ___ n * 2; }",
+    "choices": [
+      "return",
+      "break",
+      "void",
+      "new"
+    ],
+    "correct_index": 0,
+    "explanation": "return sends a value to the caller.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e07",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What characters are printed?",
+    "code_snippet": "for (int i = 0; i < 3; i++) Console.Write(i);",
+    "choices": [
+      "012",
+      "123",
+      "03",
+      "0123"
+    ],
+    "correct_index": 0,
+    "explanation": "The loop visits 0, 1, and 2.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e08",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "fix_code",
+    "prompt": "Choose the correction for this missing semicolon.",
+    "code_snippet": "int lives = 3",
+    "choices": [
+      "int lives = 3;",
+      "int lives == 3;",
+      "int = lives 3;",
+      "int lives : 3;"
+    ],
+    "correct_index": 0,
+    "explanation": "C# statements end with a semicolon.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e09",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "Console.WriteLine(7 > 4);",
+    "choices": [
+      "True",
+      "False",
+      "7",
+      "4"
+    ],
+    "correct_index": 0,
+    "explanation": "7 is greater than 4, so the boolean result is true.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-e10",
+    "language": "csharp",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "multiple_choice",
+    "prompt": "Which type stores true or false?",
+    "code_snippet": "",
+    "choices": [
+      "bool",
+      "int",
+      "string",
+      "char"
+    ],
+    "correct_index": 0,
+    "explanation": "bool is C#’s true/false type.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m01",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is the final value of sum?",
+    "code_snippet": "int sum = 0;\nforeach (int n in new[] { 2, 4, 6 }) sum += n;\nConsole.WriteLine(sum);",
+    "choices": [
+      "12",
+      "6",
+      "10",
+      "246"
+    ],
+    "correct_index": 0,
+    "explanation": "The loop accumulates 2 + 4 + 6.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m02",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What does this print?",
+    "code_snippet": "string word = \"code\";\nConsole.WriteLine(word.Substring(1, 2));",
+    "choices": [
+      "od",
+      "co",
+      "ode",
+      "code"
+    ],
+    "correct_index": 0,
+    "explanation": "Substring starts at index 1 and takes 2 characters.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m03",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "missing_code",
+    "prompt": "Fill the condition to visit indexes safely.",
+    "code_snippet": "for (int i = 0; i ___ values.Length; i++)",
+    "choices": [
+      "<",
+      "<=",
+      ">",
+      "=="
+    ],
+    "correct_index": 0,
+    "explanation": "Use < length so the final index is length - 1.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m04",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int x = 5;\nConsole.WriteLine(x++);\nConsole.WriteLine(x);",
+    "choices": [
+      "5 then 6",
+      "6 then 6",
+      "5 then 5",
+      "6 then 7"
+    ],
+    "correct_index": 0,
+    "explanation": "Post-increment yields old x, then increments it.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m05",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "fix_code",
+    "prompt": "Which comparison checks string contents?",
+    "code_snippet": "if (text == \"yes\") { ... }",
+    "choices": [
+      "if (text == \"yes\") { ... }",
+      "if (text = \"yes\") { ... }",
+      "if (text.compare(\"yes\")) { ... }",
+      "if (text !== \"yes\") { ... }"
+    ],
+    "correct_index": 0,
+    "explanation": "C# string == compares string values.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m06",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int[] a = { 3, 1, 4 };\nConsole.WriteLine(a.Length);",
+    "choices": [
+      "3",
+      "4",
+      "2",
+      "1"
+    ],
+    "correct_index": 0,
+    "explanation": "The array contains three elements.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m07",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "fill_blank",
+    "prompt": "Fill in the return type for this method.",
+    "code_snippet": "___ Add(int a, int b) { return a + b; }",
+    "choices": [
+      "int",
+      "void",
+      "string",
+      "bool"
+    ],
+    "correct_index": 0,
+    "explanation": "The method returns an integer sum.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m08",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int n = 9;\nConsole.WriteLine(n % 2 == 0 ? \"even\" : \"odd\");",
+    "choices": [
+      "odd",
+      "even",
+      "9",
+      "Nothing"
+    ],
+    "correct_index": 0,
+    "explanation": "9 has remainder 1 when divided by 2.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m09",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "missing_code",
+    "prompt": "Which keyword skips to the next loop iteration?",
+    "code_snippet": "if (i == 2) ___;",
+    "choices": [
+      "continue",
+      "break",
+      "return",
+      "throw"
+    ],
+    "correct_index": 0,
+    "explanation": "continue advances to the next iteration.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-m10",
+    "language": "csharp",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int[] a = { 1, 2 };\na[1] = a[0] + 5;\nConsole.WriteLine(a[1]);",
+    "choices": [
+      "6",
+      "5",
+      "3",
+      "2"
+    ],
+    "correct_index": 0,
+    "explanation": "a[1] becomes 1 + 5.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h01",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What value is returned by this recursion?",
+    "code_snippet": "int F(int n) => n <= 1 ? 1 : n * F(n - 1);\nConsole.WriteLine(F(4));",
+    "choices": [
+      "24",
+      "16",
+      "10",
+      "4"
+    ],
+    "correct_index": 0,
+    "explanation": "The recursive product is 4 × 3 × 2 × 1.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h02",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "What is binary search time complexity on a sorted array?",
+    "code_snippet": "",
+    "choices": [
+      "O(log n)",
+      "O(n)",
+      "O(n log n)",
+      "O(1) always"
+    ],
+    "correct_index": 0,
+    "explanation": "Each step halves the search interval.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h03",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "var xs = new List<int> { 1, 2 };\nxs.Add(3);\nConsole.WriteLine(xs.Count);",
+    "choices": [
+      "3",
+      "2",
+      "4",
+      "Compiler error"
+    ],
+    "correct_index": 0,
+    "explanation": "Adding one element changes the count from 2 to 3.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h04",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "fix_code",
+    "prompt": "How should a custom class compare object values?",
+    "code_snippet": "if (a == b) { /* equal contents? */ }",
+    "choices": [
+      "Override Equals or compare a value property",
+      "Use a = b",
+      "Use a.compare(b) == true",
+      "Use a !== b"
+    ],
+    "correct_index": 0,
+    "explanation": "For custom reference types, define value equality explicitly when needed.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h05",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "try { int x = 10 / int.Parse(\"0\"); } catch (DivideByZeroException) { Console.WriteLine(\"caught\"); }",
+    "choices": [
+      "caught",
+      "0",
+      "10",
+      "Nothing"
+    ],
+    "correct_index": 0,
+    "explanation": "Integer division by zero throws DivideByZeroException.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h06",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "missing_code",
+    "prompt": "Fill in the generic type for a list of strings.",
+    "code_snippet": "List<___> names = new List<string>();",
+    "choices": [
+      "string",
+      "int",
+      "void",
+      "bool"
+    ],
+    "correct_index": 0,
+    "explanation": "The collection holds string values.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h07",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int x = 2;\nConsole.WriteLine(x * (x + 3));",
+    "choices": [
+      "10",
+      "7",
+      "13",
+      "12"
+    ],
+    "correct_index": 0,
+    "explanation": "2 × (2 + 3) equals 10.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h08",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "Which structure is last-in, first-out?",
+    "code_snippet": "",
+    "choices": [
+      "Stack",
+      "Queue",
+      "Dictionary",
+      "HashSet"
+    ],
+    "correct_index": 0,
+    "explanation": "A stack removes the newest item first.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h09",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "int[] a = { 2, 4, 6 };\nint total = 0;\nforeach (int v in a) total += v / 2;\nConsole.WriteLine(total);",
+    "choices": [
+      "6",
+      "12",
+      "5",
+      "3"
+    ],
+    "correct_index": 0,
+    "explanation": "Integer division gives 1 + 2 + 3.",
+    "topic": "general"
+  },
+  {
+    "id": "csharp-h10",
+    "language": "csharp",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "What prevents recursion from continuing forever?",
+    "code_snippet": "",
+    "choices": [
+      "A base case",
+      "A static field",
+      "A for loop",
+      "A constructor"
+    ],
+    "correct_index": 0,
+    "explanation": "A base case terminates recursive calls.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e01",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What does this print?",
+    "code_snippet": "print(2 + 3)",
+    "choices": [
+      "5",
+      "23",
+      "6",
+      "SyntaxError"
+    ],
+    "correct_index": 0,
+    "explanation": "The integer values are added.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e02",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "fill_blank",
+    "prompt": "Fill the blank with a Python whole-number value.",
+    "code_snippet": "score = ___",
+    "choices": [
+      "12",
+      "\"twelve\"",
+      "True",
+      "12.5"
+    ],
+    "correct_index": 0,
+    "explanation": "12 is an integer literal; Python variables do not need a declared type.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e03",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "name = \"Ada\"\nprint(\"Hi \" + name)",
+    "choices": [
+      "Hi Ada",
+      "Hi name",
+      "Ada Hi",
+      "TypeError"
+    ],
+    "correct_index": 0,
+    "explanation": "The + operator joins the two strings.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e04",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "missing_code",
+    "prompt": "Which operator checks whether age equals 18?",
+    "code_snippet": "if age ___ 18:",
+    "choices": [
+      "==",
+      "=",
+      "!=",
+      "<="
+    ],
+    "correct_index": 0,
+    "explanation": "== compares values; = assigns.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e05",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "nums = [4, 8]\nprint(nums[0])",
+    "choices": [
+      "4",
+      "8",
+      "0",
+      "IndexError"
+    ],
+    "correct_index": 0,
+    "explanation": "The first list element uses index 0.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e06",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "missing_code",
+    "prompt": "Which keyword returns the result from this function?",
+    "code_snippet": "def double_it(n):\n    ___ n * 2",
+    "choices": [
+      "return",
+      "break",
+      "yield",
+      "class"
+    ],
+    "correct_index": 0,
+    "explanation": "return sends the computed value to the caller.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e07",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What numbers are printed?",
+    "code_snippet": "for i in range(3):\n    print(i, end=\"\")",
+    "choices": [
+      "012",
+      "123",
+      "03",
+      "0123"
+    ],
+    "correct_index": 0,
+    "explanation": "range(3) produces 0, 1, and 2.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e08",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "fix_code",
+    "prompt": "Choose the correction for this assignment.",
+    "code_snippet": "lives == 3",
+    "choices": [
+      "lives = 3",
+      "lives :=: 3",
+      "int lives = 3;",
+      "lives : 3"
+    ],
+    "correct_index": 0,
+    "explanation": "A single = assigns a value.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e09",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "print(7 > 4)",
+    "choices": [
+      "True",
+      "False",
+      "7",
+      "4"
+    ],
+    "correct_index": 0,
+    "explanation": "7 is greater than 4.",
+    "topic": "general"
+  },
+  {
+    "id": "python-e10",
+    "language": "python",
+    "difficulty": "easy",
+    "min_level": 1,
+    "max_level": 5,
+    "question_type": "multiple_choice",
+    "prompt": "Which literal represents true in Python?",
+    "code_snippet": "",
+    "choices": [
+      "True",
+      "true",
+      "1.0",
+      "yes"
+    ],
+    "correct_index": 0,
+    "explanation": "Python spells the boolean literal True with a capital T.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m01",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is the final value of total?",
+    "code_snippet": "total = 0\nfor n in [2, 4, 6]:\n    total += n\nprint(total)",
+    "choices": [
+      "12",
+      "6",
+      "10",
+      "246"
+    ],
+    "correct_index": 0,
+    "explanation": "The loop adds 2 + 4 + 6.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m02",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What does this print?",
+    "code_snippet": "word = \"code\"\nprint(word[1:3])",
+    "choices": [
+      "od",
+      "co",
+      "ode",
+      "code"
+    ],
+    "correct_index": 0,
+    "explanation": "The slice includes index 1 and excludes index 3.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m03",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "missing_code",
+    "prompt": "Fill the range bound to visit every valid index.",
+    "code_snippet": "for i in range(___):\n    print(values[i])",
+    "choices": [
+      "len(values)",
+      "len(values) - 1",
+      "len(values) + 1",
+      "1"
+    ],
+    "correct_index": 0,
+    "explanation": "range(len(values)) generates indexes from zero to length minus one.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m04",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "x = 5\nprint(x)\nx += 1\nprint(x)",
+    "choices": [
+      "5 then 6",
+      "6 then 6",
+      "5 then 5",
+      "6 then 7"
+    ],
+    "correct_index": 0,
+    "explanation": "x starts at 5, then += 1 changes it to 6.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m05",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "fix_code",
+    "prompt": "Choose the equality check for the word yes.",
+    "code_snippet": "if text = \"yes\":",
+    "choices": [
+      "if text == \"yes\":",
+      "if text === \"yes\":",
+      "if text.equals(\"yes\"): ",
+      "if text := \"yes\":"
+    ],
+    "correct_index": 0,
+    "explanation": "Python uses == for equality.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m06",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "a = [3, 1, 4]\nprint(len(a))",
+    "choices": [
+      "3",
+      "4",
+      "2",
+      "1"
+    ],
+    "correct_index": 0,
+    "explanation": "The list contains three elements.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m07",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "fill_blank",
+    "prompt": "Fill in the function keyword.",
+    "code_snippet": "___ add(a, b):\n    return a + b",
+    "choices": [
+      "def",
+      "func",
+      "method",
+      "return"
+    ],
+    "correct_index": 0,
+    "explanation": "def declares a Python function.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m08",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "n = 9\nprint(\"even\" if n % 2 == 0 else \"odd\")",
+    "choices": [
+      "odd",
+      "even",
+      "9",
+      "Nothing"
+    ],
+    "correct_index": 0,
+    "explanation": "9 has remainder 1 after division by 2.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m09",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "missing_code",
+    "prompt": "Which keyword skips to the next loop iteration?",
+    "code_snippet": "if i == 2:\n    ___",
+    "choices": [
+      "continue",
+      "break",
+      "return",
+      "pass"
+    ],
+    "correct_index": 0,
+    "explanation": "continue skips the rest of the current iteration.",
+    "topic": "general"
+  },
+  {
+    "id": "python-m10",
+    "language": "python",
+    "difficulty": "medium",
+    "min_level": 6,
+    "max_level": 15,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "a = [1, 2]\na[1] = a[0] + 5\nprint(a[1])",
+    "choices": [
+      "6",
+      "5",
+      "3",
+      "2"
+    ],
+    "correct_index": 0,
+    "explanation": "The second element becomes 1 + 5.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h01",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What value does this recursion return?",
+    "code_snippet": "def f(n):\n    return 1 if n <= 1 else n * f(n - 1)\nprint(f(4))",
+    "choices": [
+      "24",
+      "16",
+      "10",
+      "4"
+    ],
+    "correct_index": 0,
+    "explanation": "The recursive product is 4 × 3 × 2 × 1.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h02",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "What is binary search time complexity on a sorted list?",
+    "code_snippet": "",
+    "choices": [
+      "O(log n)",
+      "O(n)",
+      "O(n log n)",
+      "O(1) always"
+    ],
+    "correct_index": 0,
+    "explanation": "Each comparison halves the search interval.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h03",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "xs = [1, 2]\nxs.append(3)\nprint(len(xs))",
+    "choices": [
+      "3",
+      "2",
+      "4",
+      "IndexError"
+    ],
+    "correct_index": 0,
+    "explanation": "Appending one element changes the length from 2 to 3.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h04",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "fix_code",
+    "prompt": "Which method defines value equality for a custom class?",
+    "code_snippet": "class Token: pass",
+    "choices": [
+      "Implement __eq__",
+      "Implement __add__",
+      "Implement __len__ only",
+      "Use ==="
+    ],
+    "correct_index": 0,
+    "explanation": "Python custom value equality is commonly implemented with __eq__.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h05",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "try:\n    x = 10 // 0\nexcept ZeroDivisionError:\n    print(\"caught\")",
+    "choices": [
+      "caught",
+      "0",
+      "10",
+      "Nothing"
+    ],
+    "correct_index": 0,
+    "explanation": "Integer division by zero raises ZeroDivisionError and is caught.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h06",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "missing_code",
+    "prompt": "Fill in the expression to keep only even numbers.",
+    "code_snippet": "evens = [n for n in nums if n ___ 2 == 0]",
+    "choices": [
+      "%",
+      "//",
+      "/",
+      "*"
+    ],
+    "correct_index": 0,
+    "explanation": "% gives the remainder; even values have remainder zero.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h07",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "x = 2\nprint(x * (x + 3))",
+    "choices": [
+      "10",
+      "7",
+      "13",
+      "12"
+    ],
+    "correct_index": 0,
+    "explanation": "2 multiplied by (2 + 3) is 10.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h08",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "Which standard collection is last-in, first-out when used with append and pop?",
+    "code_snippet": "",
+    "choices": [
+      "list",
+      "deque used as queue",
+      "set",
+      "dict"
+    ],
+    "correct_index": 0,
+    "explanation": "A list append followed by pop uses LIFO behavior.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h09",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "predict_output",
+    "prompt": "What is printed?",
+    "code_snippet": "a = [2, 4, 6]\ntotal = sum(v // 2 for v in a)\nprint(total)",
+    "choices": [
+      "6",
+      "12",
+      "5",
+      "3"
+    ],
+    "correct_index": 0,
+    "explanation": "The integer divisions sum to 1 + 2 + 3.",
+    "topic": "general"
+  },
+  {
+    "id": "python-h10",
+    "language": "python",
+    "difficulty": "hard",
+    "min_level": 16,
+    "max_level": 0,
+    "question_type": "multiple_choice",
+    "prompt": "What prevents recursion from continuing forever?",
+    "code_snippet": "",
+    "choices": [
+      "A base case",
+      "A global variable",
+      "A list",
+      "A print statement"
+    ],
+    "correct_index": 0,
+    "explanation": "A base case stops recursive calls.",
+    "topic": "general"
+  }
+]

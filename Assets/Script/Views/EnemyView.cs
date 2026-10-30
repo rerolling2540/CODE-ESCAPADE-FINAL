@@ -6,6 +6,7 @@ public class EnemyView : CombatantView
 {
    [SerializeField] private TMP_Text attackText;
    private EnemyData data;
+   public EnemyData Data => data;
    public int ExperienceReward => data!=null?Mathf.Max(0,data.experienceReward):0;
    public bool IsRanged => data != null && data.attackStyle == EnemyAttackStyle.Ranged;
    public bool HasProjectile => data != null && data.projectileFrames != null && data.projectileFrames.Length > 0;

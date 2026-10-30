@@ -89,6 +89,26 @@ public class CombatantView : MonoBehaviour
         UpdateHealthUI();
     }
 
+    /// <summary>Bind the player HUD's authored slider and label without changing their scene layout.</summary>
+    public void ConfigureHudHealthBar(Slider authoredSlider, TMP_Text authoredLabel)
+    {
+        if (authoredSlider == null) return;
+
+        if (healthSlider != null && healthSlider != authoredSlider)
+            healthSlider.gameObject.SetActive(false);
+        if (healthText != null && healthText != authoredLabel)
+            healthText.gameObject.SetActive(false);
+
+        healthSlider = authoredSlider;
+        healthText = authoredLabel;
+        healthBarRect = authoredSlider.GetComponent<RectTransform>();
+        preserveHealthHudLayout = false;
+        authoredSlider.interactable = false;
+        // Use the same binding as existing combat health bars so the HP text
+        // stays centered in the track and the track can scale with MaxHealth.
+        ConfigureHudHealthBar(healthBarRect);
+    }
+
     private Dictionary<StatusEffectType, int> statusEffects = new();
     private bool deathQueued;
     private Sprite[] idleFrames, attackFrames;

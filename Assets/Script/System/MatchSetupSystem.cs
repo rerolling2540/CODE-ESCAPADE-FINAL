@@ -168,7 +168,11 @@ public static class BattleHudMedieval
     private static readonly Image[] epStarFills = new Image[5];
     private static int currentEp;
     private static Button epSkillButton;
-    private static TMP_Text epSkillChargeText;
+    private static Image epSkillBackground;
+    private static Image epSkillIcon;
+    private static Outline epSkillOutline;
+    private static CanvasGroup epSkillCanvasGroup;
+    private static TMP_Text epCounterText;
     private const int MaxEp = 5;
 
     public static void ResetEpMeter()
@@ -176,7 +180,11 @@ public static class BattleHudMedieval
         currentEp = 0;
         for (int i = 0; i < epStarFills.Length; i++) epStarFills[i] = null;
         epSkillButton = null;
-        epSkillChargeText = null;
+        epSkillBackground = null;
+        epSkillIcon = null;
+        epSkillOutline = null;
+        epSkillCanvasGroup = null;
+        epCounterText = null;
         RefreshEpMeter();
     }
 
@@ -212,6 +220,15 @@ public static class BattleHudMedieval
             !BattleTutorialGuide.BlocksInput && !EncounterBattleReturn.BattleEnded &&
             EnemySystem.Instance != null && EnemySystem.Instance.Enemies.Exists(enemy => enemy != null && enemy.CurrentHealth > 0);
         epSkillButton.interactable = ready;
+        if (epSkillBackground != null)
+            epSkillBackground.color = ready ? new Color(1f, 0.92f, 0.68f, 1f) : new Color(0.82f, 0.72f, 0.57f, 1f);
+        if (epSkillOutline != null)
+        {
+            epSkillOutline.effectColor = ready ? new Color(1f, 0.83f, 0.3f, 1f) : new Color(0.62f, 0.46f, 0.25f, 0.9f);
+            epSkillOutline.effectDistance = ready ? new Vector2(4f, -4f) : new Vector2(2f, -2f);
+        }
+        if (epSkillCanvasGroup != null) epSkillCanvasGroup.alpha = ready ? 1f : 0.34f;
+        if (epSkillIcon != null) epSkillIcon.color = Color.white;
     }
 
     private static void RefreshEpMeter()
@@ -219,8 +236,8 @@ public static class BattleHudMedieval
         for (int i = 0; i < epStarFills.Length; i++)
             if (epStarFills[i] != null) epStarFills[i].fillAmount = currentEp > i ? 1f : 0f;
 
-        if (epSkillChargeText != null)
-            epSkillChargeText.text = currentEp >= MaxEp ? "READY" : $"CHARGE {currentEp}/{MaxEp}";
+        if (epCounterText != null)
+            epCounterText.text = $"EP {currentEp}/{MaxEp}";
         UpdateEpSkillAvailability();
     }
 
@@ -233,6 +250,19 @@ public static class BattleHudMedieval
         // Build the EP meter independently so the combat resource still works
         // if the optional medieval HUD frame atlas cannot be loaded.
         ApplyEpStar(hudObject.GetComponentInParent<Canvas>());
+
+        // Configure the authored health slider even when the optional portrait
+        // art atlas is unavailable. Health must remain a horizontal slider in
+        // every battle setup path.
+        if (healthFillSprite == null)
+            healthFillSprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+        Slider authoredHealth = FindDescendant(hudObject.transform, "Player Health Bar")?.GetComponent<Slider>();
+        TMP_Text authoredHealthLabel = FindDescendant(hudObject.transform, "Player Health Text")?.GetComponent<TMP_Text>();
+        if (authoredHealth != null)
+        {
+            ApplyHealthBar(authoredHealth);
+            if (hero != null) hero.ConfigureHudHealthBar(authoredHealth, authoredHealthLabel);
+        }
 
         if (atlas == null) atlas = Resources.Load<Texture2D>(AtlasResourcePath);
         if (atlas == null)
@@ -250,18 +280,23 @@ public static class BattleHudMedieval
         var hudImage = hudObject.GetComponent<UnityEngine.UI.Image>();
         if (hudRect == null || hudImage == null) return;
 
-        hudRect.anchorMin = hudRect.anchorMax = new Vector2(0, 1);
-        hudRect.pivot = new Vector2(0, 1);
-        hudRect.anchoredPosition = new Vector2(16, -14);
-        hudRect.sizeDelta = new Vector2(456, 118);
+        if (hudRect.sizeDelta == Vector2.zero)
+        {
+            hudRect.anchorMin = hudRect.anchorMax = new Vector2(0, 1);
+            hudRect.pivot = new Vector2(0, 1);
+            hudRect.anchoredPosition = new Vector2(16, -14);
+            hudRect.sizeDelta = new Vector2(456, 118);
+        }
         hudImage.enabled = false;
         hudImage.raycastTarget = false;
 
         ApplyPortrait(hudRect, portrait);
-        RectTransform playerHealthBar = hero != null ? hero.HealthSliderRect : null;
-        ApplyHealthBar(hudRect, playerHealthBar);
-        if (hero != null)
-            hero.ConfigureHudHealthBar(playerHealthBar);
+        if (authoredHealth == null)
+        {
+            RectTransform playerHealthBar = hero != null ? hero.HealthSliderRect : null;
+            ApplyHealthBar(hudRect, playerHealthBar);
+            if (hero != null) hero.ConfigureHudHealthBar(playerHealthBar);
+        }
         ApplyManaBubbles();
         ApplyPlayerStatusIcons(hudRect, hero);
         RemoveCoinBalance(hudRect);
@@ -309,25 +344,30 @@ public static class BattleHudMedieval
         var frameImage = frameObject.GetComponent<UnityEngine.UI.Image>();
         if (frameRect == null || frameImage == null) return;
 
-        frameRect.SetParent(hudRect, false);
-        frameRect.anchorMin = frameRect.anchorMax = new Vector2(0, 1);
-        frameRect.pivot = new Vector2(0, 1);
-        // Leave visible breathing room below the health bar.
-        frameRect.anchoredPosition = new Vector2(10, -46);
-        frameRect.sizeDelta = new Vector2(74, 72);
-        frameImage.sprite = portraitFrameSprite;
-        frameImage.type = UnityEngine.UI.Image.Type.Sliced;
-        frameImage.color = Color.white;
-        frameImage.raycastTarget = false;
+        if (frameRect.parent != hudRect)
+        {
+            frameRect.SetParent(hudRect, false);
+            frameRect.anchorMin = frameRect.anchorMax = new Vector2(0, 1);
+            frameRect.pivot = new Vector2(0, 1);
+            frameRect.anchoredPosition = new Vector2(10, -46);
+            frameRect.sizeDelta = new Vector2(74, 72);
+        }
+        if (frameImage.sprite == null) frameImage.sprite = portraitFrameSprite;
+        if (frameImage.sprite == portraitFrameSprite) frameImage.type = UnityEngine.UI.Image.Type.Sliced;
+        // Keep the portrait clickable when the saved battle codex button is attached.
+        frameImage.raycastTarget = frameObject.GetComponent<Button>() != null;
 
         var iconRect = iconObject.GetComponent<RectTransform>();
         var icon = iconObject.GetComponent<UnityEngine.UI.Image>();
         if (iconRect == null || icon == null) return;
-        iconRect.SetParent(frameRect, false);
-        iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 0.5f);
-        iconRect.pivot = new Vector2(0.5f, 0.5f);
-        iconRect.anchoredPosition = Vector2.zero;
-        iconRect.sizeDelta = new Vector2(66, 66);
+        if (iconRect.parent != frameRect)
+        {
+            iconRect.SetParent(frameRect, false);
+            iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 0.5f);
+            iconRect.pivot = new Vector2(0.5f, 0.5f);
+            iconRect.anchoredPosition = Vector2.zero;
+            iconRect.sizeDelta = new Vector2(66, 66);
+        }
         iconRect.SetAsLastSibling();
         if (portrait != null) icon.sprite = portrait;
         icon.preserveAspect = true;
@@ -392,6 +432,44 @@ public static class BattleHudMedieval
         }
     }
 
+    private static void ApplyHealthBar(Slider slider)
+    {
+        if (slider == null) return;
+        slider.gameObject.SetActive(true);
+        // Health is a conventional horizontal meter: damage reduces the green
+        // filled section from right to left while the track stays in place.
+        slider.direction = Slider.Direction.LeftToRight;
+        slider.interactable = false;
+        slider.transition = Selectable.Transition.None;
+        Transform backgroundTransform = slider.transform.Find("Background");
+        Transform fillArea = slider.transform.Find("Fill Area");
+        if (backgroundTransform != null)
+        {
+            Image background = backgroundTransform.GetComponent<Image>();
+            if (background != null)
+            {
+                // Keep this authored slider's empty track neutral. The old
+                // atlas health sprite is red and turns the short bar into a
+                // red block when stretched horizontally.
+                background.sprite = healthFillSprite;
+                background.type = Image.Type.Simple;
+                background.color = new Color(0.12f, 0.2f, 0.12f, 1f);
+                background.raycastTarget = false;
+            }
+        }
+        if (fillArea != null)
+        {
+            Image fill = slider.fillRect != null ? slider.fillRect.GetComponent<Image>() : null;
+            if (fill != null)
+            {
+                if (healthFillSprite != null) fill.sprite = healthFillSprite;
+                fill.type = Image.Type.Simple;
+                fill.color = new Color(0.25f, 0.78f, 0.28f, 1f);
+                fill.raycastTarget = false;
+            }
+        }
+    }
+
     private static void ApplyManaBubbles()
     {
         var manaUI = Object.FindFirstObjectByType<ManaUI>(FindObjectsInactive.Include);
@@ -399,21 +477,26 @@ public static class BattleHudMedieval
 
         var rect = manaUI.GetComponent<RectTransform>();
         var hud = GameObject.Find("PlaayerHUD");
-        if (hud != null) rect.SetParent(hud.transform, false);
-        rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
-        rect.pivot = new Vector2(0, 1);
-        // Keep mana below the taller health bar, with a small gap.
-        rect.anchoredPosition = new Vector2(96, -48);
-        rect.sizeDelta = new Vector2(140, 28);
+        if (hud != null && rect.parent != hud.transform)
+        {
+            rect.SetParent(hud.transform, false);
+            rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
+            rect.pivot = new Vector2(0, 1);
+            rect.anchoredPosition = new Vector2(88, -48);
+            rect.sizeDelta = new Vector2(140, 28);
+        }
 
         int index = 0;
         foreach (RectTransform child in rect)
         {
             if (child.GetComponent<UnityEngine.UI.Image>() == null) continue;
-            child.anchorMin = child.anchorMax = new Vector2(0, 0.5f);
-            child.pivot = new Vector2(0.5f, 0.5f);
-            child.sizeDelta = new Vector2(20, 20);
-            child.anchoredPosition = new Vector2(10 + index * 23, 0);
+            if (child.parent == rect && child.sizeDelta == Vector2.zero)
+            {
+                child.anchorMin = child.anchorMax = new Vector2(0, 0.5f);
+                child.pivot = new Vector2(0.5f, 0.5f);
+                child.sizeDelta = new Vector2(20, 20);
+                child.anchoredPosition = new Vector2(10 + index * 23, 0);
+            }
             index++;
         }
     }
@@ -430,10 +513,13 @@ public static class BattleHudMedieval
         meterObject.transform.SetParent(hudCanvas.transform, false);
 
         var meterRect = meterObject.GetComponent<RectTransform>();
-        meterRect.anchorMin = meterRect.anchorMax = Vector2.zero;
-        meterRect.pivot = Vector2.zero;
-        meterRect.anchoredPosition = new Vector2(18f, 125f);
-        meterRect.sizeDelta = new Vector2(82f, 270f);
+        if (meterRect.sizeDelta == Vector2.zero)
+        {
+            meterRect.anchorMin = meterRect.anchorMax = Vector2.zero;
+            meterRect.pivot = Vector2.zero;
+            meterRect.anchoredPosition = new Vector2(8f, 14f);
+            meterRect.sizeDelta = new Vector2(84f, 320f);
+        }
 
         // Reuse the original single-star objects as the first star when this
         // HUD is rebuilt during Play Mode/domain reload.
@@ -447,17 +533,18 @@ public static class BattleHudMedieval
         // Five independent stars fill one by one as cards are used or combatants
         // lose health. The special skill consumes all five.
         const int starCount = 5;
-        const float starSize = 42f;
-        const float starSpacing = 47f;
+        const float starSize = 48f;
+        const float starSpacing = 52f;
         for (int i = 0; i < starCount; i++)
         {
-            float y = 28f + i * starSpacing;
+            float y = 16f + i * starSpacing;
             Image baseStar = GetOrCreateImage(meterRect, $"EP Star {i + 1} Empty", epStarEmptySprite);
-            PositionEpStarImage(baseStar.rectTransform, new Vector2(41f, y), new Vector2(starSize, starSize));
-            baseStar.color = Color.white;
+            if (baseStar.rectTransform.sizeDelta == Vector2.zero)
+                PositionEpStarImage(baseStar.rectTransform, new Vector2(-4f, y), new Vector2(starSize, starSize));
 
             Image energyFill = GetOrCreateImage(meterRect, $"EP Star {i + 1} Fill", epStarFillSprite);
-            PositionEpStarImage(energyFill.rectTransform, new Vector2(41f, y), new Vector2(35f, 35f));
+            if (energyFill.rectTransform.sizeDelta == Vector2.zero)
+                PositionEpStarImage(energyFill.rectTransform, new Vector2(-4f, y), new Vector2(41f, 41f));
             energyFill.type = Image.Type.Filled;
             energyFill.fillMethod = Image.FillMethod.Vertical;
             energyFill.fillOrigin = (int)Image.OriginVertical.Bottom;
@@ -465,6 +552,16 @@ public static class BattleHudMedieval
             energyFill.color = Color.white;
             epStarFills[i] = energyFill;
         }
+
+        Image counterBacking = GetOrCreateImage(meterRect, "EP Counter Background", null);
+        if (counterBacking.sprite == null) BattleUITheme.DecoratePanel(counterBacking);
+        if (counterBacking.rectTransform.sizeDelta == Vector2.zero)
+            PositionEpStarImage(counterBacking.rectTransform, new Vector2(-4f, 280f), new Vector2(72f, 34f));
+        counterBacking.raycastTarget = false;
+        Outline counterOutline = counterBacking.GetComponent<Outline>();
+        if (counterOutline == null) counterOutline = counterBacking.gameObject.AddComponent<Outline>();
+        counterOutline.effectColor = new Color(0.35f, 0.78f, 1f, 0.95f);
+        counterOutline.effectDistance = new Vector2(2f, -2f);
 
         Transform labelTransform = meterRect.Find("EP Label");
         TextMeshProUGUI label;
@@ -478,19 +575,22 @@ public static class BattleHudMedieval
 
         if (label != null)
         {
-            label.text = "EP";
-            label.font = TMP_Settings.defaultFontAsset;
-            label.fontSize = 16f;
-            label.fontStyle = FontStyles.Bold;
-            label.color = new Color(0.55f, 0.88f, 1f, 1f);
+            label.text = $"EP {currentEp}/{MaxEp}";
+            if (label.font == null) label.font = TMP_Settings.defaultFontAsset;
+            if (label.fontSize <= 0f) label.fontSize = 16f;
+            if (label.color == default) label.color = new Color(0.72f, 0.93f, 1f, 1f);
             label.alignment = TextAlignmentOptions.Center;
             label.textWrappingMode = TextWrappingModes.NoWrap;
             label.raycastTarget = false;
             var labelRect = label.rectTransform;
-            labelRect.anchorMin = labelRect.anchorMax = new Vector2(0.5f, 0f);
-            labelRect.pivot = new Vector2(0.5f, 0f);
-            labelRect.anchoredPosition = new Vector2(0f, 0f);
-            labelRect.sizeDelta = new Vector2(82f, 22f);
+            if (labelRect.sizeDelta == Vector2.zero)
+            {
+                labelRect.anchorMin = labelRect.anchorMax = new Vector2(0.5f, 0f);
+                labelRect.pivot = new Vector2(0.5f, 0f);
+                labelRect.anchoredPosition = new Vector2(-4f, 280f);
+                labelRect.sizeDelta = new Vector2(72f, 34f);
+            }
+            epCounterText = label;
         }
 
         CreateGoldSkillCard(hudCanvas.transform);
@@ -503,52 +603,106 @@ public static class BattleHudMedieval
         GameObject cardObject = existing != null
             ? existing.gameObject
             : new GameObject("EP Gold Skill Card", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
-        cardObject.transform.SetParent(canvasTransform, false);
+        if (cardObject.transform.parent != canvasTransform) cardObject.transform.SetParent(canvasTransform, false);
 
         RectTransform cardRect = cardObject.GetComponent<RectTransform>();
-        cardRect.anchorMin = cardRect.anchorMax = Vector2.zero;
-        cardRect.pivot = Vector2.zero;
-        cardRect.anchoredPosition = new Vector2(108f, 191f);
-        cardRect.sizeDelta = new Vector2(104f, 138f);
+        if (cardRect.sizeDelta == Vector2.zero)
+        {
+            cardRect.anchorMin = cardRect.anchorMax = Vector2.zero;
+            cardRect.pivot = Vector2.zero;
+            cardRect.anchoredPosition = new Vector2(98f, 100f);
+            cardRect.sizeDelta = new Vector2(116f, 154f);
+        }
 
         Image background = cardObject.GetComponent<Image>();
-        BattleUITheme.DecoratePanel(background);
-        background.color = new Color(1f, 0.78f, 0.42f, 1f);
+        if (background.sprite == null) BattleUITheme.DecoratePanel(background);
+        if (background.color == Color.white) background.color = new Color(0.92f, 0.76f, 0.5f, 1f);
         background.raycastTarget = true;
-        var outline = cardObject.GetComponent<Outline>();
-        if (outline == null) outline = cardObject.AddComponent<Outline>();
-        outline.effectColor = new Color(1f, 0.76f, 0.24f, 1f);
-        outline.effectDistance = new Vector2(3f, -3f);
+        epSkillBackground = background;
+        epSkillCanvasGroup = cardObject.GetComponent<CanvasGroup>();
+        if (epSkillCanvasGroup == null) epSkillCanvasGroup = cardObject.AddComponent<CanvasGroup>();
+        // The Button controls readiness. Keep the CanvasGroup enabled so the
+        // card remains part of normal UI input and inherits Settings visibility.
+        epSkillCanvasGroup.interactable = true;
+        epSkillCanvasGroup.blocksRaycasts = true;
+        epSkillCanvasGroup.ignoreParentGroups = false;
+        epSkillOutline = cardObject.GetComponent<Outline>();
+        if (epSkillOutline == null) epSkillOutline = cardObject.AddComponent<Outline>();
+        epSkillOutline.effectColor = new Color(0.72f, 0.52f, 0.22f, 1f);
+        epSkillOutline.effectDistance = new Vector2(2f, -2f);
 
         Button button = cardObject.GetComponent<Button>();
         button.targetGraphic = background;
+        // Readiness is shown by fading the entire card until all five EP stars fill.
+        button.transition = Selectable.Transition.None;
         ColorBlock colors = button.colors;
         colors.normalColor = Color.white;
-        colors.highlightedColor = new Color(1.16f, 1.12f, 0.85f, 1f);
-        colors.pressedColor = new Color(0.76f, 0.62f, 0.32f, 1f);
-        colors.disabledColor = new Color(0.58f, 0.52f, 0.39f, 0.82f);
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = Color.white;
+        colors.disabledColor = Color.white;
         button.colors = colors;
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() =>
-        {
-            if (QuestionUI.IsQuestionActive || BattleTutorialGuide.BlocksInput || EncounterBattleReturn.BattleEnded ||
-                ActionSystem.Instance == null || ActionSystem.Instance.IsPerforming || currentEp < MaxEp)
-                return;
-            ActionSystem.Instance.Perform(new StarfallSkillGA());
-        });
+        button.onClick.RemoveListener(OnEpSkillClick);
+        button.onClick.AddListener(OnEpSkillClick);
 
-        CreateEpCardText(cardRect, "EP Skill Title", "STARFALL", new Vector2(0f, -7f), new Vector2(96f, 22f),
-            TextAlignmentOptions.Center, 15f, new Color(0.16f, 0.09f, 0.025f, 1f), topAnchored: true);
-        Image skillIcon = GetOrCreateImage(cardRect, "EP Skill Star Icon", epStarFillSprite);
-        PositionEpStarImage(skillIcon.rectTransform, new Vector2(52f, 68f), new Vector2(39f, 39f));
+        CreateEpCardText(cardRect, "EP Skill Title", "STARFALL", new Vector2(0f, -8f), new Vector2(106f, 24f),
+            TextAlignmentOptions.Center, 15f, new Color(1f, 0.88f, 0.58f, 1f), topAnchored: true);
+        Transform oldSkillIcon = cardRect.Find("EP Skill Star Icon");
+        if (oldSkillIcon != null) oldSkillIcon.name = "EP Skill Icon";
+        CardData skillCard = Resources.Load<CardData>("MerchantCards/Arcane Tempest");
+        Sprite skillSprite = skillCard != null && skillCard.Image != null ? skillCard.Image : CreateEpSkillFallbackSprite();
+        Image skillIcon = GetOrCreateImage(cardRect, "EP Skill Icon", skillSprite);
+        if (skillIcon.rectTransform.sizeDelta == Vector2.zero)
+            PositionEpStarImage(skillIcon.rectTransform, new Vector2(58f, 80f), new Vector2(42f, 42f));
         skillIcon.color = Color.white;
-        CreateEpCardText(cardRect, "EP Skill Description", "ALL ENEMIES\n2x ATK", new Vector2(0f, 25f), new Vector2(96f, 34f),
-            TextAlignmentOptions.Center, 12f, new Color(0.18f, 0.11f, 0.045f, 1f));
-        epSkillChargeText = CreateEpCardText(cardRect, "EP Skill Charge", "CHARGE 0/5", new Vector2(0f, 4f), new Vector2(100f, 18f),
-            TextAlignmentOptions.Center, 10f, new Color(0.14f, 0.08f, 0.03f, 1f));
+        skillIcon.preserveAspect = true;
+        epSkillIcon = skillIcon;
+        CreateEpCardText(cardRect, "EP Skill Description", "Deal 2x ATK\nto all enemies.", new Vector2(0f, 31f), new Vector2(106f, 42f),
+            TextAlignmentOptions.Center, 12f, new Color(1f, 0.94f, 0.82f, 1f));
+        Transform oldCharge = cardRect.Find("EP Skill Charge");
+        if (oldCharge != null) oldCharge.gameObject.SetActive(false);
 
         epSkillButton = button;
-        button.transform.SetAsLastSibling();
+    }
+
+    private static void OnEpSkillClick()
+    {
+        if (QuestionUI.IsQuestionActive || BattleTutorialGuide.BlocksInput || EncounterBattleReturn.BattleEnded ||
+            ActionSystem.Instance == null || ActionSystem.Instance.IsPerforming || currentEp < MaxEp)
+            return;
+        ActionSystem.Instance.Perform(new StarfallSkillGA());
+    }
+
+    private static Sprite CreateEpSkillFallbackSprite()
+    {
+        const int size = 64;
+        var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+        {
+            name = "Starfall Skill Icon Texture",
+            filterMode = FilterMode.Bilinear,
+            wrapMode = TextureWrapMode.Clamp
+        };
+        var pixels = new Color32[size * size];
+        Vector2[] bolt =
+        {
+            new Vector2(38, 58), new Vector2(18, 34), new Vector2(29, 34),
+            new Vector2(24, 7), new Vector2(47, 36), new Vector2(35, 36)
+        };
+        for (int y = 0; y < size; y++)
+        for (int x = 0; x < size; x++)
+        {
+            float dx = x - 31.5f;
+            float dy = y - 31.5f;
+            float radius = Mathf.Sqrt(dx * dx + dy * dy);
+            Color32 pixel = new Color32(0, 0, 0, 0);
+            if (radius <= 29f)
+                pixel = radius >= 23f ? new Color32(255, 208, 91, 255) : new Color32(28, 56, 111, 240);
+            if (IsInsidePolygon(new Vector2(x + 0.5f, y + 0.5f), bolt))
+                pixel = new Color32(135, 226, 255, 255);
+            pixels[y * size + x] = pixel;
+        }
+        texture.SetPixels32(pixels);
+        texture.Apply(false, true);
+        return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
     }
 
     private static TMP_Text CreateEpCardText(RectTransform parent, string name, string value, Vector2 position,
@@ -569,10 +723,9 @@ public static class BattleHudMedieval
         }
 
         text.text = value;
-        text.font = TMP_Settings.defaultFontAsset;
-        text.fontSize = fontSize;
-        text.fontStyle = FontStyles.Bold;
-        text.color = color;
+        if (text.font == null) text.font = TMP_Settings.defaultFontAsset;
+        if (text.fontSize <= 0f) text.fontSize = fontSize;
+        if (text.color == default) text.color = color;
         text.alignment = alignment;
         text.textWrappingMode = TextWrappingModes.Normal;
         text.enableAutoSizing = true;
@@ -581,10 +734,13 @@ public static class BattleHudMedieval
         text.raycastTarget = false;
 
         RectTransform rect = text.rectTransform;
-        rect.anchorMin = rect.anchorMax = topAnchored ? new Vector2(0.5f, 1f) : new Vector2(0.5f, 0f);
-        rect.pivot = topAnchored ? new Vector2(0.5f, 1f) : new Vector2(0.5f, 0f);
-        rect.anchoredPosition = position;
-        rect.sizeDelta = size;
+        if (rect.sizeDelta == Vector2.zero)
+        {
+            rect.anchorMin = rect.anchorMax = topAnchored ? new Vector2(0.5f, 1f) : new Vector2(0.5f, 0f);
+            rect.pivot = topAnchored ? new Vector2(0.5f, 1f) : new Vector2(0.5f, 0f);
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
+        }
         return text;
     }
 
@@ -604,9 +760,9 @@ public static class BattleHudMedieval
             image = imageObject.GetComponent<Image>();
         }
 
-        image.sprite = sprite;
-        image.preserveAspect = true;
-        image.raycastTarget = false;
+        if (image.sprite == null) image.sprite = sprite;
+        if (image.rectTransform.sizeDelta == Vector2.zero) image.preserveAspect = true;
+        image.raycastTarget = image.gameObject.name == "EP Gold Skill Card";
         return image;
     }
 
@@ -732,7 +888,9 @@ public static class BattleHudMedieval
     {
         if (hero == null || hero.StatusEffectsUI == null) return;
         // This replaces the old crossed-swords badge beneath the mana bubbles.
-        hero.StatusEffectsUI.MoveToHud(hudRect, new Vector2(96, -78), new Vector2(220, 32));
+        Transform host = FindDescendant(hudRect, "Player Status Effects");
+        hero.StatusEffectsUI.MoveToHud(host != null ? host as RectTransform : hudRect,
+            new Vector2(96, -78), new Vector2(220, 32));
     }
 }
 

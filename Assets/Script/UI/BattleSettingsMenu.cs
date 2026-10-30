@@ -18,14 +18,18 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         if (FindFirstObjectByType<BattleSettingsMenu>() != null) return;
 
         Scene activeScene = SceneManager.GetActiveScene();
-        Transform[] all = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        Transform panelTransform = null;
-        Transform buttonTransform = null;
-        foreach (Transform item in all)
+        Transform settingsCanvas = FindNamedInScene("Battle Settings Canvas");
+        Transform panelTransform = settingsCanvas != null ? settingsCanvas.Find("Panel") : null;
+        Transform buttonTransform = settingsCanvas != null ? settingsCanvas.Find("setting") : null;
+        if (panelTransform == null || buttonTransform == null)
         {
-            if (item.gameObject.scene != activeScene) continue;
-            if (item.name == "Panel") panelTransform = item;
-            else if (item.name == "setting") buttonTransform = item;
+            Transform[] all = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (Transform item in all)
+            {
+                if (item.gameObject.scene != activeScene) continue;
+                if (panelTransform == null && item.name == "Panel") panelTransform = item;
+                if (buttonTransform == null && item.name == "setting") buttonTransform = item;
+            }
         }
 
         if (panelTransform == null || buttonTransform == null)
@@ -41,48 +45,61 @@ public sealed class BattleSettingsMenu : MonoBehaviour
     {
         settingsButton = gameObject;
         Scene activeScene = SceneManager.GetActiveScene();
-        Transform[] all = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (Transform item in all)
+        Transform settingsCanvas = FindNamedInScene("Battle Settings Canvas");
+        Transform panelTransform = settingsCanvas != null ? settingsCanvas.Find("Panel") : null;
+        if (panelTransform == null)
         {
-            if (item.gameObject.scene == activeScene && item.name == "Panel")
-            {
-                panel = item.gameObject;
-                break;
-            }
+            Transform[] all = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (Transform item in all)
+                if (item.gameObject.scene == activeScene && item.name == "Panel") { panelTransform = item; break; }
         }
+        panel = panelTransform != null ? panelTransform.gameObject : null;
         if (panel == null)
         {
             Debug.LogError("The reused Scene 2 settings panel is missing from Battle Scene.");
             return;
         }
 
-        GameObject canvasObject = new GameObject("Battle Settings Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        Canvas canvas = canvasObject.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 500;
-        CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920f, 1080f);
-        scaler.matchWidthOrHeight = 0.5f;
+        Transform canvasTransform = FindNamedInScene("Battle Settings Canvas");
+        GameObject canvasObject;
+        if (canvasTransform == null)
+        {
+            canvasObject = new GameObject("Battle Settings Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            Canvas canvas = canvasObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 500;
+            CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+        }
+        else canvasObject = canvasTransform.gameObject;
 
-        GameObject blocker = new GameObject("Settings Pause Input Blocker", typeof(RectTransform), typeof(Image));
-        blocker.transform.SetParent(canvasObject.transform, false);
-        RectTransform blockerRect = blocker.GetComponent<RectTransform>();
-        blockerRect.anchorMin = Vector2.zero;
-        blockerRect.anchorMax = Vector2.one;
-        blockerRect.offsetMin = Vector2.zero;
-        blockerRect.offsetMax = Vector2.zero;
-        inputBlocker = blocker.GetComponent<Image>();
-        inputBlocker.color = new Color(0f, 0f, 0f, 0.56f);
-        inputBlocker.raycastTarget = true;
-        blocker.transform.SetAsFirstSibling();
-        blocker.SetActive(false);
+        Transform blockerTransform = canvasTransform != null
+            ? canvasTransform.Find("Settings Pause Input Blocker") : null;
+        if (blockerTransform == null)
+        {
+            GameObject blocker = new GameObject("Settings Pause Input Blocker", typeof(RectTransform), typeof(Image));
+            blocker.transform.SetParent(canvasObject.transform, false);
+            RectTransform blockerRect = blocker.GetComponent<RectTransform>();
+            blockerRect.anchorMin = Vector2.zero;
+            blockerRect.anchorMax = Vector2.one;
+            blockerRect.offsetMin = Vector2.zero;
+            blockerRect.offsetMax = Vector2.zero;
+            inputBlocker = blocker.GetComponent<Image>();
+            inputBlocker.color = new Color(0f, 0f, 0f, 0.56f);
+            inputBlocker.raycastTarget = true;
+            blocker.transform.SetAsFirstSibling();
+            blocker.SetActive(false);
+        }
+        else inputBlocker = blockerTransform.GetComponent<Image>();
 
         // These are the original Scene 2 objects and their sprites/components; only their
         // canvas parent and battle positioning change.
-        settingsButton.transform.SetParent(canvasObject.transform, false);
+        if (settingsButton.transform.parent != canvasObject.transform)
+            settingsButton.transform.SetParent(canvasObject.transform, false);
         RectTransform buttonRect = settingsButton.GetComponent<RectTransform>();
-        if (buttonRect != null)
+        if (buttonRect != null && buttonRect.sizeDelta == Vector2.zero)
         {
             buttonRect.anchorMin = buttonRect.anchorMax = new Vector2(1f, 1f);
             buttonRect.pivot = new Vector2(1f, 1f);
@@ -92,9 +109,17 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         BuildHamburgerIcon();
         BuildTurnCounter(canvasObject.transform, buttonRect);
 
-        panel.transform.SetParent(canvasObject.transform, false);
-        panel.transform.SetAsLastSibling();
-        settingsButton.transform.SetAsLastSibling();
+        if (panel.transform.parent != canvasObject.transform)
+            panel.transform.SetParent(canvasObject.transform, false);
+
+        Button settingsClick = settingsButton.GetComponent<Button>();
+        if (settingsClick != null)
+        {
+            // Clear stale runtime handlers; the scene's legacy persistent click
+            // calls are also cleared in Battle Scene so this toggle runs once.
+            settingsClick.onClick.RemoveAllListeners();
+            settingsClick.onClick.AddListener(ToggleSettings);
+        }
 
         Slider[] sliders = panel.GetComponentsInChildren<Slider>(true);
         foreach (Slider slider in sliders)
@@ -114,7 +139,12 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         GameAudio.ApplySavedVolumes();
 
         Button lobbyButton = FindButton(panel.transform, "Lobby");
-        if (lobbyButton != null) lobbyButton.onClick.AddListener(LeaveBattle);
+        if (lobbyButton != null)
+        {
+            TMP_Text label = lobbyButton.GetComponentInChildren<TMP_Text>(true);
+            if (label != null) label.text = "RETREAT";
+            lobbyButton.onClick.AddListener(LeaveBattle);
+        }
     }
 
     private void Update()
@@ -131,6 +161,20 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         return null;
     }
 
+    private static Transform FindNamedInScene(string objectName)
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        foreach (Transform item in FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            if (item.gameObject.scene == activeScene && item.name == objectName) return item;
+        return null;
+    }
+
+    private void ToggleSettings()
+    {
+        if (panel != null && panel.activeSelf) CloseSettings();
+        else OpenSettings();
+    }
+
     private void BuildHamburgerIcon()
     {
         if (settingsButton == null) return;
@@ -143,18 +187,30 @@ public sealed class BattleSettingsMenu : MonoBehaviour
             buttonImage.sprite = null;
             buttonImage.type = Image.Type.Simple;
             buttonImage.color = new Color(0.67f, 0.42f, 0.13f, 1f);
+            buttonImage.raycastTarget = true;
         }
 
-        foreach (Image image in settingsButton.GetComponentsInChildren<Image>(true))
-            if (image.gameObject != settingsButton) image.enabled = false;
-
-        RectTransform inner = CreateImage("Menu Icon Background", settingsButton.transform,
-            new Color(0.12f, 0.075f, 0.035f, 1f), Vector2.zero, Vector2.one);
-        inner.offsetMin = new Vector2(5f, 5f);
-        inner.offsetMax = new Vector2(-5f, -5f);
+        Transform existingInner = settingsButton.transform.Find("Menu Icon Background");
+        RectTransform inner = existingInner != null ? existingInner as RectTransform :
+            CreateImage("Menu Icon Background", settingsButton.transform,
+                new Color(0.12f, 0.075f, 0.035f, 1f), Vector2.zero, Vector2.one);
+        if (existingInner == null)
+        {
+            inner.offsetMin = new Vector2(5f, 5f);
+            inner.offsetMax = new Vector2(-5f, -5f);
+        }
+        Image innerImage = inner.GetComponent<Image>();
+        if (innerImage != null) innerImage.raycastTarget = false;
 
         for (int i = 0; i < 3; i++)
         {
+            Transform existingLine = inner.Find("Menu Icon Line " + (i + 1));
+            if (existingLine != null)
+            {
+                Image existingLineImage = existingLine.GetComponent<Image>();
+                if (existingLineImage != null) existingLineImage.raycastTarget = false;
+                continue;
+            }
             RectTransform bar = CreateImage("Menu Icon Line " + (i + 1), inner,
                 new Color(1f, 0.82f, 0.42f, 1f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f));
             bar.sizeDelta = new Vector2(30f, 4f);
@@ -164,46 +220,62 @@ public sealed class BattleSettingsMenu : MonoBehaviour
 
     private void BuildTurnCounter(Transform canvasTransform, RectTransform settingsRect)
     {
-        GameObject counter = new GameObject("Battle Turn Counter", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+        Transform existing = canvasTransform.Find("Battle Turn Counter");
+        GameObject counter = existing != null ? existing.gameObject :
+            new GameObject("Battle Turn Counter", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
         RectTransform counterRect = counter.GetComponent<RectTransform>();
-        counterRect.SetParent(canvasTransform, false);
-        counterRect.anchorMin = counterRect.anchorMax = new Vector2(1f, 1f);
-        counterRect.pivot = new Vector2(1f, 1f);
-        counterRect.sizeDelta = new Vector2(132f, 54f);
+        if (counterRect.parent != canvasTransform) counterRect.SetParent(canvasTransform, false);
+        bool needsLayout = counterRect.sizeDelta == Vector2.zero;
+        if (needsLayout)
+        {
+            counterRect.anchorMin = counterRect.anchorMax = new Vector2(1f, 1f);
+            counterRect.pivot = new Vector2(1f, 1f);
+            counterRect.sizeDelta = new Vector2(132f, 54f);
+        }
 
         float settingsWidth = settingsRect != null
             ? settingsRect.rect.width * Mathf.Abs(settingsRect.localScale.x)
             : 100f;
         Vector2 settingsPosition = settingsRect != null ? settingsRect.anchoredPosition : new Vector2(-30f, -26f);
-        counterRect.anchoredPosition = new Vector2(
-            settingsPosition.x - settingsWidth - 10f,
-            settingsPosition.y - Mathf.Max(0f, (settingsRect != null ? settingsRect.rect.height * Mathf.Abs(settingsRect.localScale.y) : 80f) - counterRect.sizeDelta.y) * 0.5f);
+        if (needsLayout)
+            counterRect.anchoredPosition = new Vector2(
+                settingsPosition.x - settingsWidth - 10f,
+                settingsPosition.y - Mathf.Max(0f, (settingsRect != null ? settingsRect.rect.height * Mathf.Abs(settingsRect.localScale.y) : 80f) - counterRect.sizeDelta.y) * 0.5f);
 
         Image counterImage = counter.GetComponent<Image>();
-        counterImage.color = new Color(0.67f, 0.42f, 0.13f, 1f);
+        if (counterImage.color == Color.white) counterImage.color = new Color(0.67f, 0.42f, 0.13f, 1f);
         counterImage.raycastTarget = false;
         Button counterButton = counter.GetComponent<Button>();
         counterButton.transition = Selectable.Transition.None;
         counterButton.interactable = false;
 
-        RectTransform inner = CreateImage("Turn Counter Background", counter.transform,
-            new Color(0.12f, 0.075f, 0.035f, 1f), Vector2.zero, Vector2.one);
-        inner.offsetMin = new Vector2(4f, 4f);
-        inner.offsetMax = new Vector2(-4f, -4f);
+        Transform existingInner = counter.transform.Find("Turn Counter Background");
+        RectTransform inner = existingInner != null ? existingInner as RectTransform :
+            CreateImage("Turn Counter Background", counter.transform,
+                new Color(0.12f, 0.075f, 0.035f, 1f), Vector2.zero, Vector2.one);
+        if (existingInner == null)
+        {
+            inner.offsetMin = new Vector2(4f, 4f);
+            inner.offsetMax = new Vector2(-4f, -4f);
+        }
 
-        GameObject labelObject = new GameObject("Turn Count", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        Transform existingLabel = inner.Find("Turn Count");
+        GameObject labelObject = existingLabel != null ? existingLabel.gameObject :
+            new GameObject("Turn Count", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
         RectTransform labelRect = labelObject.GetComponent<RectTransform>();
-        labelRect.SetParent(inner, false);
-        labelRect.anchorMin = Vector2.zero;
-        labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = new Vector2(3f, 0f);
-        labelRect.offsetMax = new Vector2(-3f, 0f);
+        if (labelRect.parent != inner)
+        {
+            labelRect.SetParent(inner, false);
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = new Vector2(3f, 0f);
+            labelRect.offsetMax = new Vector2(-3f, 0f);
+        }
 
         turnCountLabel = labelObject.GetComponent<TextMeshProUGUI>();
-        turnCountLabel.font = TMP_Settings.defaultFontAsset;
-        turnCountLabel.fontSize = 20f;
-        turnCountLabel.fontStyle = FontStyles.Bold;
-        turnCountLabel.color = new Color(1f, 0.9f, 0.68f, 1f);
+        if (turnCountLabel.font == null) turnCountLabel.font = TMP_Settings.defaultFontAsset;
+        if (turnCountLabel.fontSize <= 0f) turnCountLabel.fontSize = 20f;
+        if (turnCountLabel.color == Color.white) turnCountLabel.color = new Color(1f, 0.9f, 0.68f, 1f);
         turnCountLabel.alignment = TextAlignmentOptions.Center;
         turnCountLabel.raycastTarget = false;
         RefreshTurnCounter();
@@ -245,12 +317,14 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         panel.transform.SetAsLastSibling();
         if (settingsButton != null) settingsButton.transform.SetAsLastSibling();
         Time.timeScale = 0f;
+        SettingsUiVisibility.RefreshNow();
     }
 
     public void CloseSettings()
     {
         if (panel != null) panel.SetActive(false);
         Time.timeScale = previousTimeScale > 0f ? previousTimeScale : 1f;
+        SettingsUiVisibility.RefreshNow();
     }
 
     private void LeaveBattle()

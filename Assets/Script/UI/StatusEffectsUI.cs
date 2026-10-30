@@ -19,10 +19,20 @@ public class StatusEffectsUI : MonoBehaviour
         if (previousCanvas != null && previousCanvas.renderMode == RenderMode.WorldSpace)
             previousCanvas.enabled = false;
 
-        rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
-        rect.pivot = new Vector2(0, 1);
-        rect.anchoredPosition = position;
-        rect.sizeDelta = size;
+        if (hudRect.name == "Player Status Effects")
+        {
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.offsetMin = rect.offsetMax = Vector2.zero;
+        }
+        else
+        {
+            rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
+            rect.pivot = new Vector2(0, 1);
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
+        }
         rect.localScale = Vector3.one;
         compactHudIcons = true;
 

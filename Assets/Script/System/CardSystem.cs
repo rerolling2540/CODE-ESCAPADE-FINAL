@@ -77,19 +77,6 @@ public class CardSystem : Singleton<CardSystem>
             return;
         }
 
-        // Place the piles relative to the camera so their icons and card travel targets stay on screen.
-        Camera battleCamera = Camera.main;
-        if (battleCamera != null)
-        {
-            float cameraDepth = Mathf.Abs(battleCamera.transform.position.z);
-            // Keep the draw-pile icon above the EP star stack on the left HUD.
-            Vector3 drawPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.045f, 0.46f, cameraDepth));
-            Vector3 discardPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.955f, 0.20f, cameraDepth));
-            drawPosition.z = discardPosition.z = 0f;
-            drawPilePoint.position = drawPosition;
-            discardPilePoint.position = discardPosition;
-        }
-
         Sprite drawSprite = Resources.Load<Sprite>("PileIcons/DrawPile");
         Sprite discardSprite = Resources.Load<Sprite>("PileIcons/DiscardPile");
         drawPileView = CreateOrUpdatePileView(drawPileView, drawPilePoint, drawSprite, true);
@@ -104,15 +91,19 @@ public class CardSystem : Singleton<CardSystem>
             return view;
         }
 
+        if (view == null && point != null)
+            view = point.GetComponentInChildren<CardPileView>(true);
+
         if (view == null)
         {
             GameObject pileObject = new GameObject(isDrawPile ? "Draw Pile Display" : "Discard Pile Display");
-            pileObject.transform.position = point.position;
+            pileObject.transform.SetParent(point, false);
+            pileObject.transform.localPosition = Vector3.zero;
+            pileObject.transform.localScale = Vector3.one * (isDrawPile ? 0.095f : 0.12f);
             view = pileObject.AddComponent<CardPileView>();
         }
 
         view.Setup(this, sprite, isDrawPile);
-        view.transform.position = point.position;
         return view;
     }
 

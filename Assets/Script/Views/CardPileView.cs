@@ -9,7 +9,6 @@ public class CardPileView : MonoBehaviour
     {
         cardSystem = owner;
         isDrawPile = drawPile;
-        transform.localScale = Vector3.one * (isDrawPile ? 0.095f : 0.12f);
 
         // Remove the old runtime label if this pile object survives a script reload.
         Transform oldLabel = transform.Find("Pile Count Label");
@@ -17,7 +16,7 @@ public class CardPileView : MonoBehaviour
 
         SpriteRenderer iconRenderer = GetComponent<SpriteRenderer>();
         if (iconRenderer == null) iconRenderer = gameObject.AddComponent<SpriteRenderer>();
-        iconRenderer.sprite = icon;
+        if (iconRenderer.sprite == null) iconRenderer.sprite = icon;
         if (icon != null && icon.texture != null)
         {
             // The high-resolution pile artwork is rendered much smaller than its
@@ -29,7 +28,8 @@ public class CardPileView : MonoBehaviour
 
         BoxCollider hitTarget = GetComponent<BoxCollider>();
         if (hitTarget == null) hitTarget = gameObject.AddComponent<BoxCollider>();
-        hitTarget.size = icon.bounds.size * 1.1f;
+        if (hitTarget.size == Vector3.zero && iconRenderer.sprite != null)
+            hitTarget.size = iconRenderer.sprite.bounds.size * 1.1f;
 
     }
 

@@ -20,7 +20,8 @@ public static class CardRefinementRules
     }
 
     static bool Supported(Effect effect) => effect is DealDamageEffect || effect is HealEffect ||
-        effect is AddStatusEffectEffect || effect is DrawCardsEffect;
+        effect is AddStatusEffectEffect || effect is DrawCardsEffect || effect is GainManaEffect ||
+        effect is StatusComboDamageEffect;
 
     public static bool CanAfford(CardData card, int level, int quantity, int coins, out string reason)
     {
@@ -46,8 +47,21 @@ public static class CardRefinementRules
         }
         else if (action is HealGA heal) return new HealGA(ScalePower(heal.Amount, level), heal.Targets);
         else if (action is AddStatusEffectGA status)
-            return new AddStatusEffectGA(status.StatusEffectType, ScaleUtility(status.StackCount, level), status.Targets);
+        {
+            if (status.StatusEffectType == StatusEffectType.NATURE)
+                return new AddStatusEffectGA(status.StatusEffectType, status.StackCount, status.Targets,
+                    ScalePower(status.NatureHealAmount, level));
+            return new AddStatusEffectGA(status.StatusEffectType, ScaleUtility(status.StackCount, level),
+                status.Targets, status.NatureHealAmount);
+        }
         else if (action is DrawCardsGA draw) return new DrawCardsGA(ScaleUtility(draw.Amount, level));
+        else if (action is GainManaGA gain) return new GainManaGA(ScaleUtility(gain.Amount, level));
+        else if (action is StatusComboDamageGA combo)
+        {
+            combo.BaseDamage = ScalePower(combo.BaseDamage, level);
+            combo.DamagePerStack = ScalePower(combo.DamagePerStack, level);
+            return combo;
+        }
         return action;
     }
 
@@ -72,7 +86,24 @@ public static class CardRefinementRules
             lines.Add("Damage: " + value);
         }
         else if (effect is HealEffect heal) lines.Add("Healing: " + ScalePower(heal.BaseAmount, level));
-        else if (effect is AddStatusEffectEffect status) lines.Add((status.Kind == StatusEffectType.ARMOR ? "Armor: " : "Burn stacks: ") + ScaleUtility(status.BaseStacks, level));
+        else if (effect is AddStatusEffectEffect status)
+        {
+            if (status.Kind == StatusEffectType.NATURE)
+                lines.Add("Nature: heal " + ScalePower(status.NatureHealAmount, level) + " after " + status.BaseStacks + " turns");
+            else if (status.Kind == StatusEffectType.BLEED)
+                lines.Add("Bleed: " + ScaleUtility(status.BaseStacks, level) + " stacks; deal that much damage at turn end, then clear");
+            else if (status.Kind == StatusEffectType.FROST)
+                lines.Add("Frost: " + ScaleUtility(status.BaseStacks, level) + " stacks; reduce the next attack by that amount, then clear");
+            else if (status.Kind == StatusEffectType.POISON)
+                lines.Add("Poison: " + ScaleUtility(status.BaseStacks, level) + " stacks; deal current stacks as damage each turn, lose 1 stack");
+            else
+                lines.Add(status.Kind + " stacks: " + ScaleUtility(status.BaseStacks, level));
+        }
         else if (effect is DrawCardsEffect draw) lines.Add("Cards drawn: " + ScaleUtility(draw.BaseAmount, level));
+        else if (effect is GainManaEffect gain) lines.Add("Mana gained: +" + ScaleUtility(gain.Amount, level) + " (temporary; resets to 5 after the enemy turn)");
+        else if (effect is StatusComboDamageEffect combo)
+            lines.Add("Combo damage: " + ScalePower(combo.BaseDamage, level) + " + " +
+                ScalePower(combo.DamagePerStack, level) + " per " + combo.BonusStatus + " stack" +
+                (combo.ConsumeStatusStacks ? " (consumes stacks)" : ""));
     }
 }

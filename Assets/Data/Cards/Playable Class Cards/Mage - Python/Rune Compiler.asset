@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
+  m_Name: Rune Compiler
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <Description>k__BackingField: "Gain 1 mana this turn."
+  <Mana>k__BackingField: 0
+  <Image>k__BackingField: {fileID: -3666294474207943081, guid: f9456b5c50a66644fa617320f58e94fc, type: 3}
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 101
+    <Effect>k__BackingField:
+      rid: 102
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  damageType: 0
+  baseDamage: 0
+  percentDamage: 0
+  damageMultiplier: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 101
+      type: {class: NoTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 102
+      type: {class: GainManaEffect, ns: , asm: Assembly-CSharp}
+      data:
+        amount: 1

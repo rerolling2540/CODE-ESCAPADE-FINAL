@@ -19,6 +19,20 @@ public class SettingsUI : MonoBehaviour
 
     public void CloseSettings()
     {
+        // Battle Scene reuses this Scene 2 settings panel, but its battle menu
+        // also owns the pause blocker and remembers the time scale it paused.
+        // Delegate here so a leftover serialized Scene 2 button callback cannot
+        // hide the panel while leaving the battle frozen behind the blocker.
+        if (SceneManager.GetActiveScene().name == "Battle Scene")
+        {
+            BattleSettingsMenu battleMenu = FindFirstObjectByType<BattleSettingsMenu>();
+            if (battleMenu != null)
+            {
+                battleMenu.CloseSettings();
+                return;
+            }
+        }
+
         settingsPanel.SetActive(false);
         SettingsUiVisibility.RefreshNow();
         Time.timeScale = 1f;
@@ -39,6 +53,7 @@ public class SettingsUI : MonoBehaviour
 public static class GameControlsGuide
 {
     private static readonly System.Collections.Generic.List<GameObject> settingsPanels = new System.Collections.Generic.List<GameObject>();
+    private static readonly System.Collections.Generic.List<GameObject> settingsControls = new System.Collections.Generic.List<GameObject>();
     public static bool SettingsOpen
     {
         get
@@ -47,12 +62,32 @@ public static class GameControlsGuide
             return settingsPanels.Exists(panel => panel.activeInHierarchy && panel.scene == SceneManager.GetActiveScene());
         }
     }
-    public static bool IsSettingsBranch(Transform branch) => settingsPanels.Exists(panel =>
-        panel != null && panel.activeInHierarchy && panel.scene == SceneManager.GetActiveScene() &&
-        (panel.transform == branch || panel.transform.IsChildOf(branch)));
-    public static bool IsSettingsContent(Transform branch) => settingsPanels.Exists(panel =>
-        panel != null && panel.activeInHierarchy && panel.scene == SceneManager.GetActiveScene() &&
-        (panel.transform == branch || branch.IsChildOf(panel.transform)));
+    public static bool IsSettingsBranch(Transform branch)
+    {
+        if (branch == null) return false;
+        Scene activeScene = SceneManager.GetActiveScene();
+        settingsPanels.RemoveAll(panel => panel == null);
+        settingsControls.RemoveAll(control => control == null);
+        return settingsPanels.Exists(panel => panel.activeInHierarchy && panel.scene == activeScene &&
+                   (panel.transform == branch || panel.transform.IsChildOf(branch))) ||
+               settingsControls.Exists(control => control.activeInHierarchy && control.scene == activeScene &&
+                   (control.transform == branch || control.transform.IsChildOf(branch)));
+    }
+    public static bool IsSettingsContent(Transform branch)
+    {
+        if (branch == null) return false;
+        Scene activeScene = SceneManager.GetActiveScene();
+        settingsPanels.RemoveAll(panel => panel == null);
+        settingsControls.RemoveAll(control => control == null);
+        return settingsPanels.Exists(panel => panel.activeInHierarchy && panel.scene == activeScene &&
+                   (panel.transform == branch || branch.IsChildOf(panel.transform))) ||
+               settingsControls.Exists(control => control.activeInHierarchy && control.scene == activeScene &&
+                   (control.transform == branch || branch.IsChildOf(control.transform)));
+    }
+    public static void RegisterSettingsControl(GameObject control)
+    {
+        if (control != null && !settingsControls.Contains(control)) settingsControls.Add(control);
+    }
     public static void RegisterSettings(GameObject panel)
     {
         if (panel == null) return;

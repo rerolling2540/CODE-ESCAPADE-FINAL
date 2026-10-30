@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
+  m_Name: Void Prism
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <Description>k__BackingField: "Deal 4 damage plus 3 for each Poison stack on one enemy."
+  <Mana>k__BackingField: 3
+  <Image>k__BackingField: {fileID: -4994631497262709623, guid: a59c244fcceb879498dab913f3b8b198, type: 3}
+  <OtherEffects>k__BackingField: []
+  <ManualTargetEffect>k__BackingField:
+    rid: 101
+  damageType: 0
+  baseDamage: 0
+  percentDamage: 0
+  damageMultiplier: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 101
+      type: {class: StatusComboDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        baseDamage: 4
+        bonusStatus: 2
+        damagePerStack: 3
+        consumeStatusStacks: 0

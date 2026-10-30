@@ -110,6 +110,7 @@ public class CombatantView : MonoBehaviour
     }
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
+    private int natureHealAmount;
     private bool deathQueued;
     private Sprite[] idleFrames, attackFrames;
     private float battleFrameRate = 12f;
@@ -619,6 +620,18 @@ public class CombatantView : MonoBehaviour
     #region Status Effect Logic
     public void AddStatusEffect(StatusEffectType type, int stackCount)
     {
+        if (stackCount <= 0) return;
+
+        // Nature uses its displayed stacks as a turn countdown. Reapplying it
+        // refreshes the timer without turning the countdown into an ever-growing stack.
+        if (type == StatusEffectType.NATURE)
+        {
+            statusEffects[type] = Mathf.Max(GetStatusEffectStacks(type), stackCount);
+            if (statusEffectsUI != null)
+                statusEffectsUI.UpdateStatusEffectUI(type, GetStatusEffectStacks(type));
+            return;
+        }
+
         if (statusEffects.ContainsKey(type))
         {
             statusEffects[type] += stackCount;
@@ -655,6 +668,35 @@ public class CombatantView : MonoBehaviour
     {
         if (statusEffects.ContainsKey(type)) return statusEffects[type];
         else return 0;
+    }
+
+    public void ScheduleNatureHeal(int turnsUntilHeal, int healAmount)
+    {
+        if (!(this is HeroView) || turnsUntilHeal <= 0 || healAmount <= 0) return;
+        natureHealAmount = Mathf.Max(natureHealAmount, healAmount);
+        AddStatusEffect(StatusEffectType.NATURE, turnsUntilHeal);
+    }
+
+    public void TickNatureHeal()
+    {
+        if (!(this is HeroView)) return;
+        int turnsRemaining = GetStatusEffectStacks(StatusEffectType.NATURE);
+        if (turnsRemaining <= 0) return;
+
+        if (turnsRemaining > 1)
+        {
+            RemoveStatusEffect(StatusEffectType.NATURE, 1);
+            return;
+        }
+
+        RemoveStatusEffect(StatusEffectType.NATURE, turnsRemaining);
+        int amount = natureHealAmount;
+        natureHealAmount = 0;
+        if (amount > 0 && CurrentHealth > 0)
+        {
+            Heal(amount);
+            StatusEffectSystem.PlayHealAnimation(this);
+        }
     }
     #endregion
 }

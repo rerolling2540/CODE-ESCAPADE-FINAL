@@ -154,8 +154,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusEffectsUI
   statusEffectsUIPrefab: {fileID: 6726480665477530975, guid: 79a7dd0c1729d024da472ba9c9cb8724, type: 3}
-  armorSprite: {fileID: 21300000, guid: ab5f2efaa0dc86d45a7735c888ba8625, type: 3}
-  burnSprite: {fileID: 21300000, guid: ac542d8eaf7ae574a9a46f50d397be97, type: 3}
+  armorSprite: {fileID: -7322822088631733305, guid: bd5fabae958250242bce8deb06245eb9, type: 3}
+  burnSprite: {fileID: 8763505882382083093, guid: 9806fe5dfcaae424ca07e7a30643a537, type: 3}
+  poisonSprite: {fileID: -5283208628950590460, guid: 07e809b5d26de8f4eb7baec1d0689e08, type: 3}
+  bleedSprite: {fileID: -5289552930553558104, guid: b98eef3b3b691874b819a10966b32eb6, type: 3}
+  frostSprite: {fileID: -4100375298537930028, guid: c9148acabd31c6343be2be9a5620e06f, type: 3}
+  natureSprite: {fileID: -8051045705960597501, guid: c7efab326c476074d91d67ab43db354f, type: 3}
 --- !u!222 &5066595349074076142
 CanvasRenderer:
   m_ObjectHideFlags: 0

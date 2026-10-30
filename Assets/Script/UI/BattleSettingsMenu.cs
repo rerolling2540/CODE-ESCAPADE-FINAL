@@ -12,6 +12,7 @@ public sealed class BattleSettingsMenu : MonoBehaviour
     private TextMeshProUGUI turnCountLabel;
     private int turnCount = 1;
     private float previousTimeScale = 1f;
+    private bool settingsPausedBattle;
 
     public static void EnsureCreated()
     {
@@ -59,6 +60,10 @@ public sealed class BattleSettingsMenu : MonoBehaviour
             Debug.LogError("The reused Scene 2 settings panel is missing from Battle Scene.");
             return;
         }
+
+        // Build the shared settings actions during scene setup. Doing this on the
+        // first click caused a noticeable main-thread hitch in the battle.
+        GameControlsGuide.EnsureSettings(panel);
 
         Transform canvasTransform = FindNamedInScene("Battle Settings Canvas");
         GameObject canvasObject;
@@ -112,6 +117,12 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         if (panel.transform.parent != canvasObject.transform)
             panel.transform.SetParent(canvasObject.transform, false);
 
+        // SettingsUiVisibility normally hides non-settings UI while this panel
+        // is open. Keep the menu toggle and its pause blocker inside that
+        // protected branch so the user can close the menu and gameplay stays blocked.
+        GameControlsGuide.RegisterSettingsControl(settingsButton);
+        if (inputBlocker != null) GameControlsGuide.RegisterSettingsControl(inputBlocker.gameObject);
+
         Button settingsClick = settingsButton.GetComponent<Button>();
         if (settingsClick != null)
         {
@@ -145,12 +156,26 @@ public sealed class BattleSettingsMenu : MonoBehaviour
             if (label != null) label.text = "RETREAT";
             lobbyButton.onClick.AddListener(LeaveBattle);
         }
+
+        Button resumeButton = FindButton(panel.transform, "Resume");
+        if (resumeButton != null)
+        {
+            // The Scene 2 button still carries its old SettingsUI callback,
+            // which always forces timeScale to 1. Route it through the battle
+            // menu so it restores the exact state captured when the menu opened.
+            resumeButton.onClick.RemoveAllListeners();
+            resumeButton.onClick.AddListener(CloseSettings);
+        }
     }
 
     private void Update()
     {
         if (panel != null && inputBlocker != null && inputBlocker.gameObject.activeSelf != panel.activeSelf)
+        {
             inputBlocker.gameObject.SetActive(panel.activeSelf);
+            // Recover cleanly if an old scene callback hid the panel directly.
+            if (!panel.activeSelf && settingsPausedBattle) CloseSettings();
+        }
         if (panel != null && panel.activeSelf && Input.GetKeyDown(KeyCode.Escape)) CloseSettings();
     }
 
@@ -310,20 +335,26 @@ public sealed class BattleSettingsMenu : MonoBehaviour
 
     public void OpenSettings()
     {
-        if (panel == null) return;
-        GameControlsGuide.EnsureSettings(panel);
+        if (panel == null || panel.activeSelf) return;
         previousTimeScale = Time.timeScale;
+        settingsPausedBattle = true;
         panel.SetActive(true);
         panel.transform.SetAsLastSibling();
         if (settingsButton != null) settingsButton.transform.SetAsLastSibling();
         Time.timeScale = 0f;
+        if (inputBlocker != null) inputBlocker.gameObject.SetActive(true);
         SettingsUiVisibility.RefreshNow();
     }
 
     public void CloseSettings()
     {
-        if (panel != null) panel.SetActive(false);
-        Time.timeScale = previousTimeScale > 0f ? previousTimeScale : 1f;
+        if (panel == null || (!panel.activeSelf && !settingsPausedBattle)) return;
+        panel.SetActive(false);
+        if (inputBlocker != null) inputBlocker.gameObject.SetActive(false);
+        // Preserve a pre-existing pause (for example, if another battle modal
+        // had already paused the game before Settings was opened).
+        if (settingsPausedBattle) Time.timeScale = previousTimeScale;
+        settingsPausedBattle = false;
         SettingsUiVisibility.RefreshNow();
     }
 

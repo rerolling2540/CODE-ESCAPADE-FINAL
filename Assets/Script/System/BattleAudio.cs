@@ -58,7 +58,17 @@ public class BattleAudio : MonoBehaviour
     void OnStatus(AddStatusEffectGA action)
     {
         if (action.StackCount <= 0 || action.Targets == null || !action.Targets.Exists(t => t != null && t.CurrentHealth > 0)) return;
-        Play(action.StatusEffectType == StatusEffectType.ARMOR ? BattleSound.Armor : BattleSound.FireCast);
+        BattleSound sound = action.StatusEffectType switch
+        {
+            StatusEffectType.ARMOR => BattleSound.Armor,
+            StatusEffectType.BURN => BattleSound.FireCast,
+            StatusEffectType.POISON => BattleSound.MagicCast,
+            StatusEffectType.BLEED => BattleSound.Hit,
+            StatusEffectType.FROST => BattleSound.MagicCast,
+            StatusEffectType.NATURE => BattleSound.Heal,
+            _ => BattleSound.MagicCast
+        };
+        Play(sound);
     }
     void OnHeal(HealGA action)
     {
@@ -110,8 +120,9 @@ public class BattleAudio : MonoBehaviour
     public static void HeroAttack(CardData card)
     {
         if (card == null) return;
-        bool damage = card.ManualTargetEffect is DealDamageEffect ||
-            (card.OtherEffects != null && card.OtherEffects.Exists(e => e != null && e.Effect is DealDamageEffect));
+        bool damage = card.ManualTargetEffect is DealDamageEffect || card.ManualTargetEffect is StatusComboDamageEffect ||
+            (card.OtherEffects != null && card.OtherEffects.Exists(e => e != null &&
+                (e.Effect is DealDamageEffect || e.Effect is StatusComboDamageEffect)));
         if (!damage) return;
         Play(IsFireCard(card) ? BattleSound.FireCast : SelectedHero.IsMage ? BattleSound.MagicCast :
             SelectedHero.IsArcher ? BattleSound.ArrowRelease : BattleSound.SwordSwing);

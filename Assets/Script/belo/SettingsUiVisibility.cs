@@ -7,6 +7,10 @@ public sealed class SettingsUiVisibility : MonoBehaviour
     private static SettingsUiVisibility instance;
     private readonly Dictionary<CanvasGroup, State> hidden = new Dictionary<CanvasGroup, State>();
     private readonly Dictionary<CanvasGroup, bool> overrides = new Dictionary<CanvasGroup, bool>();
+    private readonly HashSet<Canvas> roots = new HashSet<Canvas>();
+    private const float DynamicUiRefreshInterval = 1f;
+    private float nextDynamicUiRefresh;
+    private bool lastSettingsOpen;
     private struct State { public float alpha; public bool interactable, raycasts; }
 
     public static void EnsureInstance()
@@ -19,17 +23,45 @@ public sealed class SettingsUiVisibility : MonoBehaviour
     {
         // A newly opened modal may live below a branch hidden on the previous
         // frame. Restore first, then evaluate the newly protected hierarchy.
-        if (instance != null) { instance.Restore(); instance.Refresh(); }
+        if (instance != null)
+        {
+            instance.Restore();
+            instance.lastSettingsOpen = GameControlsGuide.SettingsOpen;
+            if (instance.lastSettingsOpen)
+            {
+                instance.Refresh();
+                instance.nextDynamicUiRefresh = Time.unscaledTime + DynamicUiRefreshInterval;
+            }
+        }
     }
-    void OnEnable() => Canvas.willRenderCanvases += Refresh;
-    void OnDisable() { Canvas.willRenderCanvases -= Refresh; Restore(); }
-    void LateUpdate() => Refresh();
+    void OnDisable() => Restore();
+
+    void LateUpdate()
+    {
+        bool settingsOpen = GameControlsGuide.SettingsOpen;
+        if (!settingsOpen)
+        {
+            if (hidden.Count > 0 || overrides.Count > 0) Restore();
+            lastSettingsOpen = false;
+            return;
+        }
+
+        // Scan once on open, then occasionally to catch UI added while the
+        // modal is active. The old willRenderCanvases + LateUpdate pair walked
+        // every Canvas hierarchy twice per frame, which could stall battles.
+        if (!lastSettingsOpen || Time.unscaledTime >= nextDynamicUiRefresh)
+        {
+            Refresh();
+            lastSettingsOpen = true;
+            nextDynamicUiRefresh = Time.unscaledTime + DynamicUiRefreshInterval;
+        }
+    }
 
     void Refresh()
     {
         if (!GameControlsGuide.SettingsOpen) { Restore(); return; }
         // Include newly authored UI and canvases created while settings is open.
-        var roots = new HashSet<Canvas>();
+        roots.Clear();
         foreach (var canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None)) roots.Add(canvas.rootCanvas);
         foreach (var canvas in roots) HideOutsideSettings(canvas.transform);
     }

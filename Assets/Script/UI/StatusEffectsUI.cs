@@ -5,6 +5,7 @@ public class StatusEffectsUI : MonoBehaviour
 {
     [SerializeField] private StatusEffectUI statusEffectsUIPrefab;
     [SerializeField] private Sprite armorSprite, burnSprite;
+    [SerializeField] private Sprite poisonSprite, bleedSprite, frostSprite, natureSprite;
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
     private bool compactHudIcons;
 
@@ -71,7 +72,7 @@ public class StatusEffectsUI : MonoBehaviour
                 if (compactHudIcons) ConfigureHudIcon(statusEffectUI.transform);
             }
             Sprite sprite = GetSpriteByType(statusEffectType);
-            statusEffectUIs[statusEffectType].Set(sprite, stackCount);
+            statusEffectUIs[statusEffectType].Set(statusEffectType, sprite, stackCount);
         }
     }
     private Sprite GetSpriteByType(StatusEffectType statusEffectType)
@@ -80,14 +81,25 @@ public class StatusEffectsUI : MonoBehaviour
         {
             StatusEffectType.ARMOR => armorSprite,
             StatusEffectType.BURN => burnSprite,
+            StatusEffectType.POISON => poisonSprite,
+            StatusEffectType.BLEED => bleedSprite,
+            StatusEffectType.FROST => frostSprite,
+            StatusEffectType.NATURE => natureSprite,
             _ => null,
         };
     }
 
     private static void ConfigureHudIcon(Transform iconTransform)
     {
+        var statusUI = iconTransform.GetComponent<StatusEffectUI>();
+        if (statusUI != null)
+        {
+            statusUI.ConfigureForStatusHud();
+            return;
+        }
+
         var iconRect = iconTransform as RectTransform;
-        if (iconRect != null) iconRect.sizeDelta = new Vector2(30, 30);
+        if (iconRect != null) iconRect.sizeDelta = new Vector2(36, 44);
         var image = iconTransform.GetComponentInChildren<UnityEngine.UI.Image>(true);
         if (image != null)
         {
@@ -99,11 +111,12 @@ public class StatusEffectsUI : MonoBehaviour
         if (stackText != null)
         {
             var textRect = stackText.rectTransform;
-            textRect.anchorMin = textRect.anchorMax = new Vector2(0.5f, 0.5f);
-            textRect.pivot = new Vector2(0.5f, 0.5f);
-            textRect.anchoredPosition = new Vector2(10, -4);
-            textRect.sizeDelta = new Vector2(30, 30);
-            stackText.fontSize = 15;
+            textRect.anchorMin = new Vector2(0.5f, 0);
+            textRect.anchorMax = new Vector2(0.5f, 0);
+            textRect.pivot = new Vector2(0.5f, 0);
+            textRect.anchoredPosition = Vector2.zero;
+            textRect.sizeDelta = new Vector2(28, 15);
+            stackText.fontSize = 12;
             stackText.alignment = TMPro.TextAlignmentOptions.Center;
             stackText.raycastTarget = false;
         }

@@ -36,6 +36,14 @@ automatically. The game still keeps a local inventory copy so battles work
 offline. Battle decks are built from owned copies only. Legacy saves are seeded
 with the configured starter deck during the existing one-time migration.
 
+Run `class_card_library_seed.sql` after `card_inventory_schema.sql` to add the
+90 playable Warrior, Archer, and Mage library cards to `public.cards`. They are
+class-restricted Syntax Merchant offers; purchase adds them to saved inventory
+and the battle deck. They are not added to the five-card starter deck. If this
+seed is skipped, local play still works, but Supabase inventory sync cannot
+store ownership rows for those new card keys because the database foreign key
+requires a matching master card row.
+
 The `cards` table is the editable master catalog, while battle behavior and
 visuals remain authored in Unity `CardData` assets. `game_card_key` connects the
 two; changing an asset's effects still requires a Unity project change.

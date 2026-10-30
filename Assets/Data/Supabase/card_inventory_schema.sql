@@ -52,14 +52,14 @@ on conflict (game_card_key) do nothing;
 
 create table if not exists public.player_card_inventory_slots (
     user_id uuid not null references auth.users(id) on delete cascade,
-    slot_index smallint not null check (slot_index between 0 and 2),
+    slot_index smallint not null check (slot_index between 0 and 9),
     updated_at timestamptz not null default now(),
     primary key (user_id, slot_index)
 );
 
 create table if not exists public.player_card_inventory (
     user_id uuid not null references auth.users(id) on delete cascade,
-    slot_index smallint not null check (slot_index between 0 and 2),
+    slot_index smallint not null check (slot_index between 0 and 9),
     game_card_key text not null references public.cards(game_card_key) on update cascade on delete restrict,
     quantity integer not null check (quantity > 0),
     level integer not null default 1 check (level between 1 and 5),
@@ -100,7 +100,7 @@ begin
     if auth.uid() is null then
         raise exception 'Sign in required';
     end if;
-    if p_slot_index < 0 or p_slot_index > 2 then
+    if p_slot_index < 0 or p_slot_index > 9 then
         raise exception 'Invalid save slot';
     end if;
     if coalesce(jsonb_typeof(p_cards), '') <> 'array' then

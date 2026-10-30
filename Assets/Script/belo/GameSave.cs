@@ -146,6 +146,7 @@ public class GameSave : MonoBehaviour
             if (player != null) PlaceAtTutorial(player);
         }
         pendingRestore = null;
+        LevelUpCelebration.PlayPending();
     }
 
     IEnumerator StartAtTutorial()

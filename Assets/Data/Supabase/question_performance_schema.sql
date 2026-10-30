@@ -42,7 +42,7 @@ where topic = 'general' and id ~ '^(java|csharp|python)-(e|m|h)[0-9]{2}$';
 create table if not exists public.player_question_attempts (
     attempt_id uuid primary key,
     user_id uuid not null references auth.users(id) on delete cascade,
-    slot_index integer not null check (slot_index between 0 and 2),
+    slot_index integer not null check (slot_index between 0 and 9),
     question_id text not null,
     topic text not null default 'general',
     language text not null check (language in ('java', 'csharp', 'python')),

@@ -45,5 +45,6 @@ public static class PlayerProgression
             int previous=saved.maxHealth>0?saved.maxHealth:heroClass.GetHealthForLevel(before);
             saved.currentHealth=Mathf.Clamp(saved.currentHealth+maximum-previous,0,maximum);saved.maxHealth=maximum;
         }
+        if(saved.level>before&&Application.isPlaying)LevelUpCelebration.Request();
     }
 }

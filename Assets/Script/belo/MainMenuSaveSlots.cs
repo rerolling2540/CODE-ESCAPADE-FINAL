@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class MainMenuSaveSlots : MonoBehaviour
 {
+    private const int SlotsPerPage = 3;
+    private int slotPage;
     private const string AdminEmail = "adeventurerank60@gmail.com";
 
     public CharacterSelector characterSelector;
@@ -474,6 +476,7 @@ public class MainMenuSaveSlots : MonoBehaviour
         if (open) return;
 
         open = true;
+        slotPage = SaveSlots.Active / SlotsPerPage;
         confirmOverwrite = false;
         confirmDelete = false;
 
@@ -1236,11 +1239,11 @@ public class MainMenuSaveSlots : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("StoryScene");
     }
 
-    void DrawSlot(int index)
+    void DrawSlot(int index, int row)
     {
         var saved = SaveSlots.Read(index);
 
-        float y = 198 + index * 94;
+        float y = 198 + row * 94;
         bool isSelected = index == SaveSlots.Active;
 
         Rect slotRect = new Rect(277, y, 726, 80);
@@ -1764,7 +1767,7 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         GUI.Label(
             new Rect(290, 132, 700, 28),
-            "Select your save slot and continue your journey.",
+            "Select your save slot · Selected: Slot " + (SaveSlots.Active + 1) + " of " + SaveSlots.Count,
             subtitleStyle
         );
 
@@ -1799,9 +1802,12 @@ public class MainMenuSaveSlots : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < SaveSlots.Count; i++)
+            int pageCount = (SaveSlots.Count + SlotsPerPage - 1) / SlotsPerPage;
+            slotPage = Mathf.Clamp(slotPage, 0, pageCount - 1);
+            for (int row = 0; row < SlotsPerPage; row++)
             {
-                DrawSlot(i);
+                int index = slotPage * SlotsPerPage + row;
+                if (index < SaveSlots.Count) DrawSlot(index, row);
             }
 
             var selected = SaveSlots.Read(SaveSlots.Active);
@@ -1856,11 +1862,13 @@ public class MainMenuSaveSlots : MonoBehaviour
                 Close
             );
 
-            GUI.Label(
-                new Rect(280, 555, 720, 28),
-                "PROGRESS AUTOSAVES DURING EXPLORATION",
-                footerStyle
-            );
+            GUI.enabled = slotPage > 0;
+            DrawActionButton(new Rect(277, 548, 166, 36), "< PREVIOUS", () => slotPage--);
+            GUI.enabled = true;
+            GUI.Label(new Rect(454, 552, 343, 28), "PAGE " + (slotPage + 1) + " / " + pageCount, footerStyle);
+            GUI.enabled = slotPage < pageCount - 1;
+            DrawActionButton(new Rect(808, 548, 195, 36), "NEXT >", () => slotPage++);
+            GUI.enabled = true;
 
             GUI.Label(
                 new Rect(280, 583, 720, 25),

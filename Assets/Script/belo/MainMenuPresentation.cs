@@ -40,8 +40,8 @@ public sealed class MainMenuPresentation : MonoBehaviour
         int used = 0;
         for (int i = 0; i < SaveSlots.Count; i++) if (SaveSlots.Read(i) != null) used++;
         if (saveStatus != null) saveStatus.text = used == 0
-            ? "Your first adventure awaits · 3 save slots"
-            : used + " / 3 save slots used · Continue or begin anew";
+            ? "Your first adventure awaits · " + SaveSlots.Count + " save slots"
+            : used + " / " + SaveSlots.Count + " save slots used · Continue or begin anew";
     }
 
     private void Update()

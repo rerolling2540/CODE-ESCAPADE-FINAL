@@ -13,6 +13,13 @@ The service-role key must never be placed in the Unity client. The SQL policy al
 
 ## Cross-device player saves
 
+The game supports ten save slots. Existing Supabase projects must run
+`ten_save_slots_migration.sql` after the inventory and performance schemas to
+allow slots 4–10 in normalized inventory and question history. It preserves
+existing rows and extends the inventory RPC's accepted indexes to 0–9.
+New projects can run the updated base schemas instead. Local slots work without
+this migration; cloud uploads for additional slots require it.
+
 Run `player_saves_schema.sql` in the same Supabase project's SQL Editor. The Unity login flow automatically uploads guest save slots and inventory to the signed-in user's row, or downloads the account save when the device has no local progress. If both sides have progress, it merges slot by slot and keeps the newer version of each slot with its matching inventory. Changes to save slots and inventory sync while the session is active. Row-level security restricts each user to their own save.
 
 ## Card columns

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class SaveSlots
 {
-    public const int Count = 3;
+    public const int Count = 10;
     public static event Action LocalSaveChanged;
     public static event Action ProfileChanged;
     private static bool applyingCloudSnapshot;

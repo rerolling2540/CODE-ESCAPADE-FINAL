@@ -151,7 +151,7 @@ public sealed class BattleSettingsMenu : MonoBehaviour
     {
         if (panel != null && inputBlocker != null && inputBlocker.gameObject.activeSelf != panel.activeSelf)
             inputBlocker.gameObject.SetActive(panel.activeSelf);
-        if (panel != null && panel.activeSelf && Input.GetKeyDown(KeyCode.Escape)) CloseSettings();
+        if (panel != null && panel.activeSelf && Input.GetKeyDown(KeyCode.Escape)&&!GameControlsGuide.TryCloseSettingsGuide(panel)) CloseSettings();
     }
 
     private static Button FindButton(Transform root, string objectName)

@@ -81,18 +81,44 @@ public sealed class FirstEncounterGuide : MonoBehaviour
         if(!saved.seenTutorialTips.Contains(tip.id)){saved.seenTutorialTips.Add(tip.id);SaveSlots.Write(saved);}
     }
     bool Hidden=>!CharacterAlmanac.IsExplorationScene(SceneManager.GetActiveScene().name)||GameControlsGuide.MapHidden||SceneTransitionFader.IsTransitioning;
+    bool Relevant(Tip tip)
+    {
+        if(player==null||tip==null||tip.target==null||!tip.target.gameObject.activeInHierarchy||tip.target.gameObject.scene!=player.gameObject.scene)return false;
+        var cycle=tip.target.GetComponent<TimedTrapCycle2D>();
+        if(cycle!=null&&tip.id=="trap") {if(cycle.CurrentPhase==TimedTrapCycle2D.Phase.Disabled)return false;}
+        else if(!tip.target.isActiveAndEnabled)return false;
+        if(tip.target is ElectricalTrapSwitch2D lever&&!lever.IsPowered)return false;
+        if(tip.target is CardRewardChest chest&&chest.IsOpened)return false;
+        if(tip.target is DemonDoor door&&door.IsOpened)return false;
+        var visual=tip.target.GetComponentInChildren<SpriteRenderer>();
+        var collider=tip.target.GetComponent<Collider2D>();
+        Vector3 anchor=visual!=null&&visual.enabled?visual.bounds.center:collider!=null?collider.bounds.center:tip.target.transform.position;
+        var body=player.GetComponent<Collider2D>();Vector3 origin=body!=null?body.bounds.center:player.transform.position;
+        float radius=Mathf.Min(tip.radius,tip.id=="boss"?8f:tip.id=="trap"?4f:5f);
+        if(Vector2.Distance(origin,anchor)>radius)return false;
+        var camera=Camera.main;if(camera==null)return false;
+        Vector3 viewport=camera.WorldToViewportPoint(anchor);
+        if(viewport.z<=0||viewport.x<0||viewport.x>1||viewport.y<0||viewport.y>1)return false;
+        // A nearby trap in a cave below the village is not an encounter.
+        foreach(var hit in Physics2D.LinecastAll(origin,anchor))
+        {
+            if(hit.collider==null||hit.collider.isTrigger||hit.transform.IsChildOf(player.transform)||hit.transform.IsChildOf(tip.target.transform))continue;
+            return false;
+        }
+        return true;
+    }
     void Update()
     {
         if(slot!=SaveSlots.Active){slot=SaveSlots.Active;current=null;scanAt=0;}
         if(Hidden)return;
         if(player==null)player=FindFirstObjectByType<playerMovement>();
         if(player==null)return;
-        if(current!=null){remaining-=Time.unscaledDeltaTime;if(remaining<=0)current=null;return;}
+        if(current!=null){remaining-=Time.unscaledDeltaTime;if(remaining<=0||!Relevant(current))current=null;else return;}
         if(Time.unscaledTime>=scanAt){Scan();scanAt=Time.unscaledTime+2;}
         Tip nearest=null;float best=float.PositiveInfinity;
         foreach(var tip in targets)
         {
-            if(tip.target==null||!tip.target.isActiveAndEnabled||Seen(tip.id))continue;
+            if(!Relevant(tip)||Seen(tip.id))continue;
             float distance=Vector2.Distance(player.transform.position,tip.target.transform.position);
             if(distance<=tip.radius&&distance<best){nearest=tip;best=distance;}
         }
@@ -100,7 +126,7 @@ public sealed class FirstEncounterGuide : MonoBehaviour
     }
     void OnGUI()
     {
-        if(current==null||Hidden)return;
+        if(current==null||Hidden||!Relevant(current))return;
         if(panel==null)
         {
             panel=new GUIStyle(GUI.skin.box);MedievalNotice.Apply(panel);

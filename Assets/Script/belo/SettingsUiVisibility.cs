@@ -27,6 +27,8 @@ public sealed class SettingsUiVisibility : MonoBehaviour
 
     void Refresh()
     {
+        // MainMenuPresentation already owns home/modal visibility and focus.
+        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name=="MainMenu"){Restore();return;}
         if (!GameControlsGuide.SettingsOpen) { Restore(); return; }
         // Include newly authored UI and canvases created while settings is open.
         var roots = new HashSet<Canvas>();

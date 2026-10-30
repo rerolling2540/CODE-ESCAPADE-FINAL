@@ -220,6 +220,16 @@ public static class GameControlsGuide
         if (Application.isPlaying)
             foreach (var hud in Object.FindObjectsByType<ExplorationHUD>(FindObjectsSortMode.None)) hud.CloseInventoryFromButton();
         RegisterSettings(panel);
+        TryCloseSettingsGuide(panel);
+        if(panel.scene.name=="MainMenu")
+        {
+            foreach(string name in new[]{"Controls Guide Button","Tutorial Tips Button","Settings Controls Guide","Settings Tutorial Tips"})
+            {
+                var extra=panel.transform.Find(name);
+                if(extra!=null)extra.gameObject.SetActive(false);
+            }
+            return;
+        }
         if (panel.transform.Find("Controls Guide Button") != null) return;
         var template = panel.GetComponentInChildren<TMPro.TMP_Text>(true);
         var lobby = panel.transform.Find("Lobby") as RectTransform;
@@ -228,11 +238,18 @@ public static class GameControlsGuide
         {
             var copy = Object.Instantiate(lobby.gameObject, panel.transform);
             copy.name = "Controls Guide Button";
+            copy.SetActive(true);
             button = copy.GetComponent<UnityEngine.UI.Button>();
             // Keep the Lobby artwork and typography, but never copy its navigation action.
             button.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
             var caption = copy.GetComponentInChildren<TMPro.TMP_Text>(true);
-            if (caption != null) caption.text = "CONTROLS";
+            if (caption != null)
+            {
+                caption.text="CONTROLS";caption.enabled=true;caption.gameObject.SetActive(true);
+                caption.color=new Color(1,.88f,.61f);caption.enableAutoSizing=true;caption.fontSizeMin=16;caption.fontSizeMax=26;
+                var labelRect=(RectTransform)caption.transform;
+                labelRect.anchorMin=Vector2.zero;labelRect.anchorMax=Vector2.one;labelRect.offsetMin=new Vector2(8,4);labelRect.offsetMax=new Vector2(-8,-4);
+            }
         }
         else button = Button(panel.transform, "Controls Guide Button", "CONTROLS", template);
         var rect = (RectTransform)button.transform;
@@ -290,18 +307,35 @@ public static class GameControlsGuide
             tipsPanel.SetActive(true);tipsPanel.transform.SetAsLastSibling();
         });
         var actions=new System.Collections.Generic.List<RectTransform>();
-        if(lobby!=null)actions.Add(lobby);
+        bool mainMenu=panel.scene.name=="MainMenu";
+        if(mainMenu)
+        {
+            var note=panel.transform.Find("Settings Note") as RectTransform;
+            if(note!=null){note.anchorMin=note.anchorMax=note.pivot=new Vector2(.5f,.5f);note.anchoredPosition=new Vector2(0,-110);note.sizeDelta=new Vector2(580,18);}
+        }
+        if(lobby!=null&&!mainMenu)actions.Add(lobby);
         var saveAction=panel.transform.Find("Save Game Button") as RectTransform;
         if(saveAction!=null)actions.Add(saveAction);
         actions.Add(rect);actions.Add((RectTransform)tips.transform);
-        float baseY=lobby!=null?lobby.anchoredPosition.y:-182;
+        float baseY=mainMenu?-142:lobby!=null?lobby.anchoredPosition.y:-182;
         float actionWidth=Mathf.Min(230f,((RectTransform)panel.transform).rect.width*.36f);
         for(int i=0;i<actions.Count;i++)
         {
             var action=actions[i];action.anchorMin=action.anchorMax=action.pivot=new Vector2(.5f,.5f);
-            action.sizeDelta=new Vector2(actionWidth,60);
+            action.sizeDelta=new Vector2(actionWidth,mainMenu?46:60);
             action.anchoredPosition=new Vector2((i%2==0?-1:1)*(actionWidth+20)/2,baseY+(i/2)*74);
         }
+    }
+
+    public static bool TryCloseSettingsGuide(GameObject panel)
+    {
+        if(panel==null)return false;
+        foreach(string name in new[]{"Settings Tutorial Tips","Settings Controls Guide"})
+        {
+            var guide=panel.transform.Find(name);
+            if(guide!=null&&guide.gameObject.activeSelf){guide.gameObject.SetActive(false);return true;}
+        }
+        return false;
     }
 
     static UnityEngine.UI.Button Button(Transform parent, string name, string caption, TMPro.TMP_Text template)

@@ -201,7 +201,10 @@ public sealed class FallTrapCheckpointSystem : MonoBehaviour
     private void Respawn()
     {
         if (player == null) return;
-        Vector2 destination = checkpointPosition;
+        Vector3 safe;
+        if(!SafeCheckpoint.TryFind(player,checkpointPosition,out safe)&&!SafeCheckpoint.TryFind(player,startPosition,out safe))
+        {respawnAt=-1f;GameSave.EnsureInstance().ContinueFromCheckpoint();return;}
+        Vector2 destination = safe;
         Rigidbody2D body = player.rb != null ? player.rb : player.GetComponent<Rigidbody2D>();
         if (body != null)
         {

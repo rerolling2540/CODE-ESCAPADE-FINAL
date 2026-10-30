@@ -1109,7 +1109,7 @@ public class EncounterBattleReturn : MonoBehaviour
         Time.timeScale = 1f;
         var saved = SaveSlots.Read(SaveSlots.Active);
         if (caveBattle && saved != null && Application.CanStreamedLevelBeLoaded(saved.scene))
-            GameSave.EnsureInstance().ContinueGame();
+            GameSave.EnsureInstance().ReturnFromBattle();
         else SceneManager.LoadScene("MainMenu");
     }
 

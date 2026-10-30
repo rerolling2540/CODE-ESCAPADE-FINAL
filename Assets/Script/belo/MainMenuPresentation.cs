@@ -65,6 +65,7 @@ public sealed class MainMenuPresentation : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if(settingsPanel!=null&&settingsPanel.activeInHierarchy&&GameControlsGuide.TryCloseSettingsGuide(settingsPanel))return;
             if (modalLayer.activeSelf) CloseModal();
             else ShowQuit();
         }
@@ -80,6 +81,8 @@ public sealed class MainMenuPresentation : MonoBehaviour
         foreach (var panel in new[] {settingsPanel, storyPanel, helpPanel, aboutPanel, quitPanel})
             if (panel != null) panel.SetActive(false);
         modalLayer.SetActive(false);
+        GameControlsGuide.TryCloseSettingsGuide(settingsPanel);
+        SettingsUiVisibility.RefreshNow();
         home.interactable = true;
         home.blocksRaycasts = true;
     }

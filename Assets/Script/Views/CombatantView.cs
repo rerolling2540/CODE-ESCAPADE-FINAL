@@ -27,7 +27,9 @@ public class CombatantView : MonoBehaviour
     public int AttackDamageBonus { get; private set; }
     public int AttackPower { get; protected set; } = 30;
     public int Defense { get; private set; }
+    public StatusEffectsUI StatusEffectsUI => statusEffectsUI;
     public SpriteRenderer MainSpriteRenderer => spriteRenderer;
+    public RectTransform HealthSliderRect => healthSlider != null ? healthSlider.GetComponent<RectTransform>() : null;
     public Vector3 VisualCenter => BattleBodyBounds.center;
     // Attack placement must not depend on transparent frame padding, a weapon
     // swing, or a hurt pose. These anchors follow the combatant root instead.
@@ -47,6 +49,45 @@ public class CombatantView : MonoBehaviour
         spriteRenderer.transform.parent.TransformPoint(new Vector3(visualPosition.x,footY,visualPosition.z)).y : VisualBounds.min.y;
     public Bounds VisualBounds => spriteRenderer != null ? spriteRenderer.bounds : new Bounds(transform.position, Vector3.one);
     public bool IsHovering => hovering;
+
+    public void ConfigureHudHealthBar(RectTransform barRect)
+    {
+        if (barRect == null) return;
+
+        healthBarRect = barRect;
+        baseWidth = barRect.sizeDelta.x;
+        baseHealth = Mathf.Max(1, MaxHealth);
+        // Let the bar grow with max HP while keeping it inside the compact HUD.
+        maxWidth = Mathf.Max(baseWidth, Mathf.Min(maxWidth, 480f));
+
+        // The battle HUD reuses the health slider from the old exploration HUD.
+        // Move its label with the slider so hiding that old panel cannot leave
+        // an orphaned HP label behind or place the text outside the new bar.
+        if (healthText != null)
+        {
+            RectTransform label = healthText.rectTransform;
+            label.SetParent(barRect, false);
+            label.anchorMin = Vector2.zero;
+            label.anchorMax = Vector2.one;
+            label.pivot = new Vector2(0.5f, 0.5f);
+            label.anchoredPosition = Vector2.zero;
+            label.sizeDelta = Vector2.zero;
+            label.SetAsLastSibling();
+            healthText.alignment = TextAlignmentOptions.Center;
+            healthText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            healthText.verticalAlignment = VerticalAlignmentOptions.Middle;
+            healthText.enableAutoSizing = true;
+            healthText.fontSizeMin = 12f;
+            healthText.fontSizeMax = 18f;
+            healthText.enableWordWrapping = false;
+            healthText.margin = Vector4.zero;
+            healthText.color = Color.white;
+            healthText.raycastTarget = false;
+            healthTextBoundToSlider = true;
+        }
+
+        UpdateHealthUI();
+    }
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
     private bool deathQueued;
@@ -416,8 +457,15 @@ public class CombatantView : MonoBehaviour
         label.anchoredPosition = Vector2.zero;
         label.sizeDelta = Vector2.zero;
         label.SetAsLastSibling();
+        healthText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+        healthText.verticalAlignment = VerticalAlignmentOptions.Middle;
         healthText.alignment = TextAlignmentOptions.Center;
         healthText.fontSize = 18f;
+        healthText.enableAutoSizing = true;
+        healthText.fontSizeMin = 12f;
+        healthText.fontSizeMax = 18f;
+        healthText.enableWordWrapping = false;
+        healthText.margin = Vector4.zero;
         healthText.color = Color.white;
         healthText.raycastTarget = false;
         healthTextBoundToSlider = true;
@@ -456,19 +504,28 @@ public class CombatantView : MonoBehaviour
         hitDirection = spriteRenderer != null && spriteRenderer.transform.TransformVector(Vector3.right).x * (spriteRenderer.flipX ? -1f : 1f) > 0f ? -1f : 1f;
         UpdateHealthUI();
         int healthDamage = healthBefore - CurrentHealth;
-        if(this is HeroView&&healthDamage>0&&CurrentHealth>0&&spriteRenderer!=null)
+        if (this is HeroView && healthDamage > 0 && CurrentHealth > 0 && spriteRenderer != null && restingSprite != null)
         {
-            var bank=Resources.Load<CharacterHurtFrames>("PlayerDeath/Hurt");
-            if(bank!=null)
+            var bank = Resources.Load<CharacterHurtFrames>("PlayerDeath/Hurt");
+            if (bank != null)
             {
-                int character=PlayerPrefs.GetInt("SelectedCharacter",0);
-                hurtUsesFootPivot=character==SelectedHero.ArcherIndex||character==SelectedHero.MageIndex;
-                heroHurtFrames=bank.Frames(character,restingSprite.pixelsPerUnit);
-                hurtAnimationStart=Time.time;hurtAnimationUntil=Time.time+heroHurtFrames.Length/10f;
+                int character = PlayerPrefs.GetInt("SelectedCharacter", 0);
+                hurtUsesFootPivot = character == SelectedHero.ArcherIndex || character == SelectedHero.MageIndex;
+                heroHurtFrames = bank.Frames(character, restingSprite.pixelsPerUnit);
+                if (heroHurtFrames != null && heroHurtFrames.Length > 0)
+                {
+                    hurtAnimationStart = Time.time;
+                    hurtAnimationUntil = Time.time + heroHurtFrames.Length / 10f;
+                }
             }
         }
         if (this is HeroView && Application.isPlaying) PlayerHealth.Set(CurrentHealth, MaxHealth);
-        if (healthDamage > 0) ShowDamageIndicator(healthDamage);
+        if (healthDamage > 0)
+        {
+            ShowDamageIndicator(healthDamage);
+            if (this is HeroView || this is EnemyView)
+                BattleHudMedieval.GainEpFromDamage();
+        }
         if (CurrentHealth <= 0 && !deathQueued && this is EnemyView enemy && ActionSystem.Instance != null)
         {
             deathQueued = true;

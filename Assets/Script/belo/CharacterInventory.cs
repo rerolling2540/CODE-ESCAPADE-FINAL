@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CharacterInventory : MonoBehaviour
 {
+    private const int CurrentStarterCardsVersion = 3;
     private static CharacterInventory activeInstance;
     public static event Action InventoryChanged;
     [Serializable] public class CatalogEntry { public string id; public CardData card; }
@@ -79,7 +80,7 @@ public class CharacterInventory : MonoBehaviour
             }
             catch (ArgumentException) { Debug.LogWarning("Inventory save could not be read; restoring starter cards."); }
         }
-        if (!loaded || data.starterCardsVersion < 2)
+        if (!loaded || data.starterCardsVersion < CurrentStarterCardsVersion)
         {
             bool complete = starterHero != null && starterHero.Deck != null;
             if (starterHero != null && starterHero.Deck != null)
@@ -93,7 +94,7 @@ public class CharacterInventory : MonoBehaviour
                 }
             if (complete)
             {
-                data.starterCardsVersion = 2;
+                data.starterCardsVersion = CurrentStarterCardsVersion;
                 Debug.Log($"Initialized {starterHero.name} starter inventory with {starterHero.Deck.Count} card(s) in save slot {loadedSlot + 1}.");
             }
             Save();
@@ -255,12 +256,64 @@ public class CharacterInventory : MonoBehaviour
 
     public static List<CardData> WithChestRewards(List<CardData> starterDeck)
     {
+        SaveData saved = null;
+        bool hasSavedInventory = PlayerPrefs.HasKey(SaveKey);
+        if (hasSavedInventory)
+        {
+            try
+            {
+                saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey));
+                if (saved == null)
+                {
+                    Debug.LogError("The saved card inventory is empty or invalid. Using this hero's starter deck for this battle without overwriting the save.");
+                    return starterDeck != null ? new List<CardData>(starterDeck.FindAll(card => card != null)) : new List<CardData>();
+                }
+            }
+            catch (ArgumentException)
+            {
+                Debug.LogError("The saved card inventory could not be read. Using this hero's starter deck for this battle without overwriting the save.");
+                return starterDeck != null ? new List<CardData>(starterDeck.FindAll(card => card != null)) : new List<CardData>();
+            }
+        }
+
+        // A fresh profile can enter a battle before the exploration scene has created
+        // CharacterInventory. Seed only this hero's five starter cards, never the full catalog.
+        saved ??= new SaveData();
+        saved.cards ??= new List<Stack>();
+        if (saved.starterCardsVersion < CurrentStarterCardsVersion)
+        {
+            bool complete = starterDeck != null;
+            if (starterDeck != null)
+            {
+                foreach (CardData card in starterDeck)
+                {
+                    if (card == null) { complete = false; continue; }
+                    string id = SharedId(card);
+                    if (string.IsNullOrWhiteSpace(id))
+                    {
+                        complete = false;
+                        Debug.LogWarning($"Starter card '{card.name}' has no inventory catalog ID; it is available for this battle but could not be saved to inventory.");
+                        continue;
+                    }
+
+                    Stack owned = saved.cards.Find(stack => stack != null && stack.id == id);
+                    if (owned == null)
+                        saved.cards.Add(new Stack { id = id, quantity = 1, level = 1 });
+                }
+            }
+
+            if (complete) saved.starterCardsVersion = CurrentStarterCardsVersion;
+            // Do not overwrite a malformed existing save. A genuinely new save is safe to initialize here.
+            if (!hasSavedInventory || saved.starterCardsVersion == CurrentStarterCardsVersion)
+            {
+                PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(saved));
+                PlayerPrefs.Save();
+                InventoryChanged?.Invoke();
+            }
+        }
+
+        if (saved.cards == null) return new List<CardData>();
         var deck = new List<CardData>();
-        if (!PlayerPrefs.HasKey(SaveKey)) return deck;
-        SaveData saved;
-        try { saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey)); }
-        catch (ArgumentException) { return deck; }
-        if (saved?.cards == null) return deck;
         // Ownership controls playable copies, including purchased cards and consumed duplicates.
         var available=new Dictionary<string,CardData>();
         if (starterDeck != null)

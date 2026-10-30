@@ -81,16 +81,16 @@ public sealed class BattleTutorialGuide : MonoBehaviour
             !EncounterBattleReturn.BattleEnded&&HeroSystem.Instance!=null&&HeroSystem.Instance.HeroView.CurrentHealth>0&&EnemySystem.Instance.Enemies.Count>0)
         {
             turnSummaryPending=false;
-            ShowModal("YOUR NEXT TURN","The enemy has finished its turn. Your mana refills to 3, the old hand is discarded, and 5 cards are drawn.\n\nCheck your health, choose cards you can afford, and keep reducing the enemy's health. Guard or armor cards help you survive. You can now finish the practice battle at your own pace.","Continue practice",null);
+            ShowModal("YOUR NEXT TURN","The enemy has finished its turn. Your mana refills to 5, the old hand is discarded, and 5 cards are drawn.\n\nCheck your health, choose cards you can afford, and keep reducing the enemy's health. Guard or armor cards help you survive. You can now finish the practice battle at your own pace.","Continue practice",null);
         }
     }
 
     private static readonly string[] IntroTitles={"FIELD TRAINING  /  1 OF 4","YOUR HAND AND MANA  /  2 OF 4","CARDS AND QUESTIONS  /  3 OF 4","TURNS AND VICTORY  /  4 OF 4"};
     private static readonly string[] IntroText={
             "This is a practice battle against a weak training goblin.\n\nYour health bar shows how much damage you can take. The enemy has its own health bar and an ATK value. Reduce its health to zero to win. If yours reaches zero, the battle ends in defeat.\n\nThe guide pauses the battle while you read.",
-            "Your cards are shown along the bottom. Hover over a card to read its effect and mana cost.\n\nYou have 3 mana each turn. You can play several cards as long as you can pay their costs. An unaffordable card cannot be used.\n\nAttack cards deal damage; support cards can give armor or other effects.",
+            "Your cards are shown along the bottom. Hover over a card to read its effect and mana cost.\n\nYou have 5 mana each turn, shown by the blue orbs near your health display. You can play several cards as long as you can pay their costs. An unaffordable card cannot be used.\n\nAttack cards deal damage; support cards can give armor or other effects.",
             "For a card that needs an enemy target, drag its targeting arrow onto the goblin and release. For a card without a target, drag it upward out of your hand and release.\n\nA programming question appears before the card resolves. A correct answer activates the effect. A wrong answer or timeout lets the enemy counterattack. The card and mana are still spent.",
-            "When you have finished playing cards, press End Turn. The enemy attacks, your old hand is discarded, mana refills to 3, and you draw 5 cards.\n\nThis practice battle gives you 60 seconds per question. Defeat the goblin to return to the opening area. Retreat also returns you, but leaves the goblin available to try again."
+            "When you have finished playing cards, press End Turn. The enemy attacks, your old hand is discarded, mana refills to 5, and you draw 5 cards.\n\nThis practice battle gives you 60 seconds per question. Defeat the goblin to return to the opening area. Retreat also returns you, but leaves the goblin available to try again."
         };
 
     void ShowIntro(int page)
@@ -183,7 +183,7 @@ public sealed class BattleTutorialGuide : MonoBehaviour
         var guide=instance;
         if(guide==null||guide.skipped||guide.explainedTurn)return false;
         guide.explainedTurn=true;
-        guide.ShowModal("WATCH THE ENEMY TURN","End Turn hands control to the enemy. Watch the attack and your health bar.\n\nAfter the enemy finishes, your mana refills to 3 and a new hand of 5 cards is drawn. Unplayed cards go to the discard pile. When the draw pile runs out, discarded cards are shuffled back in.\n\nYou can inspect the draw and discard piles by clicking their icons.","Start enemy turn",proceed);
+        guide.ShowModal("WATCH THE ENEMY TURN","End Turn hands control to the enemy. Watch the attack and your health bar.\n\nAfter the enemy finishes, your mana refills to 5 and a new hand of 5 cards is drawn. Unplayed cards go to the discard pile. When the draw pile runs out, discarded cards are shuffled back in.\n\nYou can inspect the draw and discard piles by clicking their icons.","Start enemy turn",proceed);
         return true;
     }
     public static IEnumerator ExplainResult(bool victory)

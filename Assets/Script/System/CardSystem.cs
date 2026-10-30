@@ -82,7 +82,8 @@ public class CardSystem : Singleton<CardSystem>
         if (battleCamera != null)
         {
             float cameraDepth = Mathf.Abs(battleCamera.transform.position.z);
-            Vector3 drawPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.045f, 0.20f, cameraDepth));
+            // Keep the draw-pile icon above the EP star stack on the left HUD.
+            Vector3 drawPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.045f, 0.46f, cameraDepth));
             Vector3 discardPosition = battleCamera.ViewportToWorldPoint(new Vector3(0.955f, 0.20f, cameraDepth));
             drawPosition.z = discardPosition.z = 0f;
             drawPilePoint.position = drawPosition;
@@ -284,6 +285,7 @@ public class CardSystem : Singleton<CardSystem>
         }
 
         BattleAudio.Play(BattleSound.CardPlay);
+        BattleHudMedieval.GainEpFromCard();
         CardView cardView = handView.RemoveCard(playCardGA.Card);
         yield return DiscardCard(cardView);
 

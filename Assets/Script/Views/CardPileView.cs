@@ -9,7 +9,7 @@ public class CardPileView : MonoBehaviour
     {
         cardSystem = owner;
         isDrawPile = drawPile;
-        transform.localScale = Vector3.one * 0.12f;
+        transform.localScale = Vector3.one * (isDrawPile ? 0.095f : 0.12f);
 
         // Remove the old runtime label if this pile object survives a script reload.
         Transform oldLabel = transform.Find("Pile Count Label");
@@ -18,6 +18,13 @@ public class CardPileView : MonoBehaviour
         SpriteRenderer iconRenderer = GetComponent<SpriteRenderer>();
         if (iconRenderer == null) iconRenderer = gameObject.AddComponent<SpriteRenderer>();
         iconRenderer.sprite = icon;
+        if (icon != null && icon.texture != null)
+        {
+            // The high-resolution pile artwork is rendered much smaller than its
+            // source texture. Trilinear filtering with mipmaps prevents aliasing.
+            icon.texture.filterMode = FilterMode.Trilinear;
+            icon.texture.anisoLevel = 4;
+        }
         iconRenderer.sortingOrder = 40;
 
         BoxCollider hitTarget = GetComponent<BoxCollider>();

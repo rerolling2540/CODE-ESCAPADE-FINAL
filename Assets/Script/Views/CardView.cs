@@ -9,6 +9,7 @@ public class CardView : MonoBehaviour
     [SerializeField] private SpriteRenderer imageSR;
     [SerializeField] private GameObject wrapper;
     [SerializeField] private LayerMask dropLayer;
+    [SerializeField] private Sprite cardFrame;
     public Card Card { get; private set; }
     private Vector3 draStartPosition;
     private Quaternion dragStartRotation;
@@ -23,7 +24,50 @@ public class CardView : MonoBehaviour
     {
         var background = wrapper != null ? wrapper.transform.Find("CardBackground") : null;
         var renderer = background != null ? background.GetComponent<SpriteRenderer>() : null;
-        if (renderer != null && renderer.sprite != null)
+        if (renderer != null && cardFrame != null)
+        {
+            renderer.sprite = cardFrame;
+            // Match the new tall frame to the existing card footprint.
+            renderer.transform.localScale = new Vector3(0.74f, 0.65f, 1f);
+            // The sample frame sprite uses a bottom-left pivot; center its bounds on the card.
+            renderer.transform.localPosition = new Vector3(
+                -cardFrame.bounds.center.x * renderer.transform.localScale.x,
+                -cardFrame.bounds.center.y * renderer.transform.localScale.y,
+                0f);
+            renderer.color = Color.white;
+            renderer.sortingOrder = -1;
+
+            if (imageSR != null)
+            {
+                imageSR.sortingOrder = -2;
+                Vector3 imagePosition = imageSR.transform.localPosition;
+                imagePosition.y = 0.74f;
+                imageSR.transform.localPosition = imagePosition;
+            }
+
+            if (title != null)
+            {
+                Vector2 titlePosition = title.rectTransform.anchoredPosition;
+                titlePosition.y = -0.55f;
+                title.rectTransform.anchoredPosition = titlePosition;
+            }
+
+            if (description != null)
+            {
+                Vector2 descriptionPosition = description.rectTransform.anchoredPosition;
+                descriptionPosition.y = -1.28f;
+                description.rectTransform.anchoredPosition = descriptionPosition;
+            }
+
+            if (mana != null)
+            {
+                Vector2 manaPosition = mana.rectTransform.anchoredPosition;
+                manaPosition.x = -1.24f;
+                manaPosition.y = 1.69f;
+                mana.rectTransform.anchoredPosition = manaPosition;
+            }
+        }
+        else if (renderer != null && renderer.sprite != null)
         {
             if (medievalBackground == null)
             {
@@ -66,15 +110,31 @@ public class CardView : MonoBehaviour
             if (label == null) continue;
             label.color = new Color(0.2f, 0.12f, 0.055f);
             label.enableAutoSizing = true;
-            label.fontSizeMin = 16;
-            label.fontSizeMax = label == description ? 25 : 32;
+            label.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            label.verticalAlignment = VerticalAlignmentOptions.Middle;
+            label.textWrappingMode = TextWrappingModes.Normal;
+            label.overflowMode = TextOverflowModes.Truncate;
+            label.margin = new Vector4(1f, 0.5f, 1f, 0.5f);
+            label.fontSizeMin = label == description ? 11 : label == title ? 12 : 18;
+            label.fontSizeMax = label == description ? 18 : label == title ? 24 : 30;
         }
         if (title != null)
         {
             title.fontStyle = FontStyles.Bold;
-            title.rectTransform.sizeDelta = new Vector2(29, 4);
+            title.rectTransform.sizeDelta = new Vector2(26, 3.8f);
+            Vector2 titlePosition = title.rectTransform.anchoredPosition;
+            titlePosition.x = 0f;
+            titlePosition.y = -0.55f;
+            title.rectTransform.anchoredPosition = titlePosition;
         }
-        if (description != null) description.rectTransform.sizeDelta = new Vector2(28, 10);
+        if (description != null)
+        {
+            description.rectTransform.sizeDelta = new Vector2(25.5f, 8.5f);
+            Vector2 descriptionPosition = description.rectTransform.anchoredPosition;
+            descriptionPosition.x = 0f;
+            descriptionPosition.y = -1.28f;
+            description.rectTransform.anchoredPosition = descriptionPosition;
+        }
         if (mana != null) mana.color = new Color(1f, 0.88f, 0.56f);
     }
 
@@ -96,22 +156,21 @@ public class CardView : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (!Interactions.Instance.PlayerCanHover()) return;
-        wrapper.SetActive(false);
+        var interactions = Interactions.Instance;
+        var hoverSystem = CardViewHoverSystem.Instance;
+        if (interactions == null || !interactions.PlayerCanHover() || hoverSystem == null || Card == null) return;
+        if (wrapper != null) wrapper.SetActive(false);
         Vector3 pos = new(transform.position.x, -2, 0);
-        CardViewHoverSystem.Instance.Show(Card, pos);
+        hoverSystem.Show(Card, pos);
     }
 
     void OnMouseExit()
     {
-        if (Interactions.Instance != null && !Interactions.Instance.PlayerCanHover())
-        {
-            CardViewHoverSystem.Instance?.Hide();
-            if (wrapper != null) wrapper.SetActive(true);
-            return;
-        }
-        CardViewHoverSystem.Instance.Hide();
-        wrapper.SetActive(true);
+        // Hover callbacks can run while scene objects are being enabled/disabled.
+        // Either reference may be unavailable during scene transitions or on cards
+        // that are not connected to the hover preview.
+        CardViewHoverSystem.Instance?.Hide();
+        if (wrapper != null) wrapper.SetActive(true);
     }
 
     void OnMouseDown()

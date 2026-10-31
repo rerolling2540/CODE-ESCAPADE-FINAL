@@ -57,6 +57,7 @@ public class CharacterSelector : MonoBehaviour
 
         // I-UPDATE DIN ANG LOGO
         logoImage.sprite = characterLogos[currentCharacter];
+        GetComponent<MainMenuCharacterIdle>()?.ShowCharacter(currentCharacter);
     }
 
     // PLAY BUTTON

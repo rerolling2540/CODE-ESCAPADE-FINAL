@@ -518,6 +518,7 @@ public class MainMenuSaveSlots : MonoBehaviour
     {
         if (loginOpen || open) return;
 
+        PlayClickSound();
         loginOpen = true;
         registerMode = false;
         waitingForEmailCode = false;
@@ -1219,6 +1220,7 @@ public class MainMenuSaveSlots : MonoBehaviour
         if (CharacterAlmanac.IsOpen) return;
         if ((open || loginOpen) && Input.GetKeyDown(KeyCode.Escape))
         {
+            PlayClickSound();
             Close();
         }
     }

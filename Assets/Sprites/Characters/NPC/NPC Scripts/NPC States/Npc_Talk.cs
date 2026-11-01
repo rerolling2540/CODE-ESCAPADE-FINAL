@@ -79,6 +79,12 @@ public class Npc_Talk : MonoBehaviour
 
     DialogueSO BuildQuestDialogue()
     {
+        var root=Node("Before facing the hollow, learn how code behaves. Our teachers offer visual lessons and question quests with XP rewards. You can learn safely before taking on battle questions.");
+        root.options=new[]{new DialogueOption{optionText="Beginner learning quest / XP",nextDialogue=LearningQuests.Dialogue(this,-1)},new DialogueOption{optionText="Warden of the Hollow",nextDialogue=BuildCombatQuestDialogue()},new DialogueOption{optionText="Farewell"}};
+        return root;
+    }
+    DialogueSO BuildCombatQuestDialogue()
+    {
         var saved = SaveSlots.Read(SaveSlots.Active) ?? new SaveSlots.Record();
         int stage = saved.elfQuestStage;
         if (stage == 0)
@@ -215,7 +221,7 @@ public class ElfQuestTracker : MonoBehaviour
     private static bool minimized = true;
 
     public static bool IsMinimized => minimized;
-    public string ObjectiveText => objective ?? "Speak to the elf at the cave entrance [E].";
+    public string ObjectiveText => (objective ?? "Speak to the elf at the cave entrance [E].")+LearningQuests.Journal();
 
     public void ToggleJournal() { minimized = !minimized; }
 

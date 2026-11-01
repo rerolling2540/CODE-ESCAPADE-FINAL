@@ -31,6 +31,20 @@ public static class PlayerProgression
         var saved=SaveSlots.Read(SaveSlots.Active);if(saved==null||amount<=0)return;
         Ensure(saved);ApplyExperience(saved,amount);SaveSlots.Write(saved);
     }
+    public static bool ClaimLearningQuest(int giver)
+    {
+        var saved=SaveSlots.Read(SaveSlots.Active);
+        if(!ApplyLearningQuestReward(saved,giver))return false;
+        SaveSlots.Write(saved);return true;
+    }
+    public static bool ApplyLearningQuestReward(SaveSlots.Record saved,int giver)
+    {
+        if(!LearningQuests.Accepted(saved,giver)||LearningQuests.Claimed(saved,giver)||LearningQuests.Completed(saved,giver)!=2)return false;
+        if(saved.learningQuestsClaimed==null)saved.learningQuestsClaimed=new System.Collections.Generic.List<string>();
+        saved.learningQuestsClaimed.Add(LearningQuests.Key(giver));
+        // Persist the reward receipt and XP together, preventing repeat claims after reload.
+        saved.level=Mathf.Max(5,saved.level);ApplyExperience(saved,LearningQuests.Reward(giver));return true;
+    }
     private static void ApplyExperience(SaveSlots.Record saved,int amount)
     {
         saved.experience=(int)System.Math.Min(int.MaxValue,(long)Mathf.Max(0,saved.experience)+amount);

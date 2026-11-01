@@ -32,7 +32,7 @@ public sealed class NPCInteractionPrompt : MonoBehaviour
         EnsureStyles();
         string actorName=npc.talk!=null&&npc.talk.actor!=null?npc.talk.actor.actorName:gameObject.name;
         string role=actorName.ToLowerInvariant();
-        string action=role.Contains("merchant")?"Talk / Trade cards":role.Contains("blacksmith")?"Talk / Refine cards":"Talk to traveller";
+        string action=GetComponent<CodeMentorNPC>()!=null?"Talk / Visual code lessons":role.Contains("merchant")?"Talk / Trade cards":role.Contains("blacksmith")?"Talk / Refine cards":"Talk to traveller";
         float scale=Mathf.Clamp(Screen.height/720f,.75f,2f);
         const float width=350f, panelHeight=76f;
         float x=Mathf.Clamp(screen.x/scale-width/2,8,Mathf.Max(8,Screen.width/scale-width-8));

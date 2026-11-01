@@ -18,10 +18,15 @@ public sealed class QuestJournalHud : MonoBehaviour
     private Vector3 arrowScale;
     private float reveal;
     private string previousObjective;
+    private float originalPanelHeight,originalTextHeight;
+    private Vector2 originalTextPosition;
 
     void Awake()
     {
         visibility = GetComponent<CanvasGroup>();
+        foreach(var label in GetComponentsInChildren<TMP_Text>(true))if(label.name=="Quest Name")label.text="Learning & Cave Quests";
+        if(panel!=null)originalPanelHeight=panel.rect.height;
+        if(objectiveLabel!=null){originalTextHeight=objectiveLabel.rectTransform.rect.height;originalTextPosition=objectiveLabel.rectTransform.anchoredPosition;}
         if (slideRoot != null) closedPosition = slideRoot.anchoredPosition;
         if (arrowArtwork != null) arrowScale = arrowArtwork.localScale;
         reveal = ElfQuestTracker.IsMinimized ? 0f : 1f;
@@ -52,6 +57,14 @@ public sealed class QuestJournalHud : MonoBehaviour
         if (objectiveLabel != null && objective != previousObjective)
         {
             objectiveLabel.text = objective;
+            if(panel!=null)
+            {
+                float height=Mathf.Max(originalTextHeight,objectiveLabel.GetPreferredValues(objective,objectiveLabel.rectTransform.rect.width,Mathf.Infinity).y+12);
+                float extra=height-originalTextHeight;
+                panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,originalPanelHeight+extra);
+                objectiveLabel.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,height);
+                objectiveLabel.rectTransform.anchoredPosition=originalTextPosition+Vector2.down*extra*(1-objectiveLabel.rectTransform.pivot.y);
+            }
             previousObjective = objective;
         }
     }

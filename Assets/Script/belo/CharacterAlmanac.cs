@@ -35,6 +35,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     private Button recommendedBookButton;
     private Button progressStudyButton;
     private Page selected;
+    private AlmanacBookReader bookReader;
     private string language, query = "", edition = "Original learning edition";
     private int tier;
     private bool opened, revealed;
@@ -73,9 +74,11 @@ public sealed class CharacterAlmanac : MonoBehaviour
     private bool InExploration => IsExplorationScene(SceneManager.GetActiveScene().name) && gameObject.scene == SceneManager.GetActiveScene();
     void Update()
     {
-        if (!InExploration) { Close(); if (canvasRoot != null) canvasRoot.SetActive(false); if (launcher != null) launcher.SetActive(false); return; }
+        if (!InExploration) { CloseImmediate(); if (canvasRoot != null) canvasRoot.SetActive(false); if (launcher != null) launcher.SetActive(false); return; }
         if (canvasRoot != null && !canvasRoot.activeSelf) canvasRoot.SetActive(true);
         bool settings = GameControlsGuide.SettingsOpen;
+        if(settings)return;
+        if(opened)Time.timeScale=0f;
         bool dialogue = DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive;
         if (launcher != null) launcher.SetActive(!opened && !settings && !dialogue && Time.timeScale > 0f);
         if (opened)
@@ -85,7 +88,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
         }
         else if (!settings && !dialogue && Time.timeScale > 0f && Input.GetKeyDown(KeyCode.L)) Open();
     }
-    void OnDisable() { Close(); }
+    void OnDisable() { CloseImmediate(); }
     void OnDestroy()
     {
         QuestionPerformanceTracker.HistoryChanged -= RefreshProgressReport;
@@ -107,11 +110,16 @@ public sealed class CharacterAlmanac : MonoBehaviour
     }
     public void Close()
     {
+        if(bookReader!=null&&bookReader.Visible&&Application.isPlaying){bookReader.Close(CloseImmediate);return;}
+        CloseImmediate();
+    }
+    void CloseImmediate()
+    {
         EndPractice();
         if (!opened) return;
         opened = false;
         if (openJournal == this) openJournal = null;
-        Time.timeScale = previousTimeScale;
+        if(!GameControlsGuide.SettingsOpen)Time.timeScale = previousTimeScale;
         if (modal != null) modal.SetActive(false);
     }
     public void SelectLanguage(int index)
@@ -137,10 +145,10 @@ public sealed class CharacterAlmanac : MonoBehaviour
             child.SetActive(false);
             if(Application.isPlaying) Destroy(child); else DestroyImmediate(child);
         }
-        var languagePages = pages.Where(p => p.Valid && p.language == language).OrderBy(p=>p.min_level).ThenBy(p=>p.id,StringComparer.Ordinal).ToList();
+        var languagePages = pages.Where(p => p.Valid && p.language == language).OrderBy(p=>QuestionCurriculum.Tier(p.difficulty)).ThenBy(p=>p.min_level).ThenBy(p=>p.id,StringComparer.Ordinal).ToList();
         var filtered = languagePages.Where(p => (tier == 0 || p.difficulty == new[]{"","easy","medium","hard"}[tier]) &&
             (string.IsNullOrEmpty(query) || (Topic(p)+" "+p.meaning+" "+p.purpose+" "+p.prompt+" "+p.code_snippet+" "+p.explanation).IndexOf(query,StringComparison.OrdinalIgnoreCase) >= 0))
-            .OrderBy(p => p.min_level).ThenBy(p => p.id,StringComparer.Ordinal).ToList();
+            .OrderBy(p => QuestionCurriculum.Tier(p.difficulty)).ThenBy(p => p.min_level).ThenBy(p => p.id,StringComparer.Ordinal).ToList();
         for (int i = 0; i < filtered.Count; i++)
         {
             var page = filtered[i];
@@ -155,16 +163,19 @@ public sealed class CharacterAlmanac : MonoBehaviour
     void ShowPage(Page page)
     {
         EndPractice();
+        progressPanel.SetActive(false);
         library.SetActive(false); reader.SetActive(true);
         selected = page; revealed = false; practiceStarted = false; practiceAttemptId = null;
-        practiceFeedback.text = "Read the lesson first, then try the practice.";
-        startPracticeButton.gameObject.SetActive(true);
-        foreach (Button button in practiceAnswerButtons) button.gameObject.SetActive(false);
-        RenderPage();
-        detailScroll.verticalNormalizedPosition = 1f;
+        if(bookReader==null)bookReader=reader.AddComponent<AlmanacBookReader>();
+        bookReader.Show(page,BackToBooksImmediate);
         UpdateStatus();
     }
     public void BackToBooks()
+    {
+        if(bookReader!=null&&bookReader.Visible&&Application.isPlaying){bookReader.Close(BackToBooksImmediate);return;}
+        BackToBooksImmediate();
+    }
+    void BackToBooksImmediate()
     {
         EndPractice();
         progressPanel.SetActive(false);
@@ -203,6 +214,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
 
     void EndPractice()
     {
+        if(bookReader!=null)bookReader.HideImmediate();
         string attempt = practiceAttemptId;
         practiceAttemptId = null;
         practiceStarted = false;
@@ -291,6 +303,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
     void UpdateStatus()
     {
         if (status == null) return;
+        status.gameObject.SetActive(bookReader==null||!bookReader.Visible);
         if (reader != null && !reader.activeSelf && recommendedBookButton != null)
         {
             status.text = recommendedBookButton.interactable

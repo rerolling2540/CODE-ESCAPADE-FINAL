@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Map 4 Fantasy Slime
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 2013896963, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  <Health>k__BackingField: 60
+  <AttackPower>k__BackingField: 28
+  idleFrames:
+  - {fileID: 2013896963, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: -1378957589, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: 433360744, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: -939569071, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: -646890187, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: -532979125, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: 1776320385, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: 1898875487, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: -1832478774, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: 303703968, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: 1552046210, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: -1816792582, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: -497947966, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  - {fileID: -1219779003, guid: 714c5a37b2fad474090b4261bd9e1152, type: 3}
+  walkFrames:
+  - {fileID: 610211799, guid: 86eec0b61fc584831b1beff67edb7755, type: 3}
+  - {fileID: 718904135, guid: 86eec0b61fc584831b1beff67edb7755, type: 3}
+  - {fileID: -1868661788, guid: 86eec0b61fc584831b1beff67edb7755, type: 3}
+  - {fileID: -615768347, guid: 86eec0b61fc584831b1beff67edb7755, type: 3}
+  - {fileID: -1556944398, guid: 86eec0b61fc584831b1beff67edb7755, type: 3}
+  - {fileID: -1014738210, guid: 86eec0b61fc584831b1beff67edb7755, type: 3}
+  attackFrames:
+  - {fileID: -1196070750, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: -1867355112, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 353618691, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 459349939, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 902837652, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 935544297, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 1638186982, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: -1187286978, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: -1856310546, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 1230892543, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: -80945156, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: -1399668824, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 1108274181, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: -760654105, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 99437693, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 1612786144, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: -75914393, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: 829543954, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  - {fileID: -937872091, guid: 469318308da4d46b390d9deef75abffc, type: 3}
+  battleFramesPerSecond: 8
+  hovering: 0
+  experienceReward: 35
+  battleMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  attackStyle: 0
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

@@ -170,13 +170,13 @@ public class playerMovement : MonoBehaviour
             rb.linearVelocity.y);
     }
 
-    public bool TryTakeDamage(int amount)
+    public bool TryTakeDamage(int amount, PlayerDamageCause cause = PlayerDamageCause.Other)
     {
         if (amount <= 0 || Time.timeScale <= 0f || Time.time < nextDamageTime ||
             PlayerHealth.CurrentHealth <= 0 || !isActiveAndEnabled) return false;
         if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) return false;
 
-        PlayerHealth.Damage(amount);
+        PlayerHealth.Damage(amount, cause);
         damageAnimationStart=Time.time;
         float duration = hurtAnimation != null ? Mathf.Max(0.1f, hurtAnimation.length) : 0.4f;
         if(damageFrames!=null)duration=damageFrames.Length/10f;

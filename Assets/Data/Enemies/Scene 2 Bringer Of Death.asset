@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Scene 2 Bringer Of Death
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: -1890000687, guid: 11eb6ccb795ef4d1b816da20c09cda40, type: 3}
+  <Health>k__BackingField: 120
+  <AttackPower>k__BackingField: 35
+  idleFrames:
+  - {fileID: -1890000687, guid: 11eb6ccb795ef4d1b816da20c09cda40, type: 3}
+  - {fileID: 161613163, guid: 799969c3fb8b540cc85e44f1f6b1c520, type: 3}
+  - {fileID: 347875550, guid: d743ab1675d4d42a3a6dc038906033a5, type: 3}
+  - {fileID: -1597239755, guid: bb12d0f84ffe5441eb898c7c57d910b0, type: 3}
+  - {fileID: -1023333519, guid: e87cd120da0884b3bba7fc44a1dedad1, type: 3}
+  - {fileID: -1444607400, guid: 55696d27a0d544228982a252edf1f437, type: 3}
+  - {fileID: 1625738526, guid: 3bb48a7d5b9a745a7a8bd8f310a04ecd, type: 3}
+  - {fileID: -785346761, guid: 366818e090f9847b2a9ced4d56ede5c8, type: 3}
+  walkFrames:
+  - {fileID: 2086963168, guid: c6692a650d6764a8aa700028c8b3fe52, type: 3}
+  - {fileID: 1643793826, guid: 5bcbbb22594104fefb5d769a4181e3bf, type: 3}
+  - {fileID: 409458198, guid: 30211b7dae9a64ecfa93cf15af2e0a1f, type: 3}
+  - {fileID: 145580311, guid: d228599a2919348d0acbee32ed2f6304, type: 3}
+  - {fileID: -1718246687, guid: 3a8484a46640a462b912ee1abc69dbdb, type: 3}
+  - {fileID: -926469016, guid: c9d5ff6f88ac640dca920da95c82297a, type: 3}
+  - {fileID: -688504667, guid: c8eb12c7e28444e36b8dbd8bd1591db7, type: 3}
+  - {fileID: -498854319, guid: 0592125dc766e489aa0bfae39872523e, type: 3}
+  attackFrames:
+  - {fileID: 852069938, guid: eb58df48851be40e0a265cd68c056f87, type: 3}
+  - {fileID: 420868781, guid: f178cf94884ea4fa7b566611bc54db84, type: 3}
+  - {fileID: -1801888216, guid: 186b3f69d6dde45a68af222fe71ae271, type: 3}
+  - {fileID: 193911805, guid: 4bbd7a7784039484f91a2c5ede01a7a2, type: 3}
+  - {fileID: 1783084892, guid: 41a2d95dbda7d4ba3838e7e850121ce5, type: 3}
+  - {fileID: -43354795, guid: e42d0edb49fbe4635ad068ad23492447, type: 3}
+  - {fileID: 329566061, guid: 86b11e50acbe043aba69882baf59fd49, type: 3}
+  - {fileID: -2048963377, guid: c46eeb3a7c21a48a4aa07d1fec5b338b, type: 3}
+  - {fileID: 863005627, guid: 9f52f42c6463b421898da0a78382296c, type: 3}
+  - {fileID: 415461487, guid: 89cb18929ea9945d69d8449222321f99, type: 3}
+  battleFramesPerSecond: 10
+  hovering: 0
+  experienceReward: 80
+  battleMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  battleVisualScale: 1.35
+  attackStyle: 0
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

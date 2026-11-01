@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Map 4 Fantasy Mimic
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: -1636021748, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  <Health>k__BackingField: 85
+  <AttackPower>k__BackingField: 38
+  idleFrames:
+  - {fileID: -1636021748, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  - {fileID: -783875136, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  - {fileID: 1562762451, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  - {fileID: -1409890176, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  - {fileID: -1956427740, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  - {fileID: -2081625492, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  - {fileID: -535473955, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  - {fileID: 275276380, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  - {fileID: 1394375533, guid: 5ff4f5760a74146b8b267ad2fd9d5cba, type: 3}
+  walkFrames:
+  - {fileID: 47028930, guid: 43114cf29efb24207a34ea6db9b1f30c, type: 3}
+  - {fileID: -1903995066, guid: 43114cf29efb24207a34ea6db9b1f30c, type: 3}
+  - {fileID: -1769967332, guid: 43114cf29efb24207a34ea6db9b1f30c, type: 3}
+  - {fileID: 1092217280, guid: 43114cf29efb24207a34ea6db9b1f30c, type: 3}
+  - {fileID: 313031170, guid: 43114cf29efb24207a34ea6db9b1f30c, type: 3}
+  - {fileID: 207581147, guid: 43114cf29efb24207a34ea6db9b1f30c, type: 3}
+  attackFrames:
+  - {fileID: -1864836966, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: -1270538798, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: -1109145287, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: -1206275183, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: -2101450092, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: -2051181672, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: 858298460, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: -2142841357, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: -766137297, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: 1745049290, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: 251892355, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: 511710501, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: 819782142, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  - {fileID: 312884846, guid: f46e1750cbf9a4faeb7ee6824b7772e8, type: 3}
+  battleFramesPerSecond: 8
+  hovering: 0
+  experienceReward: 50
+  battleMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  attackStyle: 0
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

@@ -15,7 +15,7 @@ The hanging spikes on **tinek 2** deal 5 damage. Upward-pointing floor spikes ar
 **tinek 2 - Bottom Spikes (50 damage)** and deal 50 damage. Both use the same spike-hit sound.
 Bottom-spike hits also poison the player for 5 seconds, dealing 5 HP each second (25 extra HP).
 Further accepted spike hits refresh the duration without stacking poison or delaying its next tick.
-A warning reading only **POISONED** appears at the top of the existing health HUD; it clears on expiry, death, or disable.
+A warning reading only **POISONED** blinks every 0.4 seconds at the top of the existing health HUD; it clears on expiry, death, or disable.
 Poison pauses with the game, dialogue, and scene transitions, and never applies to the ceiling spikes.
 Green floor spikes and selectable static toxic canisters under **04 - Poison Spike Markers** identify the hazard.
 The canister body holds the supplied Toxic Trap Level 1 strip's first frame, matching its authored scene appearance.

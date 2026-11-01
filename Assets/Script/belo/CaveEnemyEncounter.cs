@@ -7,7 +7,10 @@ public class CaveEnemyEncounter : MonoBehaviour
     public EnemyData enemy;
     [Tooltip("Optional battle squad. The overworld still displays this encounter as the single enemy above.")]
     public EncounterData battleEncounter;
+    [Min(0.1f), Tooltip("Distance at which the player can trigger this encounter without touching it.")]
     public float interactionDistance = 2.5f;
+    [Min(0.1f), Tooltip("Avoid triggering encounters on distant floors above or below the player.")]
+    public float maxEncounterHeightDifference = 3.5f;
     public bool flying;
     [Min(0f)] public float patrolSpeed = 1.2f;
     [Min(0.5f)] public float overworldHeight = 1.9f;
@@ -16,6 +19,10 @@ public class CaveEnemyEncounter : MonoBehaviour
     public bool preserveAuthoredTransform;
     [Tooltip("Keep the sprite's authored facing direction while patrolling or idling.")]
     public bool lockFacingDirection;
+    [Tooltip("Enable for artwork that faces left before SpriteRenderer flipping.")]
+    public bool spriteFacesLeft;
+    [Tooltip("Keep the authored encounter hitbox instead of including transparent animation padding.")]
+    public bool preserveAuthoredHitbox;
     public static List<EnemyData> PendingEnemies;
     public static string PendingEncounterId;
     private static string suppressedEncounter;
@@ -58,7 +65,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         var trigger = GetComponent<BoxCollider2D>();
         if (trigger == null) trigger = gameObject.AddComponent<BoxCollider2D>();
         trigger.isTrigger = true;
-        if (visual.sprite != null)
+        if (visual.sprite != null && !preserveAuthoredHitbox)
         {
             trigger.size = visual.sprite.bounds.size;
             trigger.offset = visual.sprite.bounds.center;
@@ -91,9 +98,12 @@ public class CaveEnemyEncounter : MonoBehaviour
                 body.position = position;
             }
         }
-        if (suppressedEncounter == gameObject.name && player != null &&
-            Vector2.Distance(player.transform.position, visual.bounds.center) > 3.5f)
-            suppressedEncounter = null;
+        if (player != null)
+        {
+            if (suppressedEncounter == gameObject.name && !IsPlayerInRange(player, 1.5f, false))
+                suppressedEncounter = null;
+            if (IsPlayerInRange(player)) TryStartBattle(player);
+        }
     }
 
     void FixedUpdate()
@@ -101,7 +111,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         if (body == null || enteringBattle) return;
         if (patrolSpeed <= 0f)
         {
-            if (!lockFacingDirection && player != null) visual.flipX = player.transform.position.x < transform.position.x;
+            if (!lockFacingDirection && player != null) FaceToward(player.transform.position);
             return;
         }
         float ahead = body.position.x + direction * 0.7f;
@@ -115,22 +125,49 @@ public class CaveEnemyEncounter : MonoBehaviour
                     hit.collider.GetComponentInParent<playerMovement>() == null) turn = true;
         }
         if (turn) direction = -direction;
-        if (!lockFacingDirection) visual.flipX = direction < 0f;
+        if (!lockFacingDirection) visual.flipX = (direction < 0f) ^ spriteFacesLeft;
         Vector2 next = body.position + Vector2.right * (direction * patrolSpeed * Time.fixedDeltaTime);
         if (flying) next.y = restingPosition.y + Mathf.Sin(Time.time * 2f) * 0.15f;
         body.MovePosition(next);
     }
 
-    void OnTriggerEnter2D(Collider2D other) { TryStartBattle(other); }
-    void OnTriggerStay2D(Collider2D other) { TryStartBattle(other); }
+    public void FaceToward(Vector3 target)
+    {
+        if (lockFacingDirection) return;
+        if (visual == null) visual = GetComponent<SpriteRenderer>();
+        float delta = target.x - transform.position.x;
+        if (Mathf.Abs(delta) < .01f) return;
+        visual.flipX = (delta * transform.TransformVector(Vector3.right).x < 0f) ^ spriteFacesLeft;
+    }
 
-    void TryStartBattle(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other) { TryStartBattle(other.GetComponentInParent<playerMovement>()); }
+    void OnTriggerStay2D(Collider2D other) { TryStartBattle(other.GetComponentInParent<playerMovement>()); }
+
+    public bool IsPlayerInRange(playerMovement character, float extraDistance = 0f, bool checkSight = true)
+    {
+        if (character == null) return false;
+        var encounterBox = GetComponent<BoxCollider2D>();
+        var characterBox = character.GetComponent<Collider2D>();
+        Vector2 origin = encounterBox != null && encounterBox.enabled ? encounterBox.bounds.center : transform.position;
+        Vector2 target = characterBox != null ? characterBox.bounds.center : character.transform.position;
+        float radius = Mathf.Max(.1f, interactionDistance) + Mathf.Max(0f, extraDistance);
+        if (Mathf.Abs(origin.y - target.y) > maxEncounterHeightDifference ||
+            (target - origin).sqrMagnitude > radius * radius) return false;
+        if (checkSight)
+            foreach (var hit in Physics2D.LinecastAll(origin, target))
+                if (hit.collider != null && !hit.collider.isTrigger && hit.collider.CompareTag("Ground"))
+                    return false;
+        return true;
+    }
+
+    void TryStartBattle(playerMovement character)
     {
         if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) return;
-        if (enemy == null || enteringBattle || Time.timeScale <= 0f || Time.unscaledTime < readyAt ||
+        if (character == null || enemy == null || enteringBattle || Time.timeScale <= 0f ||
+            GameControlsGuide.GameplayOverlayHidden || Time.unscaledTime < readyAt ||
             suppressedEncounter == gameObject.name) return;
-        var character = other.GetComponentInParent<playerMovement>();
-        if (character == null || !Application.CanStreamedLevelBeLoaded("Battle Scene")) return;
+        if (!IsPlayerInRange(character) || PlayerHealth.CurrentHealth <= 0 ||
+            !Application.CanStreamedLevelBeLoaded("Battle Scene")) return;
         enteringBattle = true;
         suppressedEncounter = gameObject.name;
         GameSave.EnsureInstance().RememberBattleReturn(character.transform);

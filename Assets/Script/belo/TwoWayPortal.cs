@@ -8,12 +8,14 @@ public class TwoWayPortal : MonoBehaviour
     public Transform destination;
     [Min(0)] public int requiredDefeatedEncounters;
     public bool hideUntilUnlocked = true;
+    public bool countAllDefeatedEnemies;
 
     private static bool isTeleporting = false;
     private Renderer[] portalVisuals;
     private bool[] originalVisualStates;
     private bool requiredVictoriesMet;
     private float nextRequirementRefresh;
+    private PortalInteraction interaction;
 
     private void Start()
     {
@@ -25,10 +27,11 @@ public class TwoWayPortal : MonoBehaviour
         originalVisualStates = new bool[portalVisuals.Length];
         for (int i = 0; i < portalVisuals.Length; i++)
             originalVisualStates[i] = portalVisuals[i].enabled;
+        interaction = PortalInteraction.For(gameObject);
         RefreshRequirement();
         RefreshPortalVisibility();
 
-        PortalInteraction.For(gameObject).AddRoute(
+        interaction.AddRoute(
             () => isActiveAndEnabled && !isTeleporting && HasRequiredVictories() && destination != null,
             player => StartCoroutine(Teleport(player)));
     }
@@ -44,8 +47,11 @@ public class TwoWayPortal : MonoBehaviour
     {
         nextRequirementRefresh = Time.unscaledTime + 0.5f;
         var saved = requiredDefeatedEncounters > 0 ? SaveSlots.Read(SaveSlots.Active) : null;
-        requiredVictoriesMet = requiredDefeatedEncounters <= 0 ||
-            ElfQuestProgress.Cleared(saved) >= requiredDefeatedEncounters;
+        int defeated = PortalDefeatRequirement.Count(saved, countAllDefeatedEnemies);
+        requiredVictoriesMet = requiredDefeatedEncounters <= 0 || defeated >= requiredDefeatedEncounters;
+        if (interaction != null)
+            interaction.unavailablePrompt = requiredVictoriesMet ? "" :
+                $"Defeat {requiredDefeatedEncounters} enemies to enter ({defeated}/{requiredDefeatedEncounters}).";
     }
 
     private bool HasRequiredVictories() => requiredVictoriesMet;

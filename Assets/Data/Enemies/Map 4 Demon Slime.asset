@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Map 4 Demon Slime
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 974506607, guid: 2bbbe9ca11fd4472c9daafb01c1ccd4a, type: 3}
+  <Health>k__BackingField: 160
+  <AttackPower>k__BackingField: 45
+  idleFrames:
+  - {fileID: 974506607, guid: 2bbbe9ca11fd4472c9daafb01c1ccd4a, type: 3}
+  - {fileID: -55144378, guid: 14f7d24ed415340a4b22683cde7ad557, type: 3}
+  - {fileID: 300887782, guid: 566eea4514b534f3d94f9956244e0e49, type: 3}
+  - {fileID: 1573547968, guid: b5d35f7f6787746a3a2d4f9d342f1a97, type: 3}
+  - {fileID: -611242852, guid: 77a18df1a61624eeb8d545a12c4fa68d, type: 3}
+  - {fileID: 1510652708, guid: 0b2fc3bb8dbab430280fc3a8941c1cba, type: 3}
+  walkFrames:
+  - {fileID: -303448131, guid: 20cae02784bfd4ccc876aeade166279c, type: 3}
+  - {fileID: 1158175751, guid: a0b4e5bf0303a4b3f862d0f1859ccd1b, type: 3}
+  - {fileID: -620780070, guid: 811ae86882fcc448e986813f125a14e9, type: 3}
+  - {fileID: -1410650425, guid: 9f3c3703d871742aea5a30d7e9221bba, type: 3}
+  - {fileID: -44248972, guid: 27cf2d996375740ce92797abb4a2afda, type: 3}
+  - {fileID: -231162855, guid: c3de081099e734d7a879a5dd364d441c, type: 3}
+  - {fileID: -853257611, guid: 196aac637f4ac4f9ea27a3fd6ac62082, type: 3}
+  - {fileID: -1610287966, guid: 489bad3cc45944dadb702c5254f5cdba, type: 3}
+  - {fileID: 1556767954, guid: 157409c9b7bf64dad8990270166b3f57, type: 3}
+  - {fileID: 999015780, guid: abc083a01f28e4f0688efef3fc7cc3bc, type: 3}
+  - {fileID: 1712575293, guid: 29339e9c8a67f4c19a67bb53161c1500, type: 3}
+  - {fileID: -1278831062, guid: d5752f3dd4429453fb7b0dfca4a0232f, type: 3}
+  attackFrames:
+  - {fileID: -1423478021, guid: 817d41f46bdf54b5a9d05db6f948cfdc, type: 3}
+  - {fileID: -1517998848, guid: 05027deca30d643c3ba38cf1de70ace1, type: 3}
+  - {fileID: -1923465705, guid: b1b6f8af765f943648e7bb4d8b11fd29, type: 3}
+  - {fileID: -812758096, guid: 09c5b3834b11b4b9484f880b16f8b608, type: 3}
+  - {fileID: -471349605, guid: 47944c219af9a43a4b786eb83ec2eb3b, type: 3}
+  - {fileID: 37358529, guid: e13b975add7a847efab02314ec6c00c2, type: 3}
+  - {fileID: -945833886, guid: 05d326ef9a2bd4f8da42ea48a04e8638, type: 3}
+  - {fileID: -677950055, guid: a152ab8765809406785a567c618bbf43, type: 3}
+  - {fileID: 496894202, guid: 0d432bf6780924649936c4d26afc47b4, type: 3}
+  - {fileID: 2018689679, guid: e639cb2c6df2740bc8ff339a37d362d7, type: 3}
+  - {fileID: 394698068, guid: 77e7f8011a8244ccaae847c26693075e, type: 3}
+  - {fileID: 1146951189, guid: ee5ad73a41bec461cad6ce1cd84154d7, type: 3}
+  - {fileID: -1653975052, guid: f9062ca54c808467f86751b6fd1188ca, type: 3}
+  - {fileID: 396290934, guid: 62fcd8d1b973f4c1890bd39852882009, type: 3}
+  - {fileID: -1664427145, guid: 9234436cdfc8f468487d5c5484e22c39, type: 3}
+  battleFramesPerSecond: 10
+  hovering: 0
+  experienceReward: 100
+  battleMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  battleVisualScale: 1.6
+  attackStyle: 0
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

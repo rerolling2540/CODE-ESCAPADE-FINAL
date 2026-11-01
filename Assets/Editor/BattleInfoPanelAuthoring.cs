@@ -68,10 +68,13 @@ public static class BattleInfoPanelAuthoring
         GameObject backdropObject = CreateRect("Dismiss Backdrop", modal.transform, Vector2.zero, Vector2.zero, true);
         Stretch((RectTransform)backdropObject.transform);
         Image backdrop = backdropObject.AddComponent<Image>();
-        backdrop.color = new Color(0.015f, 0.012f, 0.01f, 0.78f);
+        // Keep the full-screen button as a click-to-dismiss target, but let the
+        // battle remain visible around the parchment window.
+        backdrop.color = Color.clear;
         backdrop.raycastTarget = true;
         Button backdropButton = backdropObject.AddComponent<Button>();
         ConfigureButton(backdropButton, backdrop);
+        backdropButton.transition = Selectable.Transition.None;
 
         GameObject window = CreateRect("Battle Info Window", modal.transform, Vector2.zero, new Vector2(1320f, 790f), false);
         Center((RectTransform)window.transform, Vector2.zero, new Vector2(1320f, 790f));
@@ -104,7 +107,7 @@ public static class BattleInfoPanelAuthoring
         pageHeading.alignment = TextAlignmentOptions.Left;
         SetTopLeft(pageHeading.rectTransform, new Vector2(298f, -112f), new Vector2(940f, 48f));
 
-        GameObject portraitBox = CreateRect("Character Portrait Panel", paper.transform, Vector2.zero, new Vector2(220f, 490f), false);
+        GameObject portraitBox = CreateRect("Character / Enemy Portrait Panel", paper.transform, Vector2.zero, new Vector2(220f, 490f), false);
         SetTopLeft((RectTransform)portraitBox.transform, new Vector2(298f, -174f), new Vector2(220f, 490f));
         AddImage(portraitBox, new Color(0.22f, 0.14f, 0.08f, 1f), true);
         GameObject portraitGold = CreateRect("Portrait Brass Border", portraitBox.transform, Vector2.zero, new Vector2(208f, 478f), false);
@@ -113,7 +116,7 @@ public static class BattleInfoPanelAuthoring
         GameObject portraitPaper = CreateRect("Portrait Parchment", portraitGold.transform, Vector2.zero, new Vector2(198f, 468f), false);
         Center((RectTransform)portraitPaper.transform, Vector2.zero, new Vector2(198f, 468f));
         AddImage(portraitPaper, Parchment, true);
-        GameObject portraitImageObject = CreateRect("Character Portrait", portraitPaper.transform, Vector2.zero, new Vector2(180f, 420f), false);
+        GameObject portraitImageObject = CreateRect("Character or Enemy Portrait", portraitPaper.transform, Vector2.zero, new Vector2(180f, 420f), false);
         Center((RectTransform)portraitImageObject.transform, Vector2.zero, new Vector2(180f, 420f));
         Image portraitImage = portraitImageObject.AddComponent<Image>();
         portraitImage.preserveAspect = true;
@@ -158,7 +161,7 @@ public static class BattleInfoPanelAuthoring
         gridRect.sizeDelta = new Vector2(0f, 490f);
         GridLayoutGroup cardGrid = gridObject.AddComponent<GridLayoutGroup>();
         cardGrid.padding = new RectOffset(18, 18, 18, 18);
-        cardGrid.cellSize = new Vector2(210f, 300f);
+        cardGrid.cellSize = new Vector2(210f, 330f);
         cardGrid.spacing = new Vector2(15f, 16f);
         cardGrid.startCorner = GridLayoutGroup.Corner.UpperLeft;
         cardGrid.startAxis = GridLayoutGroup.Axis.Horizontal;
@@ -196,6 +199,13 @@ public static class BattleInfoPanelAuthoring
         panel.cardEmptyState = emptyCards;
         panel.portraitContainer = portraitBox;
         panel.characterPortrait = portraitImage;
+        panel.enemyHealthIcon = LoadSpriteAsset("Assets/RPG Icons/single/release_v1.2-single_38.png", "release_v1.2-single_38_0");
+        panel.enemyAttackIcon = LoadSpriteAsset("Assets/Tiny Swords/UI Elements/Icons/Icon_05.png", "Icon_05_0");
+        panel.enemyDefenseIcon = LoadSpriteAsset("Assets/Tiny Swords/UI Elements/Icons/Icon_06.png", "Icon_06_0");
+        panel.enemyRangedIcon = LoadSpriteAsset("Assets/RPG Icons/single/release_v1.2-single_21.png", "release_v1.2-single_21_0");
+        panel.enemyRewardIcon = LoadSpriteAsset("Assets/RPG Icons/single/release_v1.2-single_84.png", "release_v1.2-single_84_0");
+        panel.enemyBurnIcon = LoadSpriteAsset("Assets/RPG Icons/single/release_v1.2-single_43.png", "release_v1.2-single_43_0");
+        panel.characterDeckIcon = LoadSpriteAsset("Assets/free_fantasy_card_frames_deckbuilder_ui_sampler/Frames/512x720/card_back_player.png", "card_back_player_0");
 
         Button portraitButton = portrait.GetComponent<Button>();
         if (portraitButton == null) portraitButton = portrait.gameObject.AddComponent<Button>();
@@ -218,9 +228,11 @@ public static class BattleInfoPanelAuthoring
 
     private static CardInventoryItemUI CreateCardItemTemplate(Transform parent)
     {
-        GameObject card = CreateRect("Card Item Template (edit styles)", parent, Vector2.zero, new Vector2(210f, 300f), false);
-        Center((RectTransform)card.transform, Vector2.zero, new Vector2(210f, 300f));
-        Image frame = card.AddComponent<Image>();
+        GameObject card = CreateRect("Card Item Template (edit styles)", parent, Vector2.zero, new Vector2(210f, 330f), false);
+        Center((RectTransform)card.transform, Vector2.zero, new Vector2(210f, 330f));
+        GameObject frameObject = CreateRect("Card Frame", card.transform, Vector2.zero, new Vector2(210f, 300f), false);
+        frameObject.transform.SetAsFirstSibling();
+        Image frame = frameObject.AddComponent<Image>();
         frame.sprite = LoadSpriteAsset(BronzeCardFramePath, "action_card_bronze_0");
         frame.type = Image.Type.Simple;
         frame.preserveAspect = true;
@@ -229,31 +241,36 @@ public static class BattleInfoPanelAuthoring
         Image icon = CreateCardImage("Card Icon", card.transform, new Vector2(54f, -52f), new Vector2(102f, 104f), Color.white);
         icon.preserveAspect = true;
 
-        TMP_Text mana = CreateText("Card Mana", card.transform, "1", 25f, new Color(1f, 0.9f, 0.62f, 1f), FontStyles.Bold);
+        TMP_Text mana = CreateText("Card Mana", card.transform, "1", 22f, new Color(1f, 0.9f, 0.62f, 1f), FontStyles.Bold);
         mana.alignment = TextAlignmentOptions.Center;
-        SetTopLeft(mana.rectTransform, new Vector2(8f, -5f), new Vector2(38f, 34f));
+        mana.verticalAlignment = VerticalAlignmentOptions.Middle;
+        SetTopLeft(mana.rectTransform, new Vector2(7f, -5f), new Vector2(42f, 36f));
 
-        TMP_Text title = CreateText("Card Title", card.transform, "Card Name", 20f, Ink, FontStyles.Bold);
+        TMP_Text title = CreateText("Card Title", card.transform, "Card Name", 17f, Ink, FontStyles.Bold);
         title.alignment = TextAlignmentOptions.Center;
+        title.verticalAlignment = VerticalAlignmentOptions.Middle;
         title.enableAutoSizing = true;
-        title.fontSizeMin = 13f;
-        title.fontSizeMax = 20f;
-        SetTopLeft(title.rectTransform, new Vector2(18f, -164f), new Vector2(174f, 32f));
+        title.fontSizeMin = 10f;
+        title.fontSizeMax = 16f;
+        title.textWrappingMode = TextWrappingModes.NoWrap;
+        SetTopLeft(title.rectTransform, new Vector2(18f, -162f), new Vector2(174f, 30f));
 
-        TMP_Text description = CreateText("Card Description", card.transform, "Card effect description", 16f, Ink, FontStyles.Normal);
+        TMP_Text description = CreateText("Card Description", card.transform, "Card effect description", 14f, Ink, FontStyles.Normal);
         description.alignment = TextAlignmentOptions.Center;
+        description.textWrappingMode = TextWrappingModes.Normal;
         description.enableAutoSizing = true;
-        description.fontSizeMin = 11f;
-        description.fontSizeMax = 16f;
+        description.fontSizeMin = 10f;
+        description.fontSizeMax = 14f;
         description.margin = new Vector4(3f, 2f, 3f, 2f);
-        SetTopLeft(description.rectTransform, new Vector2(18f, -201f), new Vector2(174f, 59f));
+        SetTopLeft(description.rectTransform, new Vector2(16f, -198f), new Vector2(178f, 54f));
 
-        TMP_Text ownership = CreateText("Card Ownership", card.transform, "OWNED ×1  ·  LV 1", 13f, new Color(1f, 0.9f, 0.65f, 1f), FontStyles.Bold);
+        TMP_Text ownership = CreateText("Card Ownership", card.transform, "OWNED ×1  ·  LV 1", 13f, Ink, FontStyles.Bold);
         ownership.alignment = TextAlignmentOptions.Center;
+        ownership.verticalAlignment = VerticalAlignmentOptions.Middle;
         ownership.enableAutoSizing = true;
         ownership.fontSizeMin = 10f;
         ownership.fontSizeMax = 13f;
-        SetTopLeft(ownership.rectTransform, new Vector2(18f, -265f), new Vector2(174f, 22f));
+        SetTopLeft(ownership.rectTransform, new Vector2(4f, -303f), new Vector2(202f, 23f));
 
         CardInventoryItemUI presenter = card.AddComponent<CardInventoryItemUI>();
         presenter.frame = frame;

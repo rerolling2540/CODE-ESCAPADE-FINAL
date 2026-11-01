@@ -48,11 +48,23 @@ public class EnemySystem : Singleton<EnemySystem>
                 ApplyBurnGA applyBurnGA = new(burnStacks, enemy);
                 ActionSystem.Instance.AddReaction(applyBurnGA);
             }
+            QueueStatusTick(enemy, StatusEffectType.POISON, removeAllStacks: false);
             AttackHeroGA attackHeroGA = new(enemy);
             ActionSystem.Instance.AddReaction(attackHeroGA);
+            // Bleed detonates after this enemy finishes its turn, then all stacks clear.
+            QueueStatusTick(enemy, StatusEffectType.BLEED, removeAllStacks: true);
         }
         yield return null;
     }
+
+    private static void QueueStatusTick(CombatantView target, StatusEffectType type, bool removeAllStacks)
+    {
+        int stacks = target != null ? target.GetStatusEffectStacks(type) : 0;
+        if (stacks <= 0) return;
+        int stacksToRemove = removeAllStacks ? stacks : 1;
+        ActionSystem.Instance.AddReaction(new TickStatusEffectGA(type, target, stacks, stacksToRemove));
+    }
+
     private IEnumerator AttackHeroPerformer(AttackHeroGA attackHeroGA)
     {
         EnemyView attacker = attackHeroGA.Attacker;
@@ -105,7 +117,8 @@ public class EnemySystem : Singleton<EnemySystem>
         }
 
         if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
-        int attackDamage = Mathf.Max(1, attacker.AttackPower);
+        int frostStacks = attacker.GetStatusEffectStacks(StatusEffectType.FROST);
+        int attackDamage = Mathf.Max(1, attacker.AttackPower - frostStacks);
         DealDamageGA dealDamageGA = new(
             attackDamage,
             new() { HeroSystem.Instance.HeroView },
@@ -115,6 +128,10 @@ public class EnemySystem : Singleton<EnemySystem>
             yield return damageSystem.ApplyDamageDirect(dealDamageGA);
         else
             HeroSystem.Instance.HeroView.Damage(attackDamage);
+
+        // Frost suppresses the next attack; its stacks are consumed after damage lands.
+        if (frostStacks > 0)
+            attacker.RemoveStatusEffect(StatusEffectType.FROST, frostStacks);
     }
     private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
     {

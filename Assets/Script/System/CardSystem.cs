@@ -21,6 +21,8 @@ public class CardSystem : Singleton<CardSystem>
     private GUIStyle pileCardTitleStyle;
     private GUIStyle pileCardDetailsStyle;
 
+    public EnemyView CurrentManualTarget { get; private set; }
+
     public int DrawPileCount => drawPile.Count;
     public int DiscardPileCount => discardPile.Count;
 
@@ -283,19 +285,20 @@ public class CardSystem : Singleton<CardSystem>
         SpendManaGA spendManaGA = new(playCardGA.Card.Mana);
         ActionSystem.Instance.AddReaction(spendManaGA);
 
+        CurrentManualTarget = playCardGA.ManualTarget;
         if (playCardGA.QuestionAnsweredCorrectly)
         {
             if (playCardGA.ManualTarget != null)
                 HeroSystem.Instance.HeroView.FaceTowards(playCardGA.ManualTarget);
             BattleAudio.HeroAttack(playCardGA.Card.CardData);
-            CombatantView attackTarget = playCardGA.Card.ManualTargetEffect is DealDamageEffect ? playCardGA.ManualTarget : null;
+            CombatantView attackTarget = IsDamageEffect(playCardGA.Card.ManualTargetEffect) ? playCardGA.ManualTarget : null;
             Dictionary<AutoTargetEffect, List<CombatantView>> effectTargets = new();
             foreach (AutoTargetEffect effect in playCardGA.Card.OtherEffects)
             {
                 if (effect == null || effect.Effect == null || effect.TargetMode == null) continue;
                 List<CombatantView> targets = effect.TargetMode.GetTargets();
                 effectTargets[effect] = targets;
-                if (attackTarget == null && effect.Effect is DealDamageEffect)
+                if (attackTarget == null && IsDamageEffect(effect.Effect))
                     attackTarget = targets.Find(target => target is EnemyView && target.CurrentHealth > 0);
             }
             yield return HeroSystem.Instance.HeroView.PlayBattleAttack(attackTarget);
@@ -341,7 +344,13 @@ public class CardSystem : Singleton<CardSystem>
             ActionSystem.Instance.AddReaction(attackHeroGA);
         }
 
+        CurrentManualTarget = null;
         ManualTargetSystem.Instance?.ClearTargetHighlight();
+    }
+
+    private static bool IsDamageEffect(Effect effect)
+    {
+        return effect is DealDamageEffect || effect is StatusComboDamageEffect;
     }
 
     private static IEnumerator DamageSystemRunner(DealDamageGA damageGA)

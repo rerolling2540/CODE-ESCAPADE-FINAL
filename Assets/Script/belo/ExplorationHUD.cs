@@ -27,7 +27,9 @@ public class ExplorationHUD : MonoBehaviour
     private Texture2D resizeIcon;
     private bool inventoryOpen;
     private bool characterInfoOpen;
+    private bool showingDraftCards;
     private CharacterInfoData characterInfo;
+    private CardDraftCatalog cardDraftCatalog;
     public bool IsMapVisible => showMap && !inventoryOpen && !GameControlsGuide.MapHidden &&
         !SceneTransitionFader.IsTransitioning && CharacterAlmanac.IsExplorationScene(SceneManager.GetActiveScene().name);
     private float previousTimeScale = 1f;
@@ -47,6 +49,7 @@ public class ExplorationHUD : MonoBehaviour
     void Start()
     {
         characterInfo=Resources.Load<CharacterInfoData>("UI/CharacterInfo");
+        cardDraftCatalog=Resources.Load<CardDraftCatalog>("CardDraftCatalog");
         resizeIcon=CreateResizeIcon();
         minimapScale=Mathf.Clamp(PlayerPrefs.GetFloat("CodeEscapade.Minimap.Scale",1f),0.7f,2.2f);
         minimapPosition = new Vector2(PlayerPrefs.GetFloat("CodeEscapade.Minimap.X",918f),PlayerPrefs.GetFloat("CodeEscapade.Minimap.Y",16f));
@@ -779,7 +782,7 @@ public class ExplorationHUD : MonoBehaviour
     void DrawInventory()
     {
         if(characterInfoOpen){DrawCharacterInfo();return;}
-        if (inventory == null)
+        if (inventory == null && cardDraftCatalog == null)
         {
             GUI.Label(
                 new Rect(50, 50, 500, 50),
@@ -795,6 +798,14 @@ public class ExplorationHUD : MonoBehaviour
 
         Frame(new Rect(40, 25, 1200, 670));
         if(MedievalButton(new Rect(795,52,210,42),"Character Info"))characterInfoOpen=true;
+        bool canSwitchCardView = !showingDraftCards || inventory != null;
+        if(canSwitchCardView && MedievalButton(new Rect(570,52,210,42),showingDraftCards?"Owned Cards":"Class Card Library"))
+        {
+            showingDraftCards=!showingDraftCards;
+            selected=-1;
+            scroll=Vector2.zero;
+            detailScroll=Vector2.zero;
+        }
 
         GUI.Label(
             new Rect(70, 52, 760, 48),
@@ -813,6 +824,7 @@ public class ExplorationHUD : MonoBehaviour
 
         GUI.Label(
             new Rect(73, 105, 1050, 32),
+            inventory == null ? "Class card library. Purchase cards from the Syntax Merchant to add them to your collection." :
             "Coins: " + inventory.Coins + "   |   Tokens: " + inventory.LibraryTokens +
             "   |   Shards: " + inventory.SyntaxShards + "   |   Scraps: " + inventory.LowLogicScraps,
             textStyle
@@ -820,16 +832,27 @@ public class ExplorationHUD : MonoBehaviour
 
         Fill(new Rect(70, 148, 1135, 2), Brass);
 
+        int selectedCharacter = Mathf.Clamp(PlayerPrefs.GetInt("SelectedCharacter", 0), 0, 2);
+        string[] characterNames = { "WARRIOR · JAVA", "ARCHER · C#", "MAGE · PYTHON" };
+        var draftCards = cardDraftCatalog != null ? cardDraftCatalog.ForCharacter(selectedCharacter) : null;
+        int ownedCount = inventory != null ? inventory.Cards.Count : 0;
+        int count = showingDraftCards ? (draftCards != null ? draftCards.Count : 0) : ownedCount;
+
         GUI.Label(
             new Rect(75, 165, 755, 30),
-            "CARD COLLECTION    /    " +
-            inventory.Cards.Count + " stacks",
+            showingDraftCards
+                ? characterNames[selectedCharacter] + " CLASS LIBRARY    /    " + count + " cards · AVAILABLE FROM THE SYNTAX MERCHANT"
+                : "CARD COLLECTION    /    " + ownedCount + " stacks",
             smallStyle
         );
 
+        if (showingDraftCards && draftCards == null)
+        {
+            GUI.Label(new Rect(95, 250, 700, 80), "The class card library is unavailable.", textStyle);
+        }
+
         Frame(new Rect(850, 163, 355, 478));
 
-        int count = inventory.Cards.Count;
         const int columns = 4;
 
         int rows = Mathf.Max(
@@ -876,8 +899,18 @@ public class ExplorationHUD : MonoBehaviour
                 continue;
             }
 
-            var stack = inventory.Cards[i];
-            var card = inventory.GetCard(stack.id);
+            CharacterInventory.Stack stack = null;
+            CardData card;
+            if (showingDraftCards)
+            {
+                if (draftCards == null || i >= draftCards.Count) continue;
+                card = draftCards[i];
+            }
+            else
+            {
+                stack = inventory.Cards[i];
+                card = inventory.GetCard(stack.id);
+            }
 
             if (card != null)
             {
@@ -901,7 +934,8 @@ public class ExplorationHUD : MonoBehaviour
                     slot.x + 8, slot.y + 107,
                     slot.width - 16, 22
                 ),
-                "Owned: " + stack.quantity + "  |  Lv " + inventory.GetLevel(stack.id),
+                showingDraftCards ? "NOT OWNED · MERCHANT" :
+                    "Owned: " + stack.quantity + "  |  Lv " + inventory.GetLevel(stack.id),
                 smallStyle
             );
 
@@ -916,14 +950,27 @@ public class ExplorationHUD : MonoBehaviour
 
         if (selected >= 0 && selected < count)
         {
-            var stack = inventory.Cards[selected];
-            var card = inventory.GetCard(stack.id);
+            CharacterInventory.Stack stack = null;
+            CardData card;
+            int cardLevel = 1;
+            int quantity = 0;
+            if (showingDraftCards)
+            {
+                card = draftCards != null ? draftCards[selected] : null;
+            }
+            else
+            {
+                stack = inventory.Cards[selected];
+                card = inventory.GetCard(stack.id);
+                cardLevel = inventory.GetLevel(stack.id);
+                quantity = stack.quantity;
+            }
 
             if (card != null)
             {
                 GUI.Label(
                     new Rect(875, 185, 305, 74),
-                    card.name + "  [Lv " + inventory.GetLevel(stack.id) + "]",
+                    showingDraftCards ? card.name + "  [LIBRARY]" : card.name + "  [Lv " + cardLevel + "]",
                     headingStyle
                 );
 
@@ -934,14 +981,16 @@ public class ExplorationHUD : MonoBehaviour
 
                 GUI.Label(
                     new Rect(875, 410, 305, 32),
-                    "Mana: " + card.Mana +
-                    "   |   Owned: " + stack.quantity,
+                    showingDraftCards ? "Mana: " + card.Mana + "   |   Buy from the Syntax Merchant" :
+                    "Mana: " + card.Mana + "   |   Owned: " + quantity,
                     textStyle
                 );
 
                 Fill(new Rect(875, 450, 305, 1), Brass);
 
-                string description = (card.Description ?? "") + "\n\nCurrent effects:\n" + CardRefinementRules.Describe(card, inventory.GetLevel(stack.id));
+                string description = showingDraftCards
+                    ? (card.Description ?? "") + "\n\nCLASS LIBRARY\nNot owned yet. Purchase this card from the Syntax Merchant to add it to your saved inventory and battle deck."
+                    : (card.Description ?? "") + "\n\nCurrent effects:\n" + CardRefinementRules.Describe(card, cardLevel);
 
                 float height = Mathf.Max(
                     145,
@@ -970,14 +1019,18 @@ public class ExplorationHUD : MonoBehaviour
         {
             GUI.Label(
                 new Rect(885, 300, 285, 150),
-                "Select a card from your collection to study its abilities.",
+                showingDraftCards
+                    ? (draftCards == null ? "Could not load the class card library." : "Select a card to inspect its effect. Purchase it from the Syntax Merchant to play it.")
+                    : "Select a card from your collection to study its abilities.",
                 textStyle
             );
         }
 
         GUI.Label(
             new Rect(75, 655, 1080, 25),
-            "Select a card to inspect  |  Scroll to browse  |  I / Esc to return to your journey",
+            showingDraftCards
+                ? "Purchase class cards from the Syntax Merchant to add them to your saved inventory and battle deck  |  Scroll to browse  |  I / Esc to return"
+                : "Select a card to inspect  |  Scroll to browse  |  I / Esc to return to your journey",
             smallStyle
         );
     }

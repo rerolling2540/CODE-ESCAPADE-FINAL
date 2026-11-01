@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
+  m_Name: Astral Compass
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <Description>k__BackingField: "Draw 2 cards."
+  <Mana>k__BackingField: 1
+  <Image>k__BackingField: {fileID: -4677467958601771395, guid: df748e77b29e7084eba4bcddc50c74d0, type: 3}
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 101
+    <Effect>k__BackingField:
+      rid: 102
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  damageType: 0
+  baseDamage: 0
+  percentDamage: 0
+  damageMultiplier: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 101
+      type: {class: NoTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 102
+      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+      data:
+        drawAmount: 2

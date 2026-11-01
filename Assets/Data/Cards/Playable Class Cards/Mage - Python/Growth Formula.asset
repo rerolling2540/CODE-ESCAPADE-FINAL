@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
+  m_Name: Growth Formula
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  <Description>k__BackingField: "Gain 5 Armor and restore 3 health."
+  <Mana>k__BackingField: 1
+  <Image>k__BackingField: {fileID: -4910067624284876623, guid: 29f63f17de6f1d8408fd422b31b4241d, type: 3}
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 101
+    <Effect>k__BackingField:
+      rid: 102
+  - <TargetMode>k__BackingField:
+      rid: 103
+    <Effect>k__BackingField:
+      rid: 104
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  damageType: 0
+  baseDamage: 0
+  percentDamage: 0
+  damageMultiplier: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 101
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 102
+      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 5
+        natureTurnsUntilHeal: 3
+        natureHealAmount: 10
+    - rid: 103
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 104
+      type: {class: HealEffect, ns: , asm: Assembly-CSharp}
+      data:
+        healAmount: 3

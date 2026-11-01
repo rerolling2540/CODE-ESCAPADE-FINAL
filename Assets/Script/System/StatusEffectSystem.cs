@@ -29,10 +29,14 @@ public class StatusEffectSystem : MonoBehaviour
     private void OnEnable()
     {
         ActionSystem.AttachPerformer<AddStatusEffectGA>(AddStatusEffectPerformer);
+        ActionSystem.AttachPerformer<TickStatusEffectGA>(TickStatusEffectPerformer);
+        ActionSystem.AttachPerformer<NatureTurnGA>(NatureTurnPerformer);
     }
     private void OnDisable()
     {
         ActionSystem.DetachPerformer<AddStatusEffectGA>();
+        ActionSystem.DetachPerformer<TickStatusEffectGA>();
+        ActionSystem.DetachPerformer<NatureTurnGA>();
     }
    private IEnumerator AddStatusEffectPerformer(AddStatusEffectGA addStatusEffectGA)
     {
@@ -40,10 +44,41 @@ public class StatusEffectSystem : MonoBehaviour
         foreach (var target in addStatusEffectGA.Targets)
         {
             if (target == null) continue;
-            target.AddStatusEffect(addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount);
+            if (addStatusEffectGA.StatusEffectType == StatusEffectType.NATURE)
+                target.ScheduleNatureHeal(addStatusEffectGA.StackCount, addStatusEffectGA.NatureHealAmount);
+            else
+                target.AddStatusEffect(addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount);
             PlayStatusAnimation(target, addStatusEffectGA.StatusEffectType);
             yield return null;
         }
+    }
+
+    private IEnumerator TickStatusEffectPerformer(TickStatusEffectGA tick)
+    {
+        CombatantView target = tick != null ? tick.Target : null;
+        if (target == null) yield break;
+
+        int stacks = target.GetStatusEffectStacks(tick.Type);
+        if (stacks <= 0) yield break;
+
+        if (target.CurrentHealth > 0 && tick.Damage > 0)
+        {
+            int before = target.CurrentHealth;
+            target.Damage(tick.Damage);
+            if (target.CurrentHealth < before)
+            {
+                BattleBloodEffect.Play(target);
+                PlayImpactAnimation(target);
+            }
+        }
+        target.RemoveStatusEffect(tick.Type, Mathf.Min(stacks, tick.StacksToRemove));
+        yield return null;
+    }
+
+    private IEnumerator NatureTurnPerformer(NatureTurnGA turn)
+    {
+        if (turn?.Target != null) turn.Target.TickNatureHeal();
+        yield return null;
     }
 
     public static void PlayHealAnimation(CombatantView target)

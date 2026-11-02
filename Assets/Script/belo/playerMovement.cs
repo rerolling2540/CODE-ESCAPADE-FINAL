@@ -37,6 +37,7 @@ public class playerMovement : MonoBehaviour
     private bool facingRight = true;
     private SpriteRenderer spriteRenderer;
     private CharacterSmokeEffects smokeEffects;
+    private CharacterSoundEffects soundEffects;
     private readonly HashSet<Collider2D> groundContacts = new HashSet<Collider2D>();
     private float lastGroundedTime = float.NegativeInfinity;
     private bool isDashing;
@@ -74,6 +75,9 @@ public class playerMovement : MonoBehaviour
         smokeEffects = GetComponent<CharacterSmokeEffects>();
         if (smokeEffects == null) smokeEffects = gameObject.AddComponent<CharacterSmokeEffects>();
         smokeEffects.Initialize(spriteRenderer, GetComponent<CapsuleCollider2D>());
+        soundEffects = GetComponent<CharacterSoundEffects>();
+        if (soundEffects == null) soundEffects = gameObject.AddComponent<CharacterSoundEffects>();
+        soundEffects.Initialize(this);
         PlayerDeathFlow.EnsureInstance();
         FirstEncounterGuide.EnsureInstance();
     }
@@ -146,6 +150,8 @@ public class playerMovement : MonoBehaviour
         animator.SetBool("Falling", !groundedPose && !isDashing && rb.linearVelocity.y < -0.1f);
         if (smokeEffects != null)
             smokeEffects.UpdateRunning(runningPose && !isDashing, isGrounded, facingRight);
+        if (soundEffects != null)
+            soundEffects.UpdateRunning(runningPose && !isDashing, isGrounded, speed);
     }
 
     void FixedUpdate()
@@ -218,6 +224,7 @@ public class playerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         hasBeenAirborne = true;
         if (smokeEffects != null) smokeEffects.PlayJump(facingRight);
+        if (soundEffects != null) soundEffects.Jump();
         animator.SetBool("Grounded", false);
         animator.SetBool("Falling", false);
         animator.SetBool("Jumping", true);
@@ -232,6 +239,7 @@ public class playerMovement : MonoBehaviour
         dashCooldownTimer = dashCooldown;
         dashDirection = facingRight ? 1f : -1f;
         if (smokeEffects != null) smokeEffects.PlayDash(facingRight);
+        if (soundEffects != null) soundEffects.Dash();
         animator.SetBool("Dashing", true);
         animator.SetBool("Jumping", false);
         animator.SetBool("Falling", false);

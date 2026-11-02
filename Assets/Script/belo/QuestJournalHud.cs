@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-/// <summary>Scene-authored quest drawer. Its saved position is the closed position.</summary>
+/// <summary>Supports both a fixed quest icon and a scene-authored sliding drawer.</summary>
 [RequireComponent(typeof(CanvasGroup))]
 public sealed class QuestJournalHud : MonoBehaviour
 {
@@ -14,6 +14,7 @@ public sealed class QuestJournalHud : MonoBehaviour
 
     private CanvasGroup visibility;
     private ElfQuestTracker tracker;
+    private bool fallbackMinimized = true;
     private Vector2 closedPosition;
     private Vector3 arrowScale;
     private float reveal;
@@ -29,30 +30,33 @@ public sealed class QuestJournalHud : MonoBehaviour
         if(objectiveLabel!=null){originalTextHeight=objectiveLabel.rectTransform.rect.height;originalTextPosition=objectiveLabel.rectTransform.anchoredPosition;}
         if (slideRoot != null) closedPosition = slideRoot.anchoredPosition;
         if (arrowArtwork != null) arrowScale = arrowArtwork.localScale;
-        reveal = ElfQuestTracker.IsMinimized ? 0f : 1f;
+        FindTracker();
+        reveal = IsMinimized ? 0f : 1f;
         if (arrowButton != null) arrowButton.onClick.AddListener(ToggleJournal);
-        ApplySlide();
+        ApplyPanelVisibility();
     }
 
     public void ToggleJournal()
     {
-        if (GameControlsGuide.MapHidden) return;
+        if (GameControlsGuide.GameplayOverlayHidden || GameControlsGuide.MapHidden) return;
         FindTracker();
         if (tracker != null) tracker.ToggleJournal();
+        else fallbackMinimized = !fallbackMinimized;
+        ApplyPanelVisibility();
     }
 
     void Update()
     {
-        bool visible = !GameControlsGuide.MapHidden;
+        bool visible = !GameControlsGuide.GameplayOverlayHidden && !GameControlsGuide.MapHidden;
         visibility.alpha = visible ? 1f : 0f;
         visibility.interactable = visible;
         visibility.blocksRaycasts = visible;
         if (!visible) return;
 
         FindTracker();
-        reveal = Mathf.MoveTowards(reveal, ElfQuestTracker.IsMinimized ? 0f : 1f,
-            Mathf.Min(Time.unscaledDeltaTime, 0.05f) / slideDuration);
-        ApplySlide();
+        reveal = Mathf.MoveTowards(reveal, IsMinimized ? 0f : 1f,
+            Mathf.Min(Time.unscaledDeltaTime, 0.05f) / Mathf.Max(0.05f, slideDuration));
+        ApplyPanelVisibility();
         string objective = tracker != null ? tracker.ObjectiveText : "Speak to the elf at the cave entrance [E].";
         if (objectiveLabel != null && objective != previousObjective)
         {
@@ -74,13 +78,30 @@ public sealed class QuestJournalHud : MonoBehaviour
         if (tracker == null) tracker = FindFirstObjectByType<ElfQuestTracker>();
     }
 
+    private bool IsMinimized => tracker != null ? ElfQuestTracker.IsMinimized : fallbackMinimized;
+
+    private void ApplyPanelVisibility()
+    {
+        if (panel == null) return;
+        if (slideRoot != null)
+        {
+            // Existing authored drawers keep their slide and arrow animation.
+            // Fixed-icon prefabs leave slideRoot unassigned.
+            if (!panel.gameObject.activeSelf) panel.gameObject.SetActive(true);
+            ApplySlide();
+            return;
+        }
+        bool open = !IsMinimized;
+        if (panel.gameObject.activeSelf != open) panel.gameObject.SetActive(open);
+    }
+
     private void ApplySlide()
     {
         if (slideRoot == null || panel == null) return;
         float distance = panel.rect.width + Mathf.Max(0f, panel.anchoredPosition.x);
         slideRoot.anchoredPosition = closedPosition + Vector2.left * (distance * Mathf.SmoothStep(0f, 1f, reveal));
         if (arrowArtwork != null)
-            arrowArtwork.localScale = new Vector3(arrowScale.x * (ElfQuestTracker.IsMinimized ? 1f : -1f), arrowScale.y, arrowScale.z);
+            arrowArtwork.localScale = new Vector3(arrowScale.x * (IsMinimized ? 1f : -1f), arrowScale.y, arrowScale.z);
     }
 
     void OnDestroy()

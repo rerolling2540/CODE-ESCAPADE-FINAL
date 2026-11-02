@@ -9,6 +9,8 @@ public sealed class TrapSoundEffects : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float volume = 0.55f;
     [SerializeField, Min(0f), Tooltip("Repeat interval for a continuously spinning mechanism. Zero plays once per attack cycle.")]
     private float repeatInterval;
+    [SerializeField, Tooltip("Sustain a seamless mechanism sound while the trap is active and nearby.")]
+    private bool loopWhileActive;
     [SerializeField, Min(0f)] private float fullVolumeDistance = 1.25f;
     [SerializeField, Min(0.1f), Tooltip("Silent beyond this distance from the player to the trap's visible bounds.")]
     private float hearingDistance = 4f;
@@ -31,7 +33,7 @@ public sealed class TrapSoundEffects : MonoBehaviour
         damageTrigger = GetComponent<Map4TrapDamageTrigger>();
         trapRenderer = GetComponent<SpriteRenderer>();
         source.playOnAwake = false;
-        source.loop = false;
+        source.loop = loopWhileActive;
         // Distance is measured in the 2D game world, independent of camera zoom and Z offset.
         source.spatialBlend = 0f;
         GameAudio.Route(source, false);
@@ -39,13 +41,18 @@ public sealed class TrapSoundEffects : MonoBehaviour
 
     private void Update()
     {
-        if (Time.timeScale <= 0f) return;
+        if (Time.timeScale <= 0f)
+        {
+            if (loopWhileActive) source.Stop();
+            return;
+        }
         float proximityVolume = GetProximityVolume();
         source.volume = volume * proximityVolume;
         bool active = animation.IsDamageActive && (damageTrigger == null || damageTrigger.CanDealDamage) &&
             proximityVolume > 0f;
         bool wrapped = animation.CurrentFrame < previousFrame;
-        if (active && (!wasActive || (repeatInterval > 0f ? Time.time >= nextSoundTime : wrapped)))
+        if (active && (loopWhileActive ? !source.isPlaying :
+            !wasActive || (repeatInterval > 0f ? Time.time >= nextSoundTime : wrapped)))
         {
             if (activationSounds != null && activationSounds.Length > 0)
             {

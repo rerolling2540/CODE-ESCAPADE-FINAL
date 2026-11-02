@@ -102,9 +102,15 @@ public sealed class Map4TrapBattleSetup : MonoBehaviour
         }
 
         placements.Sort((a, b) => a.Position.x.CompareTo(b.Position.x));
+        bool hasAuthoredArrowTraps = false;
+        foreach (var root in gameObject.scene.GetRootGameObjects())
+            if (root.GetComponentInChildren<ArrowTrap2D>(true) != null)
+                hasAuthoredArrowTraps = true;
         int count = Mathf.Min(6, placements.Count);
         for (int i = 0; i < count; i++)
         {
+            // Scene-authored launchers replace the old decorative arrow hazards.
+            if (hasAuthoredArrowTraps && i % TrapSheets.Length == 0) continue;
             int placementIndex = count == 1 ? 0 : Mathf.RoundToInt(i * (placements.Count - 1f) / (count - 1f));
             TrapPlacement placement = placements[placementIndex];
             Sprite[] frames = frameSets[i % frameSets.Count];

@@ -6,6 +6,8 @@ using System.Linq;
 public class PortalNextScene : MonoBehaviour
 {
     public string nextSceneName = "NextScene";
+    [Tooltip("Optional arrival point ID in the destination scene.")]
+    public string destinationArrivalId;
     public AudioClip portalSound;
     [Min(0)] public int requiredDefeatedEncounters;
     public bool hideUntilUnlocked = true;
@@ -38,7 +40,12 @@ public class PortalNextScene : MonoBehaviour
         interaction.AddRoute(
             () => isActiveAndEnabled && !isEntering && HasRequiredVictories() &&
                 !string.IsNullOrEmpty(nextSceneName) && Application.CanStreamedLevelBeLoaded(nextSceneName),
-            player => { isEntering = true; SceneTransitionFader.Load(nextSceneName); });
+            player =>
+            {
+                isEntering = true;
+                PortalArrivalPoint.Prepare(nextSceneName, destinationArrivalId);
+                SceneTransitionFader.Load(nextSceneName);
+            });
     }
 
     private void Update()

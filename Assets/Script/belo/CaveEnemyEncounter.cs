@@ -19,6 +19,8 @@ public class CaveEnemyEncounter : MonoBehaviour
     public bool preserveAuthoredTransform;
     [Tooltip("Keep the sprite's authored facing direction while patrolling or idling.")]
     public bool lockFacingDirection;
+    [Tooltip("Look toward the player while idle or patrolling without changing the patrol route.")]
+    public bool trackPlayerFacing;
     [Tooltip("Enable for artwork that faces left before SpriteRenderer flipping.")]
     public bool spriteFacesLeft;
     [Tooltip("Keep the authored encounter hitbox instead of including transparent animation padding.")]
@@ -125,10 +127,18 @@ public class CaveEnemyEncounter : MonoBehaviour
                     hit.collider.GetComponentInParent<playerMovement>() == null) turn = true;
         }
         if (turn) direction = -direction;
-        if (!lockFacingDirection) visual.flipX = (direction < 0f) ^ spriteFacesLeft;
+        if (!lockFacingDirection && !trackPlayerFacing)
+            visual.flipX = (direction < 0f) ^ spriteFacesLeft;
         Vector2 next = body.position + Vector2.right * (direction * patrolSpeed * Time.fixedDeltaTime);
         if (flying) next.y = restingPosition.y + Mathf.Sin(Time.time * 2f) * 0.15f;
         body.MovePosition(next);
+    }
+
+    void LateUpdate()
+    {
+        if (!trackPlayerFacing || enteringBattle || Time.timeScale <= 0f) return;
+        if (player == null) player = FindFirstObjectByType<playerMovement>();
+        if (player != null) FaceToward(player.transform.position);
     }
 
     public void FaceToward(Vector3 target)

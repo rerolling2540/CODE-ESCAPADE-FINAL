@@ -169,6 +169,7 @@ public sealed class PlayerDeathFlow : MonoBehaviour
             }
         else yield return new WaitForSecondsRealtime(0.75f);
         yield return new WaitForSecondsRealtime(0.25f);
+        if(SceneManager.GetActiveScene().name=="Battle Scene")yield return BattleReportScroll.Present("DEFEAT",0);
         choosing = true;
         ShowChoices();
     }

@@ -54,6 +54,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private void EndAttempt()
     {
+        BattleQuestionReport.Resolve(activeAttemptId,"abandoned");
         QuestionPerformanceTracker.Abandon(activeAttemptId);
         activeAttemptId = null;
     }
@@ -73,6 +74,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
         bool isCorrect = false;
         string attemptId = QuestionPerformanceTracker.Begin(action.Question, "battle");
         activeAttemptId = attemptId;
+        BattleQuestionReport.Presented(attemptId,action.Question);
 
         questionUI.SetupAndShow(
             action.Question,
@@ -80,6 +82,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
             {
                 isCorrect = action.Question.CheckAnswer(selectedIndex);
                 QuestionPerformanceTracker.Complete(attemptId, isCorrect);
+                BattleQuestionReport.Resolve(attemptId,isCorrect?"correct":"incorrect",selectedIndex);
                 activeAttemptId = null;
                 isDone = true;
             },
@@ -88,6 +91,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
                 Debug.Log("Time ran out on Pop Quiz!");
                 isCorrect = false;
                 QuestionPerformanceTracker.TimeOut(attemptId);
+                BattleQuestionReport.Resolve(attemptId,"timed_out");
                 activeAttemptId = null;
                 isDone = true;
             },

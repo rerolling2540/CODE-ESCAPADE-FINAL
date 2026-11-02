@@ -49,10 +49,19 @@ public static class AdaptiveQuestionSelector
         if (floor > cap) return null; // An authored card cannot override the character's unlocks.
         int learningTier = Mathf.Clamp(LearningTier(records, level), floor, cap);
         var candidates = (pool ?? Enumerable.Empty<QuestionData>()).Where(q => q != null &&
-            QuestionCurriculum.Language(q) == language && q.minLevel <= level &&
+            QuestionCurriculum.Language(q) == language && Math.Max(q.minLevel,QuestionCurriculum.MinimumLevel(QuestionCurriculum.Topic(q))) <= level &&
             QuestionCurriculum.Tier(q.difficulty) >= floor && QuestionCurriculum.Tier(q.difficulty) <= cap)
             .GroupBy(QuestionCurriculum.Id).Select(g => g.First()).ToList();
         if (candidates.Count == 0) return null;
+
+        // Advance through available topics after repeated success, while retaining earlier topics for review.
+        var ordered=candidates.GroupBy(QuestionCurriculum.Topic).OrderBy(g=>QuestionCurriculum.Order(g.Key)).ToList();
+        var frontier=ordered.FirstOrDefault(g=>{
+            var progress=Summarize(records.Where(a=>QuestionCurriculum.Topic(a.topic,a.question_id)==g.Key));
+            return progress.Responses<3||progress.DifferentQuestions<Math.Min(2,g.Count())||progress.Accuracy<2f/3f;
+        });
+        int frontierOrder=frontier!=null?QuestionCurriculum.Order(frontier.Key):99;
+        candidates=candidates.Where(q=>QuestionCurriculum.Order(QuestionCurriculum.Topic(q))<=frontierOrder||records.Any(a=>Resolved(a)&&QuestionCurriculum.Topic(a.topic,a.question_id)==QuestionCurriculum.Topic(q))).ToList();
 
         // maxLevel marks normal level bands. Earlier bands remain available for review.
         var groups = candidates.GroupBy(QuestionCurriculum.Topic).ToList();
@@ -64,6 +73,7 @@ public static class AdaptiveQuestionSelector
             int nearest = group.Min(q => Math.Abs(QuestionCurriculum.Tier(q.difficulty) - desired));
             var choices = group.Where(q => Math.Abs(QuestionCurriculum.Tier(q.difficulty) - desired) == nearest).ToList();
             float topicWeight = progress.NeedsReview ? 3f : progress.Responses == 0 ? 1.5f : progress.Mastered ? .65f : 1f;
+            if(frontier!=null&&group.Key==frontier.Key)topicWeight*=4f;
             foreach (var q in choices) weighted.Add(new KeyValuePair<QuestionData, float>(q, topicWeight / choices.Count));
         }
         var recentIds = new HashSet<string>(records.OrderByDescending(a => a.presented_at, StringComparer.Ordinal)

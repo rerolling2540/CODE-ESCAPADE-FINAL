@@ -51,19 +51,24 @@ public static class AdaptiveLearningChecks
                 question("jh", "java", "loops", 3), question("py", "python", "loops", 1) };
             for (int i = 0; i <= 20; i++)
             {
-                var selected = AdaptiveQuestionSelector.Select(pool, "java", 1, successes, i / 20f, "j1");
+                var selected = AdaptiveQuestionSelector.Select(pool, "java", 5, successes, i / 20f, "j1");
                 check(selected != null && selected.language == "java" && selected.minLevel <= 1 && selected.questionId != "j1", "Language, level and immediate-repeat guards must always hold.");
             }
             var recent = new[] { attempt("j1", "loops", 1, false, 1), attempt("j2", "loops", 1, false, 2) };
-            check(AdaptiveQuestionSelector.Select(pool, "java", 1, recent, .5f).questionId == "j3", "Fresh questions should be preferred over the last three.");
+            check(AdaptiveQuestionSelector.Select(pool, "java", 5, recent, .5f).questionId == "j3", "Fresh questions should be preferred over the last three.");
             check(AdaptiveQuestionSelector.Select(pool.Where(q => q.topic == "loops"), "java", 6, successes, .5f).questionId == "jm", "Promoted pace should select an intermediate question when the topic has one.");
             check(AdaptiveQuestionSelector.Select(pool, "java", 6, successes, .5f, minimumTier: 1, maximumTier: 1).difficulty == "easy", "A card's upper bound must be honored.");
             check(AdaptiveQuestionSelector.Select(pool, "java", 1, successes, .5f, minimumTier: 2) == null, "A card's lower bound cannot bypass hero unlocks.");
-            check(AdaptiveQuestionSelector.Select(new[] { pool[0] }, "java", 1, recent, .5f, "j1") == pool[0], "A single legal question must not deadlock selection.");
+            check(AdaptiveQuestionSelector.Select(new[] { pool[0] }, "java", 5, recent, .5f, "j1") == pool[0], "A single legal question must not deadlock selection.");
             var failures = Enumerable.Range(0, 3).Select(i => attempt("old" + i, "loops", 1, false, i)).ToList();
             var weightedPool = new[] { question("review", "java", "loops", 1), question("new", "java", "strings", 1) };
-            int reviews = Enumerable.Range(0, 1000).Count(i => AdaptiveQuestionSelector.Select(weightedPool, "java", 1, failures, i / 1000f).topic == "loops");
-            check(reviews > 600 && reviews < 750, "Weak topics should receive extra practice without excluding other topics.");
+            int reviews = Enumerable.Range(0, 1000).Count(i => AdaptiveQuestionSelector.Select(weightedPool, "java", 5, failures, i / 1000f).topic == "loops");
+            check(reviews > 250 && reviews < 400, "The next foundation topic should lead while previously seen weak topics remain reviewable.");
+            var orderedPool=new[]{question("first-a","java","output",1),question("first-b","java","output",1),question("later","java","arrays",1)};
+            check(AdaptiveQuestionSelector.Select(orderedPool,"java",16,new QuestionAttempt[0],1).topic=="output","A high player level alone must not skip the foundation topic.");
+            var learned=new[]{attempt("first-a","output",1,true,0),attempt("first-b","output",1,true,1),attempt("first-a","output",1,true,2)};
+            check(AdaptiveQuestionSelector.Select(orderedPool,"java",16,learned,1).topic=="arrays","Success should unlock the next available topic.");
+            check(AdaptiveQuestionSelector.Select(new[]{orderedPool[2]},"java",5,new QuestionAttempt[0],0)==null,"Array questions must obey the curriculum level even if an old row says level one.");
             var abandoned = attempt("abandoned", "loops", 1, true, 100); abandoned.outcome = "abandoned";
             check(AdaptiveQuestionSelector.Summarize(new[] { abandoned }).Responses == 0, "Abandonment is not a wrong answer or evidence of mastery.");
             return "PASS: " + checks + " adaptive learning checks; no player data changed.";

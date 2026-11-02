@@ -6,6 +6,10 @@ using UnityEngine;
 /// <summary>Stable curriculum keys shared by authored lessons, quizzes and old attempt records.</summary>
 public static class QuestionCurriculum
 {
+    public static readonly string[] OrderedTopics={"output","syntax","types","variables","operators","strings","comparisons","conditionals","loops","arrays","methods","objects","collections","exceptions","algorithms","recursion"};
+    private static readonly int[] TopicLevels={1,1,1,2,2,3,3,4,5,6,8,10,12,14,16,18};
+    public static int Order(string topic){int index=Array.IndexOf(OrderedTopics,Topic(topic));return index<0?99:index;}
+    public static int MinimumLevel(string topic){int index=Order(topic);return index<TopicLevels.Length?TopicLevels[index]:1;}
     [Serializable] private sealed class Lessons { public Lesson[] items; }
     [Serializable] private sealed class Lesson { public string id, title, topic; }
     private static Dictionary<string, string> lessonTopics;

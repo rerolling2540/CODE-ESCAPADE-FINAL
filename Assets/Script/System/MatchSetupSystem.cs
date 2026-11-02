@@ -1020,6 +1020,7 @@ public class EncounterBattleReturn : MonoBehaviour
 
     public void Configure(bool fromCave, string id)
     {
+        BattleQuestionReport.BeginBattle();
         caveBattle = fromCave;
         encounterExperience=0;
         foreach(var enemy in EnemySystem.Instance.Enemies)if(enemy!=null)encounterExperience+=enemy.ExperienceReward;
@@ -1058,7 +1059,7 @@ public class EncounterBattleReturn : MonoBehaviour
     IEnumerator EndBattle()
     {
         yield return BattleTutorialGuide.ExplainResult(victory);
-        yield return new WaitForSecondsRealtime(1.8f);
+        yield return BattleReportScroll.Present("VICTORY",awardedExperience);
         Return();
     }
 

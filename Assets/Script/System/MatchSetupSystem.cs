@@ -1047,6 +1047,7 @@ public class EncounterBattleReturn : MonoBehaviour
             victory = !heroDefeated && EnemySystem.Instance.Enemies.Count == 0;
             BattleEnded = true;
             BattleAudio.Play(victory ? BattleSound.Victory : BattleSound.Defeat);
+            if (victory) PlayerAdventureStats.RecordVictory();
             if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
             if (victory && caveBattle && !string.IsNullOrEmpty(encounterId))
             {

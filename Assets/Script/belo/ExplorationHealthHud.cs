@@ -8,10 +8,15 @@ public sealed class ExplorationHealthHud : MonoBehaviour
     [SerializeField, Min(1)] private int startingLevel = 1;
     [SerializeField] private UnityEngine.UI.Slider healthSlider;
     [SerializeField] private TextMeshProUGUI healthLabel;
+    [SerializeField] private UnityEngine.UI.Image portraitImage;
+    [SerializeField] private Sprite warriorPortrait;
+    [SerializeField] private Sprite magePortrait;
+    [SerializeField] private Sprite archerPortrait;
 
     private int lastHealth = -1;
     private int lastMaximum = -1;
     private float nextRefresh;
+    private int lastSelectedCharacter = -1;
 
     private void Start()
     {
@@ -30,6 +35,13 @@ public sealed class ExplorationHealthHud : MonoBehaviour
 
     private void Refresh()
     {
+        int selectedCharacter = PlayerPrefs.GetInt("SelectedCharacter", 0);
+        if (portraitImage != null && selectedCharacter != lastSelectedCharacter)
+        {
+            portraitImage.sprite = SelectedHero.IsMage ? magePortrait :
+                SelectedHero.IsArcher ? archerPortrait : warriorPortrait;
+            lastSelectedCharacter = selectedCharacter;
+        }
         var progressionClass=PlayerProgression.Class??heroClass;
         if(progressionClass!=null)PlayerHealth.ConfigureMaximum(progressionClass.GetHealthForLevel(PlayerProgression.Level));
         int maximum = PlayerHealth.MaxHealth;

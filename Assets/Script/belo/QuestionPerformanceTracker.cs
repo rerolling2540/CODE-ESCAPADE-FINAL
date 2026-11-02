@@ -119,12 +119,22 @@ public static class QuestionPerformanceTracker
         EnsureLoaded();
         LocalQuestionAttempt local = attempts.FirstOrDefault(item => item?.attempt?.attempt_id == attemptId);
         if (local?.attempt == null || local.attempt.outcome != "in_progress") return;
+        // Seed legacy totals before this attempt is resolved, so it counts exactly once.
+        var save = local.attempt.slot_index == SaveSlots.Active &&
+            local.owner_user_id == (MainMenuSaveSlots.CurrentUserId ?? "")
+            ? SaveSlots.Read(SaveSlots.Active) : null;
+        var totals = save != null ? PlayerAdventureStats.Answers(save) : null;
         local.attempt.outcome = outcome;
         local.attempt.answered_at = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
         if (StartedAt.TryGetValue(attemptId, out float start))
         {
             local.attempt.duration_seconds = Mathf.Max(0f, Time.realtimeSinceStartup - start);
             StartedAt.Remove(attemptId);
+        }
+        if (totals != null && PlayerAdventureStats.Resolved(local.attempt))
+        {
+            PlayerAdventureStats.AddAnswer(totals, local.attempt);
+            SaveSlots.Write(save);
         }
         TrimAndSave();
         HistoryChanged?.Invoke();

@@ -9291,9 +9291,17 @@ PrefabInstance:
       objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 2215070874801027073, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 4285258239
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 2215070874801027073, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 3897512331072355631, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4287421439
+      objectReference: {fileID: 0}
+    - target: {fileID: 3897512331072355631, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}
@@ -9308,6 +9316,10 @@ PrefabInstance:
     - target: {fileID: 4322291063566250869, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5354848837279064357, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 5472222300061021961, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_Pivot.x
@@ -9389,21 +9401,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6821384060145742320, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: panel
+      value: 
+      objectReference: {fileID: 796879437}
     - target: {fileID: 7086976112496001793, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.9657422
-      objectReference: {fileID: 0}
-    - target: {fileID: 7086976112496001793, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.9755744
-      objectReference: {fileID: 0}
-    - target: {fileID: 7086976112496001793, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
-      propertyPath: m_AnchoredPosition.x
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7086976112496001793, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7086976112496001793, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7086976112496001793, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10460,11 +10476,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2864441745180243557, guid: 7b38df6ab3d90486a8305b5b5c155c22, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.6209319
+      value: 1.9451183
       objectReference: {fileID: 0}
     - target: {fileID: 2864441745180243557, guid: 7b38df6ab3d90486a8305b5b5c155c22, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.9195484
+      value: 2.3034582
       objectReference: {fileID: 0}
     - target: {fileID: 2864441745180243557, guid: 7b38df6ab3d90486a8305b5b5c155c22, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10505,6 +10521,10 @@ PrefabInstance:
     - target: {fileID: 2864441745180243557, guid: 7b38df6ab3d90486a8305b5b5c155c22, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3066944333402903861, guid: 7b38df6ab3d90486a8305b5b5c155c22, type: 3}
+      propertyPath: overworldHeight
+      value: 4.8
       objectReference: {fileID: 0}
     - target: {fileID: 3066944333402903861, guid: 7b38df6ab3d90486a8305b5b5c155c22, type: 3}
       propertyPath: trackPlayerFacing
@@ -11258,7 +11278,7 @@ Transform:
   m_GameObject: {fileID: 606382705}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 300.97, y: -15.534, z: -10}
+  m_LocalPosition: {x: 293.50998, y: -42.573997, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16552,6 +16572,114 @@ Transform:
   m_Children: []
   m_Father: {fileID: 256233188}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &796879436
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 747319650867087977, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603430390568665919, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+      propertyPath: m_Name
+      value: Character Information
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+--- !u!114 &796879437 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1774834718220962417, guid: 359c4314fdf93490fb8ae52b3e7f6f9d, type: 3}
+  m_PrefabInstance: {fileID: 796879436}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94a378e28c4b4cd28d1870ace067d101, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleInfoPanel
 --- !u!1 &817671397
 GameObject:
   m_ObjectHideFlags: 0
@@ -17588,8 +17716,8 @@ Transform:
   m_GameObject: {fileID: 887760000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 379.6, y: -17.7, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalPosition: {x: 379.6, y: -17.565601, z: 0}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -17667,11 +17795,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 0a530db798c141b5b0132a260e1d8770, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -17705,8 +17833,8 @@ Transform:
   m_GameObject: {fileID: 887760010}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 301.03, y: -40.32, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalPosition: {x: 301.03, y: -40.2288, z: 0}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -17784,11 +17912,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 841bcec34100402a81f1e0299b99c08e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -17822,8 +17950,8 @@ Transform:
   m_GameObject: {fileID: 887760020}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 325.9, y: -45.23, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalPosition: {x: 325.9, y: -45.1364, z: 0}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -17901,11 +18029,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 38f3a9a19b7b4605a7b475d5584e1b5a, type: 2}
   battleEncounter: {fileID: 11400000, guid: e277aecf2d4e4d5da0cdddf10fd89fc2, type: 2}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -17940,7 +18068,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 477.28, y: -50.61, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18018,11 +18146,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 608dd62a84d7457bb656e9ee7aa6384d, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 1
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -18056,8 +18184,8 @@ Transform:
   m_GameObject: {fileID: 887760040}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 336.47, y: -27.1, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalPosition: {x: 336.47, y: -26.965601, z: 0}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18135,11 +18263,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 0a530db798c141b5b0132a260e1d8770, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -18173,8 +18301,8 @@ Transform:
   m_GameObject: {fileID: 887760050}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 511.82, y: -31.01, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalPosition: {x: 511.82, y: -30.9188, z: 0}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18252,11 +18380,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 841bcec34100402a81f1e0299b99c08e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -18290,8 +18418,8 @@ Transform:
   m_GameObject: {fileID: 887760060}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 405.28, y: -42.42, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalPosition: {x: 405.28, y: -42.326397, z: 0}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18369,11 +18497,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 38f3a9a19b7b4605a7b475d5584e1b5a, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -18408,7 +18536,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 261.91, y: -42.9, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18486,11 +18614,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 608dd62a84d7457bb656e9ee7aa6384d, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 3.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 4.5
   flying: 1
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -18524,8 +18652,8 @@ Transform:
   m_GameObject: {fileID: 887760080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 325.48, y: -17.14, z: 0}
-  m_LocalScale: {x: 5.119993, y: 5.5087204, z: 1}
+  m_LocalPosition: {x: 325.48, y: -16.831512, z: 0}
+  m_LocalScale: {x: 6.143992, y: 6.6104646, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18607,7 +18735,7 @@ MonoBehaviour:
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -18641,8 +18769,8 @@ Transform:
   m_GameObject: {fileID: 887760090}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 431.01, y: -47.09, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalPosition: {x: 431.01, y: -46.998802, z: 0}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18720,11 +18848,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 841bcec34100402a81f1e0299b99c08e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -18758,8 +18886,8 @@ Transform:
   m_GameObject: {fileID: 887760100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 400.28, y: -23.33, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalPosition: {x: 400.28, y: -23.2364, z: 0}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18837,11 +18965,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 38f3a9a19b7b4605a7b475d5584e1b5a, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -18876,7 +19004,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 375.9, y: -53.02, z: 0}
-  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
+  m_LocalScale: {x: 2.88, y: 2.88, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 887769001}
@@ -18954,11 +19082,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 608dd62a84d7457bb656e9ee7aa6384d, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 1
   patrolSpeed: 1.2
-  overworldHeight: 1.9
+  overworldHeight: 2.28
   patrolRadius: 3
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -21378,6 +21506,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6107921621272491939, guid: df53048b1e40d42a0bac5466a95abe3a, type: 3}
   m_PrefabInstance: {fileID: 1031666038}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1032283015
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1032283016}
+  m_Layer: 0
+  m_Name: Return Landing - From Scene3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1032283016
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1032283015}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.5299683, y: -0.19000053, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2105141805}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1033926186
 GameObject:
   m_ObjectHideFlags: 0
@@ -25843,8 +26002,8 @@ Transform:
   m_GameObject: {fileID: 1111783672}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -40.18, y: 1.91, z: 0}
-  m_LocalScale: {x: 6.707531, y: 6.5625, z: 6.5625}
+  m_LocalPosition: {x: -40.179993, y: 2.3300018, z: 0}
+  m_LocalScale: {x: 8.049038, y: 7.8750005, z: 6.5625}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 975120294}
@@ -25936,11 +26095,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 1eede36c08f30bd4481ddcb1dbf3a797, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 0
-  overworldHeight: 4.2
+  overworldHeight: 5.04
   patrolRadius: 1
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -26764,11 +26923,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 301.76
+      value: 294.3
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -15.96
+      value: -43
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -38377,7 +38536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 1692790260}
-  requiredDefeatedEncounters: 5
+  requiredDefeatedEncounters: 7
   hideUntilUnlocked: 0
   countAllDefeatedEnemies: 1
 --- !u!4 &1621679249
@@ -285412,7 +285571,7 @@ Transform:
   m_GameObject: {fileID: 2095482350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 300.97, y: -15.534, z: -10}
+  m_LocalPosition: {x: 293.50998, y: -42.573997, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -285823,6 +285982,7 @@ GameObject:
   - component: {fileID: 2105141800}
   - component: {fileID: 2105141806}
   - component: {fileID: 2105141807}
+  - component: {fileID: 2105141808}
   m_Layer: 0
   m_Name: next scene
   m_TagString: Untagged
@@ -286081,6 +286241,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1418380187}
+  - {fileID: 1032283016}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2105141806
@@ -286122,6 +286283,20 @@ MonoBehaviour:
   entryPrompt: '[E] Enter portal'
   unavailablePrompt: Defeat 3 enemies to enter (0/3).
   playEntrySound: 1
+--- !u!114 &2105141808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105141799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2796daa6514be41a49d51e09aa802dc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalArrivalPoint
+  arrivalId: Scene2FromScene3
+  landingPoint: {fileID: 1032283016}
 --- !u!1001 &2132497225
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -286361,11 +286536,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 827678212a3d5c7499408281b0e0da55, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 2.5
+  interactionDistance: 4
   maxEncounterHeightDifference: 3.5
   flying: 0
   patrolSpeed: 0
-  overworldHeight: 1.7
+  overworldHeight: 2.0400002
   patrolRadius: 1.5
   preserveAuthoredTransform: 0
   lockFacingDirection: 0
@@ -286441,7 +286616,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 82, y: 0.06295994, z: 0}
-  m_LocalScale: {x: 1.5044248, y: 1.5044248, z: 1.5044248}
+  m_LocalScale: {x: 1.8053099, y: 1.8053099, z: 1.5044248}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -287104,3 +287279,4 @@ SceneRoots:
   - {fileID: 1795787782}
   - {fileID: 1723046240}
   - {fileID: 236012283}
+  - {fileID: 796879436}

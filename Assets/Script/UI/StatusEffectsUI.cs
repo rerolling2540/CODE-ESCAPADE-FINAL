@@ -110,7 +110,10 @@ public class StatusEffectsUI : MonoBehaviour
         {
             if (statusEffectUIs.TryGetValue(type, out StatusEffectUI statusEffectUI) && statusEffectUI != null)
             {
-                statusEffectUI.SetHudSize(enemyHudLayout ? new Vector2(34f, 34f) : new Vector2(48f, 54f));
+                if (enemyHudLayout)
+                    statusEffectUI.SetHudSize(new Vector2(34f, 34f));
+                else
+                    statusEffectUI.SetPlayerHudSize();
                 statusEffectUI.transform.SetSiblingIndex(siblingIndex++);
             }
         }

@@ -8,6 +8,7 @@ public sealed class BattleSettingsMenu : MonoBehaviour
 {
     private GameObject panel;
     private GameObject settingsButton;
+    private Transform menuRoot;
     private Image inputBlocker;
     private TextMeshProUGUI turnCountLabel;
     private int turnCount = 1;
@@ -16,22 +17,9 @@ public sealed class BattleSettingsMenu : MonoBehaviour
 
     public static void EnsureCreated()
     {
-        if (FindFirstObjectByType<BattleSettingsMenu>() != null) return;
-
-        Scene activeScene = SceneManager.GetActiveScene();
         Transform settingsCanvas = FindNamedInScene("Battle Settings Canvas");
-        Transform panelTransform = settingsCanvas != null ? settingsCanvas.Find("Panel") : null;
-        Transform buttonTransform = settingsCanvas != null ? settingsCanvas.Find("setting") : null;
-        if (panelTransform == null || buttonTransform == null)
-        {
-            Transform[] all = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            foreach (Transform item in all)
-            {
-                if (item.gameObject.scene != activeScene) continue;
-                if (panelTransform == null && item.name == "Panel") panelTransform = item;
-                if (buttonTransform == null && item.name == "setting") buttonTransform = item;
-            }
-        }
+        Transform panelTransform = FindDescendant(settingsCanvas, "Panel");
+        Transform buttonTransform = FindDescendant(settingsCanvas, "setting");
 
         if (panelTransform == null || buttonTransform == null)
         {
@@ -39,27 +27,27 @@ public sealed class BattleSettingsMenu : MonoBehaviour
             return;
         }
 
-        buttonTransform.gameObject.AddComponent<BattleSettingsMenu>();
+        // Use the settings canvas's own controls. Other canvases can contain
+        // generic objects named "Panel" or "setting" and must not be selected.
+        if (buttonTransform.GetComponent<BattleSettingsMenu>() == null)
+            buttonTransform.gameObject.AddComponent<BattleSettingsMenu>();
     }
 
     private void Awake()
     {
         settingsButton = gameObject;
-        Scene activeScene = SceneManager.GetActiveScene();
         Transform settingsCanvas = FindNamedInScene("Battle Settings Canvas");
-        Transform panelTransform = settingsCanvas != null ? settingsCanvas.Find("Panel") : null;
-        if (panelTransform == null)
-        {
-            Transform[] all = FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            foreach (Transform item in all)
-                if (item.gameObject.scene == activeScene && item.name == "Panel") { panelTransform = item; break; }
-        }
+        Transform panelTransform = FindDescendant(settingsCanvas, "Panel");
         panel = panelTransform != null ? panelTransform.gameObject : null;
         if (panel == null)
         {
             Debug.LogError("The reused Scene 2 settings panel is missing from Battle Scene.");
             return;
         }
+
+        // The panel is opened only by the battle menu button. Force it closed
+        // on scene entry even if an editor change or saved scene state left it visible.
+        panel.SetActive(false);
 
         // Build the shared settings actions during scene setup. Doing this on the
         // first click caused a noticeable main-thread hitch in the battle.
@@ -80,8 +68,12 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         }
         else canvasObject = canvasTransform.gameObject;
 
-        Transform blockerTransform = canvasTransform != null
-            ? canvasTransform.Find("Settings Pause Input Blocker") : null;
+        // Keep the user-authored MENU CANVAS grouping intact. The menu root is
+        // raised as a unit above the pause blocker when settings opens.
+        menuRoot = FindDescendant(canvasObject.transform, "MENU CANVAS");
+        if (menuRoot == null) menuRoot = canvasObject.transform;
+
+        Transform blockerTransform = FindDescendant(canvasObject.transform, "Settings Pause Input Blocker");
         if (blockerTransform == null)
         {
             GameObject blocker = new GameObject("Settings Pause Input Blocker", typeof(RectTransform), typeof(Image));
@@ -97,11 +89,27 @@ public sealed class BattleSettingsMenu : MonoBehaviour
             blocker.transform.SetAsFirstSibling();
             blocker.SetActive(false);
         }
-        else inputBlocker = blockerTransform.GetComponent<Image>();
+        else
+        {
+            inputBlocker = blockerTransform.GetComponent<Image>();
+            if (inputBlocker == null) inputBlocker = blockerTransform.gameObject.AddComponent<Image>();
+            RectTransform blockerRect = blockerTransform as RectTransform;
+            if (blockerRect != null)
+            {
+                blockerRect.anchorMin = Vector2.zero;
+                blockerRect.anchorMax = Vector2.one;
+                blockerRect.offsetMin = Vector2.zero;
+                blockerRect.offsetMax = Vector2.zero;
+            }
+            inputBlocker.color = new Color(0f, 0f, 0f, 0.56f);
+            inputBlocker.raycastTarget = true;
+            blockerTransform.SetAsFirstSibling();
+            blockerTransform.gameObject.SetActive(false);
+        }
 
         // These are the original Scene 2 objects and their sprites/components; only their
         // canvas parent and battle positioning change.
-        if (settingsButton.transform.parent != canvasObject.transform)
+        if (!IsWithin(settingsButton.transform, canvasObject.transform))
             settingsButton.transform.SetParent(canvasObject.transform, false);
         RectTransform buttonRect = settingsButton.GetComponent<RectTransform>();
         if (buttonRect != null && buttonRect.sizeDelta == Vector2.zero)
@@ -114,7 +122,7 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         BuildHamburgerIcon();
         BuildTurnCounter(canvasObject.transform, buttonRect);
 
-        if (panel.transform.parent != canvasObject.transform)
+        if (!IsWithin(panel.transform, canvasObject.transform))
             panel.transform.SetParent(canvasObject.transform, false);
 
         // SettingsUiVisibility normally hides non-settings UI while this panel
@@ -154,10 +162,14 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         {
             TMP_Text label = lobbyButton.GetComponentInChildren<TMP_Text>(true);
             if (label != null) label.text = "RETREAT";
+            // The copied Scene 2 Lobby event refers to its own scene manager.
+            // In battle, route this action through the battle return flow.
+            lobbyButton.onClick.RemoveAllListeners();
             lobbyButton.onClick.AddListener(LeaveBattle);
         }
 
         Button resumeButton = FindButton(panel.transform, "Resume");
+        Sprite closeSprite = null;
         if (resumeButton != null)
         {
             // The Scene 2 button still carries its old SettingsUI callback,
@@ -165,7 +177,90 @@ public sealed class BattleSettingsMenu : MonoBehaviour
             // menu so it restores the exact state captured when the menu opened.
             resumeButton.onClick.RemoveAllListeners();
             resumeButton.onClick.AddListener(CloseSettings);
+
+            // Resume is the close control in this reused settings artwork. The
+            // serialized Image contains the X sprite; the old text label can
+            // cover it, so keep the image and remove only the text overlay.
+            Image resumeImage = resumeButton.GetComponent<Image>();
+            if (resumeImage != null)
+            {
+                resumeImage.enabled = true;
+                resumeImage.color = Color.white;
+                resumeImage.raycastTarget = true;
+                closeSprite = resumeImage.sprite;
+            }
+            TMP_Text resumeLabel = resumeButton.GetComponentInChildren<TMP_Text>(true);
+            if (resumeLabel != null) resumeLabel.gameObject.SetActive(false);
+            EnsureVisibleCloseArtwork(resumeButton, closeSprite);
         }
+
+        // Battle's copied settings window has a dedicated Scene 2-style X in
+        // its top-right corner. Give it the battle-aware close path so it
+        // restores the time scale captured when the panel opened.
+        Button closeButton = FindButton(panel.transform, "Close Button");
+        if (closeButton != null)
+        {
+            closeButton.onClick.RemoveAllListeners();
+            closeButton.onClick.AddListener(CloseSettings);
+
+            // Scene 2's close artwork is the X sprite itself; hide the old
+            // "CLOSE [ESC]" overlay text that obscures the icon.
+            TMP_Text closeLabel = closeButton.GetComponentInChildren<TMP_Text>(true);
+            if (closeLabel != null) closeLabel.gameObject.SetActive(false);
+            EnsureVisibleCloseArtwork(closeButton, closeSprite);
+        }
+    }
+
+    private static void EnsureVisibleCloseArtwork(Button closeButton, Sprite fallbackSprite)
+    {
+        if (closeButton == null) return;
+
+        Image buttonImage = closeButton.GetComponent<Image>();
+        if (buttonImage == null) buttonImage = closeButton.gameObject.AddComponent<Image>();
+        Sprite iconSprite = buttonImage.sprite != null ? buttonImage.sprite : fallbackSprite;
+        if (iconSprite == null) return;
+
+        buttonImage.enabled = true;
+        buttonImage.sprite = iconSprite;
+        buttonImage.color = Color.white;
+        buttonImage.raycastTarget = true;
+        buttonImage.type = Image.Type.Simple;
+
+        // Keep the icon inside the same settings branch so CanvasGroups and
+        // SettingsUiVisibility continue to hide/block gameplay consistently.
+        Transform iconTransform = closeButton.transform.Find("Close X Icon");
+        Image iconImage;
+        if (iconTransform == null)
+        {
+            GameObject iconObject = new GameObject("Close X Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            iconObject.transform.SetParent(closeButton.transform, false);
+            iconTransform = iconObject.transform;
+            iconImage = iconObject.GetComponent<Image>();
+        }
+        else
+        {
+            iconImage = iconTransform.GetComponent<Image>();
+            if (iconImage == null) iconImage = iconTransform.gameObject.AddComponent<Image>();
+        }
+
+        RectTransform iconRect = iconTransform as RectTransform;
+        if (iconRect != null)
+        {
+            iconRect.anchorMin = Vector2.zero;
+            iconRect.anchorMax = Vector2.one;
+            iconRect.offsetMin = Vector2.zero;
+            iconRect.offsetMax = Vector2.zero;
+            iconRect.localScale = Vector3.one;
+        }
+
+        iconImage.enabled = true;
+        iconImage.sprite = iconSprite;
+        iconImage.color = Color.white;
+        iconImage.raycastTarget = false;
+        iconImage.type = Image.Type.Simple;
+        iconImage.preserveAspect = false;
+        iconTransform.SetAsLastSibling();
+        closeButton.transform.SetAsLastSibling();
     }
 
     private void Update()
@@ -184,6 +279,23 @@ public sealed class BattleSettingsMenu : MonoBehaviour
     {
         foreach (Button button in root.GetComponentsInChildren<Button>(true))
             if (button.gameObject.name == objectName) return button;
+        return null;
+    }
+
+    private static bool IsWithin(Transform child, Transform ancestor)
+    {
+        return child != null && ancestor != null && (child == ancestor || child.IsChildOf(ancestor));
+    }
+
+    private static Transform FindDescendant(Transform root, string objectName)
+    {
+        if (root == null) return null;
+        if (root.name == objectName) return root;
+        foreach (Transform child in root)
+        {
+            Transform found = FindDescendant(child, objectName);
+            if (found != null) return found;
+        }
         return null;
     }
 
@@ -344,6 +456,7 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         previousTimeScale = Time.timeScale;
         settingsPausedBattle = true;
         panel.SetActive(true);
+        if (menuRoot != null) menuRoot.SetAsLastSibling();
         panel.transform.SetAsLastSibling();
         if (settingsButton != null) settingsButton.transform.SetAsLastSibling();
         Time.timeScale = 0f;

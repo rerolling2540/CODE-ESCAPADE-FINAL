@@ -75,6 +75,45 @@ public class StatusEffectUI : MonoBehaviour
           stackCountText.raycastTarget = false;
       }
   }
+
+  public void SetPlayerHudSize(float iconSize = 48f, float stackGap = 4f, float stackHeight = 23f)
+  {
+      RectTransform root = transform as RectTransform;
+      if (root != null)
+          root.sizeDelta = new Vector2(iconSize, iconSize + stackGap + stackHeight);
+
+      if (image != null)
+      {
+          RectTransform icon = image.rectTransform;
+          icon.anchorMin = icon.anchorMax = new Vector2(0.5f, 1f);
+          icon.pivot = new Vector2(0.5f, 0.5f);
+          icon.sizeDelta = new Vector2(iconSize, iconSize);
+          icon.anchoredPosition = new Vector2(0f, -iconSize * 0.5f);
+          image.preserveAspect = true;
+          image.raycastTarget = false;
+      }
+
+      if (stackBadgeBackground != null)
+      {
+          RectTransform badge = stackBadgeBackground.rectTransform;
+          badge.anchorMin = badge.anchorMax = new Vector2(0.5f, 0f);
+          badge.pivot = new Vector2(0.5f, 0f);
+          badge.sizeDelta = new Vector2(iconSize, stackHeight);
+          badge.anchoredPosition = Vector2.zero;
+          stackBadgeBackground.raycastTarget = false;
+      }
+
+      if (stackCountText != null)
+      {
+          RectTransform count = stackCountText.rectTransform;
+          count.anchorMin = Vector2.zero;
+          count.anchorMax = Vector2.one;
+          count.offsetMin = count.offsetMax = Vector2.zero;
+          stackCountText.fontSize = 20f;
+          stackCountText.alignment = TextAlignmentOptions.Center;
+          stackCountText.raycastTarget = false;
+      }
+  }
   
   public void Set(StatusEffectType type, Sprite sprite, int stackCount)
     {

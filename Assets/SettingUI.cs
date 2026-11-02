@@ -267,6 +267,9 @@ public static class GameControlsGuide
         }
         if (panel.transform.Find("Controls Guide Button") != null)
         {
+            // Scenes can contain a partly-authored settings panel. Do not treat
+            // one existing action as proof that the complete menu is wired.
+            EnsureExistingSettingsActions(panel);
             StyleSettingsActions(panel);
             return;
         }
@@ -365,6 +368,116 @@ public static class GameControlsGuide
             action.anchoredPosition=new Vector2((i%2==0?-1:1)*(actionWidth+20)/2,baseY+(i/2)*74);
         }
         StyleSettingsActions(panel);
+    }
+
+    private static void EnsureExistingSettingsActions(GameObject panel)
+    {
+        var template = panel.GetComponentInChildren<TMPro.TMP_Text>(true);
+        var lobby = panel.transform.Find("Lobby") as RectTransform;
+        bool supportsSave = CharacterAlmanac.IsExplorationScene(panel.scene.name) || panel.scene.name == "Battle Scene";
+
+        var controls = EnsureSettingsButton(panel.transform, "Controls Guide Button", "CONTROLS", lobby, template);
+        var tips = EnsureSettingsButton(panel.transform, "Tutorial Tips Button", "TUTORIAL TIPS", lobby, template);
+        UnityEngine.UI.Button save = supportsSave
+            ? EnsureSettingsButton(panel.transform, "Save Game Button", "SAVE GAME", lobby, template)
+            : null;
+
+        if (controls != null)
+        {
+            controls.onClick.RemoveAllListeners();
+            controls.onClick.AddListener(() => ShowSettingsGuide(panel, template, false));
+        }
+        if (tips != null)
+        {
+            tips.onClick.RemoveAllListeners();
+            tips.onClick.AddListener(() => ShowSettingsGuide(panel, template, true));
+        }
+        if (save != null)
+        {
+            save.onClick.RemoveAllListeners();
+            var label = save.GetComponentInChildren<TMPro.TMP_Text>(true);
+            var saveAction = save.GetComponent<SettingsSaveButton>();
+            if (saveAction == null) saveAction = save.gameObject.AddComponent<SettingsSaveButton>();
+            saveAction.Configure(save, label);
+        }
+
+        // Keep actions in a predictable two-column grid within the paper panel
+        // so the X and each button remain visible at common game resolutions.
+        var panelRect = panel.transform as RectTransform;
+        float width = Mathf.Min(230f, panelRect != null ? panelRect.rect.width * 0.36f : 230f);
+        float height = 60f;
+        float baseY = -Mathf.Min(182f, panelRect != null ? panelRect.rect.height * 0.28f : 182f);
+        var actions = new System.Collections.Generic.List<RectTransform>();
+        if (lobby != null) actions.Add(lobby);
+        if (save != null) actions.Add(save.transform as RectTransform);
+        if (controls != null) actions.Add(controls.transform as RectTransform);
+        if (tips != null) actions.Add(tips.transform as RectTransform);
+        for (int i = 0; i < actions.Count; i++)
+        {
+            var action = actions[i];
+            if (action == null) continue;
+            action.anchorMin = action.anchorMax = action.pivot = new Vector2(0.5f, 0.5f);
+            action.sizeDelta = new Vector2(width, height);
+            action.anchoredPosition = new Vector2((i % 2 == 0 ? -1f : 1f) * (width + 20f) * 0.5f,
+                baseY + (i / 2) * (height + 14f));
+            var button = action.GetComponent<UnityEngine.UI.Button>();
+            var image = action.GetComponent<UnityEngine.UI.Image>();
+            if (button != null && image != null) button.targetGraphic = image;
+        }
+    }
+
+    private static UnityEngine.UI.Button EnsureSettingsButton(Transform parent, string name, string caption,
+        RectTransform artworkTemplate, TMPro.TMP_Text textTemplate)
+    {
+        UnityEngine.UI.Button button = null;
+        foreach (var candidate in parent.GetComponentsInChildren<UnityEngine.UI.Button>(true))
+            if (candidate.gameObject.name == name) { button = candidate; break; }
+
+        if (button == null && artworkTemplate != null && artworkTemplate.GetComponent<UnityEngine.UI.Button>() != null)
+        {
+            var copy = Object.Instantiate(artworkTemplate.gameObject, parent);
+            copy.name = name;
+            copy.SetActive(true);
+            button = copy.GetComponent<UnityEngine.UI.Button>();
+            button.onClick.RemoveAllListeners();
+        }
+        if (button == null)
+        {
+            button = Button(parent, name, caption, textTemplate);
+        }
+
+        button.gameObject.SetActive(true);
+        var background = button.GetComponent<UnityEngine.UI.Image>();
+        if (background == null) background = button.gameObject.AddComponent<UnityEngine.UI.Image>();
+        button.targetGraphic = background;
+        background.raycastTarget = true;
+        var label = button.GetComponentInChildren<TMPro.TMP_Text>(true);
+        if (label == null)
+        {
+            var labelObject = new GameObject("Label", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
+            labelObject.transform.SetParent(button.transform, false);
+            label = labelObject.GetComponent<TMPro.TextMeshProUGUI>();
+            if (textTemplate != null) label.font = textTemplate.font;
+            var labelRect = label.rectTransform;
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = new Vector2(8f, 4f);
+            labelRect.offsetMax = new Vector2(-8f, -4f);
+        }
+        label.text = caption;
+        label.enabled = true;
+        label.gameObject.SetActive(true);
+        label.raycastTarget = false;
+        return button;
+    }
+
+    private static void ShowSettingsGuide(GameObject panel, TMPro.TMP_Text template, bool tutorialTips)
+    {
+        string name = tutorialTips ? "Settings Tutorial Tips" : "Settings Controls Guide";
+        Transform existing = panel.transform.Find(name);
+        GameObject guide = existing != null ? existing.gameObject : BuildPanel(panel.transform, template, tutorialTips);
+        guide.SetActive(true);
+        guide.transform.SetAsLastSibling();
     }
 
     public static void StyleSettingsActions(GameObject panel)

@@ -9,8 +9,9 @@ public sealed class SettingsSaveButton : MonoBehaviour
     private float savedUntil;
     public void Configure(UnityEngine.UI.Button target, TMP_Text caption)
     {
+        if (button != null) button.onClick.RemoveListener(Save);
         button=target; label=caption;
-        button.onClick.AddListener(Save);
+        if (button != null) button.onClick.AddListener(Save);
     }
     void Update()
     {

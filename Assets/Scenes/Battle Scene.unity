@@ -1966,8 +1966,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160, y: -90}
-  m_SizeDelta: {x: 330, y: 31.3072}
+  m_AnchoredPosition: {x: 160, y: -106}
+  m_SizeDelta: {x: 330, y: 75}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &404133649
 MonoBehaviour:
@@ -3634,6 +3634,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardViewHoverSystem
   cardViewHover: {fileID: 243984589}
+  previewScaleFactor: 1.05
 --- !u!1 &721133670
 GameObject:
   m_ObjectHideFlags: 0
@@ -4046,8 +4047,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1168, y: -30}
-  m_SizeDelta: {x: 96, y: 46}
+  m_AnchoredPosition: {x: 1199, y: -30}
+  m_SizeDelta: {x: 65, y: 55}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &790567362
 MonoBehaviour:
@@ -4106,14 +4107,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.34, g: 0.19, b: 0.09, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 11277a3f23988ec47908362d708edaa8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4233,7 +4234,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'CLOSE  [ESC]'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -11651,18 +11652,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1797455454}
   m_CullTransparentMesh: 1
---- !u!114 &1798198550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7000000000000001004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fff70e972ee749d495d1b7d89eb21c1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BattleSettingsMenu
 --- !u!1 &1799800064
 GameObject:
   m_ObjectHideFlags: 0
@@ -14371,7 +14360,6 @@ GameObject:
   - component: {fileID: 7000000000000001008}
   - component: {fileID: 7000000000000001009}
   - component: {fileID: 7000000000000001010}
-  - component: {fileID: 1798198550}
   - component: {fileID: 7000000000000002051}
   m_Layer: 5
   m_Name: setting

@@ -59,7 +59,7 @@ public class PortalNextScene : MonoBehaviour
     {
         nextRequirementRefresh = Time.unscaledTime + 0.5f;
         var saved = requiredDefeatedEncounters > 0 ? SaveSlots.Read(SaveSlots.Active) : null;
-        int defeated = PortalDefeatRequirement.Count(saved, countAllDefeatedEnemies);
+        int defeated = PortalDefeatRequirement.Count(saved, countAllDefeatedEnemies, gameObject.scene.name);
         requiredVictoriesMet = requiredDefeatedEncounters <= 0 || defeated >= requiredDefeatedEncounters;
         if (interaction != null)
             interaction.unavailablePrompt = requiredVictoriesMet ? "" :

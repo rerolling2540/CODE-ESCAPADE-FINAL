@@ -16,13 +16,15 @@ public static class PlayerProgression
         saved.level=5;
         SaveSlots.Write(saved);
     }
-    public static int AwardEncounter(string encounterId,int amount)
+    public static int AwardEncounter(string encounterId,int amount,string sourceScene = null)
     {
         var saved=SaveSlots.Read(SaveSlots.Active);
         if(saved==null||string.IsNullOrEmpty(encounterId))return 0;
         Ensure(saved);
+        bool visitChanged=SceneVisitProgress.RecordDefeat(saved,sourceScene,encounterId);
         if(saved.defeatedEncounters==null)saved.defeatedEncounters=new System.Collections.Generic.List<string>();
-        if(saved.defeatedEncounters.Contains(encounterId))return 0;
+        if(saved.defeatedEncounters.Contains(encounterId))
+        {if(visitChanged)SaveSlots.Write(saved);return 0;}
         saved.defeatedEncounters.Add(encounterId);
         ApplyExperience(saved,Mathf.Max(0,amount));SaveSlots.Write(saved);return Mathf.Max(0,amount);
     }

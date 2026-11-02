@@ -34,7 +34,7 @@ public sealed class CharacterSmokeEffects : MonoBehaviour
         runFrames = LoadStrip(RunSheetPath);
         dashFrames = LoadStrip(DashSheetPath);
         jumpFrames = LoadStrip(JumpSheetPath, 48, 32, 48);
-        landingFrames = LoadStrip(LandingSheetPath, 48, 32, 48);
+        landingFrames = LoadStrip(LandingSheetPath, 64, 64, 64);
 
         if (runFrames == null || dashFrames == null || jumpFrames == null || landingFrames == null)
             Debug.LogWarning("One or more smoke FX sprite sheets could not be loaded from Resources/SmokeFX.", this);

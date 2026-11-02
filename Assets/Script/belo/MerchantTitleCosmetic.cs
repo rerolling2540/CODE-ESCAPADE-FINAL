@@ -8,7 +8,7 @@ public sealed class MerchantTitleCosmetic : MonoBehaviour
     private TextMeshPro label;
     void Awake()
     {
-        inventory=GetComponent<CharacterInventory>();
+        inventory=GetComponent<CharacterInventory>()??FindFirstObjectByType<CharacterInventory>();
         var go=new GameObject("Merchant Title Cosmetic",typeof(TextMeshPro));go.transform.SetParent(transform,false);
         label=go.GetComponent<TextMeshPro>();label.fontSize=2.5f;label.alignment=TextAlignmentOptions.Center;
         var font=Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");if(font!=null)label.font=font;
@@ -18,12 +18,14 @@ public sealed class MerchantTitleCosmetic : MonoBehaviour
     }
     void LateUpdate()
     {
+        if(inventory==null)inventory=FindFirstObjectByType<CharacterInventory>();
         var offer=inventory!=null?SyntaxMerchantCatalog.Load()?.Find(inventory.EquippedCosmetic):null;
-        bool show=offer!=null&&offer.kind==MerchantItemKind.CosmeticTitle&&!GameControlsGuide.MapHidden;
+        bool warden=WardenQuest.Chapter(SaveSlots.Read(SaveSlots.Active))>=6;
+        bool show=(warden||offer!=null&&offer.kind==MerchantItemKind.CosmeticTitle)&&!GameControlsGuide.MapHidden;
         label.gameObject.SetActive(show);if(!show)return;
         var body=GetComponent<Collider2D>();float y=body!=null?body.bounds.max.y:transform.position.y+1.6f;
         label.transform.position=new Vector3(transform.position.x,y+.35f,transform.position.z-.1f);
         label.transform.rotation=Quaternion.identity;var scale=transform.lossyScale;label.transform.localScale=new Vector3(Mathf.Abs(scale.x)>.001f?1f/scale.x:1,Mathf.Abs(scale.y)>.001f?1f/scale.y:1,1);
-        label.text=offer.cosmeticTitle;label.color=offer.titleColor;
+        label.text=offer!=null?offer.cosmeticTitle:"Warden of the Hollow";label.color=offer!=null?offer.titleColor:new Color(1,.84f,.35f);
     }
 }

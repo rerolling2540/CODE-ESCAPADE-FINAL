@@ -172,6 +172,12 @@ public class CaveEnemyEncounter : MonoBehaviour
 
     void TryStartBattle(playerMovement character)
     {
+        if(gameObject.name==WardenQuest.FinalEncounter)
+        {
+            var saved=SaveSlots.Read(SaveSlots.Active);
+            if(WardenQuest.Chapter(saved)<5)return;
+            for(int topic=0;topic<6;topic++)if(!WardenQuest.Lesson(saved,topic))return;
+        }
         if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) return;
         if (character == null || enemy == null || enteringBattle || Time.timeScale <= 0f ||
             GameControlsGuide.GameplayOverlayHidden || Time.unscaledTime < readyAt ||

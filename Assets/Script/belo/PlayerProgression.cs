@@ -45,6 +45,8 @@ public static class PlayerProgression
         // Persist the reward receipt and XP together, preventing repeat claims after reload.
         saved.level=Mathf.Max(5,saved.level);ApplyExperience(saved,LearningQuests.Reward(giver));return true;
     }
+    public static void ApplyQuestExperience(SaveSlots.Record saved,int amount)
+    {saved.level=Mathf.Max(5,saved.level);ApplyExperience(saved,Mathf.Max(0,amount));}
     private static void ApplyExperience(SaveSlots.Record saved,int amount)
     {
         saved.experience=(int)System.Math.Min(int.MaxValue,(long)Mathf.Max(0,saved.experience)+amount);

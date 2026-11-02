@@ -1020,7 +1020,8 @@ public class EncounterBattleReturn : MonoBehaviour
 
     public void Configure(bool fromCave, string id)
     {
-        BattleQuestionReport.BeginBattle();
+        BattleQuestionReport.BeginBattle(id);
+        if(id==WardenQuest.FinalEncounter&&GetComponent<WardenFinalTrial>()==null)gameObject.AddComponent<WardenFinalTrial>();
         caveBattle = fromCave;
         encounterExperience=0;
         foreach(var enemy in EnemySystem.Instance.Enemies)if(enemy!=null)encounterExperience+=enemy.ExperienceReward;

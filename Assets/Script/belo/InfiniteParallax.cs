@@ -55,8 +55,7 @@ public class InfiniteParallax : MonoBehaviour
 
     private bool IsBackgroundRenderer(Renderer renderer)
     {
-        if (renderer == null || renderer == GetComponent<Renderer>() ||
-            !renderer.enabled || !renderer.gameObject.activeInHierarchy)
+        if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
             return false;
 
         if (!(renderer is SpriteRenderer) && !(renderer is TilemapRenderer))
@@ -69,7 +68,10 @@ public class InfiniteParallax : MonoBehaviour
         if (objectName.Contains("_tile") || objectName.Contains("_loop"))
             return false;
 
-        return objectName.Contains("background") || objectName.StartsWith("bg") ||
+        // A component attached directly to a background must include its own
+        // renderer; otherwise the only valid layer can be skipped entirely.
+        return renderer.gameObject == gameObject ||
+               objectName.Contains("background") || objectName.StartsWith("bg") ||
                objectName.Contains("mountain") || objectName.Contains("parallax");
     }
 }

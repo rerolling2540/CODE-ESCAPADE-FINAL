@@ -130,6 +130,11 @@ public class QuestionSystem : Singleton<QuestionSystem>
             yield break;
         }
         // Wait for the bank request so card questions use the published database bank.
+        if(WardenFinalTrial.Instance!=null)
+        {
+            var finalQuestion=WardenFinalTrial.Instance.Question(playedCard);
+            if(finalQuestion!=null){ActionSystem.Instance.Perform(new QuestionGA(finalQuestion,onAnswered,playedCard));yield break;}
+        }
         while (!remoteLoadFinished) yield return null;
 
         QuestionData selected = SelectForCurrentPlayer(GetQuestionPool(), playedCard);

@@ -7,6 +7,7 @@ public sealed class PortalArrivalPoint : MonoBehaviour
 {
     public string arrivalId;
     public Transform landingPoint;
+    public bool requireSafeLanding;
     private static string pendingScene;
     private static string pendingArrival;
 
@@ -60,6 +61,8 @@ public sealed class PortalArrivalPoint : MonoBehaviour
             break;
         }
 
+        if(requireSafeLanding&&!SafeCheckpoint.TryFind(player,destination,out destination))
+        {Debug.LogWarning("No safe monolith landing found. Keeping the map's player spawn.",this);yield break;}
         Vector3 delta = destination - player.transform.position;
         player.transform.position = destination;
         var body = player.GetComponent<Rigidbody2D>();
@@ -72,5 +75,6 @@ public sealed class PortalArrivalPoint : MonoBehaviour
         foreach (var camera in FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None))
             if (camera.Follow == player.transform) camera.OnTargetObjectWarped(player.transform, delta);
         PlayerDeathFlow.RecordCheckpoint(destination);
+        if(requireSafeLanding)GameSave.EnsureInstance().SaveCurrentPlayer();
     }
 }

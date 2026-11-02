@@ -46,11 +46,15 @@ public static class SaveSlots
         public int character;
         public int level;
         public int experience;
+        public System.Collections.Generic.List<string> visitedScenes = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> seenTutorialTips = new System.Collections.Generic.List<string>();
         public bool hasPosition;
         public Vector3 position;
         public string savedAt;
         public int elfQuestStage;
+        public bool wardenAccepted;
+        public int wardenChapter;
+        public System.Collections.Generic.List<string> wardenProofs = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> workshopExercisesCompleted = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> learningQuestsAccepted = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> learningQuestProofs = new System.Collections.Generic.List<string>();

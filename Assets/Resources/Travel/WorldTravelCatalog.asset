@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d46ceddb9aa457468fa7b19b4bad91c, type: 3}
+  m_Name: WorldTravelCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::WorldTravelCatalog
+  destinations:
+  - sceneName: Scene 2
+    title: "Scene 2 \u2014 Alden's camp"
+    description: Output, variables, and the first battle
+    lobby: 0
+  - sceneName: Scene3
+    title: "Scene 3 \u2014 Rowan's hollow"
+    description: Conditions, loops, and cave exploration
+    lobby: 0
+  - sceneName: map 4
+    title: "Map 4 \u2014 Mira's refuge"
+    description: Arrays, lists, and functions
+    lobby: 0
+  - sceneName: map 5
+    title: "Map 5 \u2014 The Warden's grove"
+    description: Explore the grove and prepare for the final trial
+    lobby: 0
+  - sceneName: MainMenu
+    title: Lobby
+    description: Return to character selection and save slots
+    lobby: 1

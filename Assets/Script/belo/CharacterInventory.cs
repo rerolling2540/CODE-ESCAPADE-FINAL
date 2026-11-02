@@ -5,6 +5,7 @@ using UnityEngine;
 public class CharacterInventory : MonoBehaviour
 {
     private const int CurrentStarterCardsVersion = 3;
+    private const int AdminResourceBalance = 1000000;
     private static CharacterInventory activeInstance;
     public static event Action InventoryChanged;
     [Serializable] public class CatalogEntry { public string id; public CardData card; }
@@ -101,7 +102,16 @@ public class CharacterInventory : MonoBehaviour
         }
         if(Application.isPlaying && GetComponent<playerMovement>() != null && GetComponent<MerchantTitleCosmetic>() == null)
             gameObject.AddComponent<MerchantTitleCosmetic>();
-        if (IsCurrentSlot) activeInstance = this;
+        if (IsCurrentSlot)
+        {
+            activeInstance = this;
+            // The auth/cloud callback normally applies the admin grant, but the
+            // inventory scene can load after that callback (or after a cloud
+            // restore). Recheck against the now-active account save on scene entry.
+            if (MainMenuSaveSlots.HasAdminSession &&
+                SaveSlots.IsActiveAccountProfile(MainMenuSaveSlots.CurrentUserId))
+                EnsureAdminAccountInventory();
+        }
     }
 
     void OnDestroy()
@@ -136,7 +146,13 @@ public class CharacterInventory : MonoBehaviour
             }
         }
 
-        if (IsCurrentSlot) activeInstance = this;
+        if (IsCurrentSlot)
+        {
+            activeInstance = this;
+            if (MainMenuSaveSlots.HasAdminSession &&
+                SaveSlots.IsActiveAccountProfile(MainMenuSaveSlots.CurrentUserId))
+                EnsureAdminAccountInventory();
+        }
         InventoryChanged?.Invoke();
     }
 
@@ -374,6 +390,99 @@ public class CharacterInventory : MonoBehaviour
             try { activeInstance.data = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(key)) ?? new SaveData(); }
             catch (ArgumentException) { activeInstance.data = new SaveData(); }
         }
+    }
+
+    /// <summary>
+    /// Keeps the admin account's active save stocked for content testing. The
+    /// grant is deliberately gated by both the authenticated admin session and
+    /// that account's currently active save profile.
+    /// </summary>
+    public static bool EnsureAdminAccountInventory()
+    {
+        if (!MainMenuSaveSlots.HasAdminSession) return false;
+
+        var allCards = new Dictionary<string, CardData>();
+        var inventoryCatalog = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
+        if (inventoryCatalog != null && inventoryCatalog.cards != null)
+        {
+            foreach (var entry in inventoryCatalog.cards)
+                if (entry != null && entry.card != null && !string.IsNullOrWhiteSpace(entry.id))
+                    allCards[entry.id] = entry.card;
+        }
+
+        foreach (var card in Resources.LoadAll<CardData>("ChestCards"))
+            if (card != null) allCards["chest." + card.name] = card;
+
+        var merchant = SyntaxMerchantCatalog.Load();
+        if (merchant != null && merchant.offers != null)
+            foreach (var offer in merchant.offers)
+                if (offer != null && offer.kind == MerchantItemKind.Card && offer.card != null &&
+                    !string.IsNullOrWhiteSpace(offer.cardId))
+                    allCards[offer.cardId] = offer.card;
+
+        // Grant only the active save. Filling every empty slot would make them
+        // all appear occupied in the save selector; other admin slots are
+        // stocked automatically when selected.
+        int slot = SaveSlots.Active;
+        string key = "CodeEscapade.Inventory.v1.Slot." + slot;
+        SaveData saved = new SaveData();
+        if (PlayerPrefs.HasKey(key))
+        {
+            try
+            {
+                saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(key));
+                if (saved == null)
+                {
+                    Debug.LogWarning($"Admin inventory grant skipped save slot {slot + 1}: its saved inventory is invalid.");
+                    return false;
+                }
+            }
+            catch (ArgumentException)
+            {
+                Debug.LogWarning($"Admin inventory grant skipped save slot {slot + 1}: its saved inventory could not be read.");
+                return false;
+            }
+        }
+
+        if (saved.cards == null) saved.cards = new List<Stack>();
+        if (saved.openedChests == null) saved.openedChests = new List<string>();
+        if (saved.ownedCosmetics == null) saved.ownedCosmetics = new List<string>();
+
+        bool changed = false;
+        if (saved.coins < AdminResourceBalance) { saved.coins = AdminResourceBalance; changed = true; }
+        if (saved.libraryTokens < AdminResourceBalance) { saved.libraryTokens = AdminResourceBalance; changed = true; }
+        if (saved.lowLogicScraps < AdminResourceBalance) { saved.lowLogicScraps = AdminResourceBalance; changed = true; }
+        if (saved.syntaxShards < AdminResourceBalance) { saved.syntaxShards = AdminResourceBalance; changed = true; }
+
+        foreach (var card in allCards)
+        {
+            Stack owned = saved.cards.Find(stack => stack != null && stack.id == card.Key);
+            if (owned == null)
+            {
+                saved.cards.Add(new Stack { id = card.Key, quantity = 1, level = 1 });
+                changed = true;
+            }
+            else if (owned.quantity < 1)
+            {
+                owned.quantity = 1;
+                changed = true;
+            }
+        }
+
+        if (!changed) return false;
+
+        PlayerPrefs.SetString(key, JsonUtility.ToJson(saved));
+        PlayerPrefs.Save();
+        SaveSlots.NotifyLocalSlotsChanged(slot);
+        if (activeInstance != null && activeInstance.loadedSlot == slot)
+        {
+            try { activeInstance.data = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey)) ?? new SaveData(); }
+            catch (ArgumentException) { activeInstance.data = new SaveData(); }
+        }
+        InventoryChanged?.Invoke();
+
+        Debug.Log($"Admin inventory stocked in save slot {slot + 1}: {allCards.Count} card types and {AdminResourceBalance:N0} of each resource.");
+        return true;
     }
 
     bool AddCardInternal(CardData card, int amount)

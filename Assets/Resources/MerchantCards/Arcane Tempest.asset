@@ -15,7 +15,7 @@ MonoBehaviour:
   <Description>k__BackingField: Deal 120% of attack power to all enemies. Apply 2
     burn stacks to each enemy.
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: -9126632893365767051, guid: e132586eb2d464f4c887fbb23340deb3, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: e21da6bbf16d05d49b3b4d4a74f5a53b, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:

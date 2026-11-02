@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: Choose one enemy to take 150% Attack Power damage.
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: 8781525044889457999, guid: 014667a93c3eb1940996eeaaff2c9313, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 5bbca44050388b340b33b3e6003ad454, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: 301
   <OtherEffects>k__BackingField: []

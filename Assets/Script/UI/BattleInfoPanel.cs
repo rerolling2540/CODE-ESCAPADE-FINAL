@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -38,6 +39,19 @@ public sealed class BattleInfoPanel : MonoBehaviour
     private Texture2D portraitTexture;
     private Sprite runtimePortraitSprite;
     private bool renderingCards;
+    private EnemyView selectedEnemyPortrait;
+    private GameObject cardZoomOverlay;
+    private CardInventoryItemUI zoomCardItem;
+    private CardInventoryItemUI zoomSourceItem;
+    private CanvasGroup zoomSourceGroup;
+    private bool zoomSourceGroupWasCreated;
+    private float zoomSourceAlpha;
+    private bool zoomSourceInteractable;
+    private bool zoomSourceBlocksRaycasts;
+    private Vector2 zoomReturnPosition;
+    private Coroutine zoomAnimation;
+    private bool zoomClosing;
+    private const float CardZoomScale = 2f;
     private static readonly Color ActiveTab = new Color(0.42f, 0.25f, 0.11f, 1f);
     private static readonly Color InactiveTab = new Color(0.25f, 0.15f, 0.08f, 1f);
     private static readonly Color Ink = new Color(0.16f, 0.085f, 0.035f, 1f);
@@ -81,7 +95,9 @@ public sealed class BattleInfoPanel : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) Close();
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+        if (cardZoomOverlay != null) CloseCardZoom();
+        else Close();
     }
 
     public void ToggleFromPortrait()
@@ -104,6 +120,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
     public void Close()
     {
         if (!gameObject.activeSelf) return;
+        RestoreCardZoomImmediately();
         gameObject.SetActive(false);
         Time.timeScale = previousTimeScale;
     }
@@ -330,6 +347,123 @@ public sealed class BattleInfoPanel : MonoBehaviour
         item.gameObject.name = "Owned Card - " + card.name;
         item.gameObject.SetActive(true);
         item.Bind(card, quantity, level);
+        item.Clicked += OpenCardZoom;
+    }
+
+    private void OpenCardZoom(CardInventoryItemUI source)
+    {
+        if (source == null || source.BoundCard == null || cardItemTemplate == null || cardZoomOverlay != null) return;
+        Canvas canvas = GetComponentInParent<Canvas>();
+        Canvas rootCanvas = canvas != null ? canvas.rootCanvas : null;
+        if (rootCanvas == null) return;
+
+        zoomSourceItem = source;
+        zoomSourceGroup = source.GetComponent<CanvasGroup>();
+        zoomSourceGroupWasCreated = zoomSourceGroup == null;
+        if (zoomSourceGroup == null) zoomSourceGroup = source.gameObject.AddComponent<CanvasGroup>();
+        zoomSourceAlpha = zoomSourceGroup.alpha;
+        zoomSourceInteractable = zoomSourceGroup.interactable;
+        zoomSourceBlocksRaycasts = zoomSourceGroup.blocksRaycasts;
+        zoomSourceGroup.alpha = 0f;
+        zoomSourceGroup.interactable = false;
+        zoomSourceGroup.blocksRaycasts = false;
+
+        Vector2 sourceScreenPosition = RectTransformUtility.WorldToScreenPoint(
+            rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : rootCanvas.worldCamera,
+            ((RectTransform)source.transform).position);
+
+        cardZoomOverlay = new GameObject("Card Read View", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+        cardZoomOverlay.transform.SetParent(rootCanvas.transform, false);
+        cardZoomOverlay.transform.SetAsLastSibling();
+        RectTransform overlayRect = (RectTransform)cardZoomOverlay.transform;
+        overlayRect.anchorMin = Vector2.zero;
+        overlayRect.anchorMax = Vector2.one;
+        overlayRect.offsetMin = overlayRect.offsetMax = Vector2.zero;
+
+        Image backdrop = cardZoomOverlay.GetComponent<Image>();
+        backdrop.color = new Color(0.025f, 0.018f, 0.012f, 0.78f);
+        backdrop.raycastTarget = true;
+        Button backdropButton = cardZoomOverlay.GetComponent<Button>();
+        backdropButton.transition = Selectable.Transition.None;
+        backdropButton.targetGraphic = backdrop;
+        backdropButton.onClick.AddListener(CloseCardZoom);
+
+        zoomCardItem = Instantiate(cardItemTemplate, cardZoomOverlay.transform, false);
+        zoomCardItem.gameObject.name = "Expanded Card - " + source.BoundCard.name;
+        zoomCardItem.gameObject.SetActive(true);
+        zoomCardItem.Bind(source.BoundCard, source.BoundQuantity, source.BoundLevel);
+        zoomCardItem.Clicked += HandleZoomCardClick;
+
+        RectTransform zoomRect = (RectTransform)zoomCardItem.transform;
+        zoomRect.anchorMin = zoomRect.anchorMax = new Vector2(0.5f, 0.5f);
+        zoomRect.pivot = new Vector2(0.5f, 0.5f);
+        zoomRect.sizeDelta = new Vector2(210f, 330f);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            overlayRect, sourceScreenPosition,
+            rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : rootCanvas.worldCamera,
+            out zoomReturnPosition);
+        zoomRect.anchoredPosition = zoomReturnPosition;
+        zoomRect.localScale = Vector3.one;
+        zoomClosing = false;
+        zoomAnimation = StartCoroutine(AnimateZoomCard(zoomReturnPosition, Vector2.zero, Vector3.one, Vector3.one * CardZoomScale));
+    }
+
+    private void HandleZoomCardClick(CardInventoryItemUI _) => CloseCardZoom();
+
+    private void CloseCardZoom()
+    {
+        if (cardZoomOverlay == null || zoomClosing) return;
+        zoomClosing = true;
+        if (zoomAnimation != null) StopCoroutine(zoomAnimation);
+        RectTransform zoomRect = zoomCardItem != null ? (RectTransform)zoomCardItem.transform : null;
+        zoomAnimation = StartCoroutine(AnimateZoomCard(
+            zoomRect != null ? zoomRect.anchoredPosition : Vector2.zero,
+            zoomReturnPosition,
+            zoomRect != null ? zoomRect.localScale : Vector3.one * CardZoomScale,
+            Vector3.one,
+            true));
+    }
+
+    private IEnumerator AnimateZoomCard(Vector2 fromPosition, Vector2 toPosition, Vector3 fromScale, Vector3 toScale, bool closing = false)
+    {
+        const float duration = 0.24f;
+        float elapsed = 0f;
+        RectTransform zoomRect = zoomCardItem != null ? (RectTransform)zoomCardItem.transform : null;
+        while (elapsed < duration && zoomRect != null)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            t = t * t * (3f - 2f * t);
+            zoomRect.anchoredPosition = Vector2.LerpUnclamped(fromPosition, toPosition, t);
+            zoomRect.localScale = Vector3.LerpUnclamped(fromScale, toScale, t);
+            yield return null;
+        }
+
+        if (closing) RestoreCardZoomImmediately();
+        else zoomAnimation = null;
+    }
+
+    private void RestoreCardZoomImmediately()
+    {
+        if (zoomAnimation != null)
+        {
+            StopCoroutine(zoomAnimation);
+            zoomAnimation = null;
+        }
+        if (zoomSourceGroup != null)
+        {
+            zoomSourceGroup.alpha = zoomSourceAlpha;
+            zoomSourceGroup.interactable = zoomSourceInteractable;
+            zoomSourceGroup.blocksRaycasts = zoomSourceBlocksRaycasts;
+            if (zoomSourceGroupWasCreated) Destroy(zoomSourceGroup);
+        }
+        if (cardZoomOverlay != null) Destroy(cardZoomOverlay);
+        cardZoomOverlay = null;
+        zoomCardItem = null;
+        zoomSourceItem = null;
+        zoomSourceGroup = null;
+        zoomSourceGroupWasCreated = false;
+        zoomClosing = false;
     }
 
     private void RenderEnemies()
@@ -346,9 +480,12 @@ public sealed class BattleInfoPanel : MonoBehaviour
             }
         }
 
+        if (selectedEnemyPortrait == null || !livingEnemies.Contains(selectedEnemyPortrait))
+            selectedEnemyPortrait = livingEnemies.Count > 0 ? livingEnemies[0] : null;
+
         if (characterPortrait != null)
         {
-            Sprite enemyPortrait = livingEnemies.Count > 0 ? GetEnemyPortrait(livingEnemies[0]) : null;
+            Sprite enemyPortrait = selectedEnemyPortrait != null ? GetEnemyPortrait(selectedEnemyPortrait) : null;
             characterPortrait.sprite = enemyPortrait;
             characterPortrait.preserveAspect = true;
             characterPortrait.color = enemyPortrait != null ? Color.white : new Color(1f, 1f, 1f, 0f);
@@ -368,7 +505,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
         bodyText.gameObject.SetActive(false);
         RectTransform listRect = CreateEnemyDetailsList();
         for (int i = 0; i < livingEnemies.Count; i++)
-            CreateEnemyDetailsSection(listRect, livingEnemies[i], i == 0);
+            CreateEnemyDetailsSection(listRect, livingEnemies[i]);
 
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(listRect);
@@ -401,14 +538,21 @@ public sealed class BattleInfoPanel : MonoBehaviour
         return rect;
     }
 
-    private void CreateEnemyDetailsSection(RectTransform list, EnemyView enemy, bool isPortraitEnemy)
+    private void CreateEnemyDetailsSection(RectTransform list, EnemyView enemy)
     {
         string enemyName = enemy.Data != null ? enemy.Data.name : enemy.gameObject.name;
-        var section = new GameObject("Enemy Details - " + enemyName, typeof(RectTransform), typeof(Image),
-            typeof(VerticalLayoutGroup), typeof(LayoutElement));
+        var section = new GameObject("Enemy Details - " + enemyName + " [" + enemy.GetInstanceID() + "]", typeof(RectTransform), typeof(Image),
+            typeof(VerticalLayoutGroup), typeof(LayoutElement), typeof(Button));
         section.transform.SetParent(list, false);
-        section.GetComponent<Image>().color = new Color(0.35f, 0.22f, 0.10f, 0.18f);
-        section.GetComponent<Image>().raycastTarget = false;
+        Image sectionImage = section.GetComponent<Image>();
+        sectionImage.color = enemy == selectedEnemyPortrait
+            ? new Color(0.35f, 0.22f, 0.10f, 0.3f)
+            : new Color(0.35f, 0.22f, 0.10f, 0.18f);
+        sectionImage.raycastTarget = true;
+        Button selectButton = section.GetComponent<Button>();
+        selectButton.transition = Selectable.Transition.None;
+        selectButton.targetGraphic = sectionImage;
+        selectButton.onClick.AddListener(() => SelectEnemyPortrait(enemy));
         var sectionLayout = section.GetComponent<VerticalLayoutGroup>();
         sectionLayout.padding = new RectOffset(12, 12, 10, 10);
         sectionLayout.spacing = 8f;
@@ -435,7 +579,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
         if (burn > 0)
             stats.Add(new EnemyDetailStat("BURN", burn.ToString(), enemyBurnIcon, "FIRE", new Color(0.82f, 0.27f, 0.10f)));
 
-        CreateEnemyHeader(section.transform, enemy, enemyName, isPortraitEnemy);
+        CreateEnemyHeader(section.transform, enemy, enemyName);
         CreateEnemyStatsGrid(section.transform, stats);
 
         var sectionElement = section.GetComponent<LayoutElement>();
@@ -444,7 +588,30 @@ public sealed class BattleInfoPanel : MonoBehaviour
         sectionElement.preferredHeight = 112f + rows * 42f;
     }
 
-    private void CreateEnemyHeader(Transform parent, EnemyView enemy, string enemyName, bool isPortraitEnemy)
+    private void SelectEnemyPortrait(EnemyView enemy)
+    {
+        if (enemy == null || characterPortrait == null) return;
+        selectedEnemyPortrait = enemy;
+        Sprite portrait = GetEnemyPortrait(enemy);
+        characterPortrait.sprite = portrait;
+        characterPortrait.preserveAspect = true;
+        characterPortrait.color = portrait != null ? Color.white : new Color(1f, 1f, 1f, 0f);
+
+        if (bodyContent == null) return;
+        for (int i = 0; i < bodyContent.childCount; i++)
+        {
+            Transform child = bodyContent.GetChild(i);
+            if (!child.name.StartsWith("Enemy Details - ")) continue;
+            Image background = child.GetComponent<Image>();
+            if (background == null) continue;
+            bool selected = child.name.EndsWith("[" + enemy.GetInstanceID() + "]");
+            background.color = selected
+                ? new Color(0.35f, 0.22f, 0.10f, 0.3f)
+                : new Color(0.35f, 0.22f, 0.10f, 0.18f);
+        }
+    }
+
+    private void CreateEnemyHeader(Transform parent, EnemyView enemy, string enemyName)
     {
         var header = new GameObject("Enemy Heading", typeof(RectTransform), typeof(HorizontalLayoutGroup), typeof(LayoutElement));
         header.transform.SetParent(parent, false);
@@ -469,7 +636,6 @@ public sealed class BattleInfoPanel : MonoBehaviour
         portraitLayout.minHeight = portraitLayout.preferredHeight = 70f;
 
         string subtitle = enemy.IsRanged ? "RANGED ENEMY" : "MELEE ENEMY";
-        if (isPortraitEnemy) subtitle += "  ·  PORTRAIT";
         TMP_Text heading = CreateEnemyText("Enemy Name", parent: header.transform,
             value: "<size=27><b>" + EscapeRichText(enemyName.ToUpperInvariant()) + "</b></size>\n<size=17><color=#80602B>" + subtitle + "</color></size>",
             fontSize: 23f, style: FontStyles.Normal);

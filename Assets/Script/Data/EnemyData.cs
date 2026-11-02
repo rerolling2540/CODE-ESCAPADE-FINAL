@@ -21,6 +21,9 @@ public class EnemyData : ScriptableObject
     [Min(0.1f)] public float battleVisualScale = 1f;
     [Header("Attack Behaviour")]
     public EnemyAttackStyle attackStyle = EnemyAttackStyle.Melee;
+    [Header("Battle Intent")]
+    [Min(1)] public int attackCountdown = 15;
+    [Min(1)] public int breakMeterMax = 100;
     [Header("Attack Projectile")]
     public Sprite[] projectileFrames;
     public Sprite[] impactFrames;

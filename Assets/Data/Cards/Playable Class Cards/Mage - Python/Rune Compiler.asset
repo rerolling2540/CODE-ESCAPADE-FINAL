@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: "Gain 1 mana this turn."
   <Mana>k__BackingField: 0
-  <Image>k__BackingField: {fileID: -3666294474207943081, guid: f9456b5c50a66644fa617320f58e94fc, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: c8db765f8404a794eaf075cab8798c0a, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101

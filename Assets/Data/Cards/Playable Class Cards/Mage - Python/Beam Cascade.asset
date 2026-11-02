@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: "Deal 15 damage and apply 1 Burn to one enemy."
   <Mana>k__BackingField: 3
-  <Image>k__BackingField: {fileID: -6087015482412606584, guid: 41630cbef17660645aabddea695b0b0d, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 9cf3ac0b624168545975e8923bfe94e3, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101

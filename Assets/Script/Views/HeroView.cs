@@ -14,6 +14,8 @@ public class HeroView : CombatantView
         if (battleData == null || !battleData.dashToBattleTarget || target == null || target.CurrentHealth <= 0)
         {
             yield return PlayAttackAnimation();
+            if (CurrentHealth > 0 && battleData != null)
+                yield return PlayBattleFramesOnce(battleData.sheatheFrames, battleData.battleFramesPerSecond);
             yield break;
         }
         attackOrigin = transform.position;
@@ -31,6 +33,8 @@ public class HeroView : CombatantView
             yield return PlayAttackAnimation();
             if (CurrentHealth <= 0) yield break;
             yield return PlayBattleTravel(attackOrigin, 0.24f, battleData.battleDashFrames);
+            if (CurrentHealth > 0)
+                yield return PlayBattleFramesOnce(battleData.sheatheFrames, battleData.battleFramesPerSecond);
         }
         finally
         {

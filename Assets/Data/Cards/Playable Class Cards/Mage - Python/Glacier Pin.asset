@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: "Deal 8 damage and apply 2 Frost to one enemy."
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: -4100375298537930028, guid: c9148acabd31c6343be2be9a5620e06f, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: d8e8912eb0e430d499d921be1c3cf4be, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101

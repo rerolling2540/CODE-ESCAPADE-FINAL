@@ -11,7 +11,8 @@ public class EnemySystem : Singleton<EnemySystem>
     {
         get
         {
-            return enemyBoardView.EnemyViews[0];
+            if (enemyBoardView == null || enemyBoardView.EnemyViews == null) return null;
+            return enemyBoardView.EnemyViews.Find(enemy => enemy != null && enemy.CurrentHealth > 0);
         }
     }
 
@@ -20,6 +21,7 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.AttachPerformer<EnemyTurnGA>(EnemyTurnPerformer);
         ActionSystem.AttachPerformer<AttackHeroGA>(AttackHeroPerformer);
         ActionSystem.AttachPerformer<KillEnemyGA>(KillEnemyPerformer);
+        ActionSystem.AttachPerformer<ResetEnemyBreakMetersGA>(ResetEnemyBreakMetersPerformer);
     }
 
     void OnDisable()
@@ -27,6 +29,7 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.DetachPerformer<EnemyTurnGA>();
         ActionSystem.DetachPerformer<AttackHeroGA>();
         ActionSystem.DetachPerformer<KillEnemyGA>();
+        ActionSystem.DetachPerformer<ResetEnemyBreakMetersGA>();
     }
 
     public void Setup(List<EnemyData> enemyDatas)
@@ -39,6 +42,9 @@ public class EnemySystem : Singleton<EnemySystem>
     // Performers
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA)
     {
+        if (enemyBoardView == null || enemyBoardView.EnemyViews == null)
+            yield break;
+
         foreach (var enemy in enemyBoardView.EnemyViews)
         {
             if (enemy == null || enemy.CurrentHealth <= 0) continue;
@@ -49,11 +55,45 @@ public class EnemySystem : Singleton<EnemySystem>
                 ActionSystem.Instance.AddReaction(applyBurnGA);
             }
             QueueStatusTick(enemy, StatusEffectType.POISON, removeAllStacks: false);
-            AttackHeroGA attackHeroGA = new(enemy);
-            ActionSystem.Instance.AddReaction(attackHeroGA);
+            enemy.AdvanceAttackCountdown();
+            // Every unbroken enemy retaliates when the player ends the turn.
+            // The countdown still advances on every action for intent UI and
+            // can trigger an additional attack mid-turn when it reaches zero.
+            if (!enemy.IsBroken)
+                ActionSystem.Instance.AddReaction(new AttackHeroGA(enemy));
             // Bleed detonates after this enemy finishes its turn, then all stacks clear.
             QueueStatusTick(enemy, StatusEffectType.BLEED, removeAllStacks: true);
         }
+        // Break is a one-turn stagger. Restore meters after every enemy's turn effects
+        // and attacks have resolved, so a broken enemy skips this attack window.
+        ActionSystem.Instance.AddReaction(new ResetEnemyBreakMetersGA());
+        yield return null;
+    }
+
+    public HashSet<EnemyView> AdvanceAttackCountdownsForCard()
+    {
+        HashSet<EnemyView> attacksQueued = new();
+        if (enemyBoardView == null || enemyBoardView.EnemyViews == null || ActionSystem.Instance == null)
+            return attacksQueued;
+        foreach (EnemyView enemy in enemyBoardView.EnemyViews)
+        {
+            if (enemy == null || enemy.CurrentHealth <= 0) continue;
+            if (!enemy.AdvanceAttackCountdown()) continue;
+            if (enemy.IsBroken) continue;
+            ActionSystem.Instance.AddReaction(new AttackHeroGA(enemy));
+            attacksQueued.Add(enemy);
+        }
+        return attacksQueued;
+    }
+
+    private IEnumerator ResetEnemyBreakMetersPerformer(ResetEnemyBreakMetersGA action)
+    {
+        if (enemyBoardView == null || enemyBoardView.EnemyViews == null)
+            yield break;
+
+        foreach (EnemyView enemy in enemyBoardView.EnemyViews)
+            if (enemy != null && enemy.CurrentHealth > 0)
+                enemy.RestoreBreakMeter();
         yield return null;
     }
 
@@ -69,10 +109,10 @@ public class EnemySystem : Singleton<EnemySystem>
     {
         EnemyView attacker = attackHeroGA.Attacker;
 
-        if (attacker == null || attacker.CurrentHealth <= 0)
+        if (attacker == null || attacker.CurrentHealth <= 0 || attacker.IsBroken)
             yield break;
 
-        CombatantView hero = HeroSystem.Instance.HeroView;
+        CombatantView hero = HeroSystem.Instance != null ? HeroSystem.Instance.HeroView : null;
         if (hero == null || hero.CurrentHealth <= 0) yield break;
         Vector3 startPosition = attacker.transform.position;
         bool melee = !attacker.IsRanged;
@@ -95,7 +135,7 @@ public class EnemySystem : Singleton<EnemySystem>
                 yield return new WaitForSeconds(0.08f);
             }
 
-            if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
+            if (attacker == null || attacker.CurrentHealth <= 0 || attacker.IsBroken || hero == null || hero.CurrentHealth <= 0) yield break;
             // Melee attack frames contain the weapon slash; ranged frames launch the projectile.
             BattleAudio.Play(attacker.IsRanged ? BattleSound.MagicCast : BattleSound.SwordSwing);
             yield return attacker.PlayAttackAnimation();
@@ -116,7 +156,7 @@ public class EnemySystem : Singleton<EnemySystem>
             if (melee && attacker != null) attacker.transform.position = startPosition;
         }
 
-        if (attacker == null || attacker.CurrentHealth <= 0 || hero == null || hero.CurrentHealth <= 0) yield break;
+        if (attacker == null || attacker.CurrentHealth <= 0 || attacker.IsBroken || hero == null || hero.CurrentHealth <= 0) yield break;
         int frostStacks = attacker.GetStatusEffectStacks(StatusEffectType.FROST);
         int attackDamage = Mathf.Max(1, attacker.AttackPower - frostStacks);
         DealDamageGA dealDamageGA = new(

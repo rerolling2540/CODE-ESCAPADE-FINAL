@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnemyBoardView : MonoBehaviour
 {
     [SerializeField] private List<Transform> slots;
-    [SerializeField, Min(0.5f)] private float additionalEnemySpacing = 1.5f;
+    [SerializeField, Min(0.5f)] private float additionalEnemySpacing = 2.8f;
     public List<EnemyView> EnemyViews {get; private set; } = new();
     public void AddEnemy(EnemyData enemyData)
     {
@@ -15,8 +15,10 @@ public class EnemyBoardView : MonoBehaviour
         if (slots != null && EnemyViews.Count < slots.Count && slots[EnemyViews.Count] != null)
         {
             Transform slot = slots[EnemyViews.Count];
+            int enemyIndex = EnemyViews.Count;
             EnemyView enemyView = EnemyViewCreator.Instance.CreateEnemyView(enemyData, slot.position, slot.rotation);
             enemyView.transform.SetParent(slot, true);
+            enemyView.SetEnemyHealthBarRow(enemyIndex);
             EnemyViews.Add(enemyView);
             return;
         }
@@ -27,6 +29,7 @@ public class EnemyBoardView : MonoBehaviour
         Vector3 position = anchor.position + Vector3.left * additionalEnemySpacing * (EnemyViews.Count - (slots?.Count ?? 0) + 1);
         EnemyView additionalEnemy = EnemyViewCreator.Instance.CreateEnemyView(enemyData, position, anchor.rotation);
         additionalEnemy.transform.SetParent(transform, true);
+        additionalEnemy.SetEnemyHealthBarRow(EnemyViews.Count);
         EnemyViews.Add(additionalEnemy);
     }
     public IEnumerator RemoveEnemy(EnemyView enemyView)

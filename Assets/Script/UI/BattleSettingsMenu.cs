@@ -251,22 +251,17 @@ public sealed class BattleSettingsMenu : MonoBehaviour
             new GameObject("Battle Turn Counter", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
         RectTransform counterRect = counter.GetComponent<RectTransform>();
         if (counterRect.parent != canvasTransform) counterRect.SetParent(canvasTransform, false);
-        bool needsLayout = counterRect.sizeDelta == Vector2.zero;
-        if (needsLayout)
-        {
-            counterRect.anchorMin = counterRect.anchorMax = new Vector2(1f, 1f);
-            counterRect.pivot = new Vector2(1f, 1f);
-            counterRect.sizeDelta = new Vector2(132f, 54f);
-        }
+        counterRect.anchorMin = counterRect.anchorMax = new Vector2(1f, 1f);
+        counterRect.pivot = new Vector2(1f, 1f);
+        counterRect.sizeDelta = new Vector2(142f, 54f);
 
         float settingsWidth = settingsRect != null
             ? settingsRect.rect.width * Mathf.Abs(settingsRect.localScale.x)
             : 100f;
         Vector2 settingsPosition = settingsRect != null ? settingsRect.anchoredPosition : new Vector2(-30f, -26f);
-        if (needsLayout)
-            counterRect.anchoredPosition = new Vector2(
-                settingsPosition.x - settingsWidth - 10f,
-                settingsPosition.y - Mathf.Max(0f, (settingsRect != null ? settingsRect.rect.height * Mathf.Abs(settingsRect.localScale.y) : 80f) - counterRect.sizeDelta.y) * 0.5f);
+        counterRect.anchoredPosition = new Vector2(
+            settingsPosition.x - settingsWidth - 10f,
+            settingsPosition.y - Mathf.Max(0f, (settingsRect != null ? settingsRect.rect.height * Mathf.Abs(settingsRect.localScale.y) : 80f) - counterRect.sizeDelta.y) * 0.5f);
 
         Image counterImage = counter.GetComponent<Image>();
         if (counterImage.color == Color.white) counterImage.color = new Color(0.67f, 0.42f, 0.13f, 1f);
@@ -286,6 +281,10 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         }
 
         Transform existingLabel = inner.Find("Turn Count");
+        // The authored Battle Scene stores Turn Count directly under the counter.
+        // Reuse and move it into the inset background instead of creating a
+        // second, overlapping TMP label (which makes the digits look crossed out).
+        if (existingLabel == null) existingLabel = counter.transform.Find("Turn Count");
         GameObject labelObject = existingLabel != null ? existingLabel.gameObject :
             new GameObject("Turn Count", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
         RectTransform labelRect = labelObject.GetComponent<RectTransform>();
@@ -303,6 +302,11 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         if (turnCountLabel.fontSize <= 0f) turnCountLabel.fontSize = 20f;
         if (turnCountLabel.color == Color.white) turnCountLabel.color = new Color(1f, 0.9f, 0.68f, 1f);
         turnCountLabel.alignment = TextAlignmentOptions.Center;
+        turnCountLabel.enableAutoSizing = true;
+        turnCountLabel.fontSizeMin = 18f;
+        turnCountLabel.fontSizeMax = 25f;
+        turnCountLabel.textWrappingMode = TextWrappingModes.NoWrap;
+        turnCountLabel.overflowMode = TextOverflowModes.Overflow;
         turnCountLabel.raycastTarget = false;
         RefreshTurnCounter();
     }

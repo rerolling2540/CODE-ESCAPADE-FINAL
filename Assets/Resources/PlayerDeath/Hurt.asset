@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Hurt
   m_EditorClassIdentifier: Assembly-CSharp::CharacterHurtFrames
   warrior:
-  - {fileID: 456946378823254976, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
-  - {fileID: -6998019777905318313, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
-  - {fileID: 1240805322172666571, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
-  - {fileID: 8298387396569154617, guid: 3accdbde4e56f5c4e9cfa311b8cef55f, type: 3}
+  - {fileID: 6722648959923329643, guid: f64826dc420ed2040bf181b3b2c433ab, type: 3}
+  - {fileID: 2307299990652687902, guid: f64826dc420ed2040bf181b3b2c433ab, type: 3}
+  - {fileID: 7343847638940030945, guid: f64826dc420ed2040bf181b3b2c433ab, type: 3}
+  - {fileID: 6564820182709532416, guid: f64826dc420ed2040bf181b3b2c433ab, type: 3}
+  - {fileID: 8470306518728480881, guid: f64826dc420ed2040bf181b3b2c433ab, type: 3}
+  - {fileID: 5443156598695527543, guid: f64826dc420ed2040bf181b3b2c433ab, type: 3}
   archer: {fileID: 2800000, guid: 1b95718c563684a409c7729da71eea29, type: 3}
   mage: {fileID: 2800000, guid: dd562b6c83fed384baf5c1fe2cc91850, type: 3}

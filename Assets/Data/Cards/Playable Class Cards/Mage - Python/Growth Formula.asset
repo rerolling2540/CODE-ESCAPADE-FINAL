@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: "Gain 5 Armor and restore 3 health."
   <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: -4910067624284876623, guid: 29f63f17de6f1d8408fd422b31b4241d, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 9d99d011c762ace4c86ad318e1e624a3, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101

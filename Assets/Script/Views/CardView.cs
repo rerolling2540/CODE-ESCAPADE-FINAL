@@ -1,8 +1,14 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using TMPro;
+using System.Text.RegularExpressions;
 
 public class CardView : MonoBehaviour
 {
+    private static readonly Regex EffectDescriptionPattern = new Regex(
+        @"\(([^)]*)\)|\b\d+(?:\.\d+)?(?:%|\s+(?:damage|health|armor|mana|cards?|turns?))|\b(?:burn|bleed|frost|poison|nature|armor|mana|heal(?:ing)?|damage|draw)\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     [SerializeField] private TMP_Text title;
     [SerializeField] private TMP_Text description;
     [SerializeField] private TMP_Text mana;
@@ -13,6 +19,9 @@ public class CardView : MonoBehaviour
     public Card Card { get; private set; }
     private Vector3 draStartPosition;
     private Quaternion dragStartRotation;
+    private SortingGroup dragSortingGroup;
+    private int dragStartSortingOrder;
+    private bool hasDragSortingOrder;
     private static Sprite medievalBackground;
 
     void Awake()
@@ -120,6 +129,8 @@ public class CardView : MonoBehaviour
         }
         if (title != null)
         {
+            title.rectTransform.anchorMin = title.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            title.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             title.fontStyle = FontStyles.Bold;
             title.rectTransform.sizeDelta = new Vector2(26, 3.8f);
             Vector2 titlePosition = title.rectTransform.anchoredPosition;
@@ -129,27 +140,58 @@ public class CardView : MonoBehaviour
         }
         if (description != null)
         {
+            description.richText = true;
+            description.fontSizeMin = 15;
+            description.fontSizeMax = 22;
             description.rectTransform.sizeDelta = new Vector2(25.5f, 8.5f);
             Vector2 descriptionPosition = description.rectTransform.anchoredPosition;
             descriptionPosition.x = 0f;
             descriptionPosition.y = -1.28f;
             description.rectTransform.anchoredPosition = descriptionPosition;
         }
-        if (mana != null) mana.color = new Color(1f, 0.88f, 0.56f);
+        if (mana != null)
+        {
+            mana.rectTransform.anchorMin = mana.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            mana.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            mana.rectTransform.sizeDelta = new Vector2(5.6f, 4.6f);
+            mana.fontSizeMin = 26;
+            mana.fontSizeMax = 36;
+            mana.color = new Color(0.28f, 0.78f, 1f);
+        }
+    }
+
+    public static string FormatEffectDescription(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+        return EffectDescriptionPattern.Replace(text, match =>
+        {
+            string value = match.Groups[1].Success ? match.Groups[1].Value : match.Value;
+            string lower = value.ToLowerInvariant();
+            string color = lower.Contains("frost") ? "#53BFFF" :
+                lower.Contains("poison") || lower.Contains("nature") ? "#67C96B" :
+                lower.Contains("burn") || lower.Contains("fire") ? "#FF7043" :
+                lower.Contains("bleed") ? "#F04A54" :
+                lower.Contains("heal") || lower.Contains("health") ? "#63C878" :
+                lower.Contains("mana") || lower.Contains("armor") ? "#53BFFF" : "#F04A54";
+            string highlighted = $"<color={color}>{value}</color>";
+            return match.Groups[1].Success ? $"({highlighted})" : highlighted;
+        });
     }
 
     public void Setup(Card card)
     {
         Card = card;
         title.text = card.Title;
-        description.text = card.Description;
+        description.text = FormatEffectDescription(card.Description);
         mana.text = card.Mana.ToString();
         imageSR.sprite = card.Image;
         if (imageSR.sprite != null)
         {
-            // The RPG Icons pack uses 24px sprites. Enlarge those icons to fit the card art window.
+            // Fit both small legacy icons and full-size 500FreeSkillIcons art to
+            // the card frame's illustration window. Large source sprites scale
+            // down by their bounds; small legacy sprites retain the 6x cap.
             float sourceSize = Mathf.Max(imageSR.sprite.bounds.size.x, imageSR.sprite.bounds.size.y);
-            float iconScale = sourceSize < 0.6f ? 6f : 1f;
+            float iconScale = sourceSize > 0.001f ? Mathf.Min(6f, 2.2f / sourceSize) : 1f;
             imageSR.transform.localScale = Vector3.one * iconScale;
         }
     }
@@ -188,6 +230,15 @@ public class CardView : MonoBehaviour
             CardViewHoverSystem.Instance.Hide();
             draStartPosition = transform.position;
             dragStartRotation = transform.rotation;
+            // Enemy health bars use a high sorting order. Lift the complete card
+            // group above them while dragging so the card remains readable.
+            dragSortingGroup = GetComponent<SortingGroup>();
+            if (dragSortingGroup != null)
+            {
+                dragStartSortingOrder = dragSortingGroup.sortingOrder;
+                hasDragSortingOrder = true;
+                dragSortingGroup.sortingOrder = 120;
+            }
             transform.rotation = Quaternion.Euler(0, 0, 0);
             transform.position = mousePosition;
         }
@@ -203,6 +254,7 @@ public class CardView : MonoBehaviour
 
     void OnMouseUp()
     {
+        RestoreDragSortingOrder();
         if (!Interactions.Instance.PlayerCanInteract()) return;
         if (!MouseUtil.TryGetMousePositionInWorldSpace(out Vector3 mousePosition, -1))
         {
@@ -250,5 +302,13 @@ public class CardView : MonoBehaviour
             }
             Interactions.Instance.PlayerIsDragging = false;
         }
+    }
+
+    private void RestoreDragSortingOrder()
+    {
+        if (!hasDragSortingOrder) return;
+        if (dragSortingGroup != null) dragSortingGroup.sortingOrder = dragStartSortingOrder;
+        hasDragSortingOrder = false;
+        dragSortingGroup = null;
     }
 }

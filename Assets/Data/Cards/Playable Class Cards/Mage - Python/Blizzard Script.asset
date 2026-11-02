@@ -10,24 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: Blizzard Script
+  m_Name: Blazing Edge
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 12 damage and apply 2 Frost to all enemies."
-  <Mana>k__BackingField: 3
-  <Image>k__BackingField: {fileID: -6250364941253347385, guid: 2db213e907d774245a34647587f99aa6, type: 3}
+  <Description>k__BackingField: "Deal 8 damage and apply 2 Burn to one enemy."
+  <Mana>k__BackingField: 2
+  <Image>k__BackingField: {fileID: 21300000, guid: 17951649342328b44a00606416d2b440, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101
     <Effect>k__BackingField:
       rid: 102
-  - <TargetMode>k__BackingField:
-      rid: 103
-    <Effect>k__BackingField:
-      rid: 104
   <ManualTargetEffect>k__BackingField:
-    rid: -2
+    rid: 103
   damageType: 0
-  baseDamage: 12
+  baseDamage: 8
   percentDamage: 0
   damageMultiplier: 1
   references:
@@ -36,18 +32,15 @@ MonoBehaviour:
     - rid: -2
       type: {class: , ns: , asm: }
     - rid: 101
-      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      type: {class: SelectedEnemyTM, ns: , asm: Assembly-CSharp}
       data:
     - rid: 102
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
-    - rid: 103
-      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data:
-    - rid: 104
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
-        statusEffectType: 4
+        statusEffectType: 1
         stackCount: 2
         natureTurnsUntilHeal: 3
         natureHealAmount: 10
+    - rid: 103
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:

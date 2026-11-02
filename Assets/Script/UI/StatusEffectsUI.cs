@@ -1,13 +1,52 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StatusEffectsUI : MonoBehaviour
 {
+    // Keep the most useful player buffs first in the HUD row.
+    private static readonly StatusEffectType[] DisplayOrder =
+    {
+        StatusEffectType.ARMOR,
+        StatusEffectType.NATURE,
+        StatusEffectType.BURN,
+        StatusEffectType.POISON,
+        StatusEffectType.BLEED,
+        StatusEffectType.FROST
+    };
+
     [SerializeField] private StatusEffectUI statusEffectsUIPrefab;
     [SerializeField] private Sprite armorSprite, burnSprite;
     [SerializeField] private Sprite poisonSprite, bleedSprite, frostSprite, natureSprite;
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
-    private bool compactHudIcons;
+    private bool enemyHudLayout;
+
+    public void MoveToEnemyHud(RectTransform hudRect)
+    {
+        if (hudRect == null || !(transform is RectTransform rect)) return;
+        Canvas previousCanvas = GetComponentInParent<Canvas>();
+        rect.SetParent(hudRect, false);
+        if (previousCanvas != null && previousCanvas.transform != hudRect && previousCanvas.renderMode == RenderMode.WorldSpace)
+            previousCanvas.enabled = false;
+
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        // Enemy HUD root is 118 units tall. Keep the row just above the HP bar
+        // (center y=6, height=28) while leaving a small visual gap.
+        rect.anchoredPosition = new Vector2(30f, 37f);
+        rect.sizeDelta = new Vector2(220f, 38f);
+        rect.localScale = Vector3.one;
+        enemyHudLayout = true;
+        var layout = GetComponent<HorizontalLayoutGroup>();
+        if (layout == null) layout = gameObject.AddComponent<HorizontalLayoutGroup>();
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.spacing = 3f;
+        layout.childControlWidth = false;
+        layout.childControlHeight = false;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = false;
+        RefreshDisplayOrder();
+    }
 
     public void MoveToHud(RectTransform hudRect, Vector2 position, Vector2 size)
     {
@@ -22,6 +61,8 @@ public class StatusEffectsUI : MonoBehaviour
 
         if (hudRect.name == "Player Status Effects")
         {
+            // The visible, editable placement belongs to this scene object;
+            // make the runtime status root fill it so it follows the host.
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
             rect.pivot = new Vector2(0.5f, 0.5f);
@@ -34,22 +75,7 @@ public class StatusEffectsUI : MonoBehaviour
             rect.anchoredPosition = position;
             rect.sizeDelta = size;
         }
-        rect.localScale = Vector3.one;
-        compactHudIcons = true;
-
-        var layout = GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
-        if (layout != null)
-        {
-            layout.childAlignment = TextAnchor.MiddleLeft;
-            layout.spacing = 6;
-            layout.childControlWidth = false;
-            layout.childControlHeight = false;
-            layout.childForceExpandWidth = false;
-            layout.childForceExpandHeight = false;
-        }
-
-        foreach (Transform child in transform)
-            ConfigureHudIcon(child);
+        // Keep the container scale authored in the scene as well.
     }
 
     public void UpdateStatusEffectUI(StatusEffectType statusEffectType, int stackCount)
@@ -69,12 +95,27 @@ public class StatusEffectsUI : MonoBehaviour
             {
                 StatusEffectUI statusEffectUI = Instantiate(statusEffectsUIPrefab, transform);
                 statusEffectUIs.Add(statusEffectType, statusEffectUI);
-                if (compactHudIcons) ConfigureHudIcon(statusEffectUI.transform);
             }
             Sprite sprite = GetSpriteByType(statusEffectType);
             statusEffectUIs[statusEffectType].Set(statusEffectType, sprite, stackCount);
         }
+
+        RefreshDisplayOrder();
     }
+
+    private void RefreshDisplayOrder()
+    {
+        int siblingIndex = 0;
+        foreach (StatusEffectType type in DisplayOrder)
+        {
+            if (statusEffectUIs.TryGetValue(type, out StatusEffectUI statusEffectUI) && statusEffectUI != null)
+            {
+                statusEffectUI.SetHudSize(enemyHudLayout ? new Vector2(34f, 34f) : new Vector2(48f, 54f));
+                statusEffectUI.transform.SetSiblingIndex(siblingIndex++);
+            }
+        }
+    }
+
     private Sprite GetSpriteByType(StatusEffectType statusEffectType)
     {
         return statusEffectType switch
@@ -89,36 +130,4 @@ public class StatusEffectsUI : MonoBehaviour
         };
     }
 
-    private static void ConfigureHudIcon(Transform iconTransform)
-    {
-        var statusUI = iconTransform.GetComponent<StatusEffectUI>();
-        if (statusUI != null)
-        {
-            statusUI.ConfigureForStatusHud();
-            return;
-        }
-
-        var iconRect = iconTransform as RectTransform;
-        if (iconRect != null) iconRect.sizeDelta = new Vector2(36, 44);
-        var image = iconTransform.GetComponentInChildren<UnityEngine.UI.Image>(true);
-        if (image != null)
-        {
-            image.preserveAspect = true;
-            image.raycastTarget = false;
-        }
-
-        var stackText = iconTransform.GetComponentInChildren<TMPro.TMP_Text>(true);
-        if (stackText != null)
-        {
-            var textRect = stackText.rectTransform;
-            textRect.anchorMin = new Vector2(0.5f, 0);
-            textRect.anchorMax = new Vector2(0.5f, 0);
-            textRect.pivot = new Vector2(0.5f, 0);
-            textRect.anchoredPosition = Vector2.zero;
-            textRect.sizeDelta = new Vector2(28, 15);
-            stackText.fontSize = 12;
-            stackText.alignment = TMPro.TextAlignmentOptions.Center;
-            stackText.raycastTarget = false;
-        }
-    }
 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: "Restore 7 health."
   <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: -1705410574247415927, guid: 3cb869b537723e145bdbd2d2f7366616, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 9b4b50c788455b7449573053a74ebf12, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101

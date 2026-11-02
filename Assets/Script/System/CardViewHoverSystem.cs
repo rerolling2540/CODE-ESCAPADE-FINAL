@@ -1,10 +1,11 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
 {
     [SerializeField] private CardView cardViewHover;
-    private const float PreviewScaleFactor = 0.78f;
+    [SerializeField, Min(1f)] private float previewScaleFactor = 1.05f;
     private Vector3 originalHoverScale = Vector3.one;
     private Card shownCard;
 
@@ -21,10 +22,15 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
             BattleAudio.Play(BattleSound.CardHover);
         shownCard = card;
         // Keep the preview readable, but close to the same size as a card in hand.
-        cardViewHover.transform.localScale = originalHoverScale * PreviewScaleFactor;
+        cardViewHover.transform.localScale = originalHoverScale * Mathf.Max(1f, previewScaleFactor);
         cardViewHover.gameObject.SetActive(true);
         cardViewHover.Setup(card);
         cardViewHover.transform.position = position;
+        // Hand cards sit at sorting order 30 and enemies at 25. The hover card
+        // must render in front of both so its text remains readable.
+        SortingGroup sortingGroup = cardViewHover.GetComponent<SortingGroup>();
+        if (sortingGroup == null) sortingGroup = cardViewHover.GetComponentInChildren<SortingGroup>(true);
+        if (sortingGroup != null) sortingGroup.sortingOrder = 200;
 
     }
     public void Hide()

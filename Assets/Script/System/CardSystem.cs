@@ -340,9 +340,19 @@ public class CardSystem : Singleton<CardSystem>
         }
         else
         {
-            AttackHeroGA attackHeroGA = new(EnemySystem.Instance.CurrentEnemy);
-            ActionSystem.Instance.AddReaction(attackHeroGA);
+            EnemyView failedAnswerTarget = playCardGA.ManualTarget != null
+                ? playCardGA.ManualTarget
+                : EnemySystem.Instance != null ? EnemySystem.Instance.CurrentEnemy : null;
+            HashSet<EnemyView> countdownAttacks = EnemySystem.Instance != null
+                ? EnemySystem.Instance.AdvanceAttackCountdownsForCard()
+                : new HashSet<EnemyView>();
+            if (failedAnswerTarget != null && failedAnswerTarget.CurrentHealth > 0 && !failedAnswerTarget.IsBroken &&
+                !countdownAttacks.Contains(failedAnswerTarget))
+                ActionSystem.Instance.AddReaction(new AttackHeroGA(failedAnswerTarget));
         }
+
+        if (playCardGA.QuestionAnsweredCorrectly && EnemySystem.Instance != null)
+            EnemySystem.Instance.AdvanceAttackCountdownsForCard();
 
         CurrentManualTarget = null;
         ManualTargetSystem.Instance?.ClearTargetHighlight();

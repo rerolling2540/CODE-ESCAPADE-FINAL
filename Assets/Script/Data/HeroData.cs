@@ -10,6 +10,8 @@ public class HeroData : ScriptableObject
     [Header("Battle Animation")]
     public Sprite[] idleFrames;
     public Sprite[] attackFrames;
+    [Tooltip("Weapon recovery animation played after the hero returns from a battle attack.")]
+    public Sprite[] sheatheFrames;
     [Min(1f)] public float battleFramesPerSecond = 12f;
     [Tooltip("Optional seconds per attack frame, for weapon-specific anticipation and recovery.")]
     public float[] attackFrameDurations;

@@ -908,6 +908,11 @@ public class MainMenuSaveSlots : MonoBehaviour
             status =>
         {
             authStatus = status;
+            if (HasAdminSession)
+            {
+                CharacterInventory.EnsureAdminAccountInventory();
+                authStatus += "\nAdmin test inventory ready: all catalog cards and 1,000,000 of each resource.";
+            }
             authRequestInProgress = false;
         });
     }

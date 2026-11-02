@@ -13,6 +13,12 @@ public static class SaveSlots
     private const string ActiveProfileKey = "CodeEscapade.ActiveProfile.v1";
     private const string ProfileSnapshotPrefix = "CodeEscapade.Profile.v1.";
     private const string ProfileBootstrapPrefix = "CodeEscapade.ProfileBootstrap.v1.";
+    public static bool IsActiveAccountProfile(string userId)
+    {
+        EnsureProfileContextInitialized();
+        return !string.IsNullOrWhiteSpace(userId) &&
+               string.Equals(activeProfileId, userId, StringComparison.Ordinal);
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void RestoreGuestProfileBeforeSceneLoad()
@@ -285,6 +291,27 @@ public static class SaveSlots
     public static void NotifyLocalSaveChanged()
     {
         NotifyLocalSlotChanged(Active);
+    }
+
+    /// <summary>Marks several locally updated profile slots for the next cloud snapshot upload.</summary>
+    public static void NotifyLocalSlotsChanged(params int[] slots)
+    {
+        if (applyingCloudSnapshot || slots == null || slots.Length == 0) return;
+
+        string now = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+        bool changed = false;
+        foreach (int slot in slots)
+        {
+            if (slot < 0 || slot >= Count) continue;
+            PlayerPrefs.SetString(ModifiedKey(slot), now);
+            changed = true;
+        }
+
+        if (!changed) return;
+        PlayerPrefs.SetString("CodeEscapade.SaveModifiedUtc", now);
+        PlayerPrefs.Save();
+        PersistCurrentProfileSnapshot();
+        LocalSaveChanged?.Invoke();
     }
 
     static void NotifyLocalSlotChanged(int slot)

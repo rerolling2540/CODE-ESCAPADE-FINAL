@@ -16,44 +16,63 @@ public class StatusEffectUI : MonoBehaviour
 
   public void ConfigureForStatusHud()
   {
-      RectTransform root = transform as RectTransform;
-      if (root != null)
-          root.sizeDelta = new Vector2(36, 44);
-
       if (image != null)
       {
-          RectTransform icon = image.rectTransform;
-          icon.anchorMin = icon.anchorMax = new Vector2(0.5f, 0.5f);
-          icon.pivot = new Vector2(0.5f, 0.5f);
-          icon.sizeDelta = new Vector2(30, 30);
-          icon.anchoredPosition = new Vector2(0, 6);
           image.preserveAspect = true;
           image.raycastTarget = false;
       }
 
       if (stackBadgeBackground != null)
       {
-          RectTransform badge = stackBadgeBackground.rectTransform;
-          badge.anchorMin = badge.anchorMax = new Vector2(0.5f, 0);
-          badge.pivot = new Vector2(0.5f, 0);
-          badge.sizeDelta = new Vector2(28, 15);
-          badge.anchoredPosition = Vector2.zero;
           stackBadgeBackground.raycastTarget = false;
       }
 
       if (stackCountText != null)
       {
-          RectTransform count = stackCountText.rectTransform;
-          count.anchorMin = Vector2.zero;
-          count.anchorMax = Vector2.one;
-          count.pivot = new Vector2(0.5f, 0.5f);
-          count.offsetMin = count.offsetMax = Vector2.zero;
-          stackCountText.fontSize = 12;
           stackCountText.alignment = TextAlignmentOptions.Center;
-          stackCountText.enableAutoSizing = false;
           stackCountText.raycastTarget = false;
           stackCountText.color = new Color(1f, 0.93f, 0.72f, 1f);
           stackCountText.fontStyle = FontStyles.Bold;
+      }
+  }
+
+  public void SetHudSize(Vector2 size)
+  {
+      if (transform is RectTransform rect) rect.sizeDelta = size;
+      if (image != null)
+      {
+          RectTransform icon = image.rectTransform;
+          icon.anchorMin = icon.anchorMax = new Vector2(0.5f, 0.5f);
+          icon.pivot = new Vector2(0.5f, 0.5f);
+          float badgeHeight = Mathf.Clamp(size.y * 0.24f, 10f, 14f);
+          float gap = Mathf.Clamp(size.y * 0.07f, 2.5f, 4f);
+          float iconTop = size.y * 0.5f - Mathf.Clamp(size.y * 0.06f, 2f, 4f);
+          float iconBottom = -size.y * 0.5f + badgeHeight + gap;
+          float iconHeight = Mathf.Max(1f, iconTop - iconBottom);
+          float iconWidth = Mathf.Min(size.x - 4f, iconHeight);
+          icon.sizeDelta = new Vector2(iconWidth, iconHeight);
+          icon.anchoredPosition = new Vector2(0f, (iconTop + iconBottom) * 0.5f);
+          image.preserveAspect = true;
+          image.raycastTarget = false;
+      }
+      if (stackBadgeBackground != null)
+      {
+          RectTransform badge = stackBadgeBackground.rectTransform;
+          badge.anchorMin = badge.anchorMax = new Vector2(0.5f, 0f);
+          badge.pivot = new Vector2(0.5f, 0f);
+          badge.sizeDelta = new Vector2(size.x - 4f, Mathf.Clamp(size.y * 0.24f, 10f, 14f));
+          badge.anchoredPosition = Vector2.zero;
+          stackBadgeBackground.raycastTarget = false;
+      }
+      if (stackCountText != null)
+      {
+          RectTransform count = stackCountText.rectTransform;
+          count.anchorMin = Vector2.zero;
+          count.anchorMax = Vector2.one;
+          count.offsetMin = count.offsetMax = Vector2.zero;
+          stackCountText.fontSize = 11f;
+          stackCountText.alignment = TextAlignmentOptions.Center;
+          stackCountText.raycastTarget = false;
       }
   }
   

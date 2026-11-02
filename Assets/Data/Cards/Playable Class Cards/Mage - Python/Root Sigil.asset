@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: "Deal 4 damage and apply 1 Poison to one enemy."
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: 5975299861170666812, guid: 8e2b89451a3d2c74ab2da9c40dfa0759, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 72a9f27299fd66646b205ecd69abd54b, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101

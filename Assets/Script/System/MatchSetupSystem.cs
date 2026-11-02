@@ -87,13 +87,6 @@ public class MatchSetupSystem : MonoBehaviour
         if (portraitFrame.GetComponent<RectMask2D>() == null)
             portraitFrame.AddComponent<RectMask2D>();
 
-        RectTransform frame = portraitFrame.GetComponent<RectTransform>();
-        RectTransform image = portraitIcon.GetComponent<RectTransform>();
-        image.anchorMin = new Vector2(0f, 1f);
-        image.anchorMax = new Vector2(1f, 1f);
-        image.pivot = new Vector2(0.5f, 1f);
-        image.anchoredPosition = Vector2.zero;
-        image.sizeDelta = new Vector2(0f, frame.rect.height * 2.6f);
         var portrait = portraitIcon.GetComponent<Image>();
         if (portrait != null) portrait.preserveAspect = false;
     }
@@ -344,14 +337,8 @@ public static class BattleHudMedieval
         var frameImage = frameObject.GetComponent<UnityEngine.UI.Image>();
         if (frameRect == null || frameImage == null) return;
 
-        if (frameRect.parent != hudRect)
-        {
-            frameRect.SetParent(hudRect, false);
-            frameRect.anchorMin = frameRect.anchorMax = new Vector2(0, 1);
-            frameRect.pivot = new Vector2(0, 1);
-            frameRect.anchoredPosition = new Vector2(10, -46);
-            frameRect.sizeDelta = new Vector2(74, 72);
-        }
+        // Keep the portrait frame's parent and RectTransform authored in the
+        // scene. Runtime setup should update its appearance, not its layout.
         if (frameImage.sprite == null) frameImage.sprite = portraitFrameSprite;
         if (frameImage.sprite == portraitFrameSprite) frameImage.type = UnityEngine.UI.Image.Type.Sliced;
         // Keep the portrait clickable when the saved battle codex button is attached.
@@ -360,17 +347,13 @@ public static class BattleHudMedieval
         var iconRect = iconObject.GetComponent<RectTransform>();
         var icon = iconObject.GetComponent<UnityEngine.UI.Image>();
         if (iconRect == null || icon == null) return;
-        if (iconRect.parent != frameRect)
-        {
-            iconRect.SetParent(frameRect, false);
-            iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 0.5f);
-            iconRect.pivot = new Vector2(0.5f, 0.5f);
-            iconRect.anchoredPosition = Vector2.zero;
-            iconRect.sizeDelta = new Vector2(66, 66);
-        }
-        iconRect.SetAsLastSibling();
+        // PortraitIcon remains where it was placed under PortraitFrame in the
+        // Hierarchy; only the selected character sprite changes at runtime.
         if (portrait != null) icon.sprite = portrait;
-        icon.preserveAspect = true;
+        // Fill the authored inset RectTransform. The frame remains visible
+        // around it, while portraits with a non-square source no longer shrink
+        // inside the square frame because of preserve-aspect letterboxing.
+        icon.preserveAspect = false;
         icon.raycastTarget = false;
     }
 
@@ -388,15 +371,15 @@ public static class BattleHudMedieval
         // Keep the bar at a fixed panel width. The hero's health ratio changes
         // the fill amount only, never the overall bar size.
         barRect.anchoredPosition = new Vector2(10, -8);
-        barRect.sizeDelta = new Vector2(320, 28);
+        barRect.sizeDelta = new Vector2(320, 42);
         barRect.localScale = Vector3.one;
         slider.interactable = false;
 
         var backgroundTransform = slider.transform.Find("Background") as RectTransform;
         if (backgroundTransform != null)
         {
-            backgroundTransform.anchorMin = new Vector2(0, 0.05f);
-            backgroundTransform.anchorMax = new Vector2(1, 0.95f);
+            backgroundTransform.anchorMin = new Vector2(0, 0.03f);
+            backgroundTransform.anchorMax = new Vector2(1, 0.97f);
             backgroundTransform.anchoredPosition = Vector2.zero;
             backgroundTransform.sizeDelta = Vector2.zero;
         }
@@ -404,8 +387,8 @@ public static class BattleHudMedieval
         var fillArea = slider.transform.Find("Fill Area") as RectTransform;
         if (fillArea != null)
         {
-            fillArea.anchorMin = new Vector2(0, 0.05f);
-            fillArea.anchorMax = new Vector2(1, 0.95f);
+            fillArea.anchorMin = new Vector2(0, 0.03f);
+            fillArea.anchorMax = new Vector2(1, 0.97f);
             fillArea.anchoredPosition = Vector2.zero;
             fillArea.sizeDelta = new Vector2(-10, 0);
         }
@@ -436,8 +419,7 @@ public static class BattleHudMedieval
     {
         if (slider == null) return;
         slider.gameObject.SetActive(true);
-        // Health is a conventional horizontal meter: damage reduces the green
-        // filled section from right to left while the track stays in place.
+        // Keep slider dimensions, anchors, and position under scene authoring.
         slider.direction = Slider.Direction.LeftToRight;
         slider.interactable = false;
         slider.transition = Selectable.Transition.None;
@@ -474,31 +456,8 @@ public static class BattleHudMedieval
     {
         var manaUI = Object.FindFirstObjectByType<ManaUI>(FindObjectsInactive.Include);
         if (manaUI == null) return;
-
-        var rect = manaUI.GetComponent<RectTransform>();
-        var hud = GameObject.Find("PlaayerHUD");
-        if (hud != null && rect.parent != hud.transform)
-        {
-            rect.SetParent(hud.transform, false);
-            rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
-            rect.pivot = new Vector2(0, 1);
-            rect.anchoredPosition = new Vector2(88, -48);
-            rect.sizeDelta = new Vector2(140, 28);
-        }
-
-        int index = 0;
-        foreach (RectTransform child in rect)
-        {
-            if (child.GetComponent<UnityEngine.UI.Image>() == null) continue;
-            if (child.parent == rect && child.sizeDelta == Vector2.zero)
-            {
-                child.anchorMin = child.anchorMax = new Vector2(0, 0.5f);
-                child.pivot = new Vector2(0.5f, 0.5f);
-                child.sizeDelta = new Vector2(20, 20);
-                child.anchoredPosition = new Vector2(10 + index * 23, 0);
-            }
-            index++;
-        }
+        // ManaUI reads the scene-authored bubble layout; it owns only the
+        // visible/fill state, not placement or dimensions.
     }
 
     private static void ApplyEpStar(Canvas hudCanvas)
@@ -510,7 +469,8 @@ public static class BattleHudMedieval
         GameObject meterObject = existing != null
             ? existing.gameObject
             : new GameObject("EP Star Meter", typeof(RectTransform));
-        meterObject.transform.SetParent(hudCanvas.transform, false);
+        if (meterObject.transform.parent != hudCanvas.transform)
+            meterObject.transform.SetParent(hudCanvas.transform, false);
 
         var meterRect = meterObject.GetComponent<RectTransform>();
         if (meterRect.sizeDelta == Vector2.zero)

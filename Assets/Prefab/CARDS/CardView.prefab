@@ -508,7 +508,7 @@ MonoBehaviour:
   dropLayer:
     serializedVersion: 2
     m_Bits: 64
-  cardFrame: {fileID: 9059203621873666563, guid: e590d49eb630e5549adf1f449470f68a, type: 3}
+  cardFrame: {fileID: -2574254299180333104, guid: 96c48b931b320bf4482074fce4c4a5a5, type: 3}
 --- !u!210 &4350997148257358498
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -649,7 +649,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b58e552cdabf80d4aa6aa96f2216d569, type: 3}
+  m_Sprite: {fileID: -2574254299180333104, guid: 96c48b931b320bf4482074fce4c4a5a5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

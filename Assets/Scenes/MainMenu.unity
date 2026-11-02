@@ -883,12 +883,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuCharacterIdle
   heroes:
   - frames:
-    - {fileID: 1065188682, guid: 1fe216190dddd4e43a8f2df33ce6dbcb, type: 3}
-    - {fileID: -272262256, guid: 1fe216190dddd4e43a8f2df33ce6dbcb, type: 3}
-    - {fileID: 1542475520, guid: 1fe216190dddd4e43a8f2df33ce6dbcb, type: 3}
-    - {fileID: 345717554, guid: 1fe216190dddd4e43a8f2df33ce6dbcb, type: 3}
-    - {fileID: 1412870644, guid: 1fe216190dddd4e43a8f2df33ce6dbcb, type: 3}
-    - {fileID: -1780871890, guid: 1fe216190dddd4e43a8f2df33ce6dbcb, type: 3}
+    - {fileID: 1810033441652940789, guid: 7f29eeefff290974b83d02ebd998b80d, type: 3}
+    - {fileID: 5501332728314541869, guid: 7f29eeefff290974b83d02ebd998b80d, type: 3}
+    - {fileID: -9154433337685469184, guid: 7f29eeefff290974b83d02ebd998b80d, type: 3}
+    - {fileID: 7560979133787046853, guid: 7f29eeefff290974b83d02ebd998b80d, type: 3}
+    - {fileID: 28557374282640591, guid: 7f29eeefff290974b83d02ebd998b80d, type: 3}
+    - {fileID: -8410912299538517939, guid: 7f29eeefff290974b83d02ebd998b80d, type: 3}
     framesPerSecond: 10
   - frames:
     - {fileID: 1754332786, guid: de3854e0ab9bf446eb1813962b0399fd, type: 3}

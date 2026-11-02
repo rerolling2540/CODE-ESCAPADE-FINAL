@@ -6,7 +6,16 @@ public class EnemyView : CombatantView
 {
    [SerializeField] private TMP_Text attackText;
    private EnemyData data;
+   private int attackCountdown;
+   private int maxAttackCountdown = 15;
+   private int breakMeter;
+   private int maxBreakMeter = 100;
+   private bool breakRestorePending;
    public EnemyData Data => data;
+   public int AttackCountdown => attackCountdown;
+   public int BreakMeter => breakMeter;
+   public int MaxBreakMeter => maxBreakMeter;
+   public bool IsBroken => breakMeter <= 0;
    public int ExperienceReward => data!=null?Mathf.Max(0,data.experienceReward):0;
    public bool IsRanged => data != null && data.attackStyle == EnemyAttackStyle.Ranged;
    public bool HasProjectile => data != null && data.projectileFrames != null && data.projectileFrames.Length > 0;
@@ -14,12 +23,46 @@ public class EnemyView : CombatantView
     {
         data = enemyData;
         AttackPower = enemyData.AttackPower;
+        maxAttackCountdown = Mathf.Max(1, enemyData.attackCountdown);
+        attackCountdown = maxAttackCountdown;
+        maxBreakMeter = Mathf.Max(1, enemyData.breakMeterMax);
+        breakMeter = maxBreakMeter;
+        breakRestorePending = false;
         if (attackText != null) attackText.gameObject.SetActive(false);
         SetUpBase(enemyData.Health, enemyData.Image);
         SetBattleMaterial(enemyData.battleMaterial);
         EnlargeEnemyVisual(2.8f * Mathf.Max(0.1f, enemyData.battleVisualScale));
         EnsureEnemyHealthBar();
         ConfigureBattleAnimation(enemyData.idleFrames, enemyData.attackFrames, enemyData.battleFramesPerSecond, true, enemyData.hovering);
+    }
+
+    /// <summary>Advances this enemy's intent by one player action. Returns true when an attack becomes due.</summary>
+    public bool AdvanceAttackCountdown()
+    {
+        if (CurrentHealth <= 0) return false;
+        if (attackCountdown > 0) attackCountdown--;
+        bool attackDue = attackCountdown <= 0;
+        if (attackDue) attackCountdown = maxAttackCountdown;
+        UpdateEnemyIntentUI(attackCountdown, breakMeter, maxBreakMeter);
+        return attackDue;
+    }
+
+    public void ApplyBreakDamage(int amount)
+    {
+        if (amount <= 0 || IsBroken || CurrentHealth <= 0) return;
+        breakMeter = Mathf.Max(0, breakMeter - amount);
+        if (breakMeter == 0) breakRestorePending = true;
+        UpdateEnemyIntentUI(attackCountdown, breakMeter, maxBreakMeter);
+    }
+
+    public void RestoreBreakMeter()
+    {
+        // A positive meter persists between turns. Only a meter that actually
+        // reached zero is restored, after this enemy has missed its turn.
+        if (!breakRestorePending) return;
+        breakMeter = maxBreakMeter;
+        breakRestorePending = false;
+        UpdateEnemyIntentUI(attackCountdown, breakMeter, maxBreakMeter);
     }
     public IEnumerator PlayProjectile(CombatantView target)
     {

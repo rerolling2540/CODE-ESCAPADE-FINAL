@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: "Deal 7 damage and enter Nature for 3 turns."
   <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: -8051045705960597501, guid: c7efab326c476074d91d67ab43db354f, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 5604c071f7afd5c4892a892c65c15c00, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101

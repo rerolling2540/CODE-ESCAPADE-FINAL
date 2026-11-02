@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class CombatantView : MonoBehaviour
 {
+    private static Sprite enemyIntentCircleSprite;
+
     [Header("UI & Visual References")]
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private Slider healthSlider;
@@ -60,19 +62,21 @@ public class CombatantView : MonoBehaviour
         // Let the bar grow with max HP while keeping it inside the compact HUD.
         maxWidth = Mathf.Max(baseWidth, Mathf.Min(maxWidth, 480f));
 
-        // The battle HUD reuses the health slider from the old exploration HUD.
-        // Move its label with the slider so hiding that old panel cannot leave
-        // an orphaned HP label behind or place the text outside the new bar.
+        // Keep the authored HP label placement when it is already part of the
+        // authored bar. Only repair legacy labels that live elsewhere.
         if (healthText != null)
         {
             RectTransform label = healthText.rectTransform;
-            label.SetParent(barRect, false);
-            label.anchorMin = Vector2.zero;
-            label.anchorMax = Vector2.one;
-            label.pivot = new Vector2(0.5f, 0.5f);
-            label.anchoredPosition = Vector2.zero;
-            label.sizeDelta = Vector2.zero;
-            label.SetAsLastSibling();
+            if (label.parent != barRect)
+            {
+                label.SetParent(barRect, false);
+                label.anchorMin = Vector2.zero;
+                label.anchorMax = Vector2.one;
+                label.pivot = new Vector2(0.5f, 0.5f);
+                label.anchoredPosition = Vector2.zero;
+                label.sizeDelta = Vector2.zero;
+                label.SetAsLastSibling();
+            }
             healthText.alignment = TextAlignmentOptions.Center;
             healthText.horizontalAlignment = HorizontalAlignmentOptions.Center;
             healthText.verticalAlignment = VerticalAlignmentOptions.Middle;
@@ -102,11 +106,26 @@ public class CombatantView : MonoBehaviour
         healthSlider = authoredSlider;
         healthText = authoredLabel;
         healthBarRect = authoredSlider.GetComponent<RectTransform>();
-        preserveHealthHudLayout = false;
+        preserveHealthHudLayout = true;
         authoredSlider.interactable = false;
-        // Use the same binding as existing combat health bars so the HP text
-        // stays centered in the track and the track can scale with MaxHealth.
-        ConfigureHudHealthBar(healthBarRect);
+        baseWidth = healthBarRect != null ? healthBarRect.sizeDelta.x : baseWidth;
+        baseHealth = Mathf.Max(1, MaxHealth);
+        maxWidth = Mathf.Max(baseWidth, Mathf.Min(maxWidth, 480f));
+        if (healthText != null)
+        {
+            healthText.alignment = TextAlignmentOptions.Center;
+            healthText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            healthText.verticalAlignment = VerticalAlignmentOptions.Middle;
+            healthText.enableAutoSizing = true;
+            healthText.fontSizeMin = 12f;
+            healthText.fontSizeMax = 18f;
+            healthText.enableWordWrapping = false;
+            healthText.margin = Vector4.zero;
+            healthText.color = Color.white;
+            healthText.raycastTarget = false;
+            healthTextBoundToSlider = authoredLabel != null && authoredLabel.transform.parent == authoredSlider.transform;
+        }
+        UpdateHealthUI();
     }
 
     private Dictionary<StatusEffectType, int> statusEffects = new();
@@ -125,6 +144,10 @@ public class CombatantView : MonoBehaviour
     private float hitDirection;
     private Color restingColor = Color.white;
     private bool healthTextBoundToSlider;
+    private Slider enemyBreakSlider;
+    private TMP_Text enemyIntentText;
+    private TMP_Text enemyBreakText;
+    private RectTransform enemyHudRoot;
     private GameObject targetOutlineObject;
     private SpriteRenderer targetOutlineRenderer;
     private Vector3 FacingAnchor => battleAnimationReady && spriteRenderer != null
@@ -285,6 +308,28 @@ public class CombatantView : MonoBehaviour
         }
     }
 
+    protected IEnumerator PlayBattleFramesOnce(Sprite[] frames, float framesPerSecond)
+    {
+        if (!battleAnimationReady || CurrentHealth <= 0 || frames == null || frames.Length == 0 || attacking) yield break;
+        attacking = true;
+        float frameDelay = 1f / Mathf.Max(1f, framesPerSecond);
+        try
+        {
+            foreach (Sprite frame in frames)
+            {
+                if (CurrentHealth <= 0) yield break;
+                SetBattleFrame(frame, 1f, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
+                yield return new WaitForSeconds(frameDelay);
+            }
+        }
+        finally
+        {
+            attacking = false;
+            if (spriteRenderer != null && CurrentHealth > 0)
+                SetBattleFrame(restingSprite, 1f, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
+        }
+    }
+
     protected virtual void OnAttackFrame(int index, int count) { }
     protected virtual void OnAttackFinished() { }
 
@@ -354,63 +399,256 @@ public class CombatantView : MonoBehaviour
 
     protected void EnsureEnemyHealthBar()
     {
-        if (healthSlider != null) return;
-        if (healthText != null) healthText.gameObject.SetActive(false);
-        var root = new GameObject("Enemy Health Bar", typeof(RectTransform), typeof(Canvas));
-        root.transform.SetParent(transform, false);
+        Transform existingRoot = transform.Find("Enemy Health Bar");
+        if (existingRoot == null)
+        {
+            var rootObject = new GameObject("Enemy Health Bar", typeof(RectTransform), typeof(Canvas));
+            rootObject.transform.SetParent(transform, false);
+            existingRoot = rootObject.transform;
+        }
+        enemyHudRoot = existingRoot.GetComponent<RectTransform>();
         float top = spriteRenderer != null ? spriteRenderer.bounds.max.y - transform.position.y : 2f;
-        root.transform.localPosition = new Vector3(0f, top + 0.6f, -0.1f);
-        root.transform.localScale = Vector3.one * 0.013f;
-        var canvas = root.GetComponent<Canvas>();
+        enemyHudRoot.localPosition = new Vector3(0f, top + 0.6f, -0.1f);
+        enemyHudRoot.localScale = Vector3.one * 0.013f;
+        enemyHudRoot.sizeDelta = new Vector2(310, 118);
+        var canvas = existingRoot.GetComponent<Canvas>();
+        if (canvas == null) canvas = existingRoot.gameObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
         canvas.overrideSorting = true;
         canvas.sortingOrder = 50;
-        root.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 65);
 
-        var bar = new GameObject("HP Slider", typeof(RectTransform), typeof(Image), typeof(Slider));
-        bar.transform.SetParent(root.transform, false);
-        var barRect = bar.GetComponent<RectTransform>();
-        barRect.sizeDelta = new Vector2(300, 30);
-        barRect.anchoredPosition = new Vector2(0, -12);
-        bar.GetComponent<Image>().color = new Color(0.65f, 0.45f, 0.18f);
-        bar.GetComponent<Image>().raycastTarget = false;
-        var background = new GameObject("Dark Backing", typeof(RectTransform), typeof(Image));
-        background.transform.SetParent(bar.transform, false);
-        var backingRect = background.GetComponent<RectTransform>();
-        backingRect.anchorMin = Vector2.zero;
-        backingRect.anchorMax = Vector2.one;
-        backingRect.offsetMin = new Vector2(3, 3);
-        backingRect.offsetMax = new Vector2(-3, -3);
-        background.GetComponent<Image>().color = new Color(0.16f, 0.055f, 0.035f);
-        background.GetComponent<Image>().raycastTarget = false;
-        var fill = new GameObject("Blood Red Fill", typeof(RectTransform), typeof(Image));
-        fill.transform.SetParent(background.transform, false);
-        var fillRect = fill.GetComponent<RectTransform>();
-        fillRect.anchorMin = Vector2.zero;
-        fillRect.anchorMax = Vector2.one;
-        fillRect.offsetMin = fillRect.offsetMax = Vector2.zero;
-        fill.GetComponent<Image>().color = new Color(0.73f, 0.12f, 0.09f);
-        fill.GetComponent<Image>().raycastTarget = false;
-        healthSlider = bar.GetComponent<Slider>();
-        healthSlider.interactable = false;
-        healthSlider.transition = Selectable.Transition.None;
-        healthSlider.navigation = new Navigation { mode = Navigation.Mode.None };
-        healthSlider.fillRect = fillRect;
-        healthSlider.direction = Slider.Direction.LeftToRight;
-        healthSlider.minValue = 0;
-        healthSlider.wholeNumbers = true;
+        if (healthSlider == null)
+        {
+            // EnemyView now builds its HP bar and label on a dedicated world
+            // canvas. Hide the legacy HealthText inherited from CombatantViewBase
+            // so it does not overlap the generated HP label.
+            if (healthText != null)
+                healthText.gameObject.SetActive(false);
 
-        var label = new GameObject("HP Label", typeof(RectTransform), typeof(TextMeshProUGUI));
-        label.transform.SetParent(root.transform, false);
-        label.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 32);
-        label.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 18);
-        healthText = label.GetComponent<TextMeshProUGUI>();
-        healthText.fontSize = 29;
-        healthText.alignment = TextAlignmentOptions.Center;
-        healthText.color = new Color(1f, 0.9f, 0.67f);
-        healthText.raycastTarget = false;
-        healthBarRect = null; // All enemy bars retain a readable, fixed width.
+            Transform oldLabel = existingRoot.Find("HP Label");
+            if (oldLabel != null) Destroy(oldLabel.gameObject);
+            var bar = new GameObject("HP Slider", typeof(RectTransform), typeof(Image), typeof(Slider));
+            bar.transform.SetParent(existingRoot, false);
+            var barRect = bar.GetComponent<RectTransform>();
+            barRect.anchorMin = barRect.anchorMax = new Vector2(0.5f, 0.5f);
+            barRect.pivot = new Vector2(0.5f, 0.5f);
+            barRect.sizeDelta = new Vector2(220, 28);
+            barRect.anchoredPosition = new Vector2(30, 6);
+            bar.GetComponent<Image>().color = new Color(0.65f, 0.45f, 0.18f);
+            bar.GetComponent<Image>().raycastTarget = false;
+            var background = new GameObject("Dark Backing", typeof(RectTransform), typeof(Image));
+            background.transform.SetParent(bar.transform, false);
+            var backingRect = background.GetComponent<RectTransform>();
+            backingRect.anchorMin = Vector2.zero;
+            backingRect.anchorMax = Vector2.one;
+            backingRect.offsetMin = new Vector2(3, 3);
+            backingRect.offsetMax = new Vector2(-3, -3);
+            background.GetComponent<Image>().color = new Color(0.16f, 0.055f, 0.035f);
+            background.GetComponent<Image>().raycastTarget = false;
+            var fill = new GameObject("Blood Red Fill", typeof(RectTransform), typeof(Image));
+            fill.transform.SetParent(background.transform, false);
+            var fillRect = fill.GetComponent<RectTransform>();
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
+            fillRect.offsetMin = fillRect.offsetMax = Vector2.zero;
+            fill.GetComponent<Image>().color = new Color(0.73f, 0.12f, 0.09f);
+            fill.GetComponent<Image>().raycastTarget = false;
+            healthSlider = bar.GetComponent<Slider>();
+            healthSlider.interactable = false;
+            healthSlider.transition = Selectable.Transition.None;
+            healthSlider.navigation = new Navigation { mode = Navigation.Mode.None };
+            healthSlider.fillRect = fillRect;
+            healthSlider.direction = Slider.Direction.LeftToRight;
+            healthSlider.minValue = 0;
+            healthSlider.wholeNumbers = true;
+            healthBarRect = null; // Enemy bars retain a readable, fixed width.
+
+            var label = new GameObject("HP Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            label.transform.SetParent(existingRoot, false);
+            var labelRect = label.GetComponent<RectTransform>();
+            labelRect.anchorMin = labelRect.anchorMax = new Vector2(0.5f, 0.5f);
+            labelRect.sizeDelta = new Vector2(220, 28);
+            labelRect.anchoredPosition = new Vector2(30, 6);
+            healthText = label.GetComponent<TextMeshProUGUI>();
+            healthText.fontSize = 22;
+            healthText.alignment = TextAlignmentOptions.Center;
+            healthText.color = new Color(1f, 0.9f, 0.67f);
+            healthText.raycastTarget = false;
+        }
+
+        CreateEnemyIntentAndBreakUI(existingRoot);
+        if (this is EnemyView && statusEffectsUI != null)
+            statusEffectsUI.MoveToEnemyHud(enemyHudRoot);
+        if (this is EnemyView enemyView)
+            UpdateEnemyIntentUI(enemyView.AttackCountdown, enemyView.BreakMeter, enemyView.MaxBreakMeter);
         UpdateHealthUI();
+    }
+
+    private void CreateEnemyIntentAndBreakUI(Transform root)
+    {
+        Transform intent = root.Find("Enemy Attack Countdown");
+        if (intent == null)
+        {
+            var outer = new GameObject("Enemy Attack Countdown", typeof(RectTransform), typeof(Image));
+            outer.transform.SetParent(root, false);
+            intent = outer.transform;
+            var rect = outer.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(40, 40);
+            rect.anchoredPosition = new Vector2(-108, 6);
+            var image = outer.GetComponent<Image>();
+            image.sprite = GetEnemyIntentCircleSprite();
+            image.color = new Color(1f, 0.73f, 0.12f, 1f);
+            image.raycastTarget = false;
+
+            var inner = new GameObject("Countdown Face", typeof(RectTransform), typeof(Image));
+            inner.transform.SetParent(outer.transform, false);
+            var innerRect = inner.GetComponent<RectTransform>();
+            innerRect.anchorMin = Vector2.zero;
+            innerRect.anchorMax = Vector2.one;
+            innerRect.offsetMin = new Vector2(4, 4);
+            innerRect.offsetMax = new Vector2(-4, -4);
+            var innerImage = inner.GetComponent<Image>();
+            innerImage.sprite = GetEnemyIntentCircleSprite();
+            innerImage.color = new Color(0.18f, 0.11f, 0.05f, 1f);
+            innerImage.raycastTarget = false;
+            var number = new GameObject("Countdown Number", typeof(RectTransform), typeof(TextMeshProUGUI));
+            number.transform.SetParent(outer.transform, false);
+            var numberRect = number.GetComponent<RectTransform>();
+            numberRect.anchorMin = Vector2.zero;
+            numberRect.anchorMax = Vector2.one;
+            numberRect.offsetMin = numberRect.offsetMax = Vector2.zero;
+            enemyIntentText = number.GetComponent<TextMeshProUGUI>();
+            ConfigureEnemyHudText(enemyIntentText, 22, new Color(1f, 0.93f, 0.72f));
+        }
+        else enemyIntentText = intent.Find("Countdown Number")?.GetComponent<TMP_Text>();
+
+        // Keep existing authored countdown objects aligned with the HP bar too,
+        // not just the countdown object created at runtime for a new enemy.
+        RectTransform intentRect = intent as RectTransform;
+        RectTransform hpRect = root.Find("HP Slider") as RectTransform;
+        if (intentRect != null)
+        {
+            intentRect.anchorMin = intentRect.anchorMax = new Vector2(0.5f, 0.5f);
+            intentRect.pivot = new Vector2(0.5f, 0.5f);
+            float hpCenterY = hpRect != null ? hpRect.anchoredPosition.y : 6f;
+            intentRect.anchoredPosition = new Vector2(-108f, hpCenterY);
+        }
+
+        Transform breakBar = root.Find("Enemy Break Meter");
+        if (breakBar == null)
+        {
+            var bar = new GameObject("Enemy Break Meter", typeof(RectTransform), typeof(Image), typeof(Slider));
+            bar.transform.SetParent(root, false);
+            breakBar = bar.transform;
+            var rect = bar.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(220, 18);
+            rect.anchoredPosition = new Vector2(30, -21);
+            bar.GetComponent<Image>().color = new Color(0.1f, 0.22f, 0.32f);
+            bar.GetComponent<Image>().raycastTarget = false;
+            var fill = new GameObject("Break Blue Fill", typeof(RectTransform), typeof(Image));
+            fill.transform.SetParent(bar.transform, false);
+            var fillRect = fill.GetComponent<RectTransform>();
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
+            fillRect.offsetMin = fillRect.offsetMax = Vector2.zero;
+            fill.GetComponent<Image>().color = new Color(0.1f, 0.62f, 0.95f);
+            fill.GetComponent<Image>().raycastTarget = false;
+            enemyBreakSlider = bar.GetComponent<Slider>();
+            enemyBreakSlider.interactable = false;
+            enemyBreakSlider.transition = Selectable.Transition.None;
+            enemyBreakSlider.navigation = new Navigation { mode = Navigation.Mode.None };
+            enemyBreakSlider.fillRect = fillRect;
+            enemyBreakSlider.direction = Slider.Direction.LeftToRight;
+            enemyBreakSlider.minValue = 0;
+            enemyBreakSlider.wholeNumbers = true;
+
+            var label = new GameObject("Break Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            label.transform.SetParent(bar.transform, false);
+            var labelRect = label.GetComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = labelRect.offsetMax = Vector2.zero;
+            enemyBreakText = label.GetComponent<TextMeshProUGUI>();
+            ConfigureEnemyHudText(enemyBreakText, 13, Color.white);
+        }
+        else
+        {
+            enemyBreakSlider = breakBar.GetComponent<Slider>();
+            enemyBreakText = breakBar.Find("Break Label")?.GetComponent<TMP_Text>();
+        }
+    }
+
+    private static Sprite GetEnemyIntentCircleSprite()
+    {
+        if (enemyIntentCircleSprite != null) return enemyIntentCircleSprite;
+
+        const int size = 64;
+        var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+        {
+            name = "Enemy Intent Circle Texture",
+            filterMode = FilterMode.Bilinear,
+            wrapMode = TextureWrapMode.Clamp
+        };
+        var pixels = new Color32[size * size];
+        float center = (size - 1) * 0.5f;
+        float radius = size * 0.47f;
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), new Vector2(center, center));
+                byte alpha = (byte)Mathf.RoundToInt(Mathf.Clamp01(radius + 0.75f - distance) * 255f);
+                pixels[y * size + x] = new Color32(255, 255, 255, alpha);
+            }
+        }
+
+        texture.SetPixels32(pixels);
+        texture.Apply(false, true);
+        enemyIntentCircleSprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
+        enemyIntentCircleSprite.name = "Enemy Intent Circle";
+        return enemyIntentCircleSprite;
+    }
+
+    private static void ConfigureEnemyHudText(TMP_Text text, float size, Color color)
+    {
+        if (text == null) return;
+        text.fontSize = size;
+        text.enableAutoSizing = true;
+        text.fontSizeMin = Mathf.Max(10, size - 3);
+        text.fontSizeMax = size;
+        text.alignment = TextAlignmentOptions.Center;
+        text.horizontalAlignment = HorizontalAlignmentOptions.Center;
+        text.verticalAlignment = VerticalAlignmentOptions.Middle;
+        text.color = color;
+        text.raycastTarget = false;
+        text.enableWordWrapping = false;
+        text.margin = Vector4.zero;
+    }
+
+    public void UpdateEnemyIntentUI(int countdown, int breakValue, int breakMax)
+    {
+        if (enemyIntentText != null) enemyIntentText.text = Mathf.Max(0, countdown).ToString();
+        if (enemyBreakSlider != null)
+        {
+            enemyBreakSlider.maxValue = Mathf.Max(1, breakMax);
+            enemyBreakSlider.value = Mathf.Clamp(breakValue, 0, breakMax);
+        }
+        if (enemyBreakText != null)
+            enemyBreakText.text = breakValue <= 0 ? "BROKEN" : $"BREAK {breakValue}/{breakMax}";
+    }
+
+    public void SetEnemyHealthBarRow(int row)
+    {
+        if (!(this is EnemyView) || row <= 0) return;
+        Transform barRoot = transform.Find("Enemy Health Bar");
+        if (barRoot == null) return;
+        Vector3 position = barRoot.localPosition;
+        position.y += row * 0.42f;
+        barRoot.localPosition = position;
     }
 
     protected void EnlargeEnemyVisual(float targetHeight = 2.8f)
@@ -525,6 +763,8 @@ public class CombatantView : MonoBehaviour
         hitDirection = spriteRenderer != null && spriteRenderer.transform.TransformVector(Vector3.right).x * (spriteRenderer.flipX ? -1f : 1f) > 0f ? -1f : 1f;
         UpdateHealthUI();
         int healthDamage = healthBefore - CurrentHealth;
+        if (healthDamage > 0 && this is EnemyView enemyView)
+            enemyView.ApplyBreakDamage(healthDamage);
         if (this is HeroView && healthDamage > 0 && CurrentHealth > 0 && spriteRenderer != null && restingSprite != null)
         {
             var bank = Resources.Load<CharacterHurtFrames>("PlayerDeath/Hurt");

@@ -12,6 +12,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
     public CanvasGroup panelGroup;
     public Button backdropButton;
     public Button closeButton;
+    public Sprite closeIcon;
     public Button[] tabButtons = new Button[3];
     public Image[] tabBackgrounds = new Image[3];
     public TMP_Text pageHeading;
@@ -69,12 +70,68 @@ public sealed class BattleInfoPanel : MonoBehaviour
             backdropButton.targetGraphic.color = backdropColor;
         }
         if (backdropButton != null) backdropButton.onClick.AddListener(Close);
-        if (closeButton != null) closeButton.onClick.AddListener(Close);
+        if (closeButton != null)
+        {
+            EnsureVisibleCloseArtwork(closeButton, closeIcon);
+            closeButton.onClick.AddListener(Close);
+        }
         for (int i = 0; i < tabButtons.Length; i++)
         {
             int tab = i;
             if (tabButtons[i] != null) tabButtons[i].onClick.AddListener(() => ShowTab(tab));
         }
+    }
+
+    private static void EnsureVisibleCloseArtwork(Button button, Sprite icon)
+    {
+        if (button == null) return;
+
+        Image background = button.GetComponent<Image>();
+        if (background == null) background = button.gameObject.AddComponent<Image>();
+        if (icon == null) icon = background.sprite;
+        if (icon == null) return;
+
+        background.enabled = true;
+        background.sprite = icon;
+        background.color = Color.white;
+        background.type = Image.Type.Simple;
+        background.raycastTarget = true;
+
+        TMP_Text oldLabel = button.GetComponentInChildren<TMP_Text>(true);
+        if (oldLabel != null) oldLabel.gameObject.SetActive(false);
+
+        Transform iconTransform = button.transform.Find("Close X Icon");
+        Image iconImage;
+        if (iconTransform == null)
+        {
+            GameObject iconObject = new GameObject("Close X Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            iconObject.transform.SetParent(button.transform, false);
+            iconTransform = iconObject.transform;
+            iconImage = iconObject.GetComponent<Image>();
+        }
+        else
+        {
+            iconImage = iconTransform.GetComponent<Image>();
+            if (iconImage == null) iconImage = iconTransform.gameObject.AddComponent<Image>();
+        }
+
+        RectTransform iconRect = iconTransform as RectTransform;
+        if (iconRect != null)
+        {
+            iconRect.anchorMin = Vector2.zero;
+            iconRect.anchorMax = Vector2.one;
+            iconRect.offsetMin = Vector2.zero;
+            iconRect.offsetMax = Vector2.zero;
+            iconRect.localScale = Vector3.one;
+        }
+
+        iconImage.enabled = true;
+        iconImage.sprite = icon;
+        iconImage.color = Color.white;
+        iconImage.raycastTarget = false;
+        iconImage.type = Image.Type.Simple;
+        iconImage.preserveAspect = true;
+        iconTransform.SetAsLastSibling();
     }
 
     private void OnEnable()
@@ -347,6 +404,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
         item.gameObject.name = "Owned Card - " + card.name;
         item.gameObject.SetActive(true);
         item.Bind(card, quantity, level);
+        BattleSettingsMenu.AttachClickSound(item.GetComponent<Button>());
         item.Clicked += OpenCardZoom;
     }
 
@@ -387,11 +445,13 @@ public sealed class BattleInfoPanel : MonoBehaviour
         backdropButton.transition = Selectable.Transition.None;
         backdropButton.targetGraphic = backdrop;
         backdropButton.onClick.AddListener(CloseCardZoom);
+        BattleSettingsMenu.AttachClickSound(backdropButton);
 
         zoomCardItem = Instantiate(cardItemTemplate, cardZoomOverlay.transform, false);
         zoomCardItem.gameObject.name = "Expanded Card - " + source.BoundCard.name;
         zoomCardItem.gameObject.SetActive(true);
         zoomCardItem.Bind(source.BoundCard, source.BoundQuantity, source.BoundLevel);
+        BattleSettingsMenu.AttachClickSound(zoomCardItem.GetComponent<Button>());
         zoomCardItem.Clicked += HandleZoomCardClick;
 
         RectTransform zoomRect = (RectTransform)zoomCardItem.transform;
@@ -553,6 +613,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
         selectButton.transition = Selectable.Transition.None;
         selectButton.targetGraphic = sectionImage;
         selectButton.onClick.AddListener(() => SelectEnemyPortrait(enemy));
+        BattleSettingsMenu.AttachClickSound(selectButton);
         var sectionLayout = section.GetComponent<VerticalLayoutGroup>();
         sectionLayout.padding = new RectOffset(12, 12, 10, 10);
         sectionLayout.spacing = 8f;

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a08373f35b046c2ba90f2aa48a3124e, type: 3}
+  m_Name: BattleMusicLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::BattleMusicLibrary
+  transitionAndVictory: {fileID: 8300000, guid: df8a8b2faae96ec42884ba738fb584e1, type: 3}
+  battleIntro: {fileID: 8300000, guid: 5bfc26b6a7c60c34eae668f65bac5ac2, type: 3}
+  battleLoop: {fileID: 8300000, guid: 1ba74312ea7e85f478d602241754a06d, type: 3}
+  defeat: {fileID: 8300000, guid: 6b801cf70c37f6249b30612ebcb80b14, type: 3}

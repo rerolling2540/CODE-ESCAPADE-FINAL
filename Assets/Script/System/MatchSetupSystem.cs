@@ -36,6 +36,7 @@ public class MatchSetupSystem : MonoBehaviour
         BattleSettingsMenu.EnsureCreated();
         PlayerDeathFlow.EnsureInstance();
         BattleAudio.EnsureInstance();
+        BattleBgmController.EnterBattle();
         heroData = SelectedHero.Resolve(heroData);
         BattleUITheme.Apply();
         ApplyPlayerHudLayout();
@@ -1046,7 +1047,7 @@ public class EncounterBattleReturn : MonoBehaviour
         {
             victory = !heroDefeated && EnemySystem.Instance.Enemies.Count == 0;
             BattleEnded = true;
-            BattleAudio.Play(victory ? BattleSound.Victory : BattleSound.Defeat);
+            if (victory) BattleBgmController.PlayVictory();
             if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
             if (victory && caveBattle && !string.IsNullOrEmpty(encounterId))
             {

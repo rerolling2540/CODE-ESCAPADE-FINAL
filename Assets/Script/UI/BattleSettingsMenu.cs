@@ -6,6 +6,12 @@ using TMPro;
 /// <summary>Hosts and wires the original Scene 2 settings objects in the battle scene.</summary>
 public sealed class BattleSettingsMenu : MonoBehaviour
 {
+    private static BattleSettingsMenu activeInstance;
+
+    [Header("Battle UI Click Sound")]
+    [SerializeField] private AudioClip buttonClickSound;
+    [SerializeField, Range(0f, 1f)] private float buttonClickVolume = 1f;
+
     private GameObject panel;
     private GameObject settingsButton;
     private Transform menuRoot;
@@ -14,6 +20,7 @@ public sealed class BattleSettingsMenu : MonoBehaviour
     private int turnCount = 1;
     private float previousTimeScale = 1f;
     private bool settingsPausedBattle;
+    private AudioSource buttonAudioSource;
 
     public static void EnsureCreated()
     {
@@ -35,6 +42,15 @@ public sealed class BattleSettingsMenu : MonoBehaviour
 
     private void Awake()
     {
+        activeInstance = this;
+        buttonAudioSource = GetComponent<AudioSource>();
+        if (buttonAudioSource == null) buttonAudioSource = gameObject.AddComponent<AudioSource>();
+        buttonAudioSource.playOnAwake = false;
+        buttonAudioSource.loop = false;
+        buttonAudioSource.spatialBlend = 0f;
+        buttonAudioSource.volume = 1f;
+        GameAudio.Route(buttonAudioSource, false);
+
         settingsButton = gameObject;
         Transform settingsCanvas = FindNamedInScene("Battle Settings Canvas");
         Transform panelTransform = FindDescendant(settingsCanvas, "Panel");
@@ -209,6 +225,10 @@ public sealed class BattleSettingsMenu : MonoBehaviour
             if (closeLabel != null) closeLabel.gameObject.SetActive(false);
             EnsureVisibleCloseArtwork(closeButton, closeSprite);
         }
+
+        // Attach pointer/submit relays once to authored scene buttons. Runtime
+        // Codex controls register themselves when they are created.
+        AttachClickSoundToSceneButtons();
     }
 
     private static void EnsureVisibleCloseArtwork(Button closeButton, Sprite fallbackSprite)
@@ -273,6 +293,45 @@ public sealed class BattleSettingsMenu : MonoBehaviour
         }
         if (panel != null && panel.activeSelf && Input.GetKeyDown(KeyCode.Escape) &&
             !GameControlsGuide.TryCloseSettingsGuide(panel)) CloseSettings();
+    }
+
+    private void AttachClickSoundToSceneButtons()
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        foreach (Button button in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (button == null || button.gameObject.scene != activeScene) continue;
+            AttachClickSound(button);
+        }
+    }
+
+    /// <summary>Registers a runtime-created battle button for the shared Scene 2 click sound.</summary>
+    public static void AttachClickSound(Button button)
+    {
+        if (button == null || activeInstance == null) return;
+        BattleButtonClickSound clickSound = button.GetComponent<BattleButtonClickSound>();
+        if (clickSound == null) clickSound = button.gameObject.AddComponent<BattleButtonClickSound>();
+
+        // Some copied Scene 2 buttons already invoke AudioManager.PlayButtonSound.
+        // Do not play a second copy of the same click when that legacy event exists.
+        bool alreadyPlaysScene2Click = false;
+        for (int i = 0; i < button.onClick.GetPersistentEventCount(); i++)
+        {
+            if (button.onClick.GetPersistentMethodName(i) == "PlayButtonSound")
+            {
+                alreadyPlaysScene2Click = true;
+                break;
+            }
+        }
+
+        clickSound.Configure(activeInstance.buttonAudioSource,
+            alreadyPlaysScene2Click ? null : activeInstance.buttonClickSound,
+            activeInstance.buttonClickVolume);
+    }
+
+    private void OnDestroy()
+    {
+        if (activeInstance == this) activeInstance = null;
     }
 
     private static Button FindButton(Transform root, string objectName)

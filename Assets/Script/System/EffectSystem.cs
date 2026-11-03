@@ -41,6 +41,8 @@ public class EffectSystem : MonoBehaviour
             {
                 target.Heal(healGA.Amount);
                 StatusEffectSystem.PlayHealAnimation(target);
+                string subject = target is EnemyView ? "ENEMY HEAL" : "PLAYER HEAL";
+                BattleMessageUI.Instance?.ShowAt(subject, $"Restores {healGA.Amount} health.", target.VisualCenter);
             }
             yield return null;
         }

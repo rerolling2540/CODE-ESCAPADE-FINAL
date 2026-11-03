@@ -36,6 +36,7 @@ public class MatchSetupSystem : MonoBehaviour
         BattleSettingsMenu.EnsureCreated();
         PlayerDeathFlow.EnsureInstance();
         BattleAudio.EnsureInstance();
+        BattleBgmController.EnterBattle();
         heroData = SelectedHero.Resolve(heroData);
         BattleUITheme.Apply();
         ApplyPlayerHudLayout();
@@ -117,8 +118,7 @@ public class MatchSetupSystem : MonoBehaviour
         if (hero == null || hero.CurrentHealth <= 0 || targets.Count == 0 || !BattleHudMedieval.TrySpendFullEp())
             yield break;
 
-        BattleAudio.Play(BattleSound.MagicCast);
-        yield return hero.PlayBattleAttack(targets[0]);
+        yield return hero.PlayBattleAttack(targets[0], null);
         if (hero == null || hero.CurrentHealth <= 0) yield break;
 
         int damage = Mathf.Max(1, hero.AttackPower * 2);
@@ -1054,6 +1054,7 @@ public class EncounterBattleReturn : MonoBehaviour
             BattleEnded = true;
             BattleAudio.Play(victory ? BattleSound.Victory : BattleSound.Defeat);
             if (victory) PlayerAdventureStats.RecordVictory();
+            if (victory) BattleBgmController.PlayVictory();
             if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
             if (victory && caveBattle && !string.IsNullOrEmpty(encounterId))
             {

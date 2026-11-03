@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 public enum EnemyAttackStyle { Melee, Ranged }
+public enum EnemyOpeningAction { Random, Shield, DamageBuff }
 
 [CreateAssetMenu(menuName = "Data/Enemy")]
 public class EnemyData : ScriptableObject
@@ -30,5 +31,17 @@ public class EnemyData : ScriptableObject
     [Min(1f)] public float projectileSpeed = 10f;
     [Min(1f)] public float projectileFrameRate = 16f;
     public float projectileArc;
+
+    [Header("Periodic status assault (turns 1, 3, 5, ...)")]
+    [Tooltip("When enabled, this enemy applies its configured status to the player on its status-assault turns.")]
+    public bool appliesStatusEffect;
+    public StatusEffectType onHitStatus = StatusEffectType.BURN;
+    [Min(1)] public int onHitStacks = 1;
+    [Min(1)] public int natureHealAmount = 10;
+    [Header("First player turn action (instead of attacking)")]
+    public EnemyOpeningAction openingAction = EnemyOpeningAction.Random;
+    [Min(1)] public int openingShield = 8;
+    [Min(1)] public int openingDamageBonus = 3;
+    [Min(1)] public int openingDamageBuffAttacks = 3;
 
 }

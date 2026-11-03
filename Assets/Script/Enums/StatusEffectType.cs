@@ -6,5 +6,6 @@ public enum StatusEffectType
     POISON = 2,
     BLEED = 3,
     FROST = 4,
-    NATURE = 5
+    NATURE = 5,
+    DAMAGE_BUFF = 6
 }

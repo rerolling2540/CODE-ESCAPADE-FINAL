@@ -11,6 +11,17 @@ public enum DamageType
     AttackPercentLegacy = 2
 }
 
+public enum CardAttackVfxType
+{
+    Auto = 0,
+    ArrowRain = 1,
+    Fireball = 2,
+    Arrow = 3,
+    ArcaneBolt = 4,
+    MeleeSlash = 5,
+    Impact = 6
+}
+
 [CreateAssetMenu(menuName = "Data/Card")]
 public class CardData : ScriptableObject
 {
@@ -23,6 +34,10 @@ public class CardData : ScriptableObject
     [field: SerializeField] public Sprite Image { get; private set; }
     [field: SerializeReference, SR] public Effect ManualTargetEffect { get; private set; } = null;
     [field: SerializeField] public List<AutoTargetEffect> OtherEffects { get; private set; }
+
+    [Header("Attack Visual Effect")]
+    [Tooltip("Chooses the projectile or strike effect played when this attack card resolves. Auto picks one from the card name and selected hero.")]
+    public CardAttackVfxType attackVfxType = CardAttackVfxType.Auto;
 
     [Header("Damage Scaling Type")]
     public DamageType damageType = DamageType.Flat;

@@ -193,6 +193,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         PendingEnemies = squad != null && squad.Count > 0 ? squad : new List<EnemyData> { enemy };
         PendingEncounterId = gameObject.name;
         PendingEncounterScene = gameObject.scene.name;
+        BattleBgmController.PlayBattleTransition();
         SceneTransitionFader.Load("Battle Scene");
     }
 }

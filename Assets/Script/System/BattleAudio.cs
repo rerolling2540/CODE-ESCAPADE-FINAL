@@ -66,6 +66,7 @@ public class BattleAudio : MonoBehaviour
             StatusEffectType.BLEED => BattleSound.Hit,
             StatusEffectType.FROST => BattleSound.MagicCast,
             StatusEffectType.NATURE => BattleSound.Heal,
+            StatusEffectType.DAMAGE_BUFF => BattleSound.Armor,
             _ => BattleSound.MagicCast
         };
         Play(sound);
@@ -117,13 +118,18 @@ public class BattleAudio : MonoBehaviour
         return name.Contains("fire") || name.Contains("burn") || name.Contains("ignite");
     }
 
-    public static void HeroAttack(CardData card)
+    public static bool IsAttackCard(CardData card)
     {
-        if (card == null) return;
-        bool damage = card.ManualTargetEffect is DealDamageEffect || card.ManualTargetEffect is StatusComboDamageEffect ||
+        if (card == null) return false;
+        return card.ManualTargetEffect is DealDamageEffect || card.ManualTargetEffect is StatusComboDamageEffect ||
             (card.OtherEffects != null && card.OtherEffects.Exists(e => e != null &&
                 (e.Effect is DealDamageEffect || e.Effect is StatusComboDamageEffect)));
-        if (!damage) return;
+    }
+
+    public static void HeroAttack(CardData card)
+    {
+        // A null card is used by scripted attacks such as Starfall.
+        if (card != null && !IsAttackCard(card)) return;
         Play(IsFireCard(card) ? BattleSound.FireCast : SelectedHero.IsMage ? BattleSound.MagicCast :
             SelectedHero.IsArcher ? BattleSound.ArrowRelease : BattleSound.SwordSwing);
     }

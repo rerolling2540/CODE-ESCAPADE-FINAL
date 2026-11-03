@@ -11,6 +11,9 @@ public class EnemyView : CombatantView
    private int breakMeter;
    private int maxBreakMeter = 100;
    private bool breakRestorePending;
+   private bool openingActionResolved;
+   private int openingDamageBuffBonus;
+   public bool OpeningActionResolved => openingActionResolved;
    public EnemyData Data => data;
    public int AttackCountdown => attackCountdown;
    public int BreakMeter => breakMeter;
@@ -28,12 +31,57 @@ public class EnemyView : CombatantView
         maxBreakMeter = Mathf.Max(1, enemyData.breakMeterMax);
         breakMeter = maxBreakMeter;
         breakRestorePending = false;
+        openingActionResolved = false;
+        openingDamageBuffBonus = 0;
         if (attackText != null) attackText.gameObject.SetActive(false);
         SetUpBase(enemyData.Health, enemyData.Image);
         SetBattleMaterial(enemyData.battleMaterial);
         EnlargeEnemyVisual(2.8f * Mathf.Max(0.1f, enemyData.battleVisualScale));
         EnsureEnemyHealthBar();
         ConfigureBattleAnimation(enemyData.idleFrames, enemyData.attackFrames, enemyData.battleFramesPerSecond, true, enemyData.hovering);
+    }
+
+    public void ResolveOpeningAction()
+    {
+        openingActionResolved = true;
+        EnemyOpeningAction action = data != null ? data.openingAction : EnemyOpeningAction.Random;
+        if (action == EnemyOpeningAction.Random)
+            action = Random.value < 0.5f ? EnemyOpeningAction.Shield : EnemyOpeningAction.DamageBuff;
+        if (action == EnemyOpeningAction.Shield)
+        {
+            int shield = Mathf.Max(1, data != null ? data.openingShield : 8);
+            AddStatusEffect(StatusEffectType.ARMOR, shield);
+            StatusEffectSystem.PlayShieldAnimation(this);
+            BattleMessageUI.Instance?.ShowAt("ENEMY SHIELD", $"{GetDisplayName()} gains {shield} shield.", VisualCenter);
+        }
+        else
+        {
+            int damageBonus = Mathf.Max(1, data != null ? data.openingDamageBonus : 3);
+            openingDamageBuffBonus = damageBonus;
+            AttackPower += damageBonus;
+            int empoweredAttacks = Mathf.Max(1, data != null ? data.openingDamageBuffAttacks : 3);
+            AddStatusEffect(StatusEffectType.DAMAGE_BUFF, empoweredAttacks);
+            StatusEffectSystem.PlayDamageBuffAnimation(this);
+            BattleMessageUI.Instance?.ShowAt("DAMAGE UP", $"{GetDisplayName()} powers up for {empoweredAttacks} attacks.", VisualCenter);
+        }
+    }
+
+    private string GetDisplayName()
+    {
+        return data != null && !string.IsNullOrWhiteSpace(data.name) ? data.name : "Enemy";
+    }
+
+    public void ConsumeDamageBuffAttack()
+    {
+        int attacksRemaining = GetStatusEffectStacks(StatusEffectType.DAMAGE_BUFF);
+        if (attacksRemaining <= 0) return;
+
+        RemoveStatusEffect(StatusEffectType.DAMAGE_BUFF, 1);
+        if (GetStatusEffectStacks(StatusEffectType.DAMAGE_BUFF) == 0 && openingDamageBuffBonus > 0)
+        {
+            AttackPower = Mathf.Max(0, AttackPower - openingDamageBuffBonus);
+            openingDamageBuffBonus = 0;
+        }
     }
 
     /// <summary>Advances this enemy's intent by one player action. Returns true when an attack becomes due.</summary>

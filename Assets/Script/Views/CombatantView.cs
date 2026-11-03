@@ -410,7 +410,7 @@ public class CombatantView : MonoBehaviour
         float top = spriteRenderer != null ? spriteRenderer.bounds.max.y - transform.position.y : 2f;
         enemyHudRoot.localPosition = new Vector3(0f, top + 0.6f, -0.1f);
         enemyHudRoot.localScale = Vector3.one * 0.013f;
-        enemyHudRoot.sizeDelta = new Vector2(310, 118);
+        enemyHudRoot.sizeDelta = new Vector2(380, 140);
         var canvas = existingRoot.GetComponent<Canvas>();
         if (canvas == null) canvas = existingRoot.gameObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;

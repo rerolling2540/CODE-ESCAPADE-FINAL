@@ -107,7 +107,8 @@ public sealed class PlayerDeathFlow : MonoBehaviour
         if (combatant != null) combatant.StopAllCoroutines();
         if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
         BattleAudio.EnsureInstance();
-        BattleAudio.Play(BattleSound.Defeat);
+        if (SceneManager.GetActiveScene().name == "Battle Scene")
+            BattleBgmController.PlayDefeat();
         SpriteRenderer visual = null;
         if (source != null)
         {

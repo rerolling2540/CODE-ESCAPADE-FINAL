@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e2f4e98961d49a5b860f0a7c9c26419, type: 3}
+  m_Name: CardAttackVfxLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::CardAttackVfxLibrary
+  fireballProjectile: {fileID: 2800000, guid: a60c4c601fe30624b9c9e5e48531c4fb, type: 3}
+  impactSheet: {fileID: 2800000, guid: 7cc3b2177af638646856e0c568fd4cf9, type: 3}

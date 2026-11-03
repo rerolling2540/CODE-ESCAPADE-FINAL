@@ -14,7 +14,8 @@ public static class BattleQuestionReport
     }
     public static readonly List<Entry> Entries=new List<Entry>();
     public static bool Pending {get;private set;}
-    public static void BeginBattle(){Entries.Clear();Pending=true;}
+    public static string EncounterId {get;private set;}
+    public static void BeginBattle(string encounterId=null){Entries.Clear();Pending=true;EncounterId=encounterId;}
     public static void Presented(string id,QuestionData question)
     {
         if(!Pending||question==null||Entries.Any(e=>e.id==id))return;

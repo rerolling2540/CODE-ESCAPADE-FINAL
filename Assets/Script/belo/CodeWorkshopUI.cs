@@ -18,6 +18,7 @@ public sealed class CodeWorkshopUI : MonoBehaviour
     private static string TopicArt(int index)=>new[]{"Scroll","Coins","Gate","Step","Shelf","Heal"}[index];
     private static readonly System.Collections.Generic.Dictionary<string,Sprite> artwork=new System.Collections.Generic.Dictionary<string,Sprite>();
     private UnityEngine.UI.Button previousPage,nextPage,previousStep,nextStep,replay,practice;
+    private UnityEngine.UI.Button changeExample,resetExample;
     private TMP_Text header,pageNumber,overview,chapter,definition,context,example,code,trace,console,challenge,instructions,resultTitle,resultAnswer,resultExplanation,stepLabel;
     private WorkshopBookTurn turn;
     private CanvasGroup bookInput;
@@ -27,6 +28,9 @@ public sealed class CodeWorkshopUI : MonoBehaviour
     private Material textMaterial;
     private string language,attempt,user;
     private int topic,exerciseTier,step,page,slot,hero,selectedAnswer=-1;
+    private int experimentMessage,experimentCoins;
+    private bool HasExperiment=>mentor!=null&&mentor.workshop==0&&exerciseTier==0&&topic<2;
+    private VisualCodeLessons.Lesson SelectedLesson()=>HasExperiment?BeginnerWorkshopExperiment.Create(language,topic,experimentMessage,experimentCoins):WorkshopVariations.Get(language,topic,exerciseTier);
     private bool opened,answered,correct;
     private bool coverMoving;
     private Coroutine coverRoutine;
@@ -52,7 +56,7 @@ public sealed class CodeWorkshopUI : MonoBehaviour
         if(opened||IsOpen||GameControlsGuide.SettingsOpen||Time.timeScale<=0||!CharacterAlmanac.IsExplorationScene(gameObject.scene.name))return;
         mentor=teacher;hero=PlayerPrefs.GetInt("SelectedCharacter",0);slot=SaveSlots.Active;user=MainMenuSaveSlots.CurrentUserId;
         language=CharacterAlmanac.LanguageForCharacter(hero);topic=teacher.SuggestedTopic(language);exerciseTier=0;step=0;page=0;answered=false;
-        lesson=WorkshopVariations.Get(language,topic,exerciseTier);
+        experimentMessage=experimentCoins=0;lesson=SelectedLesson();
         if(root==null)Build();
         opened=true;active=this;previousTimeScale=Time.timeScale;Time.timeScale=0;root.SetActive(true);Refresh();
         SettingsUiVisibility.EnsureInstance();SettingsUiVisibility.RefreshNow();
@@ -122,13 +126,13 @@ public sealed class CodeWorkshopUI : MonoBehaviour
     {
         if(!CanUse||page!=0)return;
         index=Mathf.Clamp(index,mentor.workshop*2,mentor.workshop*2+1);
-        if(topic!=index){topic=index;exerciseTier=0;step=0;answered=false;lesson=WorkshopVariations.Get(language,topic,0);}
+        if(topic!=index){topic=index;exerciseTier=0;step=0;answered=false;experimentMessage=experimentCoins=0;lesson=SelectedLesson();}
         Refresh();
     }
     public void SelectExerciseTier(int value)
     {
         if(!CanUse||page!=0||value<0||value>2||!WorkshopProgression.Available(language,topic,value))return;
-        if(exerciseTier!=value){exerciseTier=value;step=0;answered=false;lesson=WorkshopVariations.Get(language,topic,value);}
+        if(exerciseTier!=value){exerciseTier=value;step=0;answered=false;experimentMessage=experimentCoins=0;lesson=SelectedLesson();}
         Refresh();
     }
     public void Contents(){if(CanUse&&page!=0)Transition(0,false);}
@@ -143,6 +147,16 @@ public sealed class CodeWorkshopUI : MonoBehaviour
     }
     public void Move(int delta){if(!CanUse||page!=2)return;step=Mathf.Clamp(step+delta,0,lesson.steps.Length-1);Refresh();}
     public void Replay(){if(!CanUse)return;if(page!=2)Transition(2,false,()=>step=0);else{step=0;Refresh();}}
+    public void ChangeBeginnerExample(bool reset)
+    {
+        if(!CanUse||page!=2||!HasExperiment)return;
+        if(reset){experimentMessage=experimentCoins=0;}
+        else if(topic==0)experimentMessage=(experimentMessage+1)%BeginnerWorkshopExperiment.Messages.Length;
+        else experimentCoins=Mathf.Min(BeginnerWorkshopExperiment.MaxExtraCoins,experimentCoins+1);
+        lesson=SelectedLesson();step=lesson.steps.Length-1;
+        // This is a toy demonstration, not a question attempt or a completed quest.
+        Refresh();
+    }
     public void BeginPrediction()
     {
         if(!CanUse||page!=2||step!=lesson.steps.Length-1||!WorkshopProgression.Available(language,topic,exerciseTier))return;
@@ -179,7 +193,11 @@ public sealed class CodeWorkshopUI : MonoBehaviour
         resultTitle.text=correct?"CORRECT":"LET'S REVIEW";resultTitle.color=correct?new Color(.08f,.42f,.16f):Ink;
         correctMark.SetActive(answered&&correct);
         resultAnswer.text="Your answer:\n"+(selectedAnswer<0?"":lesson.answers[selectedAnswer])+"\n\nCorrect output:\n"+lesson.answers[lesson.correct];resultAnswer.richText=false;
-        resultExplanation.text=lesson.explanation+"\n\n"+(correct?"Your progress is saved. ":"Replay the example, then return to practice. ")+LearningQuests.Objective(mentor.workshop);
+        resultExplanation.text=lesson.explanation+"\n\n"+(correct?"Your progress is saved. ":"Replay "+QuestJournalText.Topic(topic)+", then try again. ")+LearningQuests.Objective(mentor.workshop);
+        changeExample.gameObject.SetActive(HasExperiment);resetExample.gameObject.SetActive(HasExperiment);
+        changeExample.GetComponentInChildren<TMP_Text>().text=topic==0?"Change message":"Add 1 starting coin";
+        changeExample.interactable=topic==0||experimentCoins<BeginnerWorkshopExperiment.MaxExtraCoins;
+        Place(console.gameObject,44,265,482,HasExperiment?80:130);
         for(int i=0;i<2;i++){int t=mentor.workshop*2+i;topics[i].GetComponentInChildren<TMP_Text>().text=(i+1)+". "+VisualCodeLessons.Get(language,t).title.Split('·')[1].Trim()+(WorkshopProgression.Passed(language,t,0)?"  / Done":"");topics[i].GetComponent<UnityEngine.UI.Image>().color=t==topic?Blue:Color.white;topicIcons[i].sprite=Art(TopicArt(t));}
         for(int i=0;i<3;i++){bool available=WorkshopProgression.Available(language,topic,i);bool passed=WorkshopProgression.Passed(language,topic,i);levels[i].interactable=available;levels[i].GetComponentInChildren<TMP_Text>().text=WorkshopProgression.TierName(i)+(passed?" / Done":available?"":" / Locked");levels[i].GetComponent<UnityEngine.UI.Image>().color=i==exerciseTier?Blue:Color.white;levelIcons[i].sprite=Art(passed?"Complete":available?"Book":"Lock");}
         previousStep.interactable=step>0;nextStep.interactable=step<lesson.steps.Length-1;
@@ -246,6 +264,8 @@ public sealed class CodeWorkshopUI : MonoBehaviour
         Title(rightSections[2],"PROGRAM STATE",40);cellsRoot=Section("State boxes",rightSections[2].transform);Place(cellsRoot,52,115,456,108);
         stateLegend=Text("Visual icon meaning",rightSections[2].transform,"",17);stateLegend.fontSizeMin=14;Place(stateLegend.gameObject,44,230,482,30);
         console=Text("Console",rightSections[2].transform,"",24);Place(console.gameObject,44,265,482,130);
+        changeExample=Button("Change message",rightSections[2].transform,()=>ChangeBeginnerExample(false),44,356,236,42);
+        resetExample=Button("Reset example",rightSections[2].transform,()=>ChangeBeginnerExample(true),292,356,234,42);
         stepLabel=Text("Step counter",rightSections[2].transform,"",18);Place(stepLabel.gameObject,44,410,482,30);
         previousStep=Button("< Step",rightSections[2].transform,()=>Move(-1),44,456,140,42);replay=Button("Replay",rightSections[2].transform,Replay,200,456,140,42);nextStep=Button("Step >",rightSections[2].transform,()=>Move(1),356,456,170,42);
         practice=Button("Turn to practice >",rightSections[2].transform,BeginPrediction,200,510,326,36);

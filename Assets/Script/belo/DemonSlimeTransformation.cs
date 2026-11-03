@@ -19,12 +19,6 @@ public sealed class DemonSlimeTransformation : MonoBehaviour
 
     void Awake()
     {
-        var saved = SaveSlots.Read(SaveSlots.Active);
-        if (saved?.defeatedEncounters != null && saved.defeatedEncounters.Contains(gameObject.name))
-        {
-            gameObject.SetActive(false);
-            return;
-        }
         encounter = GetComponent<CaveEnemyEncounter>();
         visual = GetComponent<SpriteRenderer>();
         hitbox = GetComponent<BoxCollider2D>();
@@ -32,6 +26,13 @@ public sealed class DemonSlimeTransformation : MonoBehaviour
         encounter.enabled = false;
         hitbox.enabled = false;
         ShowDormant();
+    }
+
+    void Start()
+    {
+        // sceneLoaded resets a new visit after Awake and before Start.
+        if (SceneVisitProgress.IsDefeated(SaveSlots.Read(SaveSlots.Active), gameObject.scene.name, gameObject.name))
+            gameObject.SetActive(false);
     }
 
     void Update()

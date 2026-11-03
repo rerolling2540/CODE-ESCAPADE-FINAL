@@ -79,9 +79,15 @@ public class Npc_Talk : MonoBehaviour
 
     DialogueSO BuildQuestDialogue()
     {
-        var root=Node("Before facing the hollow, learn how code behaves. Our teachers offer visual lessons and question quests with XP rewards. You can learn safely before taking on battle questions.");
-        root.options=new[]{new DialogueOption{optionText="Beginner learning quest / XP",nextDialogue=LearningQuests.Dialogue(this,-1)},new DialogueOption{optionText="Warden of the Hollow",nextDialogue=BuildCombatQuestDialogue()},new DialogueOption{optionText="Farewell"}};
-        return root;
+        var saved=SaveSlots.Read(SaveSlots.Active);
+        var main=WardenQuest.Dialogue(this);
+        if(saved!=null&&saved.elfQuestStage>0&&saved.elfQuestStage<4)
+        {
+            var root=Node("Your earlier cave contract is still available. We can also continue the learning journey across the realm.");
+            root.options=new[]{new DialogueOption{optionText="Main quest: Warden of the Hollow",nextDialogue=main},new DialogueOption{optionText="Earlier cave contract",nextDialogue=BuildCombatQuestDialogue()},new DialogueOption{optionText="Farewell"}};
+            return root;
+        }
+        return main;
     }
     DialogueSO BuildCombatQuestDialogue()
     {
@@ -221,7 +227,8 @@ public class ElfQuestTracker : MonoBehaviour
     private static bool minimized = true;
 
     public static bool IsMinimized => minimized;
-    public string ObjectiveText => (objective ?? "Speak to the elf at the cave entrance [E].")+LearningQuests.Journal();
+    public string ObjectiveText => QuestJournalText.All(SaveSlots.Read(SaveSlots.Active));
+    static string LegacyObjective(){var s=SaveSlots.Read(SaveSlots.Active);return s!=null&&s.elfQuestStage>0&&s.elfQuestStage<4?"\nEarlier cave contract: "+ElfQuestProgress.Objective(s):"";}
 
     public void ToggleJournal() { minimized = !minimized; }
 

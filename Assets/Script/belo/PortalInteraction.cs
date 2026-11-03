@@ -128,10 +128,11 @@ public class PortalInteraction : MonoBehaviour
         var oldColor = GUI.color;
         GUI.matrix = Matrix4x4.identity;
         GUI.color = Color.white;
-        float width = Mathf.Min(showLocked ? 580f : 170f, Mathf.Max(1f, Screen.width - 8f));
+        float width = Mathf.Min(showLocked ? 580f : Mathf.Max(170f,buttonStyle.CalcSize(new GUIContent(entryPrompt)).x+16), Mathf.Max(1f, Screen.width - 8f));
         float height = showLocked ? 72f : 40f;
         Rect button = new Rect(Mathf.Clamp(screen.x - width * 0.5f, 4f, Mathf.Max(4f, Screen.width - width - 4f)),
             Mathf.Clamp(Screen.height - screen.y - height * 0.5f, 4f, Mathf.Max(4f, Screen.height - height - 4f)), width, height);
+        if(QuestJournalHud.OccludesWorldRect(button)){GUI.color=oldColor;GUI.matrix=oldMatrix;return;}
         bool oldEnabled = GUI.enabled;
         if (showLocked)
             GUI.Label(button, unavailablePrompt, buttonStyle);

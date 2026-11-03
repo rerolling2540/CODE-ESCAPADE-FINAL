@@ -33,6 +33,7 @@ public class GameSave : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         SceneManager.sceneLoaded += OnSceneLoaded;
         SaveSlots.MigrateLegacy();
+        WorldTravelDiscovery.RecordCurrentScene();
     }
 
     void Update()
@@ -65,8 +66,9 @@ public class GameSave : MonoBehaviour
     {
         string scene = SceneManager.GetActiveScene().name;
         if (player == null || PlayerDeathFlow.IsActive || PlayerHealth.CurrentHealth <= 0 ||
-            (scene != "Scene 2" && scene != "Scene3" && scene != "Scene4" && scene != "map 4") || pendingRestore != null) return;
-        var saved = SaveSlots.Read(SaveSlots.Active) ?? new SaveSlots.Record();
+            !CharacterAlmanac.IsExplorationScene(scene) || pendingRestore != null) return;
+        var saved = SaveSlots.Read(SaveSlots.Active) ?? new SaveSlots.Record {scene=scene};
+        WorldTravelDiscovery.RecordVisit(saved,scene);
         PlayerHealth.CopyTo(saved);
         var movement=player.GetComponent<playerMovement>();
         if(movement!=null&&SafeCheckpoint.IsSafe(movement,player.position))
@@ -99,6 +101,8 @@ public class GameSave : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        WorldTravelDiscovery.RecordVisit(pendingRestore,scene.name);
+        WorldTravelDiscovery.RecordCurrentScene();
         if (pendingRestore != null && scene.name == pendingRestore.scene)
             StartCoroutine(RestorePlayer());
         else if (freshTutorialStart && scene.name == "Scene 2")

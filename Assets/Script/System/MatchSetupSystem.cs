@@ -47,11 +47,13 @@ public class MatchSetupSystem : MonoBehaviour
         ApplyPlayerHudLayout(ResolveHudPortrait(), HeroSystem.Instance.HeroView);
         bool caveBattle = CaveEnemyEncounter.PendingEnemies != null && CaveEnemyEncounter.PendingEnemies.Count > 0;
         string encounterId = CaveEnemyEncounter.PendingEncounterId;
+        string encounterScene = CaveEnemyEncounter.PendingEncounterScene;
         if (caveBattle)
         {
             EnemySystem.Instance.Setup(CaveEnemyEncounter.PendingEnemies);
             CaveEnemyEncounter.PendingEnemies = null;
             CaveEnemyEncounter.PendingEncounterId = null;
+            CaveEnemyEncounter.PendingEncounterScene = null;
         }
         else EnemySystem.Instance.Setup(enemyDatas);
         var platform = FindFirstObjectByType<BattlePlatform>();
@@ -60,7 +62,7 @@ public class MatchSetupSystem : MonoBehaviour
             enemy.FaceTowards(HeroSystem.Instance.HeroView);
         if (EnemySystem.Instance.Enemies.Count > 0)
             HeroSystem.Instance.HeroView.FaceTowards(EnemySystem.Instance.Enemies[0]);
-        gameObject.AddComponent<EncounterBattleReturn>().Configure(caveBattle, encounterId);
+        gameObject.AddComponent<EncounterBattleReturn>().Configure(caveBattle, encounterId, encounterScene);
         List<CardData> ownedBattleDeck = CharacterInventory.WithChestRewards(heroData.Deck);
         Debug.Log($"Battle deck created from this save slot's owned inventory: {ownedBattleDeck.Count} card(s). Unowned catalog cards are excluded.");
         CardSystem.Instance.Setup(ownedBattleDeck);
@@ -89,7 +91,7 @@ public class MatchSetupSystem : MonoBehaviour
             portraitFrame.AddComponent<RectMask2D>();
 
         var portrait = portraitIcon.GetComponent<Image>();
-        if (portrait != null) portrait.preserveAspect = false;
+        if (portrait != null) portrait.preserveAspect = true;
     }
 
     private static Transform FindDescendant(Transform root, string objectName)
@@ -324,6 +326,9 @@ public static class BattleHudMedieval
 
     private static void ApplyPortrait(RectTransform hudRect, Sprite portrait)
     {
+        var info=Resources.Load<CharacterInfoData>("UI/CharacterInfo");
+        var sharedPortrait=info != null ? info.GetPortraitSprite(Mathf.Clamp(PlayerPrefs.GetInt("SelectedCharacter",0),0,2)) : null;
+        if(sharedPortrait != null)portrait=sharedPortrait;
         Transform frameTransform = FindDescendant(hudRect, "PortraitFrame");
         Transform iconTransform = FindDescendant(hudRect, "PortraitIcon");
         if (frameTransform == null || iconTransform == null) return;
@@ -350,10 +355,8 @@ public static class BattleHudMedieval
         // PortraitIcon remains where it was placed under PortraitFrame in the
         // Hierarchy; only the selected character sprite changes at runtime.
         if (portrait != null) icon.sprite = portrait;
-        // Fill the authored inset RectTransform. The frame remains visible
-        // around it, while portraits with a non-square source no longer shrink
-        // inside the square frame because of preserve-aspect letterboxing.
-        icon.preserveAspect = false;
+        // Use the same artwork and aspect ratio as Character Information.
+        icon.preserveAspect = true;
         icon.raycastTarget = false;
     }
 
@@ -1015,16 +1018,19 @@ public class EncounterBattleReturn : MonoBehaviour
     private bool hadEnemies;
     private bool victory;
     private string encounterId;
+    private string encounterScene;
     private RectTransform playerHealthPanel;
     private int encounterExperience, awardedExperience;
 
-    public void Configure(bool fromCave, string id)
+    public void Configure(bool fromCave, string id, string sourceScene = null)
     {
-        BattleQuestionReport.BeginBattle();
+        BattleQuestionReport.BeginBattle(id);
+        if(id==WardenQuest.FinalEncounter&&GetComponent<WardenFinalTrial>()==null)gameObject.AddComponent<WardenFinalTrial>();
         caveBattle = fromCave;
         encounterExperience=0;
         foreach(var enemy in EnemySystem.Instance.Enemies)if(enemy!=null)encounterExperience+=enemy.ExperienceReward;
         encounterId = id;
+        encounterScene = sourceScene;
         var healthHud = FindFirstObjectByType<ExplorationHealthHud>(FindObjectsInactive.Include);
         if (healthHud != null) playerHealthPanel = healthHud.transform.Find("Player Health Panel") as RectTransform;
         hadEnemies = EnemySystem.Instance.Enemies.Count > 0;
@@ -1046,11 +1052,13 @@ public class EncounterBattleReturn : MonoBehaviour
         {
             victory = !heroDefeated && EnemySystem.Instance.Enemies.Count == 0;
             BattleEnded = true;
+            BattleAudio.Play(victory ? BattleSound.Victory : BattleSound.Defeat);
+            if (victory) PlayerAdventureStats.RecordVictory();
             if (victory) BattleBgmController.PlayVictory();
             if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
             if (victory && caveBattle && !string.IsNullOrEmpty(encounterId))
             {
-                awardedExperience=PlayerProgression.AwardEncounter(encounterId,encounterExperience);
+                awardedExperience=PlayerProgression.AwardEncounter(encounterId,encounterExperience,encounterScene);
             }
             StartCoroutine(EndBattle());
         }

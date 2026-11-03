@@ -16,13 +16,15 @@ public static class PlayerProgression
         saved.level=5;
         SaveSlots.Write(saved);
     }
-    public static int AwardEncounter(string encounterId,int amount)
+    public static int AwardEncounter(string encounterId,int amount,string sourceScene = null)
     {
         var saved=SaveSlots.Read(SaveSlots.Active);
         if(saved==null||string.IsNullOrEmpty(encounterId))return 0;
         Ensure(saved);
+        bool visitChanged=SceneVisitProgress.RecordDefeat(saved,sourceScene,encounterId);
         if(saved.defeatedEncounters==null)saved.defeatedEncounters=new System.Collections.Generic.List<string>();
-        if(saved.defeatedEncounters.Contains(encounterId))return 0;
+        if(saved.defeatedEncounters.Contains(encounterId))
+        {if(visitChanged)SaveSlots.Write(saved);return 0;}
         saved.defeatedEncounters.Add(encounterId);
         ApplyExperience(saved,Mathf.Max(0,amount));SaveSlots.Write(saved);return Mathf.Max(0,amount);
     }
@@ -45,6 +47,8 @@ public static class PlayerProgression
         // Persist the reward receipt and XP together, preventing repeat claims after reload.
         saved.level=Mathf.Max(5,saved.level);ApplyExperience(saved,LearningQuests.Reward(giver));return true;
     }
+    public static void ApplyQuestExperience(SaveSlots.Record saved,int amount)
+    {saved.level=Mathf.Max(5,saved.level);ApplyExperience(saved,Mathf.Max(0,amount));}
     private static void ApplyExperience(SaveSlots.Record saved,int amount)
     {
         saved.experience=(int)System.Math.Min(int.MaxValue,(long)Mathf.Max(0,saved.experience)+amount);

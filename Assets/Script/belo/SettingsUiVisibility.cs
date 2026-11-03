@@ -11,6 +11,7 @@ public sealed class SettingsUiVisibility : MonoBehaviour
     private const float DynamicUiRefreshInterval = 1f;
     private float nextDynamicUiRefresh;
     private bool lastSettingsOpen;
+    private bool lastTravelOpen;
     private struct State { public float alpha; public bool interactable, raycasts; }
 
     public static void EnsureInstance()
@@ -27,7 +28,8 @@ public sealed class SettingsUiVisibility : MonoBehaviour
         {
             instance.Restore();
             instance.lastSettingsOpen = GameControlsGuide.SettingsOpen;
-            if (instance.lastSettingsOpen)
+            instance.lastTravelOpen = MonolithTravelPanel.IsOpen;
+            if (instance.lastSettingsOpen||instance.lastTravelOpen)
             {
                 instance.Refresh();
                 instance.nextDynamicUiRefresh = Time.unscaledTime + DynamicUiRefreshInterval;
@@ -39,20 +41,24 @@ public sealed class SettingsUiVisibility : MonoBehaviour
     void LateUpdate()
     {
         bool settingsOpen = GameControlsGuide.SettingsOpen;
-        if (!settingsOpen)
+        bool travelOpen=MonolithTravelPanel.IsOpen;
+        if (!settingsOpen&&!travelOpen)
         {
             if (hidden.Count > 0 || overrides.Count > 0) Restore();
             lastSettingsOpen = false;
+            lastTravelOpen = false;
             return;
         }
 
         // Scan once on open, then occasionally to catch UI added while the
         // modal is active. The old willRenderCanvases + LateUpdate pair walked
         // every Canvas hierarchy twice per frame, which could stall battles.
-        if (!lastSettingsOpen || Time.unscaledTime >= nextDynamicUiRefresh)
+        if (settingsOpen!=lastSettingsOpen||travelOpen!=lastTravelOpen||Time.unscaledTime >= nextDynamicUiRefresh)
         {
+            if(settingsOpen!=lastSettingsOpen||travelOpen!=lastTravelOpen)Restore();
             Refresh();
-            lastSettingsOpen = true;
+            lastSettingsOpen = settingsOpen;
+            lastTravelOpen = travelOpen;
             nextDynamicUiRefresh = Time.unscaledTime + DynamicUiRefreshInterval;
         }
     }
@@ -61,11 +67,13 @@ public sealed class SettingsUiVisibility : MonoBehaviour
     {
         // MainMenuPresentation already owns home/modal visibility and focus.
         if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name=="MainMenu"){Restore();return;}
-        if (!GameControlsGuide.SettingsOpen) { Restore(); return; }
+        if (!GameControlsGuide.SettingsOpen&&!MonolithTravelPanel.IsOpen) { Restore(); return; }
         // Include newly authored UI and canvases created while settings is open.
         roots.Clear();
         foreach (var canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None)) roots.Add(canvas.rootCanvas);
-        foreach (var canvas in roots) HideOutsideSettings(canvas.transform);
+        foreach (var canvas in roots)
+            if(GameControlsGuide.SettingsOpen)HideOutsideSettings(canvas.transform);
+            else if(canvas.GetComponent<MonolithTravelPanel>()==null)HideBranch(canvas.transform);
     }
     void HideOutsideSettings(Transform branch)
     {
@@ -75,6 +83,10 @@ public sealed class SettingsUiVisibility : MonoBehaviour
             foreach (Transform child in branch) HideOutsideSettings(child);
             return;
         }
+        HideBranch(branch);
+    }
+    void HideBranch(Transform branch)
+    {
         var group = branch.GetComponent<CanvasGroup>();
         if (group == null) group = branch.gameObject.AddComponent<CanvasGroup>();
         if (!hidden.ContainsKey(group)) hidden.Add(group,new State { alpha=group.alpha, interactable=group.interactable, raycasts=group.blocksRaycasts });

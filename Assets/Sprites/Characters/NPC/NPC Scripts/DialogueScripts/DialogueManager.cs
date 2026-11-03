@@ -18,6 +18,7 @@ public class DialogueManager : MonoBehaviour
     private bool choosing;
     private Coroutine typing;
     public Object Owner { get; private set; }
+    public string ActiveLearningVisualProof => isDialogueActive && currentDialogue != null ? currentDialogue.learningVisualProof : null;
     private ActorSO fallbackSpeaker;
     private TMP_FontAsset dialogueFont;
     private Material dialogueMaterial;
@@ -140,12 +141,13 @@ public class DialogueManager : MonoBehaviour
 
     void Update()
     {
-        if (!isDialogueActive || Time.frameCount == openedFrame || Time.timeScale <= 0f) return;
+        if (!isDialogueActive || Time.frameCount == openedFrame || Time.timeScale <= 0f || GameControlsGuide.GameplayOverlayHidden) return;
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         { EndDialogue(); return; }
         bool advance = Keyboard.current != null && (Keyboard.current.eKey.wasPressedThisFrame ||
             Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame);
         advance |= Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame;
+        advance |= Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
         if (advance && !choosing) AdvanceDialogue();
     }
 
@@ -192,7 +194,7 @@ public class DialogueManager : MonoBehaviour
             actorName.text = speaker.actorName;
         }
         else { portrait.enabled = false; actorName.text = "Traveller"; }
-        dialogueText.text = line.text + "\n<size=75%><b><color=#342014>[E / Space] Continue    [Esc] Close</color></b></size>";
+        dialogueText.text = line.text + "\n<size=75%><b><color=#342014>[Left click / E / Space] Continue    [Esc] Close</color></b></size>";
         dialogueText.maxVisibleCharacters = 0;
         typing = StartCoroutine(RevealText());
     }
@@ -246,15 +248,17 @@ public class DialogueManager : MonoBehaviour
         var grid = choiceButtons[0].GetComponentInParent<GridLayoutGroup>();
         if (grid == null) return;
         var area = (RectTransform)grid.transform;
-        int columns = Mathf.Min(2, count);
+        // Full-width rows leave room for quest and service names at a readable size.
+        int columns = 1;
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         grid.constraintCount = columns;
-        grid.spacing = new Vector2(24f, 16f);
+        grid.spacing = new Vector2(0f, 10f);
         grid.childAlignment = TextAnchor.MiddleCenter;
-        float width = Mathf.Min(450f, (area.rect.width - grid.padding.horizontal - 24f * (columns - 1)) / columns);
-        grid.cellSize = new Vector2(Mathf.Max(160f, width), 150f);
+        float width = Mathf.Min(720f, area.rect.width - grid.padding.horizontal);
+        float height = Mathf.Min(100f, (320f - grid.padding.vertical - (count - 1) * 10f) / count);
+        grid.cellSize = new Vector2(Mathf.Max(160f, width), height);
         int rows = Mathf.CeilToInt((float)count / columns);
-        area.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rows * 150f + (rows - 1) * 16f + grid.padding.vertical);
+        area.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rows * height + (rows - 1) * 10f + grid.padding.vertical);
         LayoutRebuilder.ForceRebuildLayoutImmediate(area);
         foreach (var button in choiceButtons)
         {
@@ -268,6 +272,17 @@ public class DialogueManager : MonoBehaviour
     {
         if (choiceButtons == null || index >= choiceButtons.Length || choiceButtons[index] == null) return;
         var button = choiceButtons[index];
+        var frame = button.targetGraphic as Image;
+        var choiceFrame = Resources.Load<Sprite>("UI/NPC/DialogueChoice");
+        if (frame != null && choiceFrame != null)
+        {
+            frame.sprite = choiceFrame;
+            frame.type = Image.Type.Sliced;
+            frame.preserveAspect = false;
+            // Tiny Swords uses 64 PPU against a 100-PPU canvas. At 1x the
+            // sliced top/bottom borders exceed the row height and crush its fill.
+            frame.pixelsPerUnitMultiplier = 4f;
+        }
         var label = button.GetComponentInChildren<TMP_Text>(true);
         if (label != null)
         {
@@ -277,20 +292,19 @@ public class DialogueManager : MonoBehaviour
             var rect = label.rectTransform;
             if (rect != button.transform)
             {
-                // This sprite includes transparent space and a thick frame.
-                // Inset proportionally so the text fits the painted blue area.
-                rect.anchorMin = new Vector2(0.23f, 0.25f);
-                rect.anchorMax = new Vector2(0.77f, 0.78f);
+                // The sliced frame keeps fixed corners and a broad text area.
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
                 rect.pivot = new Vector2(0.5f, 0.5f);
-                rect.offsetMin = Vector2.zero;
-                rect.offsetMax = Vector2.zero;
+                rect.offsetMin = new Vector2(48f, 24f);
+                rect.offsetMax = new Vector2(-48f, -20f);
                 rect.localScale = Vector3.one;
             }
             label.margin = Vector4.zero;
             label.alignment = TextAlignmentOptions.Center;
             label.enableAutoSizing = true;
-            label.fontSizeMin = 14f;
-            label.fontSizeMax = 28f;
+            label.fontSizeMin = 24f;
+            label.fontSizeMax = 32f;
             label.textWrappingMode = TextWrappingModes.Normal;
             label.overflowMode = TextOverflowModes.Ellipsis;
             label.raycastTarget = false;

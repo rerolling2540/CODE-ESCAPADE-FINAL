@@ -36,6 +36,9 @@ public sealed class BattleReportScroll : MonoBehaviour
         SettingsUiVisibility.EnsureInstance();SettingsUiVisibility.RefreshNow();
         yield return Animate(true);ready=true;
         while(!continuePressed)yield return null;
+        var save=SaveSlots.Read(SaveSlots.Active);
+        if(outcome=="VICTORY"&&BattleQuestionReport.EncounterId==BattleTutorialGuide.EncounterId&&save?.defeatedEncounters?.Contains(BattleTutorialGuide.EncounterId)==true)WardenQuest.Record("tutorial-report");
+        if(outcome=="VICTORY"&&BattleQuestionReport.EncounterId==WardenQuest.FinalEncounter&&save?.defeatedEncounters?.Contains(WardenQuest.FinalEncounter)==true)WardenQuest.Record("final-report");
         ready=false;yield return Animate(false);
         if(!GameControlsGuide.SettingsOpen)Time.timeScale=previousTime;restore=false;
     }

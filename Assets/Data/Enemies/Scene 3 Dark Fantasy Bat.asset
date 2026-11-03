@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Scene 3 Dark Fantasy Bat
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 1594195869, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  <Health>k__BackingField: 35
+  <AttackPower>k__BackingField: 28
+  idleFrames:
+  - {fileID: 1594195869, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: -251009394, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: -287097671, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: -1786502070, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: 1962779996, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: 7031941, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: -172586502, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: 1983795498, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: 1704092467, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  walkFrames:
+  - {fileID: 1594195869, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: -251009394, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: -287097671, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: -1786502070, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: 1962779996, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: 7031941, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: -172586502, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: 1983795498, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  - {fileID: 1704092467, guid: 65a83ab0fbc1c4a83991fe38e434eb36, type: 3}
+  attackFrames:
+  - {fileID: 2116601621, guid: 747b57b07c88340bca56e1904f2b4609, type: 3}
+  - {fileID: 1660129773, guid: 747b57b07c88340bca56e1904f2b4609, type: 3}
+  - {fileID: -463277136, guid: 747b57b07c88340bca56e1904f2b4609, type: 3}
+  - {fileID: -1648941468, guid: 747b57b07c88340bca56e1904f2b4609, type: 3}
+  - {fileID: -445740037, guid: 747b57b07c88340bca56e1904f2b4609, type: 3}
+  - {fileID: 991285296, guid: 747b57b07c88340bca56e1904f2b4609, type: 3}
+  - {fileID: -1741807557, guid: 747b57b07c88340bca56e1904f2b4609, type: 3}
+  - {fileID: 1594465434, guid: 747b57b07c88340bca56e1904f2b4609, type: 3}
+  battleFramesPerSecond: 10
+  hovering: 1
+  experienceReward: 35
+  battleMaterial: {fileID: 0}
+  battleVisualScale: 1
+  attackStyle: 0
+  attackCountdown: 15
+  breakMeterMax: 100
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

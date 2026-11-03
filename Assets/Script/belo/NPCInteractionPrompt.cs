@@ -26,17 +26,18 @@ public sealed class NPCInteractionPrompt : MonoBehaviour
 
     void OnGUI()
     {
-        if(npc==null||npc.currentState!=NPC.NPCState.Talk||GameControlsGuide.MapHidden||Camera.main==null)return;
+        if(npc==null||npc.currentState!=NPC.NPCState.Talk||GameControlsGuide.GameplayOverlayHidden||GameControlsGuide.MapHidden||Camera.main==null||DialogueManager.Instance!=null&&DialogueManager.Instance.isDialogueActive)return;
         Vector3 screen=Camera.main.WorldToScreenPoint(transform.position+Vector3.up*height);
         if(screen.z<=0)return;
         EnsureStyles();
         string actorName=npc.talk!=null&&npc.talk.actor!=null?npc.talk.actor.actorName:gameObject.name;
         string role=actorName.ToLowerInvariant();
-        string action=GetComponent<CodeMentorNPC>()!=null?"Talk / Visual code lessons":role.Contains("merchant")?"Talk / Trade cards":role.Contains("blacksmith")?"Talk / Refine cards":"Talk to traveller";
+        string action=GetComponent<HuntQuestNPC>()!=null?"Talk / Combat contracts":GetComponent<CodeMentorNPC>()!=null?"Talk / Visual code lessons":npc.talk!=null&&npc.talk.offersElfQuest?"Talk / Main quest":role.Contains("merchant")?"Talk / Trade cards":role.Contains("blacksmith")?"Talk / Refine cards":"Talk to traveller";
         float scale=Mathf.Clamp(Screen.height/720f,.75f,2f);
         const float width=350f, panelHeight=76f;
         float x=Mathf.Clamp(screen.x/scale-width/2,8,Mathf.Max(8,Screen.width/scale-width-8));
         float y=Mathf.Clamp((Screen.height-screen.y)/scale-panelHeight-8,8,Mathf.Max(8,Screen.height/scale-panelHeight-8));
+        if(QuestJournalHud.OccludesWorldRect(new Rect(x*scale,y*scale,width*scale,panelHeight*scale)))return;
         Matrix4x4 previousMatrix=GUI.matrix;Color previousColor=GUI.color;int previousDepth=GUI.depth;
         try
         {

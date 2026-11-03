@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DialogueSO", menuName = "Dialogue/DialogueNode")]
 public class DialogueSO : ScriptableObject
 {
+    [HideInInspector] public string learningVisualProof;
 
     public DialogueLine[] lines;
     public DialogueOption[] options;

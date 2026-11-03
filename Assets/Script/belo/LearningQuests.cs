@@ -15,7 +15,7 @@ public static class LearningQuests
     {
         int count=0;
         for(int i=FirstTopic(giver);i<FirstTopic(giver)+2;i++)
-            if(save?.learningQuestProofs?.Contains(Key(giver)+"/"+VisualCodeLessons.Topics[i])==true)count++;
+            if(save?.learningQuestProofs?.Contains(Key(giver)+"/"+VisualCodeLessons.Topics[i])==true||WardenQuest.Lesson(save,i))count++;
         return count;
     }
     public static void Accept(int giver)
@@ -29,7 +29,7 @@ public static class LearningQuests
         if(language!=Language)return;
         var save=SaveSlots.Read(SaveSlots.Active);if(save==null)return;
         if(save.learningQuestProofs==null)save.learningQuestProofs=new List<string>();
-        for(int giver=-1;giver<3;giver++)
+        for(int giver=0;giver<3;giver++)
         {
             if(!Accepted(save,giver)||Claimed(save,giver))continue;
             for(int t=FirstTopic(giver);t<FirstTopic(giver)+2;t++)
@@ -43,12 +43,13 @@ public static class LearningQuests
         if(Claimed(save,giver))return Title(giver)+": complete.";
         if(!Accepted(save,giver))return "Accept "+Title(giver)+" to begin. Reward: "+Reward(giver)+" XP.";
         if(Completed(save,giver)==2)return Title(giver)+": return to "+(giver<0?"the elf":new[]{"Alden","Rowan","Mira"}[giver])+" to claim "+Reward(giver)+" XP.";
-        return Title(giver)+": solve "+VisualCodeLessons.Topics[FirstTopic(giver)]+" and "+VisualCodeLessons.Topics[FirstTopic(giver)+1]+" predictions ("+Completed(save,giver)+"/2).";
+        int next=FirstTopic(giver);if(WardenQuest.Lesson(save,next))next++;
+        return Title(giver)+": next, finish "+QuestJournalText.Topic(next)+" > Foundation ("+Completed(save,giver)+"/2 lessons).";
     }
     public static string Journal()
     {
         string result="";var save=SaveSlots.Read(SaveSlots.Active);
-        for(int i=-1;i<3;i++)if(Accepted(save,i)&&!Claimed(save,i))result+="\n"+Objective(i);
+        for(int i=0;i<3;i++)if(Accepted(save,i)&&!Claimed(save,i))result+="\n"+Objective(i);
         return result;
     }
     public static DialogueSO Dialogue(Npc_Talk host,int giver)
@@ -58,12 +59,12 @@ public static class LearningQuests
         if(Claimed(save,giver))return host.Node(Title(giver)+" is complete. You have claimed its XP. You may replay every lesson for practice without spending anything.",route);
         if(!Accepted(save,giver))
         {
-            var accepted=host.Node("Quest accepted: "+Title(giver)+". "+ObjectiveText(giver),"Watch the visual steps, then solve both different-topic predictions. Wrong answers have no health penalty; replay and try again. Return to me for "+Reward(giver)+" XP. Track your objectives in the quest journal [Q].");
+            var accepted=host.Node("Quest accepted: "+Title(giver)+". "+ObjectiveText(giver),"Read the meaning, watch each instruction, then answer a new practice question. "+(giver==0?"In the Foundation examples, use Change message or Add 1 starting coin to see what changes. These experiments are free practice, not quest answers. ":"")+"Wrong answers have no health penalty; replay and try again. Return to me for "+Reward(giver)+" XP. Track your objectives in the quest journal [Q].", "My reward is for learning the two topics. The elf gives a separate reward when you use those ideas to solve a chapter challenge. You do not have to repeat completed lessons.");
             var offer=host.Node(route,"Quest: "+Title(giver)+". "+ObjectiveText(giver)+" Reward: "+Reward(giver)+" XP, claimed once for this language in this save.");
             offer.options=new[]{new DialogueOption{optionText="Accept learning quest",nextDialogue=accepted,onSelected=()=>Accept(giver)},new DialogueOption{optionText="Not yet"}};return offer;
         }
-        if(Completed(save,giver)<2)return host.Node(Objective(giver),ObjectiveText(giver)+" Return after solving both predictions. Answers from before accepting do not count.");
-        var thanks=host.Node("Quest completed: "+Title(giver)+". Your "+Reward(giver)+" XP has been added. Continue along the learning route, or practise again whenever you wish.");
+        if(Completed(save,giver)<2)return host.Node(Objective(giver),ObjectiveText(giver)+" Return after solving both predictions. Previously completed foundation lessons count.");
+        var thanks=host.Node("Quest completed: "+Title(giver)+". Your "+Reward(giver)+" XP has been added. You can return for free practice.","Now use what you learned in the elf's chapter challenge. Open the journal [Q] for your next unfinished step; previously completed lessons still count.");
         var claim=host.Node(Objective(giver));
         claim.options=new[]{new DialogueOption{optionText="Claim "+Reward(giver)+" XP",nextDialogue=thanks,onSelected=()=>PlayerProgression.ClaimLearningQuest(giver)},new DialogueOption{optionText="Later"}};return claim;
     }

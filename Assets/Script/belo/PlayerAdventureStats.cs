@@ -72,8 +72,8 @@ public static class PlayerAdventureStats
         SaveSlots.Write(save);
     }
 
-    // Three cave quest stages and four learning quests for the selected hero's language.
-    public const int AvailableQuests = 7;
+    // Existing cave/learning quests plus Eleonore and Joanna's six combat contracts.
+    public const int AvailableQuests = 13;
     public static int CompletedQuests(SaveSlots.Record save)
     {
         int count = Mathf.Clamp((save?.elfQuestStage ?? 0) - 1, 0, 3);
@@ -81,6 +81,7 @@ public static class PlayerAdventureStats
         for (int giver = -1; giver < 3; giver++)
             if (LearningQuests.Claimed(save, giver) ||
                 LearningQuests.Accepted(save, giver) && LearningQuests.Completed(save, giver) == 2) count++;
+        for(int giver=0;giver<2;giver++)count+=HuntQuestProgress.Stage(save,giver)+(HuntQuestProgress.Ready(save,giver)?1:0);
         return count;
     }
 

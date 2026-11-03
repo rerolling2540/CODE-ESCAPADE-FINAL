@@ -233,9 +233,11 @@ public static class QuestionPerformanceTracker
             .Select(g => g.Topic).FirstOrDefault();
     }
 
-    public static string BuildReport(string userId)
+    public static string BuildReport(string userId, string languageFilter = null, int? slot = null)
     {
         List<QuestionAttempt> records = GetAttemptsForContext(userId)
+            .Where(item => (languageFilter == null || NormalizeLanguage(item.language) == NormalizeLanguage(languageFilter)) &&
+                (!slot.HasValue || item.slot_index == slot.Value))
             .OrderByDescending(item => ParseTime(item.presented_at)).ToList();
         int total = records.Count;
         int correct = records.Count(item => item.outcome == "correct");
@@ -281,13 +283,16 @@ public static class QuestionPerformanceTracker
             lines.Add("  " + string.Join(" / ", latest.Take(5).Select(item => "Lv " + item.player_level + " · " + TitleCase(item.outcome))));
         }
         if (!any) lines.Add("\nAnswer questions in battles, at doors, or in Almanac practice to build your report.");
-        string language = CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
-        string recommended = RecommendedTopic(language, SaveSlots.Active);
-        int learningTier = AdaptiveQuestionSelector.LearningTier(GetLearningHistory(language, SaveSlots.Active), GetCurrentPlayerLevel());
-        lines.Add("\nCURRENT HERO / SAVE SLOT " + (SaveSlots.Active + 1));
+        string language = languageFilter ?? CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
+        int reportSlot = slot ?? SaveSlots.Active;
+        string recommended = RecommendedTopic(language, reportSlot);
+        int learningTier = AdaptiveQuestionSelector.LearningTier(GetLearningHistory(language, reportSlot), GetCurrentPlayerLevel());
+        lines.Add("\n" + LanguageDisplay(NormalizeLanguage(language)).ToUpperInvariant() + " / SAVE SLOT " + (reportSlot + 1));
         lines.Add("Learning pace: " + TitleCase(QuestionCurriculum.Difficulty(learningTier)) + ". Earlier topics may appear for review.");
         if (recommended != null) lines.Add("Study suggestion: review " + TitleCase(recommended) + " using Recommended book.");
-        lines.Add("The report above combines account history; question adaptation uses this hero's language and save slot.");
+        lines.Add(languageFilter != null && slot.HasValue
+            ? "This report uses this character's language and current save slot."
+            : "The report above combines account history; question adaptation uses this hero's language and save slot.");
         lines.Add("\n" + syncStatus);
         if (string.IsNullOrEmpty(userId)) lines.Add("\nGuest history stays on this device until you sign in.");
         return string.Join("\n", lines);

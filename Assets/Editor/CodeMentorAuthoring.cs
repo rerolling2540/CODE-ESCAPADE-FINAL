@@ -51,7 +51,10 @@ public static class CodeMentorAuthoring
             new[]{"Character skin colors/Male Skin3.png","Male Clothing/Green Pants.png","Male Clothing/Green Shirt v2.png","Male Clothing/Shoes.png","Male Hair/Male Hair3.png"},
             new[]{"Character skin colors/Female Skin2.png","Female Clothing/Skirt.png","Female Clothing/Purple Corset v2.png","Female Clothing/Boots.png","Female Hair/Female Hair4.png"}};
         float[] xs={-2,35,73};int added=0;
-        for(int teacher=0;teacher<3;teacher++)
+        // Only Alden belongs in the starting map. Rowan and Mira are authored in
+        // Scene3 and map 4 by WardenQuestPlacement; recreating them here duplicates
+        // their quest givers when this older setup tool is run after a merge.
+        for(int teacher=0;teacher<1;teacher++)
         {
             if(Object.FindObjectsByType<CodeMentorNPC>(FindObjectsInactive.Include,FindObjectsSortMode.None).Any(n=>n.workshop==teacher))continue;
             string path=Folder+"/"+names[teacher]+".prefab";
@@ -93,6 +96,6 @@ public static class CodeMentorAuthoring
             PrefabUtility.RecordPrefabInstancePropertyModifications(instance.transform);added++;
         }
         AssetDatabase.SaveAssets();EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
-        return "Saved "+added+" new teachers in Scene 2. Existing NPC placements preserved.";
+        return "Saved "+added+" new Alden instance in Scene 2. Rowan and Mira remain in Scene3 and map 4. Existing NPC placements preserved.";
     }
 }

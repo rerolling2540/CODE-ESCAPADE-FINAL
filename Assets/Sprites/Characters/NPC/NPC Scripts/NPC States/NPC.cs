@@ -51,11 +51,13 @@ public class NPC : MonoBehaviour
     {
         if (GameControlsGuide.GameplayOverlayHidden || GameControlsGuide.MapHidden ||
             DialogueManager.Instance!=null&&DialogueManager.Instance.isDialogueActive) return;
-        if (talk == null || !talk.offersElfQuest || Camera.main == null) return;
+        var hunt=GetComponent<HuntQuestNPC>();
+        if (talk == null || (!talk.offersElfQuest&&hunt==null) || Camera.main == null) return;
         var saved = SaveSlots.Read(SaveSlots.Active);
-        int stage = WardenQuest.Chapter(saved);
-        if (stage >= 6) return;
-        bool highlighted = saved==null||!saved.wardenAccepted || WardenQuest.Ready(saved);
+        int stage = hunt!=null?HuntQuestProgress.Stage(saved,hunt.giver):WardenQuest.Chapter(saved);
+        if (stage >= (hunt!=null?HuntQuestProgress.Stages:6)) return;
+        bool available=hunt!=null?!HuntQuestProgress.Accepted(saved,hunt.giver):saved==null||!saved.wardenAccepted;
+        bool highlighted = available || (hunt!=null?HuntQuestProgress.Ready(saved,hunt.giver):WardenQuest.Ready(saved));
         Color color = highlighted ? new Color(1f, 0.78f, 0.12f) : new Color(0.4f, 0.65f, 0.85f);
         Vector3 anchor = transform.position + Vector3.up * 1.8f;
         foreach(var visual in GetComponentsInChildren<SpriteRenderer>())
@@ -83,7 +85,7 @@ public class NPC : MonoBehaviour
         GUI.DrawTexture(new Rect(bubbleRect.x + 2f, bubbleRect.y + 2f,bubbleRect.width-4,bubbleRect.height-4), Texture2D.whiteTexture);
         GUI.color = Color.white;
         questBubbleStyle.normal.textColor = color; UiTextColors.Stable(questBubbleStyle);
-        GUI.Label(bubbleRect, saved==null||!saved.wardenAccepted ? "!" : "?", questBubbleStyle);
+        GUI.Label(bubbleRect, available ? "!" : "?", questBubbleStyle);
         GUI.color = oldColor;
         GUI.matrix = oldMatrix;
     }

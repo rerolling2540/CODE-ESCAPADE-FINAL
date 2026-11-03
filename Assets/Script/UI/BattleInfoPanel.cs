@@ -270,25 +270,13 @@ public sealed class BattleInfoPanel : MonoBehaviour
             new EnemyDetailStat("QUESTS COMPLETED", PlayerAdventureStats.CompletedQuests(saved) + " / " + PlayerAdventureStats.AvailableQuests, enemyRewardIcon, "QUEST", new Color(0.75f, 0.57f, 0.12f)),
             new EnemyDetailStat("BEST ANSWER STREAK", answers.bestStreak.ToString(), enemyRewardIcon, "BEST", new Color(0.75f, 0.57f, 0.12f))
         });
-        CreateInfoHeading(list, "ANSWER ACCURACY");
-        CreateProgressText(list, "Overall Accuracy", PlayerAdventureStats.Accuracy(answers.correct, answers.attempts));
-        CreateProgressText(list, "Progress Scope", "This save slot · All card types · 3 cave quests + 4 learning quests\nAccuracy includes timed-out questions. Leaving a question does not count.");
-        if (answers.groups != null)
-        {
-            var languages = new System.Collections.Generic.SortedSet<string>();
-            foreach (var group in answers.groups) languages.Add(group.language);
-            foreach (string key in languages)
-            {
-                int correct = 0, attempts = 0;
-                foreach (var group in answers.groups)
-                    if (group.language == key) { correct += group.correct; attempts += group.attempts; }
-                CreateInfoHeading(list, CharacterAlmanac.LanguageName(key).ToUpperInvariant());
-                CreateProgressText(list, "Language Accuracy", PlayerAdventureStats.Accuracy(correct, attempts));
-                foreach (var group in answers.groups.FindAll(g => g.language == key).OrderBy(g => g.topic))
-                    CreateProgressText(list, "Topic Accuracy - " + group.topic,
-                        group.topic.Replace('_', ' ') + ": " + PlayerAdventureStats.Accuracy(group.correct, group.attempts));
-            }
-        }
+        CreateInfoHeading(list, "LEARNING PROGRESSION");
+        string report=QuestionPerformanceTracker.BuildReport(MainMenuSaveSlots.CurrentUserId,
+            CharacterAlmanac.LanguageForCharacter(index),SaveSlots.Active);
+        TMP_Text reportText=CreateEnemyText("Character Learning Report",list,EscapeRichText(report),17f,FontStyles.Normal);
+        reportText.enableWordWrapping=true;
+        var reportLayout=reportText.gameObject.AddComponent<LayoutElement>();
+        reportLayout.minHeight=reportLayout.preferredHeight=reportText.GetPreferredValues(reportText.text,630f,float.PositiveInfinity).y+20f;
 
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(list);

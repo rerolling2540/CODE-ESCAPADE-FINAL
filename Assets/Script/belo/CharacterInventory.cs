@@ -22,6 +22,7 @@ public class CharacterInventory : MonoBehaviour
         public string equippedCosmetic;
         public List<string> openedChests = new List<string>();
         public List<string> wardenRewards = new List<string>();
+        public List<string> huntRewards = new List<string>();
         public int starterCardsVersion;
     }
 
@@ -526,6 +527,22 @@ public class CharacterInventory : MonoBehaviour
     {
         if(!IsCurrentSlot)return;
         if(ApplyWardenGrant(data,chapter,gold,scraps,tokens))Save();
+    }
+    public void GrantHuntReward(string receipt,int gold,int scraps,int tokens)
+    {
+        if(!IsCurrentSlot)return;
+        if(ApplyHuntGrant(data,receipt,gold,scraps,tokens))Save();
+    }
+    static bool ApplyHuntGrant(SaveData target,string receipt,int gold,int scraps,int tokens)
+    {
+        if(string.IsNullOrEmpty(receipt))return false;
+        if(target.huntRewards==null)target.huntRewards=new List<string>();
+        if(target.huntRewards.Contains(receipt))return false;
+        target.huntRewards.Add(receipt);
+        target.coins=(int)Math.Min(int.MaxValue,(long)Mathf.Max(0,target.coins)+Mathf.Max(0,gold));
+        target.lowLogicScraps=(int)Math.Min(int.MaxValue,(long)Mathf.Max(0,target.lowLogicScraps)+Mathf.Max(0,scraps));
+        target.libraryTokens=(int)Math.Min(int.MaxValue,(long)Mathf.Max(0,target.libraryTokens)+Mathf.Max(0,tokens));
+        return true;
     }
     static bool ApplyWardenGrant(SaveData target,int chapter,int gold,int scraps,int tokens)
     {

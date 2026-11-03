@@ -22,13 +22,14 @@ public sealed class QuestReturnPanel : MonoBehaviour
         if(WardenQuest.Ready(s))result.Add(new Destination{giver=-1,scene=WardenQuest.Maps[WardenQuest.Chapter(s)],title="Elf — "+WardenQuest.Titles[WardenQuest.Chapter(s)],key="main-"+WardenQuest.Chapter(s),reward=WardenQuest.RewardText(WardenQuest.Chapter(s))});
         for(int i=0;i<3;i++)if(LearningQuests.Accepted(s,i)&&!LearningQuests.Claimed(s,i)&&LearningQuests.Completed(s,i)==2)result.Add(new Destination{giver=i,scene=new[]{"Scene 2","Scene3","map 4"}[i],title=new[]{"Alden","Rowan","Mira"}[i]+" — "+LearningQuests.Title(i),key="teacher-"+i,reward=LearningQuests.Reward(i)+" XP"});
         if(s!=null&&s.elfQuestStage>0&&s.elfQuestStage<4&&ElfQuestProgress.Ready(s))result.Add(new Destination{giver=-1,scene="Scene 2",title="Elf — Earlier cave contract",key="legacy-"+s.elfQuestStage,reward="Cave contract reward"});
+        for(int i=0;i<2;i++)if(HuntQuestProgress.Ready(s,i)){int stage=HuntQuestProgress.Stage(s,i);result.Add(new Destination{giver=HuntQuestProgress.ReturnGiverOffset+i,scene=HuntQuestProgress.Scene(i),title=HuntQuestProgress.Name(i)+" — "+HuntQuestProgress.Get(i,stage).title,key=HuntQuestProgress.Key(i,stage),reward=HuntQuestProgress.Reward(HuntQuestProgress.Get(i,stage))});}
         return result;
     }
     public static Npc_Talk FindNpc(int giver)
     {
         var player=Object.FindFirstObjectByType<playerMovement>();
         return Object.FindObjectsByType<Npc_Talk>(FindObjectsInactive.Include,FindObjectsSortMode.None)
-            .Where(n=>n.gameObject.scene==SceneManager.GetActiveScene()&&n.gameObject.activeInHierarchy&&(giver<0?n.offersElfQuest:n.GetComponent<CodeMentorNPC>()?.workshop==giver))
+            .Where(n=>n.gameObject.scene==SceneManager.GetActiveScene()&&n.gameObject.activeInHierarchy&&(giver<0?n.offersElfQuest:giver>=HuntQuestProgress.ReturnGiverOffset?n.GetComponent<HuntQuestNPC>()?.giver==giver-HuntQuestProgress.ReturnGiverOffset:n.GetComponent<CodeMentorNPC>()?.workshop==giver))
             .OrderBy(n=>player!=null?Vector2.Distance(player.transform.position,n.transform.position):n.name=="Elf - Warden Guide"?0:1).FirstOrDefault();
     }
     public static bool Far(Destination d,playerMovement player)
@@ -64,12 +65,25 @@ public sealed class QuestReturnPanel : MonoBehaviour
         var paper=Box("Parchment",frame.transform,new Color(.91f,.83f,.65f));Stretch(paper.rectTransform,8);
         Label(destinations.Count==0?"QUEST JOURNAL":"QUEST REWARD READY",paper.transform,28,20,708,44,30,true);
         message=Label(destinations.Count==0?"No rewards are ready yet. Finish a quest objective first.":"Your reward is ready. Choose an NPC below.\nYou can return later from the quest journal.",paper.transform,28,72,708,66,23,false);
+        var list=Box("Scrollable rewards",paper.transform,new Color(1,1,1,0));Place(list.rectTransform,28,150,708,420);
+        var scroll=list.gameObject.AddComponent<UnityEngine.UI.ScrollRect>();scroll.horizontal=false;scroll.movementType=UnityEngine.UI.ScrollRect.MovementType.Clamped;
+        var view=Box("Viewport",list.transform,Color.white);Stretch(view.rectTransform);view.rectTransform.offsetMax=new Vector2(-24,0);view.gameObject.AddComponent<UnityEngine.UI.Mask>().showMaskGraphic=false;
+        var content=new GameObject("Content",typeof(RectTransform),typeof(UnityEngine.UI.VerticalLayoutGroup),typeof(UnityEngine.UI.ContentSizeFitter));content.transform.SetParent(view.transform,false);
+        var contentRect=content.GetComponent<RectTransform>();contentRect.anchorMin=new Vector2(0,1);contentRect.anchorMax=Vector2.one;contentRect.pivot=new Vector2(.5f,1);contentRect.sizeDelta=Vector2.zero;
+        var layout=content.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();layout.spacing=8;layout.childControlWidth=true;layout.childControlHeight=true;layout.childForceExpandHeight=false;
+        content.GetComponent<UnityEngine.UI.ContentSizeFitter>().verticalFit=UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
+        scroll.viewport=view.rectTransform;scroll.content=contentRect;
+        var track=Box("Scrollbar",list.transform,new Color(.27f,.16f,.07f));Place(track.rectTransform,690,0,18,420);
+        var handle=Box("Handle",track.transform,new Color(.84f,.63f,.30f));Stretch(handle.rectTransform);
+        var bar=track.gameObject.AddComponent<UnityEngine.UI.Scrollbar>();bar.direction=UnityEngine.UI.Scrollbar.Direction.BottomToTop;bar.handleRect=handle.rectTransform;bar.targetGraphic=handle;scroll.verticalScrollbar=bar;scroll.scrollSensitivity=35;
+        if(destinations.Count>5)message.text="Your rewards are ready. Scroll the list to choose an NPC.\nYou can return later from the quest journal.";
         var player=FindFirstObjectByType<playerMovement>();
         for(int i=0;i<destinations.Count;i++)
         {
             var d=destinations[i];bool far=Far(d,player);
             var localNpc=FindNpc(d.giver);string map=localNpc!=null?localNpc.gameObject.scene.name:d.scene;
-            var b=Button(d.title+"\n"+(far?"Travel to "+map.Replace("Scene3","Scene 3"):"Nearby — close this panel and press E"),paper.transform,28,150+i*84,708,76,()=>Travel(d));b.interactable=far;
+            var b=Button(d.title+"\n"+(far?"Travel to "+map.Replace("Scene3","Scene 3"):"Nearby — close this panel and press E"),content.transform,0,0,684,76,()=>Travel(d));b.interactable=far;
+            b.gameObject.AddComponent<UnityEngine.UI.LayoutElement>().preferredHeight=76;
         }
         Button("Return later",paper.transform,222,580,320,52,Dismiss);
         if(!preview){GameControlsGuide.RegisterMapBlocker(root);SettingsUiVisibility.EnsureInstance();SettingsUiVisibility.RefreshNow();}

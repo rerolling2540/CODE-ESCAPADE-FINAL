@@ -347,7 +347,7 @@ public sealed class CharacterAlmanac : MonoBehaviour
         for(int i=0;i<tiers.Length;i++){int index=i;var button=MakeButton("Difficulty "+tiers[i],library.transform,tiers[i],()=>{tier=index;RefreshList();});Position(button.gameObject,new Vector2(355+i*197,-76),new Vector2(185,42));tierButtons.Add(button);}
         countLabel=Label("Book Count",library.transform,"",18,Gold);Position(countLabel.gameObject,new Vector2(28,-126),new Vector2(590,30));
         recommendedBookButton=MakeButton("Recommended Book",library.transform,"Recommended book",OpenRecommendedBook);Position(recommendedBookButton.gameObject,new Vector2(640,-120),new Vector2(250,38));
-        var progressButton=MakeButton("Progress Report",library.transform,"Progress report",ShowProgress);Position(progressButton.gameObject,new Vector2(910,-120),new Vector2(220,38));
+        // Learning progression lives beside the hero's stats in Character Information.
         libraryScroll=MakeScroll("Bookshelf",library.transform,false);Stretch(libraryScroll.gameObject,24,164,24,48);listContent=libraryScroll.content.gameObject;
         var grid=listContent.AddComponent<UnityEngine.UI.GridLayoutGroup>();grid.cellSize=new Vector2(175,226);grid.spacing=new Vector2(12,16);grid.padding=new RectOffset(12,12,14,14);grid.constraint=UnityEngine.UI.GridLayoutGroup.Constraint.FixedColumnCount;grid.constraintCount=6;grid.childAlignment=TextAnchor.UpperCenter;
         var back=MakeButton("Back To Books",reader.transform,"< Back to books [Esc]",BackToBooks);Position(back.gameObject,new Vector2(24,-76),new Vector2(260,42));

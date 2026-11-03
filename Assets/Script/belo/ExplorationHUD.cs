@@ -29,6 +29,9 @@ public class ExplorationHUD : MonoBehaviour
     private bool characterInfoOpen;
     private bool showingDraftCards;
     private CharacterInfoData characterInfo;
+    private Vector2 characterInfoScroll;
+    private string characterReport;
+    private float nextCharacterReportRefresh;
     private CardDraftCatalog cardDraftCatalog;
     public bool IsMapVisible => showMap && !inventoryOpen && !GameControlsGuide.MapHidden &&
         !SceneTransitionFader.IsTransitioning && CharacterAlmanac.IsExplorationScene(SceneManager.GetActiveScene().name);
@@ -123,6 +126,8 @@ public class ExplorationHUD : MonoBehaviour
 
         previousTimeScale = Time.timeScale;
         inventoryOpen = true;
+        nextCharacterReportRefresh = 0f;
+        characterInfoScroll = Vector2.zero;
         Time.timeScale = 0f;
     }
 
@@ -684,7 +689,12 @@ public class ExplorationHUD : MonoBehaviour
         {
             // Talking is disabled outside interaction range; the map icon stays visible.
             if (npc == null || !npc.gameObject.activeInHierarchy) continue;
-            bool questNpc = npc.offersElfQuest;
+            var hunt=npc.GetComponent<HuntQuestNPC>();
+            bool huntActive=hunt!=null&&HuntQuestProgress.Stage(saved,hunt.giver)<HuntQuestProgress.Stages;
+            bool questNpc = npc.offersElfQuest||huntActive;
+            bool npcAvailable=huntActive?!HuntQuestProgress.Accepted(saved,hunt.giver):saved==null||!saved.wardenAccepted;
+            bool npcHighlighted=huntActive?npcAvailable||HuntQuestProgress.Ready(saved,hunt.giver):highlighted;
+            Color npcColor=huntActive?(npcHighlighted?new Color(1f,.78f,.12f):new Color(.4f,.65f,.85f)):markerColor;
             Vector2 delta = (Vector2)npc.transform.position - centre;
             Vector2 point = new Vector2(
                 mapRect.width / 2f + delta.x / window.x * mapRect.width,
@@ -697,8 +707,8 @@ public class ExplorationHUD : MonoBehaviour
             Vector3 corner=GUI.matrix.MultiplyPoint3x4(new Vector3(mapRect.x+point.x-14,mapRect.y+point.y-26,0));
             Vector3 opposite=GUI.matrix.MultiplyPoint3x4(new Vector3(mapRect.x+point.x+24,mapRect.y+point.y+14,0));
             if(QuestJournalHud.OccludesWorldRect(Rect.MinMaxRect(corner.x,corner.y,opposite.x,opposite.y)))continue;
-            float pulse = questNpc && highlighted ? 0.7f + 0.3f * (0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f)) : 1f;
-            Color glow = questNpc ? markerColor : Brass;
+            float pulse = questNpc && npcHighlighted ? 0.7f + 0.3f * (0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f)) : 1f;
+            Color glow = questNpc ? npcColor : Brass;
             glow.a = pulse;
             Fill(new Rect(point.x - 12f, point.y - 12f, 24f, 24f), glow);
             Fill(new Rect(point.x - 10f, point.y - 10f, 20f, 20f), Ink);
@@ -723,14 +733,14 @@ public class ExplorationHUD : MonoBehaviour
                     new Rect(region.x / portrait.texture.width, region.y / portrait.texture.height,
                         region.width / portrait.texture.width, region.height / portrait.texture.height));
             }
-            if (questNpc && stage < 6)
+            if (huntActive || npc.offersElfQuest && stage < 6)
             {
                 Rect badge = new Rect(point.x + 4f, point.y - 24f, 18f, 22f);
                 Fill(badge, Ink);
-                questMarkerStyle.normal.textColor = markerColor; UiTextColors.Stable(questMarkerStyle);
-                bool available=saved==null||!saved.wardenAccepted;
+                questMarkerStyle.normal.textColor = npcColor; UiTextColors.Stable(questMarkerStyle);
+                bool available=npcAvailable;
                 GUI.Label(badge, new GUIContent(available ? "!" : "?",
-                    available ? "Quest available" : highlighted ? "Reward ready" : "Quest accepted"), questMarkerStyle);
+                    available ? "Quest available" : npcHighlighted ? "Reward ready" : "Quest accepted"), questMarkerStyle);
             }
         }
     }
@@ -751,14 +761,33 @@ public class ExplorationHUD : MonoBehaviour
         var heroClass=stats!=null&&stats.HeroClass!=null?stats.HeroClass:characterInfo.battleClass;
         var hero=characterInfo.heroes[index];
         Frame(new Rect(75,145,360,470));
-        if(characterInfo.portraits[index]!=null)GUI.DrawTexture(new Rect(100,175,310,330),characterInfo.portraits[index],ScaleMode.ScaleToFit,true);
+        // Use a square portrait inset for every hero, without stretching or cropping.
+        var portrait = characterInfo.GetPortraitTexture(index);
+        if(portrait!=null)GUI.DrawTexture(new Rect(100,175,310,310),portrait,ScaleMode.ScaleToFit,true);
         GUI.Label(new Rect(110,540,300,45),titles[index],headingStyle);
-        GUI.Label(new Rect(480,155,680,50),titles[index]+"  /  LEVEL "+level,headingStyle);
+        GUI.Label(new Rect(100,585,310,30),"Scroll the details to view progress",smallStyle);
+        GUI.Label(new Rect(480,155,700,50),titles[index]+"  /  LEVEL "+level+"  /  "+languages[index],headingStyle);
         Fill(new Rect(480,218,700,2),Brass);
         string details="XP: "+PlayerProgression.Experience+" / "+PlayerProgression.RequiredExperience(level)+"\n\nHealth: "+PlayerHealth.CurrentHealth+" / "+PlayerHealth.MaxHealth;
         if(heroClass!=null)details+="\n\nAttack Power: "+heroClass.GetAttackPowerForLevel(level)+"\n\nAttack Bonus: "+heroClass.GetAttackBonusForLevel(level)+"\n\nDefense: "+heroClass.GetDefenseForLevel(level);
         details+="\n\nStarting Deck: "+(hero!=null&&hero.Deck!=null?hero.Deck.Count:0)+" cards";
-        GUI.Label(new Rect(485,245,680,370),details,textStyle);
+        details=details.Replace("\n\n","\n");
+        if(characterReport == null || Time.unscaledTime >= nextCharacterReportRefresh)
+        {
+            characterReport=QuestionPerformanceTracker.BuildReport(MainMenuSaveSlots.CurrentUserId,
+                CharacterAlmanac.LanguageForCharacter(index),SaveSlots.Active);
+            nextCharacterReportRefresh=Time.unscaledTime+1f;
+        }
+        const float contentWidth=660f;
+        float statsHeight=textStyle.CalcHeight(new GUIContent(details),contentWidth);
+        float reportHeight=textStyle.CalcHeight(new GUIContent(characterReport),contentWidth);
+        characterInfoScroll=GUI.BeginScrollView(new Rect(480,240,710,420),characterInfoScroll,
+            new Rect(0,0,contentWidth,statsHeight+reportHeight+100f));
+        GUI.Label(new Rect(5,0,contentWidth,statsHeight),details,textStyle);
+        Fill(new Rect(5,statsHeight+20,contentWidth,2),Brass);
+        GUI.Label(new Rect(5,statsHeight+30,contentWidth,42),"LEARNING PROGRESSION",headingStyle);
+        GUI.Label(new Rect(5,statsHeight+80,contentWidth,reportHeight),characterReport,textStyle);
+        GUI.EndScrollView();
     }
 
     void DrawInventory()

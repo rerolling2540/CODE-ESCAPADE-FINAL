@@ -90,7 +90,7 @@ public class MatchSetupSystem : MonoBehaviour
             portraitFrame.AddComponent<RectMask2D>();
 
         var portrait = portraitIcon.GetComponent<Image>();
-        if (portrait != null) portrait.preserveAspect = false;
+        if (portrait != null) portrait.preserveAspect = true;
     }
 
     private static Transform FindDescendant(Transform root, string objectName)
@@ -326,6 +326,9 @@ public static class BattleHudMedieval
 
     private static void ApplyPortrait(RectTransform hudRect, Sprite portrait)
     {
+        var info=Resources.Load<CharacterInfoData>("UI/CharacterInfo");
+        var sharedPortrait=info != null ? info.GetPortraitSprite(Mathf.Clamp(PlayerPrefs.GetInt("SelectedCharacter",0),0,2)) : null;
+        if(sharedPortrait != null)portrait=sharedPortrait;
         Transform frameTransform = FindDescendant(hudRect, "PortraitFrame");
         Transform iconTransform = FindDescendant(hudRect, "PortraitIcon");
         if (frameTransform == null || iconTransform == null) return;
@@ -352,10 +355,8 @@ public static class BattleHudMedieval
         // PortraitIcon remains where it was placed under PortraitFrame in the
         // Hierarchy; only the selected character sprite changes at runtime.
         if (portrait != null) icon.sprite = portrait;
-        // Fill the authored inset RectTransform. The frame remains visible
-        // around it, while portraits with a non-square source no longer shrink
-        // inside the square frame because of preserve-aspect letterboxing.
-        icon.preserveAspect = false;
+        // Use the same artwork and aspect ratio as Character Information.
+        icon.preserveAspect = true;
         icon.raycastTarget = false;
     }
 

@@ -70,6 +70,8 @@ public static class SaveSlots
         public string checkpointScene;
         public Vector3 checkpointPosition;
         public System.Collections.Generic.List<string> defeatedEncounters = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> huntQuestsAccepted = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> huntQuestsClaimed = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> scene3VisitDefeated = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> map4VisitDefeated = new System.Collections.Generic.List<string>();
     }

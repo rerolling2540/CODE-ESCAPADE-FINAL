@@ -38,8 +38,11 @@ public sealed class ExplorationHealthHud : MonoBehaviour
         int selectedCharacter = PlayerPrefs.GetInt("SelectedCharacter", 0);
         if (portraitImage != null && selectedCharacter != lastSelectedCharacter)
         {
-            portraitImage.sprite = SelectedHero.IsMage ? magePortrait :
+            var info=Resources.Load<CharacterInfoData>("UI/CharacterInfo");
+            portraitImage.sprite = info != null ? info.GetPortraitSprite(Mathf.Clamp(selectedCharacter,0,2)) : null;
+            if(portraitImage.sprite == null)portraitImage.sprite = SelectedHero.IsMage ? magePortrait :
                 SelectedHero.IsArcher ? archerPortrait : warriorPortrait;
+            portraitImage.preserveAspect = true;
             lastSelectedCharacter = selectedCharacter;
         }
         var progressionClass=PlayerProgression.Class??heroClass;

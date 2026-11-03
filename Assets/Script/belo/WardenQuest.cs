@@ -38,8 +38,7 @@ public static class WardenQuest
     {
         int c=Chapter(s);if(c==6)return "Warden of the Hollow: complete. Your title is earned; teachers remain available for review.";
         if(s==null||!s.wardenAccepted)return "Warden of the Hollow: speak to the elf in Scene 2 [E] to begin.";
-        string[] tasks={"Scene 2: finish Alden's output and variables foundations, then solve the elf's supply challenge.","Scene 2: defeat the Tutorial Training Goblin and seal its battle report.","Scene3: study conditions with Rowan, then solve the elf's gate challenge.","Scene3: study loops with Rowan, then solve the elf's watchfire challenge.","Map 4: study arrays/lists and functions with Mira, then solve the elf's shelf and healing challenges.","Map 5: complete all six foundations, defeat the Warden Final Trial, and seal its report."};
-        return "Chapter "+(c+1)+"/6: "+Titles[c]+"\n"+(Ready(s)?"Return to an elf to claim your reward.":tasks[c])+"\nReward: "+RewardText(c)+".";
+        return "Chapter "+(c+1)+"/6: "+Titles[c]+"\n"+QuestLearningRoute.Next(s)+"\nReward: "+RewardText(c)+".";
     }
     public static void Accept()
     {

@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2530383652141459996
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775490242571874562, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: frames.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[0]'
+      value: 
+      objectReference: {fileID: 21300000, guid: f44fc5ab020f450469c97780b3ed505d, type: 3}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[1]'
+      value: 
+      objectReference: {fileID: 21300000, guid: 57ca3bf74cf2e7c49a61f5b600072328, type: 3}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[2]'
+      value: 
+      objectReference: {fileID: 21300000, guid: c1abe6ffdc86d6c4ea25ff27832f4d0b, type: 3}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[3]'
+      value: 
+      objectReference: {fileID: 21300000, guid: f74601e519358b7408d8da4017365ac3, type: 3}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[4]'
+      value: 
+      objectReference: {fileID: 21300000, guid: 2b860b48f5e6f8c49aeb19bf685dbca7, type: 3}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[5]'
+      value: 
+      objectReference: {fileID: 21300000, guid: a106e343eace8bf42a751d137639044e, type: 3}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[6]'
+      value: 
+      objectReference: {fileID: 21300000, guid: 9c413e532a6852e498965f72145c618a, type: 3}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[7]'
+      value: 
+      objectReference: {fileID: 21300000, guid: 7b0452f9e432d164ca3f9a26a299d966, type: 3}
+    - target: {fileID: 2414992171826271582, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: 'frames.Array.data[8]'
+      value: 
+      objectReference: {fileID: 21300000, guid: 106029a0e43aba94d9e4ed396bca42cd, type: 3}
+    - target: {fileID: 3471427833641324120, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f44fc5ab020f450469c97780b3ed505d, type: 3}
+    - target: {fileID: 4471049624302812480, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: actor
+      value: 
+      objectReference: {fileID: 11400000, guid: 7bfd23649a87fcb4189c5d965eab7e5d, type: 2}
+    - target: {fileID: 4471049624302812480, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: dialogueSO
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5536100822147227792, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_Name
+      value: Eleonore - Hollow Contracts
+      objectReference: {fileID: 0}
+    - target: {fileID: 6184130544430625050, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.90000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 6184130544430625050, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.90000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 6184130544430625050, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.90000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 8793647303855686269, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      propertyPath: height
+      value: 3.1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5536100822147227792, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6103520599107855419}
+  m_SourcePrefab: {fileID: 100100000, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+--- !u!1 &8055133079725771404 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5536100822147227792, guid: 9fbdf87b29edd42448ad25d07ffd56fd, type: 3}
+  m_PrefabInstance: {fileID: 2530383652141459996}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6103520599107855419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8055133079725771404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8b697aaed678d4480a83d6cc84ad38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HuntQuestNPC
+  giver: 0

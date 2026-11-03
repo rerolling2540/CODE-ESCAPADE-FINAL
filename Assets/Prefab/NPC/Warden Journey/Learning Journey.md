@@ -55,3 +55,10 @@ Rewards use the existing gold, refinement-material, and token economy. Card-choi
 - The panel and travel honor settings/overlay visibility and block battle triggering during transit.
 - Verified: compilation; 36 journal/readiness/save checks; rendered maximum-five-quest panel with no overflowing text; long journal scrolling; safe landing searches near the Scene 2 elf and Alden without moving the player or writing saves.
 - Full runtime cross-map teleport testing remains unverified.
+
+## Progression improvements: stage 1
+- All six main chapters show a saved-progress checklist and a single next unfinished action, shared between elf dialogue and journal. Teacher checklists mark individual topics as done.
+- Alden's Foundation demonstrations include Change message and Add 1 starting coin, plus Reset example. Code, highlighted instruction, state box and console update together. Replay still steps through the instructions, and page turns remain manual.
+- Experiments only change authored demonstration inputs. They do not award currency, record question attempts, complete lessons or alter the separate practice question. Available for Java, C# and Python.
+- Teacher dialogue distinguishes the lesson XP from the elf's application-challenge reward. Incorrect practice answers point to the current topic for review.
+- No new completion gates, reward amounts or save fields were introduced; prior completions still count. Advanced interactive quests and reward/economy balancing are later stages.

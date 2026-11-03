@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -95,6 +96,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
 
     private void Update()
     {
+        if (GameControlsGuide.SettingsOpen) return;
         if (!Input.GetKeyDown(KeyCode.Escape)) return;
         if (cardZoomOverlay != null) CloseCardZoom();
         else Close();
@@ -108,7 +110,9 @@ public sealed class BattleInfoPanel : MonoBehaviour
             return;
         }
 
-        if (GameControlsGuide.SettingsOpen || QuestionUI.IsQuestionActive || Time.timeScale <= 0f)
+        if (GameControlsGuide.GameplayOverlayHidden || QuestionUI.IsQuestionActive || Time.timeScale <= 0f ||
+            SceneTransitionFader.IsTransitioning ||
+            (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive))
             return;
 
         previousTimeScale = Time.timeScale;
@@ -256,6 +260,36 @@ public sealed class BattleInfoPanel : MonoBehaviour
             characterDeckIcon, "DECK", new Color(0.54f, 0.37f, 0.16f)));
         CreateEnemyStatsGrid(list, stats);
 
+        CreateInfoHeading(list, "ADVENTURE PROGRESS");
+        var saved = SaveSlots.Read(SaveSlots.Active);
+        var answers = PlayerAdventureStats.Answers(saved);
+        CreateEnemyStatsGrid(list, new List<EnemyDetailStat>
+        {
+            new EnemyDetailStat("CARDS COLLECTED", PlayerAdventureStats.CardsCollected(), characterDeckIcon, "C", new Color(0.54f, 0.37f, 0.16f)),
+            new EnemyDetailStat("BATTLES WON", PlayerAdventureStats.BattlesWon(saved).ToString(), enemyAttackIcon, "WIN", new Color(0.78f, 0.36f, 0.15f)),
+            new EnemyDetailStat("QUESTS COMPLETED", PlayerAdventureStats.CompletedQuests(saved) + " / " + PlayerAdventureStats.AvailableQuests, enemyRewardIcon, "QUEST", new Color(0.75f, 0.57f, 0.12f)),
+            new EnemyDetailStat("BEST ANSWER STREAK", answers.bestStreak.ToString(), enemyRewardIcon, "BEST", new Color(0.75f, 0.57f, 0.12f))
+        });
+        CreateInfoHeading(list, "ANSWER ACCURACY");
+        CreateProgressText(list, "Overall Accuracy", PlayerAdventureStats.Accuracy(answers.correct, answers.attempts));
+        CreateProgressText(list, "Progress Scope", "This save slot · All card types · 3 cave quests + 4 learning quests\nAccuracy includes timed-out questions. Leaving a question does not count.");
+        if (answers.groups != null)
+        {
+            var languages = new System.Collections.Generic.SortedSet<string>();
+            foreach (var group in answers.groups) languages.Add(group.language);
+            foreach (string key in languages)
+            {
+                int correct = 0, attempts = 0;
+                foreach (var group in answers.groups)
+                    if (group.language == key) { correct += group.correct; attempts += group.attempts; }
+                CreateInfoHeading(list, CharacterAlmanac.LanguageName(key).ToUpperInvariant());
+                CreateProgressText(list, "Language Accuracy", PlayerAdventureStats.Accuracy(correct, attempts));
+                foreach (var group in answers.groups.FindAll(g => g.language == key).OrderBy(g => g.topic))
+                    CreateProgressText(list, "Topic Accuracy - " + group.topic,
+                        group.topic.Replace('_', ' ') + ": " + PlayerAdventureStats.Accuracy(group.correct, group.attempts));
+            }
+        }
+
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(list);
         ResizeInfoListContent(list);
@@ -269,6 +303,14 @@ public sealed class BattleInfoPanel : MonoBehaviour
         heading.enableWordWrapping = false;
         LayoutElement layout = heading.gameObject.AddComponent<LayoutElement>();
         layout.minHeight = layout.preferredHeight = 30f;
+    }
+
+    private void CreateProgressText(Transform parent, string objectName, string value)
+    {
+        TMP_Text text = CreateEnemyText(objectName, parent, EscapeRichText(value), 17f, FontStyles.Normal);
+        text.enableWordWrapping = true;
+        var layout = text.gameObject.AddComponent<LayoutElement>();
+        layout.minHeight = layout.preferredHeight = objectName == "Progress Scope" ? 58f : 30f;
     }
 
     private static HeroData ResolveSelectedHero(CharacterInfoData info, int index)

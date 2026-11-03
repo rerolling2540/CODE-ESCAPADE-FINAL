@@ -27,6 +27,7 @@ public class CaveEnemyEncounter : MonoBehaviour
     public bool preserveAuthoredHitbox;
     public static List<EnemyData> PendingEnemies;
     public static string PendingEncounterId;
+    public static string PendingEncounterScene;
     private static string suppressedEncounter;
     private static bool enteringBattle;
     private playerMovement player;
@@ -39,7 +40,7 @@ public class CaveEnemyEncounter : MonoBehaviour
     void Start()
     {
         var saved = SaveSlots.Read(SaveSlots.Active);
-        if (saved?.defeatedEncounters != null && saved.defeatedEncounters.Contains(gameObject.name))
+        if (SceneVisitProgress.IsDefeated(saved, gameObject.scene.name, gameObject.name))
         { gameObject.SetActive(false); return; }
         enteringBattle = false;
         readyAt = Time.unscaledTime + 2f;
@@ -191,6 +192,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         List<EnemyData> squad = battleEncounter != null ? battleEncounter.CreateEnemySquad() : null;
         PendingEnemies = squad != null && squad.Count > 0 ? squad : new List<EnemyData> { enemy };
         PendingEncounterId = gameObject.name;
+        PendingEncounterScene = gameObject.scene.name;
         SceneTransitionFader.Load("Battle Scene");
     }
 }

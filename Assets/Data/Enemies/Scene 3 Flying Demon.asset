@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Scene 3 Flying Demon
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: 2003638306, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  <Health>k__BackingField: 35
+  <AttackPower>k__BackingField: 28
+  idleFrames:
+  - {fileID: 2003638306, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  - {fileID: 875195379, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  - {fileID: -1590546751, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  - {fileID: -1892899840, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  walkFrames:
+  - {fileID: 2003638306, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  - {fileID: 875195379, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  - {fileID: -1590546751, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  - {fileID: -1892899840, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
+  attackFrames:
+  - {fileID: 98208703, guid: b54da16a5c911499e9bf8dd26fda5792, type: 3}
+  - {fileID: -250878482, guid: b54da16a5c911499e9bf8dd26fda5792, type: 3}
+  - {fileID: -1092143298, guid: b54da16a5c911499e9bf8dd26fda5792, type: 3}
+  - {fileID: 1187558181, guid: b54da16a5c911499e9bf8dd26fda5792, type: 3}
+  - {fileID: -1777223232, guid: b54da16a5c911499e9bf8dd26fda5792, type: 3}
+  - {fileID: 776720433, guid: b54da16a5c911499e9bf8dd26fda5792, type: 3}
+  - {fileID: -145984734, guid: b54da16a5c911499e9bf8dd26fda5792, type: 3}
+  - {fileID: -219584316, guid: b54da16a5c911499e9bf8dd26fda5792, type: 3}
+  battleFramesPerSecond: 8
+  hovering: 1
+  experienceReward: 35
+  battleMaterial: {fileID: 0}
+  battleVisualScale: 1
+  attackStyle: 0
+  attackCountdown: 15
+  breakMeterMax: 100
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0

@@ -47,6 +47,8 @@ public static class SaveSlots
         public int level;
         public int experience;
         public System.Collections.Generic.List<string> visitedScenes = new System.Collections.Generic.List<string>();
+        public PlayerAdventureStats.AnswerTotals answerStats;
+        public int battlesWon = -1;
         public System.Collections.Generic.List<string> seenTutorialTips = new System.Collections.Generic.List<string>();
         public bool hasPosition;
         public Vector3 position;
@@ -68,6 +70,8 @@ public static class SaveSlots
         public string checkpointScene;
         public Vector3 checkpointPosition;
         public System.Collections.Generic.List<string> defeatedEncounters = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> scene3VisitDefeated = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> map4VisitDefeated = new System.Collections.Generic.List<string>();
     }
     public static int Active
     {
@@ -285,7 +289,8 @@ public static class SaveSlots
     {
         PlayerPrefs.DeleteKey(InventoryKey);
         PlayerPrefs.SetInt("SelectedCharacter", character);
-        Write(new Record { character = character, level = 5 });
+        Write(new Record { character = character, level = 5, battlesWon = 0,
+            answerStats = new PlayerAdventureStats.AnswerTotals() });
     }
     public static void Delete(int slot)
     {

@@ -140,6 +140,7 @@ public class CombatantView : MonoBehaviour
     private float footY;
     private Sprite restingSprite;
     private CombatantView facingTarget;
+    private bool battleSpriteFacesLeft;
     private float hitTime;
     private float hitDirection;
     private Color restingColor = Color.white;
@@ -215,12 +216,12 @@ public class CombatantView : MonoBehaviour
             // The enemy prefab rotates its visual parent 180 degrees around Y.
             // Compare against the transformed sprite axis to avoid flipping twice.
             float spriteAxis = spriteRenderer.transform.TransformVector(Vector3.right).x;
-            spriteRenderer.flipX = delta * spriteAxis < 0f;
+            spriteRenderer.flipX = (delta * spriteAxis < 0f) ^ battleSpriteFacesLeft;
         }
     }
 
     protected void ConfigureBattleAnimation(Sprite[] idle, Sprite[] attack, float fps, bool faceLeft, bool hover = false,
-        float[] frameDurations = null)
+        float[] frameDurations = null, bool sourceFacesLeft = false)
     {
         if (spriteRenderer == null) return;
         idleFrames = idle;
@@ -228,7 +229,8 @@ public class CombatantView : MonoBehaviour
         attackFrameDurations = frameDurations;
         battleFrameRate = Mathf.Max(1f, fps);
         hovering = hover;
-        spriteRenderer.flipX = faceLeft;
+        battleSpriteFacesLeft = sourceFacesLeft;
+        spriteRenderer.flipX = faceLeft ^ battleSpriteFacesLeft;
         visualScale = spriteRenderer.transform.localScale;
         visualPosition = spriteRenderer.transform.localPosition;
         restingColor = spriteRenderer.color;

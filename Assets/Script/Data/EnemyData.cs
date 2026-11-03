@@ -11,6 +11,8 @@ public class EnemyData : ScriptableObject
     [field: SerializeField] public int Health {get; private set;}
     [field: SerializeField] public int AttackPower {get; private set;}
     [Header("Battle Animation")]
+    [Tooltip("Enable when the original, unflipped battle sprites face left.")]
+    public bool battleSpriteFacesLeft;
     public Sprite[] idleFrames;
     [Header("Overworld Patrol Animation")]
     public Sprite[] walkFrames;

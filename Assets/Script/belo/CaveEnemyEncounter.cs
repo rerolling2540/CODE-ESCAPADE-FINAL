@@ -11,6 +11,8 @@ public class CaveEnemyEncounter : MonoBehaviour
     public float interactionDistance = 2.5f;
     [Min(0.1f), Tooltip("Avoid triggering encounters on distant floors above or below the player.")]
     public float maxEncounterHeightDifference = 3.5f;
+    [Tooltip("Require a clear path to the player. Disable to trigger battles across walls within the distance and height limits.")]
+    public bool requireLineOfSight = true;
     public bool flying;
     [Min(0f)] public float patrolSpeed = 1.2f;
     [Min(0.5f)] public float overworldHeight = 1.9f;
@@ -164,7 +166,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         float radius = Mathf.Max(.1f, interactionDistance) + Mathf.Max(0f, extraDistance);
         if (Mathf.Abs(origin.y - target.y) > maxEncounterHeightDifference ||
             (target - origin).sqrMagnitude > radius * radius) return false;
-        if (checkSight)
+        if (checkSight && requireLineOfSight)
             foreach (var hit in Physics2D.LinecastAll(origin, target))
                 if (hit.collider != null && !hit.collider.isTrigger && hit.collider.CompareTag("Ground"))
                     return false;

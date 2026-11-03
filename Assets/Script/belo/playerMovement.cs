@@ -62,6 +62,8 @@ public class playerMovement : MonoBehaviour
             spriteRenderer = SelectedHero.ApplyMage(this, spriteRenderer);
         else if (archerAppearance || SelectedHero.IsArcher)
             spriteRenderer = SelectedHero.ApplyArcher(this, spriteRenderer);
+        else
+            spriteRenderer = SelectedHero.ApplyWarrior(this, spriteRenderer);
         if (spriteRenderer != null) facingRight = !spriteRenderer.flipX;
         if (spriteRenderer != null) restingColor = spriteRenderer.color;
         if(archerAppearance||mageAppearance||SelectedHero.IsArcher||SelectedHero.IsMage)
@@ -69,6 +71,11 @@ public class playerMovement : MonoBehaviour
             var bank=Resources.Load<CharacterHurtFrames>("PlayerDeath/Hurt");
             int character=mageAppearance||SelectedHero.IsMage?2:1;
             if(bank!=null&&spriteRenderer!=null)damageFrames=bank.Frames(character,spriteRenderer.sprite.pixelsPerUnit);
+        }
+        else
+        {
+            var bank=Resources.Load<CharacterHurtFrames>("Warrior/WarriorHurtFrames");
+            if(bank!=null)damageFrames=bank.warrior;
         }
         hasHurtState = animator != null && animator.HasState(0, Animator.StringToHash("Hurt"));
 

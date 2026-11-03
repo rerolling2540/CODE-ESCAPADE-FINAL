@@ -478,8 +478,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
+      propertyPath: requireLineOfSight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: interactionDistance
-      value: 4
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: lockFacingDirection
@@ -329093,8 +329097,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: d7dbc37ed749b14429ab81602938dd8b, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1
   overworldHeight: 2.28
@@ -344443,8 +344448,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: b5d2b4b63631ac148a4b2c80017b152e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1.4
   overworldHeight: 2.28
@@ -344769,11 +344775,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -15.8
+      value: -15.7
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13.2
+      value: 9.6
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -345104,8 +345110,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
+      propertyPath: requireLineOfSight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: interactionDistance
-      value: 4
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: lockFacingDirection
@@ -345481,8 +345491,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: b5d2b4b63631ac148a4b2c80017b152e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1.4
   overworldHeight: 2.28
@@ -345735,8 +345746,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: b5d2b4b63631ac148a4b2c80017b152e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1.4
   overworldHeight: 2.28
@@ -345819,11 +345831,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8409883572668221133, guid: 6c446518449663b44a3a30ef73e81340, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6
+      value: -7.87
       objectReference: {fileID: 0}
     - target: {fileID: 8409883572668221133, guid: 6c446518449663b44a3a30ef73e81340, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.0649946
+      value: -2.08
       objectReference: {fileID: 0}
     - target: {fileID: 8409883572668221133, guid: 6c446518449663b44a3a30ef73e81340, type: 3}
       propertyPath: m_LocalPosition.z
@@ -349352,8 +349364,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: b5d2b4b63631ac148a4b2c80017b152e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1.4
   overworldHeight: 2.28
@@ -356074,8 +356087,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
+      propertyPath: requireLineOfSight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: interactionDistance
-      value: 4
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: lockFacingDirection
@@ -356485,8 +356502,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
+      propertyPath: requireLineOfSight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: interactionDistance
-      value: 4
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: lockFacingDirection
@@ -356747,8 +356768,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: d7dbc37ed749b14429ab81602938dd8b, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1
   overworldHeight: 2.28
@@ -357259,8 +357281,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: d7dbc37ed749b14429ab81602938dd8b, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1
   overworldHeight: 2.28
@@ -686440,8 +686463,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: b5d2b4b63631ac148a4b2c80017b152e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1.4
   overworldHeight: 2.28
@@ -694522,8 +694546,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: d7dbc37ed749b14429ab81602938dd8b, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1
   overworldHeight: 2.28
@@ -702276,8 +702301,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: b5d2b4b63631ac148a4b2c80017b152e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1.4
   overworldHeight: 2.28
@@ -702640,6 +702666,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8686433458968124, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
+      propertyPath: activationDistance
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 637817271503574290, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
       propertyPath: m_Name
       value: Map 4 - Demon Slime 02
@@ -702705,8 +702735,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3021687724489417278, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
+      propertyPath: requireLineOfSight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3021687724489417278, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
       propertyPath: interactionDistance
-      value: 4
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -703659,8 +703693,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
+      propertyPath: requireLineOfSight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: interactionDistance
-      value: 4
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7057485463524852054, guid: 109fd124d96844cdcb2a5c1777fe33a7, type: 3}
       propertyPath: lockFacingDirection
@@ -705174,8 +705212,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: d7dbc37ed749b14429ab81602938dd8b, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1
   overworldHeight: 2.28
@@ -711225,7 +711264,7 @@ Transform:
   m_GameObject: {fileID: 1534294954}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.854, y: 13.950001, z: -10}
+  m_LocalPosition: {x: -15.754, y: 10.350001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -716995,8 +717034,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: b5d2b4b63631ac148a4b2c80017b152e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1.4
   overworldHeight: 2.28
@@ -748362,7 +748402,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7531414887499767656, guid: 923218e7432033d4b852db2c9ebb57bf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -19.81
+      value: -18.91
       objectReference: {fileID: 0}
     - target: {fileID: 7531414887499767656, guid: 923218e7432033d4b852db2c9ebb57bf, type: 3}
       propertyPath: m_LocalPosition.y
@@ -748527,8 +748567,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: b5d2b4b63631ac148a4b2c80017b152e, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1.4
   overworldHeight: 2.28
@@ -751137,7 +751178,7 @@ Transform:
   m_GameObject: {fileID: 1865409911}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.854, y: 13.950001, z: -10}
+  m_LocalPosition: {x: -15.754, y: 10.350001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -757660,8 +757701,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: d7dbc37ed749b14429ab81602938dd8b, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1
   overworldHeight: 2.28
@@ -759016,8 +759058,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: d7dbc37ed749b14429ab81602938dd8b, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1
   overworldHeight: 2.28
@@ -759671,8 +759714,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: d7dbc37ed749b14429ab81602938dd8b, type: 2}
   battleEncounter: {fileID: 0}
-  interactionDistance: 4
+  interactionDistance: 9
   maxEncounterHeightDifference: 3.5
+  requireLineOfSight: 0
   flying: 0
   patrolSpeed: 1
   overworldHeight: 2.28
@@ -765697,11 +765741,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4740266836057221828, guid: 05973fd2d4274488a9a4ebf482b6f32d, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 2.46875
+      value: 2.459947
       objectReference: {fileID: 0}
     - target: {fileID: 4740266836057221828, guid: 05973fd2d4274488a9a4ebf482b6f32d, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 2.15625
+      objectReference: {fileID: 0}
+    - target: {fileID: 5800960950770278976, guid: 05973fd2d4274488a9a4ebf482b6f32d, type: 3}
+      propertyPath: requireLineOfSight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5800960950770278976, guid: 05973fd2d4274488a9a4ebf482b6f32d, type: 3}
+      propertyPath: interactionDistance
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 8198771770350138642, guid: 05973fd2d4274488a9a4ebf482b6f32d, type: 3}
       propertyPath: m_Name

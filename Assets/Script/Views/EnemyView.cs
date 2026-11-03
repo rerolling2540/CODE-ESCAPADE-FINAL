@@ -38,7 +38,8 @@ public class EnemyView : CombatantView
         SetBattleMaterial(enemyData.battleMaterial);
         EnlargeEnemyVisual(2.8f * Mathf.Max(0.1f, enemyData.battleVisualScale));
         EnsureEnemyHealthBar();
-        ConfigureBattleAnimation(enemyData.idleFrames, enemyData.attackFrames, enemyData.battleFramesPerSecond, true, enemyData.hovering);
+        ConfigureBattleAnimation(enemyData.idleFrames, enemyData.attackFrames, enemyData.battleFramesPerSecond,
+            true, enemyData.hovering, sourceFacesLeft: enemyData.battleSpriteFacesLeft);
     }
 
     public void ResolveOpeningAction()

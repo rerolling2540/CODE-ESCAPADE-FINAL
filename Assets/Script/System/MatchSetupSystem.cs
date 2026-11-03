@@ -116,8 +116,7 @@ public class MatchSetupSystem : MonoBehaviour
         if (hero == null || hero.CurrentHealth <= 0 || targets.Count == 0 || !BattleHudMedieval.TrySpendFullEp())
             yield break;
 
-        BattleAudio.Play(BattleSound.MagicCast);
-        yield return hero.PlayBattleAttack(targets[0]);
+        yield return hero.PlayBattleAttack(targets[0], null);
         if (hero == null || hero.CurrentHealth <= 0) yield break;
 
         int damage = Mathf.Max(1, hero.AttackPower * 2);

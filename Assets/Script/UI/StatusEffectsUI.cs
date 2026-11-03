@@ -12,12 +12,13 @@ public class StatusEffectsUI : MonoBehaviour
         StatusEffectType.BURN,
         StatusEffectType.POISON,
         StatusEffectType.BLEED,
-        StatusEffectType.FROST
+        StatusEffectType.FROST,
+        StatusEffectType.DAMAGE_BUFF
     };
 
     [SerializeField] private StatusEffectUI statusEffectsUIPrefab;
     [SerializeField] private Sprite armorSprite, burnSprite;
-    [SerializeField] private Sprite poisonSprite, bleedSprite, frostSprite, natureSprite;
+    [SerializeField] private Sprite poisonSprite, bleedSprite, frostSprite, natureSprite, damageBuffSprite;
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
     private bool enemyHudLayout;
 
@@ -31,16 +32,16 @@ public class StatusEffectsUI : MonoBehaviour
 
         rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.pivot = new Vector2(0.5f, 0.5f);
-        // Enemy HUD root is 118 units tall. Keep the row just above the HP bar
-        // (center y=6, height=28) while leaving a small visual gap.
-        rect.anchoredPosition = new Vector2(30f, 37f);
-        rect.sizeDelta = new Vector2(220f, 38f);
+        // Keep enlarged per-enemy status icons above the HP bar, with enough width
+        // for multiple effects without overlapping the neighboring enemy's HUD.
+        rect.anchoredPosition = new Vector2(30f, 48f);
+        rect.sizeDelta = new Vector2(440f, 70f);
         rect.localScale = Vector3.one;
         enemyHudLayout = true;
         var layout = GetComponent<HorizontalLayoutGroup>();
         if (layout == null) layout = gameObject.AddComponent<HorizontalLayoutGroup>();
         layout.childAlignment = TextAnchor.MiddleCenter;
-        layout.spacing = 3f;
+        layout.spacing = 5f;
         layout.childControlWidth = false;
         layout.childControlHeight = false;
         layout.childForceExpandWidth = false;
@@ -111,7 +112,7 @@ public class StatusEffectsUI : MonoBehaviour
             if (statusEffectUIs.TryGetValue(type, out StatusEffectUI statusEffectUI) && statusEffectUI != null)
             {
                 if (enemyHudLayout)
-                    statusEffectUI.SetHudSize(new Vector2(34f, 34f));
+                    statusEffectUI.SetHudSize(new Vector2(66f, 66f));
                 else
                     statusEffectUI.SetPlayerHudSize();
                 statusEffectUI.transform.SetSiblingIndex(siblingIndex++);
@@ -129,6 +130,7 @@ public class StatusEffectsUI : MonoBehaviour
             StatusEffectType.BLEED => bleedSprite,
             StatusEffectType.FROST => frostSprite,
             StatusEffectType.NATURE => natureSprite,
+            StatusEffectType.DAMAGE_BUFF => damageBuffSprite,
             _ => null,
         };
     }

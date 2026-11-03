@@ -9,11 +9,13 @@ public class HeroSystem : Singleton<HeroSystem>
     {
         ActionSystem.SubscribedReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribedReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribedReaction<PlayCardGA>(PlayerCardPostReaction, ReactionTiming.POST);
     }
     void OnDisable()
     {
         ActionSystem.UnSubscribedReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
         ActionSystem.UnSubscribedReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
+        ActionSystem.UnSubscribedReaction<PlayCardGA>(PlayerCardPostReaction, ReactionTiming.POST);
     }
     public void SetUp(HeroData heroData)
     {
@@ -25,16 +27,22 @@ public class HeroSystem : Singleton<HeroSystem>
         DiscardAllCardsGA discardAllCardsGA = new();
         ActionSystem.Instance.AddReaction(discardAllCardsGA);
 
-        // EnemyTurnGA begins when the player's turn ends. Resolve timed effects
-        // before enemies act, then start the enemy phase.
+        // Nature healing remains turn-based. Harmful player statuses now resolve
+        // after each card play, rather than once at the end of the turn.
         if (HeroView == null || HeroView.CurrentHealth <= 0) return;
+        if (HeroView.GetStatusEffectStacks(StatusEffectType.NATURE) > 0)
+            ActionSystem.Instance.AddReaction(new NatureTurnGA(HeroView));
+    }
+
+    private void PlayerCardPostReaction(PlayCardGA playCardGA)
+    {
+        if (HeroView == null || HeroView.CurrentHealth <= 0) return;
+
         int burnStacks = HeroView.GetStatusEffectStacks(StatusEffectType.BURN);
         if (burnStacks > 0)
             ActionSystem.Instance.AddReaction(new ApplyBurnGA(burnStacks, HeroView));
         QueueStatusTick(StatusEffectType.POISON, removeAllStacks: false);
         QueueStatusTick(StatusEffectType.BLEED, removeAllStacks: true);
-        if (HeroView.GetStatusEffectStacks(StatusEffectType.NATURE) > 0)
-            ActionSystem.Instance.AddReaction(new NatureTurnGA(HeroView));
     }
 
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA)

@@ -49,6 +49,7 @@ public class StatusEffectSystem : MonoBehaviour
             else
                 target.AddStatusEffect(addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount);
             PlayStatusAnimation(target, addStatusEffectGA.StatusEffectType);
+            ShowStatusMessage(target, addStatusEffectGA.StatusEffectType, addStatusEffectGA.StackCount);
             yield return null;
         }
     }
@@ -91,12 +92,102 @@ public class StatusEffectSystem : MonoBehaviour
         if (Instance != null) Instance.PlayAnimation(target, Instance.impactVfxFrames, 1.1f);
     }
 
+    public static void PlayShieldAnimation(CombatantView target)
+    {
+        if (Instance == null) return;
+
+        // Enemy shields use the red version of the shield animation; player shields
+        // retain the original blue/gold treatment.
+        Color? tint = target is EnemyView ? new Color(1f, 0.12f, 0.1f, 0.96f) : null;
+        Instance.PlayAnimation(target, Instance.armorVfxFrames, 1.5f, false, tint);
+    }
+
+    public static void PlayDamageBuffAnimation(CombatantView target)
+    {
+        if (Instance == null || target == null) return;
+
+        // A damage buff is a short red power-up pulse, not a shield effect.
+        if (target is EnemyView)
+            Instance.PlayRedOutlinePulse(target);
+        else
+            Instance.PlayAnimation(target, Instance.armorVfxFrames, 1.5f);
+    }
+
+    private void PlayRedOutlinePulse(CombatantView target)
+    {
+        SpriteRenderer source = target != null ? target.MainSpriteRenderer : null;
+        if (source == null || source.sprite == null) return;
+
+        Transform anchor = source.transform;
+        GameObject outline = new GameObject("Damage Buff Red Outline Pulse");
+        outline.transform.SetParent(anchor, false);
+        outline.transform.localPosition = anchor.InverseTransformPoint(target.VisualCenter);
+        outline.transform.localRotation = Quaternion.identity;
+        outline.transform.localScale = Vector3.one * 1.1f;
+
+        SpriteRenderer outlineRenderer = outline.AddComponent<SpriteRenderer>();
+        outlineRenderer.sprite = source.sprite;
+        outlineRenderer.sortingLayerID = source.sortingLayerID;
+        outlineRenderer.sortingOrder = source.sortingOrder - 1;
+        outlineRenderer.color = new Color(1f, 0.06f, 0.035f, 0.9f);
+        StartCoroutine(AnimateRedOutlinePulse(outline.transform, outlineRenderer, target));
+    }
+
+    private IEnumerator AnimateRedOutlinePulse(Transform outline, SpriteRenderer renderer, CombatantView target)
+    {
+        const float duration = 0.65f;
+        float elapsed = 0f;
+        while (elapsed < duration && outline != null && renderer != null && target != null)
+        {
+            float phase = elapsed / duration;
+            float pulse = 0.5f + 0.5f * Mathf.Sin(phase * Mathf.PI * 6f);
+            float scale = Mathf.Lerp(1.07f, 1.16f, pulse);
+            outline.localScale = new Vector3(scale, scale, 1f);
+            Color color = renderer.color;
+            color.a = Mathf.Lerp(0.35f, 0.95f, pulse) * (1f - phase * 0.35f);
+            renderer.color = color;
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (outline != null) Destroy(outline.gameObject);
+    }
+
+    private static void ShowStatusMessage(CombatantView target, StatusEffectType type, int stacks)
+    {
+        BattleMessageUI messages = BattleMessageUI.Instance;
+        if (messages == null || target == null) return;
+
+        string subject = target is EnemyView ? "ENEMY" : "PLAYER";
+        switch (type)
+        {
+            case StatusEffectType.ARMOR:
+                messages.ShowAt(subject + " SHIELD", $"Gains {stacks} shield.", target.VisualCenter);
+                break;
+            case StatusEffectType.DAMAGE_BUFF:
+                messages.ShowAt(subject + " DAMAGE UP", $"Damage increased for {stacks} attack(s).", target.VisualCenter);
+                break;
+            case StatusEffectType.NATURE:
+                messages.ShowAt(subject + " HEAL", "Healing effect applied.", target.VisualCenter);
+                break;
+            case StatusEffectType.BURN:
+            case StatusEffectType.POISON:
+            case StatusEffectType.BLEED:
+            case StatusEffectType.FROST:
+                messages.ShowAt(subject + " " + type, $"{stacks} stack(s) applied.", target.VisualCenter);
+                break;
+        }
+    }
+
     private void PlayStatusAnimation(CombatantView target, StatusEffectType type)
     {
         switch (type)
         {
             case StatusEffectType.ARMOR:
-                PlayAnimation(target, armorVfxFrames, 1.5f);
+                PlayShieldAnimation(target);
+                break;
+            case StatusEffectType.DAMAGE_BUFF:
+                PlayDamageBuffAnimation(target);
                 break;
             case StatusEffectType.BURN:
                 PlayAnimation(target, burnVfxFrames, 1.0f, true);
@@ -104,7 +195,7 @@ public class StatusEffectSystem : MonoBehaviour
         }
     }
 
-    private void PlayAnimation(CombatantView target, Sprite[] frames, float sizeMultiplier, bool loop = false)
+    private void PlayAnimation(CombatantView target, Sprite[] frames, float sizeMultiplier, bool loop = false, Color? tint = null)
     {
         if (target == null || frames == null || frames.Length == 0 || target.MainSpriteRenderer == null) return;
 
@@ -118,6 +209,7 @@ public class StatusEffectSystem : MonoBehaviour
         SpriteRenderer targetRenderer = target.MainSpriteRenderer;
         effectRenderer.sortingLayerID = targetRenderer.sortingLayerID;
         effectRenderer.sortingOrder = targetRenderer.sortingOrder + 5;
+        effectRenderer.color = tint ?? Color.white;
 
         float framesPerSecond = Mathf.Max(1f, vfxFramesPerSecond);
         Sprite firstFrame = null;

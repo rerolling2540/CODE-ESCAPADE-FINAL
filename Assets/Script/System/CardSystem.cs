@@ -290,18 +290,28 @@ public class CardSystem : Singleton<CardSystem>
         {
             if (playCardGA.ManualTarget != null)
                 HeroSystem.Instance.HeroView.FaceTowards(playCardGA.ManualTarget);
-            BattleAudio.HeroAttack(playCardGA.Card.CardData);
             CombatantView attackTarget = IsDamageEffect(playCardGA.Card.ManualTargetEffect) ? playCardGA.ManualTarget : null;
             Dictionary<AutoTargetEffect, List<CombatantView>> effectTargets = new();
+            List<CombatantView> attackVisualTargets = new();
+            if (IsDamageEffect(playCardGA.Card.ManualTargetEffect) &&
+                playCardGA.ManualTarget is EnemyView manualEnemy && manualEnemy.CurrentHealth > 0)
+                attackVisualTargets.Add(manualEnemy);
             foreach (AutoTargetEffect effect in playCardGA.Card.OtherEffects)
             {
                 if (effect == null || effect.Effect == null || effect.TargetMode == null) continue;
                 List<CombatantView> targets = effect.TargetMode.GetTargets();
                 effectTargets[effect] = targets;
+                if (IsDamageEffect(effect.Effect))
+                    foreach (CombatantView affected in targets)
+                        if (affected is EnemyView enemy && enemy.CurrentHealth > 0 && !attackVisualTargets.Contains(enemy))
+                            attackVisualTargets.Add(enemy);
                 if (attackTarget == null && IsDamageEffect(effect.Effect))
                     attackTarget = targets.Find(target => target is EnemyView && target.CurrentHealth > 0);
             }
-            yield return HeroSystem.Instance.HeroView.PlayBattleAttack(attackTarget);
+            if (attackVisualTargets.Count > 0)
+                BattleMessageUI.Instance?.ShowAt("PLAYER ATTACK", playCardGA.Card.Title, HeroSystem.Instance.HeroView.VisualCenter);
+            yield return HeroSystem.Instance.HeroView.PlayBattleAttack(
+                attackTarget, playCardGA.Card.CardData, attackVisualTargets);
             if (playCardGA.Card.ManualTargetEffect != null)
             {
                 List<CombatantView> targets = new() { playCardGA.ManualTarget };

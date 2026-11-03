@@ -160,6 +160,7 @@ MonoBehaviour:
   bleedSprite: {fileID: 3964978915805350872, guid: 38e6e221d9ece624eac5431015e12ed4, type: 3}
   frostSprite: {fileID: 1165691426016755503, guid: 0c94456d1f7f8d24192bbffcfad2938b, type: 3}
   natureSprite: {fileID: -630607183058940282, guid: 8362a1acdee4e3f4baed26dd51b7454a, type: 3}
+  damageBuffSprite: {fileID: -940102292310120488, guid: 8362a1acdee4e3f4baed26dd51b7454a, type: 3}
 --- !u!222 &5066595349074076142
 CanvasRenderer:
   m_ObjectHideFlags: 0

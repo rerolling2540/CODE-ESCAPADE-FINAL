@@ -44,7 +44,7 @@ public class StatusEffectUI : MonoBehaviour
           RectTransform icon = image.rectTransform;
           icon.anchorMin = icon.anchorMax = new Vector2(0.5f, 0.5f);
           icon.pivot = new Vector2(0.5f, 0.5f);
-          float badgeHeight = Mathf.Clamp(size.y * 0.24f, 10f, 14f);
+          float badgeHeight = Mathf.Clamp(size.y * 0.24f, 12f, 18f);
           float gap = Mathf.Clamp(size.y * 0.07f, 2.5f, 4f);
           float iconTop = size.y * 0.5f - Mathf.Clamp(size.y * 0.06f, 2f, 4f);
           float iconBottom = -size.y * 0.5f + badgeHeight + gap;
@@ -60,7 +60,7 @@ public class StatusEffectUI : MonoBehaviour
           RectTransform badge = stackBadgeBackground.rectTransform;
           badge.anchorMin = badge.anchorMax = new Vector2(0.5f, 0f);
           badge.pivot = new Vector2(0.5f, 0f);
-          badge.sizeDelta = new Vector2(size.x - 4f, Mathf.Clamp(size.y * 0.24f, 10f, 14f));
+          badge.sizeDelta = new Vector2(size.x - 4f, Mathf.Clamp(size.y * 0.24f, 12f, 18f));
           badge.anchoredPosition = Vector2.zero;
           stackBadgeBackground.raycastTarget = false;
       }
@@ -70,7 +70,7 @@ public class StatusEffectUI : MonoBehaviour
           count.anchorMin = Vector2.zero;
           count.anchorMax = Vector2.one;
           count.offsetMin = count.offsetMax = Vector2.zero;
-          stackCountText.fontSize = 11f;
+          stackCountText.fontSize = 16f;
           stackCountText.alignment = TextAlignmentOptions.Center;
           stackCountText.raycastTarget = false;
       }
@@ -143,6 +143,7 @@ public class StatusEffectUI : MonoBehaviour
         StatusEffectType.BLEED => "BLD",
         StatusEffectType.FROST => "FST",
         StatusEffectType.NATURE => "NAT",
+        StatusEffectType.DAMAGE_BUFF => "ATK",
         _ => type.ToString()
     };
 }

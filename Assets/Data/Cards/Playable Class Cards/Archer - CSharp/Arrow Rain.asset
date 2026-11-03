@@ -24,6 +24,7 @@ MonoBehaviour:
       rid: 401
     <Effect>k__BackingField:
       rid: 402
+  attackVfxType: 1
   damageType: 1
   baseDamage: 0
   percentDamage: 65

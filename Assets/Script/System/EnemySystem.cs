@@ -6,6 +6,7 @@ using UnityEngine;
 public class EnemySystem : Singleton<EnemySystem>
 {
     [SerializeField] private EnemyBoardView enemyBoardView;
+    private int enemyPhaseCount;
     public List<EnemyView> Enemies => enemyBoardView.EnemyViews;
     public EnemyView CurrentEnemy
     {
@@ -34,6 +35,7 @@ public class EnemySystem : Singleton<EnemySystem>
 
     public void Setup(List<EnemyData> enemyDatas)
     {
+        enemyPhaseCount = 0;
         foreach (var enemyData in enemyDatas)
         {
             enemyBoardView.AddEnemy(enemyData);
@@ -45,6 +47,11 @@ public class EnemySystem : Singleton<EnemySystem>
         if (enemyBoardView == null || enemyBoardView.EnemyViews == null)
             yield break;
 
+        // Status assault begins on the first enemy phase, then repeats every
+        // other phase (turns 1, 3, 5, ...). A broken enemy cannot perform it.
+        bool statusAssaultPhase = (++enemyPhaseCount % 2) == 1;
+        CombatantView hero = HeroSystem.Instance != null ? HeroSystem.Instance.HeroView : null;
+
         foreach (var enemy in enemyBoardView.EnemyViews)
         {
             if (enemy == null || enemy.CurrentHealth <= 0) continue;
@@ -55,6 +62,22 @@ public class EnemySystem : Singleton<EnemySystem>
                 ActionSystem.Instance.AddReaction(applyBurnGA);
             }
             QueueStatusTick(enemy, StatusEffectType.POISON, removeAllStacks: false);
+            EnemyData enemyData = enemy.Data;
+            if (statusAssaultPhase && !enemy.IsBroken && hero != null && hero.CurrentHealth > 0 &&
+                enemyData != null && enemyData.appliesStatusEffect)
+            {
+                ActionSystem.Instance.AddReaction(new AddStatusEffectGA(
+                    enemyData.onHitStatus,
+                    Mathf.Max(1, enemyData.onHitStacks),
+                    new List<CombatantView> { hero },
+                    Mathf.Max(1, enemyData.natureHealAmount)));
+            }
+            if (!enemy.OpeningActionResolved && !enemy.IsBroken)
+            {
+                enemy.ResolveOpeningAction();
+                QueueStatusTick(enemy, StatusEffectType.BLEED, removeAllStacks: true);
+                continue;
+            }
             enemy.AdvanceAttackCountdown();
             // Every unbroken enemy retaliates when the player ends the turn.
             // The countdown still advances on every action for intent UI and
@@ -77,7 +100,7 @@ public class EnemySystem : Singleton<EnemySystem>
             return attacksQueued;
         foreach (EnemyView enemy in enemyBoardView.EnemyViews)
         {
-            if (enemy == null || enemy.CurrentHealth <= 0) continue;
+            if (enemy == null || enemy.CurrentHealth <= 0 || !enemy.OpeningActionResolved) continue;
             if (!enemy.AdvanceAttackCountdown()) continue;
             if (enemy.IsBroken) continue;
             ActionSystem.Instance.AddReaction(new AttackHeroGA(enemy));
@@ -109,7 +132,7 @@ public class EnemySystem : Singleton<EnemySystem>
     {
         EnemyView attacker = attackHeroGA.Attacker;
 
-        if (attacker == null || attacker.CurrentHealth <= 0 || attacker.IsBroken)
+        if (attacker == null || attacker.CurrentHealth <= 0 || attacker.IsBroken || !attacker.OpeningActionResolved)
             yield break;
 
         CombatantView hero = HeroSystem.Instance != null ? HeroSystem.Instance.HeroView : null;
@@ -119,6 +142,7 @@ public class EnemySystem : Singleton<EnemySystem>
         Tween movement = null;
         attacker.FaceTowards(hero);
         hero.FaceTowards(attacker);
+        BattleMessageUI.Instance?.ShowAt("ENEMY ATTACK", $"{(attacker.Data != null ? attacker.Data.name : "Enemy")} attacks.", attacker.VisualCenter);
         try
         {
             if (melee)
@@ -169,9 +193,14 @@ public class EnemySystem : Singleton<EnemySystem>
         else
             HeroSystem.Instance.HeroView.Damage(attackDamage);
 
+        // The sword icon counts empowered attacks. Consume one after each attack;
+        // when it reaches zero, remove the temporary attack-power bonus.
+        attacker.ConsumeDamageBuffAttack();
+
         // Frost suppresses the next attack; its stacks are consumed after damage lands.
         if (frostStacks > 0)
             attacker.RemoveStatusEffect(StatusEffectType.FROST, frostStacks);
+
     }
     private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
     {

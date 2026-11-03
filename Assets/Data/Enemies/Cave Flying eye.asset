@@ -48,3 +48,8 @@ MonoBehaviour:
   projectileSpeed: 15
   projectileFrameRate: 18
   projectileArc: 0
+  appliesStatusEffect: 1
+  onHitStatus: 2
+  onHitStacks: 1
+  natureHealAmount: 10
+

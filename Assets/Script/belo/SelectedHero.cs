@@ -3,6 +3,7 @@ using UnityEngine;
 // Selection indices are persisted in SaveSlots; keep existing slots stable.
 public static class SelectedHero
 {
+    public const int WarriorIndex = 0;
     public const int ArcherIndex = 1;
     public const int MageIndex = 2;
     public static bool IsArcher => PlayerPrefs.GetInt("SelectedCharacter", 0) == ArcherIndex;

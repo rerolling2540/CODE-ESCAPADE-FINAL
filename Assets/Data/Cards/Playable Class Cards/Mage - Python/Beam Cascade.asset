@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Beam Cascade
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 15 damage and apply 1 Burn to one enemy."
+  <Description>k__BackingField: "Deal 100% of your Attack Power and apply 1 Burn to one enemy."
   <Mana>k__BackingField: 3
-  <Image>k__BackingField: {fileID: 21300000, guid: 9cf3ac0b624168545975e8923bfe94e3, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: a75085037fd278148ab9bc1455cf53dc, type: 3}
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101
@@ -22,9 +22,9 @@ MonoBehaviour:
       rid: 102
   <ManualTargetEffect>k__BackingField:
     rid: 103
-  damageType: 0
-  baseDamage: 15
-  percentDamage: 0
+  damageType: 1
+  baseDamage: 0
+  percentDamage: 100
   damageMultiplier: 1
   references:
     version: 2

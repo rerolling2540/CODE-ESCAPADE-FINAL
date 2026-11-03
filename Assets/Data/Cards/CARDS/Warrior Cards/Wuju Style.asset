@@ -10,23 +10,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
-  m_Name: Cleaving Arc
+  m_Name: Wuju Style
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 14 damage to one enemy."
-  <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: 21300000, guid: cbd64a19ce7b824499a7d3c5033bda2a, type: 3}
-  <OtherEffects>k__BackingField: []
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 50 damage to all enemies
+  <Mana>k__BackingField: 1
+  <Image>k__BackingField: {fileID: 0}
   <ManualTargetEffect>k__BackingField:
-    rid: 101
+    rid: 8493059999646613551
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 8493059999646613550
+    <Effect>k__BackingField:
+      rid: -2
+  attackVfxType: 0
   damageType: 0
-  baseDamage: 14
-  percentDamage: 0
+  baseDamage: 50
+  percentDamage: 10
   damageMultiplier: 1
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 101
+    - rid: 8493059999646613550
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 8493059999646613551
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

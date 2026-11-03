@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Cinder Cut
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 8 damage to one enemy."
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 8 damage to one enemy.
   <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: 21300000, guid: 4661b6652c421224e8280d42e06d50af, type: 3}
-  <OtherEffects>k__BackingField: []
+  <Image>k__BackingField: {fileID: 21300000, guid: 0e1ab67eb67874542b1606233616c377, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: 101
+  <OtherEffects>k__BackingField: []
+  attackVfxType: 0
   damageType: 0
   baseDamage: 8
   percentDamage: 0
@@ -25,8 +28,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
     - rid: 101
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

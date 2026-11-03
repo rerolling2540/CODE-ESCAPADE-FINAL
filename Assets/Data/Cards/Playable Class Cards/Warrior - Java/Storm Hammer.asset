@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Storm Hammer
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 11 damage and apply 2 Frost to one enemy."
+  <Description>k__BackingField: "Deal 90% of your Attack Power and apply 2 Frost to one enemy."
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 21300000, guid: d6a0dc2f08f982c47957ce126e114f32, type: 3}
   <OtherEffects>k__BackingField:
@@ -22,9 +22,9 @@ MonoBehaviour:
       rid: 102
   <ManualTargetEffect>k__BackingField:
     rid: 103
-  damageType: 0
-  baseDamage: 11
-  percentDamage: 0
+  damageType: 1
+  baseDamage: 0
+  percentDamage: 90
   damageMultiplier: 1
   references:
     version: 2

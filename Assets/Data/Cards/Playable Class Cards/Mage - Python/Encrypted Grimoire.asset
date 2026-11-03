@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Encrypted Grimoire
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 6 damage to one random enemy."
+  <Description>k__BackingField: "Deal 8% of the target's maximum Health to one random enemy."
   <Mana>k__BackingField: 1
   <Image>k__BackingField: {fileID: 21300000, guid: c8db765f8404a794eaf075cab8798c0a, type: 3}
   <OtherEffects>k__BackingField:
@@ -22,9 +22,9 @@ MonoBehaviour:
       rid: 102
   <ManualTargetEffect>k__BackingField:
     rid: -2
-  damageType: 0
-  baseDamage: 6
-  percentDamage: 0
+  damageType: 3
+  baseDamage: 0
+  percentDamage: 8
   damageMultiplier: 1
   references:
     version: 2

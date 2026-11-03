@@ -9,13 +9,18 @@ create table if not exists public.cards (
     description text not null default '',
     mana integer not null default 0 check (mana >= 0),
     image_url text not null default '',
-    damage_type integer not null default 0 check (damage_type in (0, 1)),
+    damage_type integer not null default 0 check (damage_type in (0, 1, 2, 3)),
     base_damage integer not null default 10 check (base_damage >= 0),
     percent_damage numeric not null default 100 check (percent_damage >= 0),
     damage_multiplier numeric not null default 1 check (damage_multiplier >= 0),
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
 );
+
+-- Upgrade existing projects created with the original 0/1 constraint.
+alter table public.cards drop constraint if exists cards_damage_type_check;
+alter table public.cards add constraint cards_damage_type_check
+    check (damage_type in (0, 1, 2, 3));
 
 alter table public.cards enable row level security;
 

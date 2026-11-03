@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Draw
   m_EditorClassIdentifier: Assembly-CSharp::CardData
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
   <Description>k__BackingField: Draw 2
   <Mana>k__BackingField: 1
-  <Image>k__BackingField: {fileID: 21300000, guid: c2022b298e63c33459e4f912e3dea09a, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 95c076b3f531697469ee83e2c5c57ece, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:
@@ -22,6 +24,11 @@ MonoBehaviour:
       rid: 7337470236345761879
     <Effect>k__BackingField:
       rid: 7337470236345761880
+  attackVfxType: 0
+  damageType: 0
+  baseDamage: 10
+  percentDamage: 10
+  damageMultiplier: 1
   references:
     version: 2
     RefIds:

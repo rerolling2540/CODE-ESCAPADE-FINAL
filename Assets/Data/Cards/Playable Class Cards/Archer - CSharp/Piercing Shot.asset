@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: Deal 150% Attack Power to one random enemy.
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: 21300000, guid: f47342aef65088546b3a1daf13cb9ccb, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 57fddcef572254749ad949b7a07b3e07, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:

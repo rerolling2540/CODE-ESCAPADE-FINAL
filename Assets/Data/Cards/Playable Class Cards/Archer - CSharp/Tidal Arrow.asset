@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Tidal Arrow
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 9 damage and apply 2 Bleed to one enemy."
+  <Description>k__BackingField: "Deal 85% of your Attack Power and apply 2 Bleed to one enemy."
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 21300000, guid: a658ec0d4c286ed489843b72ebb7a3a0, type: 3}
   <OtherEffects>k__BackingField:
@@ -22,9 +22,9 @@ MonoBehaviour:
       rid: 102
   <ManualTargetEffect>k__BackingField:
     rid: 103
-  damageType: 0
-  baseDamage: 9
-  percentDamage: 0
+  damageType: 1
+  baseDamage: 0
+  percentDamage: 85
   damageMultiplier: 1
   references:
     version: 2

@@ -8,7 +8,9 @@ public enum DamageType
     Flat = 0,
     AttackPercent = 1,
     [InspectorName("Attack Percent (legacy card data)")]
-    AttackPercentLegacy = 2
+    AttackPercentLegacy = 2,
+    [InspectorName("Target Maximum Health Percent")]
+    TargetHealthPercent = 3
 }
 
 public enum CardAttackVfxType
@@ -46,7 +48,7 @@ public class CardData : ScriptableObject
     public int baseDamage = 10;
 
     [Header("Percent Damage Settings")]
-    [Tooltip("Percentage of the caster's Attack Power (e.g., 120 = 120% of Attack Power)")]
+    [Tooltip("Used as a percentage of Attack Power for AttackPercent, or a percentage of the target's maximum Health for TargetHealthPercent.")]
     [Range(0f, 500f)]
     public float percentDamage = 10f;
 
@@ -69,6 +71,13 @@ public class CardData : ScriptableObject
                 if (caster != null)
                 {
                     calculatedBase = caster.AttackPower * (percentDamage / 100f);
+                }
+                break;
+
+            case DamageType.TargetHealthPercent:
+                if (target != null)
+                {
+                    calculatedBase = target.MaxHealth * (percentDamage / 100f);
                 }
                 break;
         }

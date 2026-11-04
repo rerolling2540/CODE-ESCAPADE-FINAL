@@ -403,24 +403,46 @@ public class CharacterInventory : MonoBehaviour
     {
         if (!MainMenuSaveSlots.HasAdminSession) return false;
 
-        var allCards = new Dictionary<string, CardData>();
+        // The class library is the authoritative class-to-card mapping. Do not
+        // infer class from a card's title or asset folder: cards can be renamed
+        // and the inventory catalog contains every class in one flat list.
+        var warriorCards = new HashSet<CardData>();
+        var classCatalog = Resources.Load<CardDraftCatalog>("CardDraftCatalog");
+        if (classCatalog == null || classCatalog.warriorJava == null)
+        {
+            Debug.LogWarning("Admin Warrior card grant skipped: CardDraftCatalog.warriorJava is unavailable.");
+            return false;
+        }
+        foreach (var card in classCatalog.warriorJava)
+            if (card != null) warriorCards.Add(card);
+
+        // Warrior-only merchant cards may be sold without appearing in the
+        // class library. Universal offers (hero == -1) are intentionally not
+        // included in this Warrior-only admin preview.
+        var merchant = SyntaxMerchantCatalog.Load();
+        if (merchant != null && merchant.offers != null)
+            foreach (var offer in merchant.offers)
+                if (offer != null && offer.kind == MerchantItemKind.Card && offer.hero == SelectedHero.WarriorIndex && offer.card != null)
+                    warriorCards.Add(offer.card);
+
+        var warriorInventory = new Dictionary<string, CardData>();
         var inventoryCatalog = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
         if (inventoryCatalog != null && inventoryCatalog.cards != null)
         {
             foreach (var entry in inventoryCatalog.cards)
-                if (entry != null && entry.card != null && !string.IsNullOrWhiteSpace(entry.id))
-                    allCards[entry.id] = entry.card;
+                if (entry != null && entry.card != null && warriorCards.Contains(entry.card) && !string.IsNullOrWhiteSpace(entry.id))
+                    warriorInventory[entry.id] = entry.card;
         }
 
         foreach (var card in Resources.LoadAll<CardData>("ChestCards"))
-            if (card != null) allCards["chest." + card.name] = card;
+            if (card != null && warriorCards.Contains(card)) warriorInventory["chest." + card.name] = card;
 
-        var merchant = SyntaxMerchantCatalog.Load();
         if (merchant != null && merchant.offers != null)
             foreach (var offer in merchant.offers)
-                if (offer != null && offer.kind == MerchantItemKind.Card && offer.card != null &&
+                if (offer != null && offer.kind == MerchantItemKind.Card && offer.hero == SelectedHero.WarriorIndex &&
+                    offer.card != null && warriorCards.Contains(offer.card) &&
                     !string.IsNullOrWhiteSpace(offer.cardId))
-                    allCards[offer.cardId] = offer.card;
+                    warriorInventory[offer.cardId] = offer.card;
 
         // Grant only the active save. Filling every empty slot would make them
         // all appear occupied in the save selector; other admin slots are
@@ -451,12 +473,18 @@ public class CharacterInventory : MonoBehaviour
         if (saved.ownedCosmetics == null) saved.ownedCosmetics = new List<string>();
 
         bool changed = false;
+        // Earlier admin builds granted every class. Remove those test grants
+        // from this admin save so its collection now contains only Warrior
+        // cards. Keep all other save profiles untouched.
+        int removedNonWarriorCards = saved.cards.RemoveAll(stack => stack == null || !warriorInventory.ContainsKey(stack.id));
+        if (removedNonWarriorCards > 0) changed = true;
+
         if (saved.coins < AdminResourceBalance) { saved.coins = AdminResourceBalance; changed = true; }
         if (saved.libraryTokens < AdminResourceBalance) { saved.libraryTokens = AdminResourceBalance; changed = true; }
         if (saved.lowLogicScraps < AdminResourceBalance) { saved.lowLogicScraps = AdminResourceBalance; changed = true; }
         if (saved.syntaxShards < AdminResourceBalance) { saved.syntaxShards = AdminResourceBalance; changed = true; }
 
-        foreach (var card in allCards)
+        foreach (var card in warriorInventory)
         {
             Stack owned = saved.cards.Find(stack => stack != null && stack.id == card.Key);
             if (owned == null)
@@ -483,7 +511,7 @@ public class CharacterInventory : MonoBehaviour
         }
         InventoryChanged?.Invoke();
 
-        Debug.Log($"Admin inventory stocked in save slot {slot + 1}: {allCards.Count} card types and {AdminResourceBalance:N0} of each resource.");
+        Debug.Log($"Admin Warrior inventory stocked in save slot {slot + 1}: {warriorInventory.Count} Warrior card types and {AdminResourceBalance:N0} of each resource; removed {removedNonWarriorCards} non-Warrior card stacks.");
         return true;
     }
 

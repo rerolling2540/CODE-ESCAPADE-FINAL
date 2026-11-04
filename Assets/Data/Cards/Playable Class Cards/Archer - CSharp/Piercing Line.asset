@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Piercing Line
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 10 damage to one enemy."
+  <Description>k__BackingField: "Deal 90% of your Attack Power to one enemy."
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: 21300000, guid: f47342aef65088546b3a1daf13cb9ccb, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 7a2181c228f80644b8029357fb1209fe, type: 3}
   <OtherEffects>k__BackingField: []
   <ManualTargetEffect>k__BackingField:
     rid: 101
-  damageType: 0
-  baseDamage: 10
-  percentDamage: 0
+  damageType: 1
+  baseDamage: 0
+  percentDamage: 90
   damageMultiplier: 1
   references:
     version: 2

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: Gain 5 Armor and deal 75% of your Attack Power to one random enemy.
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: 21300000, guid: 03b0d95c839f48c43af808e21b70b8ab, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 3d374cd3dfe286347a286e36190046e0, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:

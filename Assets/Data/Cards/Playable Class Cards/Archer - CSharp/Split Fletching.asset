@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   <Description>k__BackingField: "Deal 12 damage to one enemy."
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: 21300000, guid: 1b6057b8d4dcc964894086495cb7b54b, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: 95c076b3f531697469ee83e2c5c57ece, type: 3}
   <OtherEffects>k__BackingField: []
   <ManualTargetEffect>k__BackingField:
     rid: 101

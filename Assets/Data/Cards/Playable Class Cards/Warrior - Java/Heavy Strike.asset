@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Heavy Strike
   m_EditorClassIdentifier: Assembly-CSharp::CardData
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
   <Description>k__BackingField: Deal 150% of your Attack Power to one random enemy.
   <Mana>k__BackingField: 2
-  <Image>k__BackingField: {fileID: 21300000, guid: ebd8073fb4741c64b9043c1d9366dd38, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: e443a94203fa75c488576aef3f07c127, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
   <OtherEffects>k__BackingField:
@@ -22,6 +24,7 @@ MonoBehaviour:
       rid: 201
     <Effect>k__BackingField:
       rid: 202
+  attackVfxType: 0
   damageType: 1
   baseDamage: 0
   percentDamage: 150
@@ -33,7 +36,7 @@ MonoBehaviour:
       type: {class: , ns: , asm: }
     - rid: 201
       type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 202
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

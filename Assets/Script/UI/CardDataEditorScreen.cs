@@ -190,10 +190,10 @@ public class CardDataEditorScreen : MonoBehaviour
             new Vector2(20, -181), new Vector2(710, 145), false, true);
 
         manaInput = AddLabeledInput(editPanel, "Mana", "Mana cost", new Vector2(20, -345), new Vector2(130, 52));
-        damageTypeInput = AddLabeledInput(editPanel, "Damage type", "0 flat / 1 attack %",
+        damageTypeInput = AddLabeledInput(editPanel, "Damage type", "0 flat / 1 ATK % / 3 target HP %",
             new Vector2(170, -345), new Vector2(190, 52));
         baseDamageInput = AddLabeledInput(editPanel, "Base damage", "Flat damage", new Vector2(380, -345), new Vector2(150, 52));
-        percentDamageInput = AddLabeledInput(editPanel, "Attack %", "Percent", new Vector2(550, -345), new Vector2(150, 52));
+        percentDamageInput = AddLabeledInput(editPanel, "Percent %", "ATK or target HP", new Vector2(550, -345), new Vector2(150, 52));
         multiplierInput = AddLabeledInput(editPanel, "Multiplier", "1.0 = 100%", new Vector2(720, -345), new Vector2(150, 52));
 
         AddText(editPanel, "Image URL Label", "Image URL (public URL or Supabase Storage URL)", 16,
@@ -560,12 +560,13 @@ public class CardDataEditorScreen : MonoBehaviour
             return false;
         }
         if (!int.TryParse(manaInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int mana) || mana < 0 ||
-            !int.TryParse(damageTypeInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int damageType) || damageType < 0 || damageType > 1 ||
+            !int.TryParse(damageTypeInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int damageType) ||
+                (damageType != 0 && damageType != 1 && damageType != 2 && damageType != 3) ||
             !int.TryParse(baseDamageInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int baseDamage) || baseDamage < 0 ||
             !float.TryParse(percentDamageInput.text, NumberStyles.Float, CultureInfo.InvariantCulture, out float percentDamage) || percentDamage < 0 ||
             !float.TryParse(multiplierInput.text, NumberStyles.Float, CultureInfo.InvariantCulture, out float multiplier) || multiplier < 0)
         {
-            SetStatus("Enter valid numbers. Damage type is 0 (flat) or 1 (attack percent).", true);
+            SetStatus("Enter valid numbers. Damage type: 0 flat, 1 attack %, or 3 target max-health %.", true);
             return false;
         }
 

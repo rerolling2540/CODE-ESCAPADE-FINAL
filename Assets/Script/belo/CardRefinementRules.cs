@@ -80,9 +80,15 @@ public static class CardRefinementRules
     {
         if (effect is DealDamageEffect)
         {
-            string value = card.damageType == DamageType.Flat
-                ? card.GetCalculatedDamage(null, null, level).ToString()
-                : (card.percentDamage * card.damageMultiplier * Multiplier(level)).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + "% ATK";
+            string value;
+            if (card.damageType == DamageType.Flat)
+                value = card.GetCalculatedDamage(null, null, level).ToString();
+            else
+            {
+                string suffix = card.damageType == DamageType.TargetHealthPercent ? "% target max HP" : "% ATK";
+                value = (card.percentDamage * card.damageMultiplier * Multiplier(level))
+                    .ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + suffix;
+            }
             lines.Add("Damage: " + value);
         }
         else if (effect is HealEffect heal) lines.Add("Healing: " + ScalePower(heal.BaseAmount, level));

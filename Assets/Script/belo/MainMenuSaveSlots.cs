@@ -911,7 +911,7 @@ public class MainMenuSaveSlots : MonoBehaviour
             if (HasAdminSession)
             {
                 CharacterInventory.EnsureAdminAccountInventory();
-                authStatus += "\nAdmin test inventory ready: all catalog cards and 1,000,000 of each resource.";
+                authStatus += "\nAdmin test inventory ready: Warrior cards only and 1,000,000 of each resource.";
             }
             authRequestInProgress = false;
         });

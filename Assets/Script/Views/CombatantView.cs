@@ -271,7 +271,7 @@ public class CombatantView : MonoBehaviour
             footY - (useFootPivot ? 0f : frame.bounds.min.y) * visualScale.y * breath + lift, visualPosition.z);
     }
 
-    public IEnumerator PlayAttackAnimation()
+    public IEnumerator PlayAttackAnimation(Action onRelease = null, int releaseFrame = 0)
     {
         if (!battleAnimationReady || CurrentHealth <= 0 || attacking) yield break;
         attacking = true;
@@ -285,6 +285,7 @@ public class CombatantView : MonoBehaviour
                     // Keep hovering casters at their current height during the cast.
                     SetBattleFrame(attackFrames[i], 1f, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
                     OnAttackFrame(i, attackFrames.Length);
+                    if(i==Mathf.Clamp(releaseFrame,0,attackFrames.Length-1))onRelease?.Invoke();
                     // Preserve the default swing timing unless the hero supplies
                     // weapon-specific draw, release and recovery durations.
                     float timing = i == 0 ? 1.4f : i == attackFrames.Length - 1 ? 1.5f : 0.8f;
@@ -297,6 +298,7 @@ public class CombatantView : MonoBehaviour
             {
                 // Existing combatants without a sheet still have an attack pose.
                 spriteRenderer.transform.localScale = new Vector3(visualScale.x * 1.08f, visualScale.y * 0.96f, visualScale.z);
+                onRelease?.Invoke();
                 yield return new WaitForSeconds(0.25f);
             }
         }

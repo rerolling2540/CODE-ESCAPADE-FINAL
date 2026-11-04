@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>Free return travel to previously visited exploration maps.</summary>
+/// <summary>Free return travel, plus the elf's unlocked first journey to the final grove.</summary>
 public sealed class MonolithTravelPanel : MonoBehaviour
 {
     private static MonolithTravelPanel current;
@@ -12,7 +12,8 @@ public sealed class MonolithTravelPanel : MonoBehaviour
     private TMP_Text notice;
     private bool restore;
     public static bool IsDiscovered(WorldTravelCatalog.Destination d)=>d!=null&&(d.sceneName=="MainMenu"||WorldTravelDiscovery.HasVisited(SaveSlots.Read(SaveSlots.Active),d.sceneName));
-    public static bool CanTravel(WorldTravelCatalog.Destination d)=>d!=null&&!string.IsNullOrWhiteSpace(d.sceneName)&&Application.CanStreamedLevelBeLoaded(d.sceneName)&&IsDiscovered(d);
+    public static bool CanTravel(WorldTravelCatalog.Destination d)=>d!=null&&!string.IsNullOrWhiteSpace(d.sceneName)&&Application.CanStreamedLevelBeLoaded(d.sceneName)&&WorldTravelDiscovery.CanTravelTo(SaveSlots.Read(SaveSlots.Active),d.sceneName);
+    static string LockedMessage(WorldTravelCatalog.Destination d)=>d?.sceneName=="map 5"?"Locked — claim the elf's Map 4 chapter reward":"Undiscovered — visit this map first";
     public static void Open(MonolithTravel owner)
     {
         if(IsOpen||owner==null||Time.timeScale<=0||GameControlsGuide.GameplayOverlayHidden)return;
@@ -30,7 +31,7 @@ public sealed class MonolithTravelPanel : MonoBehaviour
     public void Travel(WorldTravelCatalog.Destination d)
     {
         if(GameControlsGuide.SettingsOpen)return;
-        if(!CanTravel(d)){notice.text=IsDiscovered(d)?"This destination is unavailable. Choose another location.":"Visit this map through normal exploration first.\nIts monolith destination will then unlock for this save.";return;}
+        if(!CanTravel(d)){notice.text=WorldTravelDiscovery.CanTravelTo(SaveSlots.Read(SaveSlots.Active),d?.sceneName)?"This destination is unavailable. Choose another location.":LockedMessage(d);return;}
         if(d.sceneName==SceneManager.GetActiveScene().name)return;
         GameSave.EnsureInstance().SaveCurrentPlayer();
         PortalArrivalPoint.Prepare(d.sceneName,d.lobby?null:WorldTravelCatalog.ArrivalId);
@@ -47,14 +48,14 @@ public sealed class MonolithTravelPanel : MonoBehaviour
         var frame=Image("Monolith travel",shade.transform,new Color(.24f,.14f,.065f));var rt=frame.rectTransform;rt.anchorMin=rt.anchorMax=rt.pivot=Vector2.one*.5f;rt.sizeDelta=new Vector2(820,660);
         var paper=Image("Parchment",frame.transform,new Color(.91f,.83f,.65f));Stretch(paper.rectTransform,8);
         Text("MONOLITH TRAVEL",paper.transform,28,20,748,44,32,true);
-        notice=Text("Return to a map you have visited. Travel is free.\nExplore new maps first to unlock their destinations.",paper.transform,28,75,748,64,23,false);
+        notice=Text("Return to visited maps for free. The elf unlocks Map 5\nafter you claim the Map 4 chapter reward.",paper.transform,28,75,748,64,23,false);
         if(catalog?.destinations!=null)
         {
             int count=Mathf.Min(5,catalog.destinations.Length);
             for(int i=0;i<count;i++)
             {
                 var destination=catalog.destinations[i];bool here=destination.sceneName==currentScene;bool available=CanTravel(destination);
-                string label=destination.title+"\n"+(here?"You are here":!IsDiscovered(destination)?"Undiscovered — visit this map first":available?destination.description:"Destination unavailable");
+                string label=destination.title+"\n"+(here?"You are here":available?destination.description:WorldTravelDiscovery.CanTravelTo(SaveSlots.Read(SaveSlots.Active),destination.sceneName)?"Destination unavailable":LockedMessage(destination));
                 var b=Button(label,paper.transform,28,150+i*84,748,76,()=>Travel(destination));b.interactable=!here&&available;
             }
         }

@@ -7,6 +7,13 @@ public class CardRewardChest : MonoBehaviour
 {
     public string chestId;
     public CardData reward;
+    [Header("Optional class rewards (otherwise use Reward above)")]
+    public CardData warriorReward;
+    public CardData archerReward;
+    public CardData mageReward;
+    public CardData RewardForCharacter(int character)=>
+        (character==SelectedHero.ArcherIndex?archerReward:character==SelectedHero.MageIndex?mageReward:warriorReward)??reward;
+    public CardData CurrentReward=>RewardForCharacter(PlayerPrefs.GetInt("SelectedCharacter",SelectedHero.WarriorIndex));
     public Texture2D spriteSheet;
     [Range(0, 2)] public int variant;
     public float interactionDistance = 2.5f;
@@ -15,6 +22,7 @@ public class CardRewardChest : MonoBehaviour
     private CharacterInventory inventory;
     private playerMovement player;
     private bool opened;
+    private CardData grantedReward;
     public bool IsOpened => opened;
     private float messageUntil;
     private GUIStyle promptStyle, rewardStyle;
@@ -43,8 +51,8 @@ public class CardRewardChest : MonoBehaviour
 
     bool CanInteract()
     {
-        return !opened && reward != null && spriteSheet != null && inventory != null && player != null &&
-            !GameControlsGuide.MapHidden &&
+        return !opened && CurrentReward != null && spriteSheet != null && inventory != null && player != null &&
+            !GameControlsGuide.GameplayOverlayHidden &&
             (DialogueManager.Instance == null || !DialogueManager.Instance.isDialogueActive) &&
             Vector2.Distance(player.transform.position, visual.bounds.center) <= interactionDistance;
     }
@@ -63,7 +71,9 @@ public class CardRewardChest : MonoBehaviour
         if (!CanInteract()) return;
         bool interact = Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame;
         interact |= Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame;
-        if (!interact || !inventory.ClaimChest(chestId, reward)) return;
+        var card=CurrentReward;
+        if (!interact || !inventory.ClaimChest(chestId, card)) return;
+        grantedReward=card;
         opened = true;
         StartCoroutine(Open());
     }
@@ -80,9 +90,11 @@ public class CardRewardChest : MonoBehaviour
 
     void OnGUI()
     {
-        if (GameControlsGuide.MapHidden) return;
+        if (GameControlsGuide.GameplayOverlayHidden) return;
         if (!CanInteract() && Time.unscaledTime >= messageUntil) return;
         if (Camera.main == null) return;
+        var displayCard=grantedReward??CurrentReward;
+        if(Time.unscaledTime<messageUntil&&displayCard==null)return;
         if (promptStyle == null)
         {
             promptStyle = new GUIStyle(GUI.skin.box) { fontSize = 18, alignment = TextAnchor.MiddleCenter };
@@ -101,7 +113,7 @@ public class CardRewardChest : MonoBehaviour
         if (Time.unscaledTime < messageUntil)
         {
             float width = Mathf.Min(560f, Screen.width/scale - 32f);
-            string message="<b>CARD DISCOVERED</b>\n<b>"+reward.name+"</b>\n\n"+reward.Description+"\n\nAdded to your collection and battle deck.";
+            string message="<b>CARD DISCOVERED</b>\n<b>"+displayCard.name+"</b>\n\n"+displayCard.Description+"\n\nAdded to your collection and battle deck.";
             float height=Mathf.Max(180f,rewardStyle.CalcHeight(new GUIContent(message),width));
             GUI.Box(new Rect((Screen.width/scale-width)/2f,28f,width,height),message,rewardStyle);
         }

@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Frostfire
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 10 damage, apply 1 Burn and 1 Frost to one enemy."
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 10 damage, apply 1 Burn and 1 Frost to one enemy.
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 21300000, guid: da88b1ff266954f44abd6d1472bd9323, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: 105
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101
@@ -24,8 +28,32 @@ MonoBehaviour:
       rid: 103
     <Effect>k__BackingField:
       rid: 104
-  <ManualTargetEffect>k__BackingField:
-    rid: 105
+  attackVfxType: 0
+  attackImpactFrames:
+  - {fileID: -4913982344839117222, guid: ad92ea79c8bb746ac9e385f1e1d45a9e, type: 3}
+  - {fileID: -575696589628924425, guid: c3e1091eb3e1b4b918e9acedaba89a9b, type: 3}
+  - {fileID: -1679085568475732275, guid: c84467fcb730b4a8283725062cf891bb, type: 3}
+  - {fileID: -4960229840327395196, guid: dd0e1b943d0424290982d3200a127f26, type: 3}
+  - {fileID: -8398409672689469449, guid: 9ba9c1246e0e7419d973138eb2cef79b, type: 3}
+  - {fileID: -6658418643737043593, guid: 30b9c6083c4f74a3fa5b41d67a4b5a70, type: 3}
+  - {fileID: 6490354421893865411, guid: 8573b5e2c1bfd4956b2d6839e44e860e, type: 3}
+  - {fileID: -3047093270054505527, guid: 45ddbc5a9dd174d8eaafc0d5b20f6482, type: 3}
+  - {fileID: -4913982344839117222, guid: f60abb7611ef64dae8633dcf9bc26eb6, type: 3}
+  - {fileID: -575696589628924425, guid: 1b2f1ec386be64552923a2b82c7cf0fe, type: 3}
+  - {fileID: -1679085568475732275, guid: 9c561d1edce734d4dbf765c66a0b1c24, type: 3}
+  - {fileID: -4960229840327395196, guid: 3c2bfa3deb7ad4071ae3e1bd558b10d3, type: 3}
+  - {fileID: -8398409672689469449, guid: 1495decc9e61e4432b992d789667fc1b, type: 3}
+  - {fileID: -6658418643737043593, guid: 7695e97f3f1c8461f803149a8114bc2d, type: 3}
+  - {fileID: 6490354421893865411, guid: c730548f7a62b4182a9f16e3f924d234, type: 3}
+  - {fileID: -3047093270054505527, guid: de3ec745eace546bd824e37fcedf4240, type: 3}
+  - {fileID: 417835678940605132, guid: 27536a4de3f014622896d8af2902bc39, type: 3}
+  - {fileID: 6216626595070851197, guid: 58b19bc2b10164cfaa2d184c3195f7cb, type: 3}
+  - {fileID: -609197253124883428, guid: 9e8051d0e25024c6d9ad96ae346d06c4, type: 3}
+  - {fileID: -4109647963036294930, guid: 85613d598f8924a8eb46936cc417ea48, type: 3}
+  - {fileID: -3067493327820312267, guid: 987bd5bcefdd8460c9ac2ee6bdd45bd9, type: 3}
+  - {fileID: 8051787128312575447, guid: b982a8286771c4b16b8f09cbf20b8fb8, type: 3}
+  attackImpactFramesPerSecond: 18
+  attackImpactScale: 1.2
   damageType: 0
   baseDamage: 10
   percentDamage: 0
@@ -33,11 +61,9 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
     - rid: 101
       type: {class: SelectedEnemyTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 102
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -47,7 +73,7 @@ MonoBehaviour:
         natureHealAmount: 10
     - rid: 103
       type: {class: SelectedEnemyTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 104
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -57,4 +83,4 @@ MonoBehaviour:
         natureHealAmount: 10
     - rid: 105
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

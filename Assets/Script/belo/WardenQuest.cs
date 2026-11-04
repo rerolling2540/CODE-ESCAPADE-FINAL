@@ -62,19 +62,42 @@ public static class WardenQuest
         inv.GrantWardenReward(expected,Gold[expected],expected==3?3:0,expected==4?1:expected==5?2:0);
         if(!ApplyReward(s,expected))return false;SaveSlots.Write(s);return true;
     }
-    public static DialogueSO Dialogue(Npc_Talk host)
+    public static string PendingBattleReview(SaveSlots.Record s)
     {
-        var s=SaveSlots.Read(SaveSlots.Active);int c=Chapter(s);
+        if(s==null||!s.wardenAccepted)return null;
+        int c=Chapter(s);
+        string encounter=c==1?BattleTutorialGuide.EncounterId:c==5?FinalEncounter:null;
+        string proof=c==1?"tutorial-report":c==5?"final-report":null;
+        return encounter!=null&&s.defeatedEncounters?.Contains(encounter)==true&&!Has(s,proof)?proof:null;
+    }
+    public static bool ApplyBattleReview(SaveSlots.Record s)
+    {
+        string proof=PendingBattleReview(s);if(proof==null)return false;
+        if(s.wardenProofs==null)s.wardenProofs=new List<string>();
+        s.wardenProofs.Add(Proof(proof));return true;
+    }
+    static void FinishBattleReview()
+    {
+        var s=SaveSlots.Read(SaveSlots.Active);
+        if(ApplyBattleReview(s))SaveSlots.Write(s);
+    }
+    public static DialogueSO Dialogue(Npc_Talk host)=>Dialogue(host,SaveSlots.Read(SaveSlots.Active));
+    public static DialogueSO Dialogue(Npc_Talk host,SaveSlots.Record s)
+    {
+        int c=Chapter(s);
         if(c==6)return host.Node("You are Warden of the Hollow. You learned to read code, follow its changing values, and apply it to new problems. Your teachers will still welcome you for practice.");
         var root=host.Node("I travel ahead to tend the wards. Wherever you meet me, we will continue the same journey; you do not need to start again.",Objective(s));
         if(s==null||!s.wardenAccepted)root.options=new[]{new DialogueOption{optionText="Accept: Warden of the Hollow",onSelected=Accept},new DialogueOption{optionText="Not yet"}};
         else if(Ready(s))root.options=new[]{new DialogueOption{optionText="Claim chapter reward",onSelected=()=>Claim(c)},new DialogueOption{optionText="Later"}};
-        else if(c==1&&s.defeatedEncounters?.Contains(BattleTutorialGuide.EncounterId)==true&&!Has(s,"tutorial-report"))
+        else if(PendingBattleReview(s)!=null)
         {
-            // Older saves may have beaten the one-time training enemy before reports existed.
-            var review=host.Node("Your training victory already counts. Review: play a card, answer its code question, and check the effect. End your turn when ready; enemies then act. Read the battle report to understand mistakes and revisit the matching almanac topic.","Future victories show a report automatically. Your earlier training victory does not need to be repeated.");
-            review.options=new[]{new DialogueOption{optionText="Finish battle review",onSelected=()=>Record("tutorial-report")},new DialogueOption{optionText="Review later"}};
-            root.options=new[]{new DialogueOption{optionText="Review my training victory",nextDialogue=review},new DialogueOption{optionText="Farewell"}};
+            // One-time victories survive an interrupted report. Review them without replaying the enemy.
+            string summary=c==1?
+                "Your training victory already counts. Review: play a card, answer its code question, and check the effect. End your turn when ready; enemies then act. Read the battle report to understand mistakes and revisit the matching almanac topic.":
+                "Your final trial victory already counts. Review: output shows messages, variables hold changing values, conditions choose a path, loops repeat instructions, arrays and lists use indexed positions, and functions turn inputs into results. Revisit your teachers for any topic you want to practice.";
+            var review=host.Node(summary,"Your saved victory does not need to be repeated. Finish this review, then speak to me again for your remaining objective or chapter reward.");
+            review.options=new[]{new DialogueOption{optionText="Finish battle review",onSelected=FinishBattleReview},new DialogueOption{optionText="Review later"}};
+            root.options=new[]{new DialogueOption{optionText=c==1?"Review my training victory":"Review my final trial victory",nextDialogue=review},new DialogueOption{optionText="Farewell"}};
         }
         else {
             int task=c==0?0:c==2?1:c==3?2:c==4?(!Has(s,"shelf")?3:4):-1;

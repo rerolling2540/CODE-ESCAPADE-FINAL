@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Arcane Bolt
   m_EditorClassIdentifier: Assembly-CSharp::CardData
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
   <Description>k__BackingField: Deal 120% Attack Power to one random enemy.
   <Mana>k__BackingField: 1
   <Image>k__BackingField: {fileID: 21300000, guid: eb16c3cde1c506a4ab2126b917a71d96, type: 3}
@@ -22,6 +24,20 @@ MonoBehaviour:
       rid: 901
     <Effect>k__BackingField:
       rid: 902
+  attackVfxType: 0
+  attackImpactFrames:
+  - {fileID: -4913982344839117222, guid: bfbce4705893c46788eed6caa65b40a7, type: 3}
+  - {fileID: -575696589628924425, guid: 1a7ba0a373b2a4b14b59200af45d5f37, type: 3}
+  - {fileID: -1679085568475732275, guid: f211ce0e1e6c94c37aadf42459737474, type: 3}
+  - {fileID: -4960229840327395196, guid: 05611463583a44b84a51a042974f14dd, type: 3}
+  - {fileID: -8398409672689469449, guid: b80fc37089f004df2b2b9c726b1da932, type: 3}
+  - {fileID: -6658418643737043593, guid: e274502c650cd4a67a6a7f08bec741b0, type: 3}
+  - {fileID: 6490354421893865411, guid: 7f89bf89cc0ed48a98678cab8204c064, type: 3}
+  - {fileID: -3047093270054505527, guid: 956927d3c143342359c4a771f4f6eab5, type: 3}
+  - {fileID: 417835678940605132, guid: b7d1eb3bf4a0143408a4a6fca944a767, type: 3}
+  - {fileID: 6216626595070851197, guid: 3bde4c2f764ae4054a07eee7d2a16fc0, type: 3}
+  attackImpactFramesPerSecond: 18
+  attackImpactScale: 1.2
   damageType: 1
   baseDamage: 0
   percentDamage: 120
@@ -33,7 +49,7 @@ MonoBehaviour:
       type: {class: , ns: , asm: }
     - rid: 901
       type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 902
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

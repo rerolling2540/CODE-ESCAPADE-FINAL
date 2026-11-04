@@ -29,6 +29,35 @@ public static class WardenQuestChecks
         var roundTrip=JsonUtility.FromJson<SaveSlots.Record>(JsonUtility.ToJson(s));check(roundTrip.wardenChapter==6&&roundTrip.wardenProofs.Count==7,"Save round trip failed");
         var old=JsonUtility.FromJson<SaveSlots.Record>("{\"elfQuestStage\":4,\"level\":6}");check(old.elfQuestStage==4&&WardenQuest.Chapter(old)==0&&!WardenQuest.Ready(old),"Old save lost legacy state");
         var wrongLanguage=new SaveSlots.Record{wardenAccepted=true};wrongLanguage.workshopExercisesCompleted.Add(WorkshopProgression.Id(LearningQuests.Language=="java"?"python":"java",0,0));check(!WardenQuest.Lesson(wrongLanguage,0),"Other-language lesson leaked");
+        foreach(int chapter in new[]{1,5})
+        {
+            var interrupted=new SaveSlots.Record{wardenAccepted=true,wardenChapter=chapter,level=5};
+            string encounter=chapter==1?BattleTutorialGuide.EncounterId:WardenQuest.FinalEncounter;
+            string proof=chapter==1?"tutorial-report":"final-report";
+            for(int t=0;t<6;t++)interrupted.workshopExercisesCompleted.Add(WorkshopProgression.Id(LearningQuests.Language,t,0));
+            check(WardenQuest.PendingBattleReview(interrupted)==null&&!WardenQuest.ApplyBattleReview(interrupted),"Review granted before victory");
+            interrupted.defeatedEncounters.Add(encounter);
+            interrupted=JsonUtility.FromJson<SaveSlots.Record>(JsonUtility.ToJson(interrupted));
+            check(!WardenQuest.Ready(interrupted)&&WardenQuest.PendingBattleReview(interrupted)==proof,"Interrupted victory cannot be reviewed after reload");
+            check(QuestLearningRoute.Next(interrupted).Contains("elf"),"Journal does not explain review recovery");
+            interrupted.wardenAccepted=false;check(!WardenQuest.ApplyBattleReview(interrupted),"Unaccepted quest granted review");interrupted.wardenAccepted=true;
+            var preview=EditorSceneManager.NewPreviewScene();
+            try
+            {
+                var go=new GameObject("Isolated battle review host");SceneManager.MoveGameObjectToScene(go,preview);
+                var dialogue=WardenQuest.Dialogue(go.AddComponent<Npc_Talk>(),interrupted);
+                check(dialogue.options[0].optionText==(chapter==1?"Review my training victory":"Review my final trial victory"),"Elf has no matching review option");
+                var review=dialogue.options[0].nextDialogue;
+                check(review!=null&&review.options.Any(o=>o.optionText=="Finish battle review"&&o.onSelected!=null),"Recovery review cannot be finished");
+                // Npc_Talk owns these transient nodes; destroy them before closing the preview scene.
+                foreach(var node in new[]{review,dialogue})UnityEngine.Object.DestroyImmediate(node);
+            }
+            finally{EditorSceneManager.ClosePreviewScene(preview);}
+            check(WardenQuest.ApplyBattleReview(interrupted)&&WardenQuest.Ready(interrupted),"Review did not unblock chapter");
+            check(interrupted.wardenChapter==chapter&&interrupted.experience==0,"Review paid a reward or skipped a chapter");
+            check(!WardenQuest.ApplyBattleReview(interrupted)&&interrupted.wardenProofs.Count==1,"Review proof duplicated");
+            check(WardenQuest.ApplyReward(interrupted,chapter)&&!WardenQuest.ApplyReward(interrupted,chapter),"Recovered reward cannot be claimed exactly once");
+        }
         var fields=BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance;var type=typeof(CharacterInventory).GetNestedType("SaveData",BindingFlags.NonPublic);var inv=Activator.CreateInstance(type,true);var grant=typeof(CharacterInventory).GetMethod("ApplyWardenGrant",BindingFlags.NonPublic|BindingFlags.Static);
         check((bool)grant.Invoke(null,new object[]{inv,3,100,3,0}),"Inventory grant failed");check(!(bool)grant.Invoke(null,new object[]{inv,3,100,3,0}),"Inventory reward repeated");check((int)type.GetField("coins",fields).GetValue(inv)==100&&(int)type.GetField("lowLogicScraps",fields).GetValue(inv)==3,"Inventory balances wrong");
         type.GetField("coins",fields).SetValue(inv,int.MaxValue);grant.Invoke(null,new object[]{inv,4,150,0,1});check((int)type.GetField("coins",fields).GetValue(inv)==int.MaxValue,"Gold overflow");

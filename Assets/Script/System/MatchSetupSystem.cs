@@ -50,7 +50,7 @@ public class MatchSetupSystem : MonoBehaviour
         string encounterScene = CaveEnemyEncounter.PendingEncounterScene;
         if (caveBattle)
         {
-            EnemySystem.Instance.Setup(CaveEnemyEncounter.PendingEnemies);
+            EnemySystem.Instance.Setup(CaveEnemyEncounter.PendingEnemies,encounterScene);
             CaveEnemyEncounter.PendingEnemies = null;
             CaveEnemyEncounter.PendingEncounterId = null;
             CaveEnemyEncounter.PendingEncounterScene = null;
@@ -1020,15 +1020,16 @@ public class EncounterBattleReturn : MonoBehaviour
     private string encounterId;
     private string encounterScene;
     private RectTransform playerHealthPanel;
-    private int encounterExperience, awardedExperience;
+    private int encounterExperience, awardedExperience,encounterGold,awardedGold;
 
     public void Configure(bool fromCave, string id, string sourceScene = null)
     {
         BattleQuestionReport.BeginBattle(id);
         if(id==WardenQuest.FinalEncounter&&GetComponent<WardenFinalTrial>()==null)gameObject.AddComponent<WardenFinalTrial>();
         caveBattle = fromCave;
-        encounterExperience=0;
-        foreach(var enemy in EnemySystem.Instance.Enemies)if(enemy!=null)encounterExperience+=enemy.ExperienceReward;
+        encounterExperience=encounterGold=0;
+        foreach(var enemy in EnemySystem.Instance.Enemies)if(enemy!=null)
+        {encounterExperience+=enemy.ExperienceReward;encounterGold+=enemy.GoldReward;}
         encounterId = id;
         encounterScene = sourceScene;
         var healthHud = FindFirstObjectByType<ExplorationHealthHud>(FindObjectsInactive.Include);
@@ -1058,6 +1059,8 @@ public class EncounterBattleReturn : MonoBehaviour
             if (CardViewHoverSystem.Instance != null) CardViewHoverSystem.Instance.Hide();
             if (victory && caveBattle && !string.IsNullOrEmpty(encounterId))
             {
+                // Persist gold before marking the encounter defeated. A retry cannot duplicate gold.
+                awardedGold=CharacterInventory.AwardEncounterGold(encounterScene,encounterId,encounterGold);
                 awardedExperience=PlayerProgression.AwardEncounter(encounterId,encounterExperience,encounterScene);
             }
             StartCoroutine(EndBattle());
@@ -1067,7 +1070,7 @@ public class EncounterBattleReturn : MonoBehaviour
     IEnumerator EndBattle()
     {
         yield return BattleTutorialGuide.ExplainResult(victory);
-        yield return BattleReportScroll.Present("VICTORY",awardedExperience);
+        yield return BattleReportScroll.Present("VICTORY",awardedExperience,awardedGold);
         Return();
     }
 
@@ -1091,7 +1094,7 @@ public class EncounterBattleReturn : MonoBehaviour
         if (BattleEnded)
         {
             BattleUITheme.DrawResultPanel(new Rect(Screen.width / 2f - 240, Screen.height / 2f - 65, 480, 130),
-                victory ? "VICTORY  +"+awardedExperience+" XP\nLevel "+PlayerProgression.Level+" / Returning from battle..." : "DEFEAT\nReturning from battle...");
+                victory ? "VICTORY  +"+awardedExperience+" XP / +"+awardedGold+" gold\nLevel "+PlayerProgression.Level+" / Returning from battle..." : "DEFEAT\nReturning from battle...");
         }
     }
 

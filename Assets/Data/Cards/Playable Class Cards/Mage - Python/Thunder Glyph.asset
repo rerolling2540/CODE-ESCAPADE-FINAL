@@ -12,16 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Thunder Glyph
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 10 damage and apply 1 Frost to one enemy."
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 10 damage and apply 1 Frost to one enemy.
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 21300000, guid: 3ed3b16e663709b4cb420283dd4eb736, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: 103
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101
     <Effect>k__BackingField:
       rid: 102
-  <ManualTargetEffect>k__BackingField:
-    rid: 103
+  attackVfxType: 0
+  attackImpactFrames:
+  - {fileID: -4913982344839117222, guid: bcbd1410fbe9e4a4f853d2c0bcef7b40, type: 3}
+  - {fileID: -575696589628924425, guid: 3e2d491b788db49d08400cae4145c65e, type: 3}
+  - {fileID: -1679085568475732275, guid: bc0a60c9dada3495ca9404b66ff15c2a, type: 3}
+  - {fileID: -4960229840327395196, guid: 5e320f305c06844a58bee2632817f054, type: 3}
+  - {fileID: -8398409672689469449, guid: cb323db698a2749949e2547c63af62c8, type: 3}
+  - {fileID: -6658418643737043593, guid: 528dfc92ce68d4ed09cdf3da250502e9, type: 3}
+  - {fileID: 6490354421893865411, guid: 7f938e8b64b0f43469908a66b4632aa5, type: 3}
+  - {fileID: -3047093270054505527, guid: ebfc9cade089e4d76aaf2b1e0c7a5cf6, type: 3}
+  attackImpactFramesPerSecond: 18
+  attackImpactScale: 1.2
   damageType: 0
   baseDamage: 10
   percentDamage: 0
@@ -29,11 +43,9 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
     - rid: 101
       type: {class: SelectedEnemyTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 102
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -43,4 +55,4 @@ MonoBehaviour:
         natureHealAmount: 10
     - rid: 103
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

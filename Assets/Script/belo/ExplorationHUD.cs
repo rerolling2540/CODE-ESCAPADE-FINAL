@@ -30,8 +30,6 @@ public class ExplorationHUD : MonoBehaviour
     private bool showingDraftCards;
     private CharacterInfoData characterInfo;
     private Vector2 characterInfoScroll;
-    private string characterReport;
-    private float nextCharacterReportRefresh;
     private CardDraftCatalog cardDraftCatalog;
     public bool IsMapVisible => showMap && !inventoryOpen && !GameControlsGuide.MapHidden &&
         !SceneTransitionFader.IsTransitioning && CharacterAlmanac.IsExplorationScene(SceneManager.GetActiveScene().name);
@@ -126,7 +124,6 @@ public class ExplorationHUD : MonoBehaviour
 
         previousTimeScale = Time.timeScale;
         inventoryOpen = true;
-        nextCharacterReportRefresh = 0f;
         characterInfoScroll = Vector2.zero;
         Time.timeScale = 0f;
     }
@@ -765,28 +762,18 @@ public class ExplorationHUD : MonoBehaviour
         var portrait = characterInfo.GetPortraitTexture(index);
         if(portrait!=null)GUI.DrawTexture(new Rect(100,175,310,310),portrait,ScaleMode.ScaleToFit,true);
         GUI.Label(new Rect(110,540,300,45),titles[index],headingStyle);
-        GUI.Label(new Rect(100,585,310,30),"Scroll the details to view progress",smallStyle);
+        GUI.Label(new Rect(100,585,310,30),"Character level and combat stats",smallStyle);
         GUI.Label(new Rect(480,155,700,50),titles[index]+"  /  LEVEL "+level+"  /  "+languages[index],headingStyle);
         Fill(new Rect(480,218,700,2),Brass);
         string details="XP: "+PlayerProgression.Experience+" / "+PlayerProgression.RequiredExperience(level)+"\n\nHealth: "+PlayerHealth.CurrentHealth+" / "+PlayerHealth.MaxHealth;
         if(heroClass!=null)details+="\n\nAttack Power: "+heroClass.GetAttackPowerForLevel(level)+"\n\nAttack Bonus: "+heroClass.GetAttackBonusForLevel(level)+"\n\nDefense: "+heroClass.GetDefenseForLevel(level);
         details+="\n\nStarting Deck: "+(hero!=null&&hero.Deck!=null?hero.Deck.Count:0)+" cards";
         details=details.Replace("\n\n","\n");
-        if(characterReport == null || Time.unscaledTime >= nextCharacterReportRefresh)
-        {
-            characterReport=QuestionPerformanceTracker.BuildReport(MainMenuSaveSlots.CurrentUserId,
-                CharacterAlmanac.LanguageForCharacter(index),SaveSlots.Active);
-            nextCharacterReportRefresh=Time.unscaledTime+1f;
-        }
         const float contentWidth=660f;
         float statsHeight=textStyle.CalcHeight(new GUIContent(details),contentWidth);
-        float reportHeight=textStyle.CalcHeight(new GUIContent(characterReport),contentWidth);
         characterInfoScroll=GUI.BeginScrollView(new Rect(480,240,710,420),characterInfoScroll,
-            new Rect(0,0,contentWidth,statsHeight+reportHeight+100f));
+            new Rect(0,0,contentWidth,Mathf.Max(420f,statsHeight+20f)));
         GUI.Label(new Rect(5,0,contentWidth,statsHeight),details,textStyle);
-        Fill(new Rect(5,statsHeight+20,contentWidth,2),Brass);
-        GUI.Label(new Rect(5,statsHeight+30,contentWidth,42),"LEARNING PROGRESSION",headingStyle);
-        GUI.Label(new Rect(5,statsHeight+80,contentWidth,reportHeight),characterReport,textStyle);
         GUI.EndScrollView();
     }
 

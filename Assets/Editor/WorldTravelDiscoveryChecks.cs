@@ -27,6 +27,20 @@ public static class WorldTravelDiscoveryChecks
         check(!WorldTravelDiscovery.HasVisited(null,"Scene3"),"Empty slot unlocked a map");
         check(WorldTravelDiscovery.HasVisited(new SaveSlots.Record{scene="Scene4"},"map 4"),"Legacy Map 4 alias not recognized");
         check(MonolithTravelPanel.IsDiscovered(new WorldTravelCatalog.Destination{sceneName="MainMenu",lobby=true}),"Lobby locked");
+        var warden=new SaveSlots.Record{scene="map 4",wardenAccepted=true,wardenChapter=4};
+        check(!WorldTravelDiscovery.CanTravelTo(warden,"map 5"),"Final journey unlocked before Map 4 reward");
+        warden.wardenChapter=5;
+        check(WorldTravelDiscovery.CanTravelTo(warden,"map 5"),"Final journey has no first-visit route");
+        check(!WorldTravelDiscovery.HasVisited(warden,"map 5"),"Quest unlock fabricated a visit");
+        check(!WorldTravelDiscovery.CanTravelTo(warden,"Scene3"),"Final journey unlocked other unvisited maps");
+        var restored=JsonUtility.FromJson<SaveSlots.Record>(JsonUtility.ToJson(warden));
+        check(WorldTravelDiscovery.CanTravelTo(restored,"map 5"),"Final journey lost on reload");
+        restored.wardenChapter=6;check(WorldTravelDiscovery.CanTravelTo(restored,"map 5"),"Completed campaign lost grove access");
+        restored.wardenAccepted=false;check(!WorldTravelDiscovery.CanTravelTo(restored,"map 5"),"Unaccepted quest unlocked grove");
+        check(!WorldTravelDiscovery.CanTravelTo(second,"map 5"),"Final journey unlock leaked between saves");
+        check(!WorldTravelDiscovery.CanTravelTo(null,"map 5"),"Empty slot unlocked grove");
+        WorldTravelDiscovery.RecordVisit(second,"map 5");
+        check(WorldTravelDiscovery.CanTravelTo(second,"map 5"),"Previously visited grove lost return access");
         return count+" discovery checks passed: visited-only travel, per-slot isolation, save reload, duplicates, and legacy compatibility. Player saves unchanged.";
     }
 }

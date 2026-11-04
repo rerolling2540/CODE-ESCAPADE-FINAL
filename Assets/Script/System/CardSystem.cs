@@ -358,7 +358,7 @@ public class CardSystem : Singleton<CardSystem>
                 : new HashSet<EnemyView>();
             if (failedAnswerTarget != null && failedAnswerTarget.CurrentHealth > 0 && !failedAnswerTarget.IsBroken &&
                 !countdownAttacks.Contains(failedAnswerTarget))
-                ActionSystem.Instance.AddReaction(new AttackHeroGA(failedAnswerTarget));
+                ActionSystem.Instance.AddReaction(new AttackHeroGA(failedAnswerTarget, isCounterattack: true));
         }
 
         if (playCardGA.QuestionAnsweredCorrectly && EnemySystem.Instance != null)

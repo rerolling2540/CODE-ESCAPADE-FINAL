@@ -40,6 +40,10 @@ public class CardData : ScriptableObject
     [Header("Attack Visual Effect")]
     [Tooltip("Chooses the projectile or strike effect played when this attack card resolves. Auto picks one from the card name and selected hero.")]
     public CardAttackVfxType attackVfxType = CardAttackVfxType.Auto;
+    [Tooltip("Optional imported attack animation played on each affected enemy.")]
+    public Sprite[] attackImpactFrames;
+    [Range(8f,40f)] public float attackImpactFramesPerSecond = 24f;
+    [Range(.5f,2f)] public float attackImpactScale = 1f;
 
     [Header("Damage Scaling Type")]
     public DamageType damageType = DamageType.Flat;

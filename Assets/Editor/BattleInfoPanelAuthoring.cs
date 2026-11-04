@@ -199,12 +199,12 @@ public static class BattleInfoPanelAuthoring
         panel.cardEmptyState = emptyCards;
         panel.portraitContainer = portraitBox;
         panel.characterPortrait = portraitImage;
-        panel.enemyHealthIcon = LoadSpriteAsset("Assets/RPG Icons/single/release_v1.2-single_38.png", "release_v1.2-single_38_0");
-        panel.enemyAttackIcon = LoadSpriteAsset("Assets/Tiny Swords/UI Elements/Icons/Icon_05.png", "Icon_05_0");
-        panel.enemyDefenseIcon = LoadSpriteAsset("Assets/Tiny Swords/UI Elements/Icons/Icon_06.png", "Icon_06_0");
-        panel.enemyRangedIcon = LoadSpriteAsset("Assets/RPG Icons/single/release_v1.2-single_21.png", "release_v1.2-single_21_0");
-        panel.enemyRewardIcon = LoadSpriteAsset("Assets/RPG Icons/single/release_v1.2-single_84.png", "release_v1.2-single_84_0");
-        panel.enemyBurnIcon = LoadSpriteAsset("Assets/RPG Icons/single/release_v1.2-single_43.png", "release_v1.2-single_43_0");
+        panel.enemyHealthIcon = LoadSpriteAsset("Assets/500FreeSkillIcons/Icons/skill_309.png", "skill_309");
+        panel.enemyAttackIcon = LoadSpriteAsset("Assets/500FreeSkillIcons/Icons/skill_295.png", "skill_295");
+        panel.enemyDefenseIcon = LoadSpriteAsset("Assets/500FreeSkillIcons/Icons/skill_206.png", "skill_206");
+        panel.enemyRangedIcon = LoadSpriteAsset("Assets/500FreeSkillIcons/Icons/skill_246.png", "skill_246");
+        panel.enemyRewardIcon = LoadSpriteAsset("Assets/500FreeSkillIcons/Icons/skill_442.png", "skill_442");
+        panel.enemyBurnIcon = LoadSpriteAsset("Assets/500FreeSkillIcons/Icons/skill_040.png", "skill_040");
         panel.characterDeckIcon = LoadSpriteAsset("Assets/free_fantasy_card_frames_deckbuilder_ui_sampler/Frames/512x720/card_back_player.png", "card_back_player_0");
 
         Button portraitButton = portrait.GetComponent<Button>();

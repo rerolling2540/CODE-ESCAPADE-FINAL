@@ -12,16 +12,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Encrypted Grimoire
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 8% of the target's maximum Health to one random enemy."
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 8% of the target's maximum Health to one random
+    enemy.
   <Mana>k__BackingField: 1
   <Image>k__BackingField: {fileID: 21300000, guid: c8db765f8404a794eaf075cab8798c0a, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101
     <Effect>k__BackingField:
       rid: 102
-  <ManualTargetEffect>k__BackingField:
-    rid: -2
+  attackVfxType: 0
+  attackImpactFrames:
+  - {fileID: -4913982344839117222, guid: 87f6839591b8047c682fddf3585be768, type: 3}
+  - {fileID: -575696589628924425, guid: 22ccf4a2153994697a08875bcdf88fa1, type: 3}
+  - {fileID: -1679085568475732275, guid: 3bc1deef527934dadbb791bc92de2553, type: 3}
+  - {fileID: -4960229840327395196, guid: 81ff39a524f914279ba46bb3348145dd, type: 3}
+  - {fileID: -8398409672689469449, guid: a1493c2bf9fca485e9a956193c48915f, type: 3}
+  - {fileID: -6658418643737043593, guid: 41ee4d2525fa74808a43f27b6752de02, type: 3}
+  - {fileID: 6490354421893865411, guid: 86f14cb8563634efcbf55f13b60c5283, type: 3}
+  - {fileID: -3047093270054505527, guid: 1bf5c1c40f3bb4a098e1224f53130905, type: 3}
+  - {fileID: 417835678940605132, guid: 78f3f15dd26664cab8c2dfb3622af82f, type: 3}
+  - {fileID: 6216626595070851197, guid: 25415347b3f344ac0a593674527013cc, type: 3}
+  - {fileID: -609197253124883428, guid: d8870f31ced6a40b09c91592032a8a0e, type: 3}
+  - {fileID: -4109647963036294930, guid: 9be804f0e6f6e47b9898992c2fb714d9, type: 3}
+  - {fileID: -3067493327820312267, guid: 58479c02a59654353b797c41d42effba, type: 3}
+  - {fileID: 8051787128312575447, guid: 71e4c6e8882164249a8eed44b4df40c6, type: 3}
+  - {fileID: -391791065217982268, guid: 2227b47b628a447b89803ddd41006dd6, type: 3}
+  - {fileID: -6625191455329246351, guid: d19b0e2bcd8af455cb9f37e8db60dd0c, type: 3}
+  - {fileID: 991369460418844821, guid: a590cc26756d24bd8adf1e343741d116, type: 3}
+  - {fileID: -8043657186160104015, guid: e872cbc14657247be81b47715f9778e2, type: 3}
+  - {fileID: 4868110299486283018, guid: 22b2a347d8fc246f29ca245978575e55, type: 3}
+  - {fileID: 7313599084942330795, guid: 7debbd284c7a44bd0a1aca872555d790, type: 3}
+  - {fileID: -3481615690500452255, guid: 81c000bfc379b471993e5a7351c45b02, type: 3}
+  - {fileID: 3944655843641993218, guid: d3a2edb1acd2b4735be596342292684c, type: 3}
+  - {fileID: 6219620843437133521, guid: ffc100c7c96d54920a4a258e3f340b80, type: 3}
+  - {fileID: -3410037993184219493, guid: b4da1e73b7af741de82e269f27cd0c1c, type: 3}
+  - {fileID: 258813060469893404, guid: bb89aa8ef75f9445eb254b958a35a6fa, type: 3}
+  - {fileID: 8621210677642441822, guid: eb25797399a644170945b8a61cc23846, type: 3}
+  - {fileID: -4617501658687102720, guid: c83b858d004834565a3442fdcbbca4cf, type: 3}
+  - {fileID: 2942562738661822302, guid: ab6a156ccdcab4ddf905ad03ccdaaeeb, type: 3}
+  - {fileID: 2353205042808239058, guid: 693866c647a734dbeb4adcefb97895bc, type: 3}
+  - {fileID: 658128807007300085, guid: ff2c787fd69d7401e9f6eeb23814754f, type: 3}
+  - {fileID: -7937484489131319921, guid: 01a03dcf4e8274407b4cdf58c537809a, type: 3}
+  attackImpactFramesPerSecond: 18
+  attackImpactScale: 1.2
   damageType: 3
   baseDamage: 0
   percentDamage: 8
@@ -33,7 +71,7 @@ MonoBehaviour:
       type: {class: , ns: , asm: }
     - rid: 101
       type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 102
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

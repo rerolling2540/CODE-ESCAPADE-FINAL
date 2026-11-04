@@ -3,6 +3,7 @@ using UnityEngine;
 
 public enum EnemyAttackStyle { Melee, Ranged }
 public enum EnemyOpeningAction { Random, Shield, DamageBuff }
+public enum EnemyProgressionRank { Normal, Elite, Boss, Tutorial, LearningTrial }
 
 [CreateAssetMenu(menuName = "Data/Enemy")]
 public class EnemyData : ScriptableObject
@@ -20,6 +21,10 @@ public class EnemyData : ScriptableObject
     [Min(1f)] public float battleFramesPerSecond = 12f;
     public bool hovering;
     [Min(0)] public int experienceReward = 25;
+    [Min(0)] public int goldReward = 10;
+    [Header("Map progression")]
+    public EnemyProgressionRank progressionRank;
+    [Range(.75f,1.5f)] public float progressionWeight = 1f;
     public Material battleMaterial;
     [Min(0.1f)] public float battleVisualScale = 1f;
     [Header("Attack Behaviour")]

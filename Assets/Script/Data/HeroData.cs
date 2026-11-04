@@ -15,6 +15,8 @@ public class HeroData : ScriptableObject
     [Min(1f)] public float battleFramesPerSecond = 12f;
     [Tooltip("Optional seconds per attack frame, for weapon-specific anticipation and recovery.")]
     public float[] attackFrameDurations;
+    [Tooltip("Zero-based attack frame that releases the card VFX and attack sound.")]
+    [Min(0)] public int attackFeedbackFrame;
     public bool hoverBattleAnimation;
     [Header("Melee Battle Movement")]
     public bool dashToBattleTarget;

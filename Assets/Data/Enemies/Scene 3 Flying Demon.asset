@@ -15,6 +15,7 @@ MonoBehaviour:
   <Image>k__BackingField: {fileID: 2003638306, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
   <Health>k__BackingField: 35
   <AttackPower>k__BackingField: 28
+  battleSpriteFacesLeft: 0
   idleFrames:
   - {fileID: 2003638306, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
   - {fileID: 875195379, guid: bd798414e8d164ea88aea431aa3620b9, type: 3}
@@ -37,6 +38,9 @@ MonoBehaviour:
   battleFramesPerSecond: 8
   hovering: 1
   experienceReward: 35
+  goldReward: 10
+  progressionRank: 2
+  progressionWeight: 1
   battleMaterial: {fileID: 0}
   battleVisualScale: 1
   attackStyle: 0
@@ -47,3 +51,11 @@ MonoBehaviour:
   projectileSpeed: 10
   projectileFrameRate: 16
   projectileArc: 0
+  appliesStatusEffect: 0
+  onHitStatus: 1
+  onHitStacks: 1
+  natureHealAmount: 10
+  openingAction: 0
+  openingShield: 8
+  openingDamageBonus: 3
+  openingDamageBuffAttacks: 3

@@ -18,20 +18,20 @@ public sealed class BattleReportScroll : MonoBehaviour
     private TMP_FontAsset font;
     private Material textMaterial;
     private readonly System.Collections.Generic.List<Sprite> ownedSprites=new System.Collections.Generic.List<Sprite>();
-    public static IEnumerator Present(string outcome,int xp)
+    public static IEnumerator Present(string outcome,int xp,int gold=0)
     {
         if(!BattleQuestionReport.Pending||IsOpen)yield break;
         BattleQuestionReport.Finish();
         var go=new GameObject("Battle Report Scroll",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler),typeof(GraphicRaycaster),typeof(CanvasGroup));
         var report=go.AddComponent<BattleReportScroll>();current=report;
-        yield return report.Run(outcome,xp);
+        yield return report.Run(outcome,xp,gold);
         Destroy(go);
     }
-    IEnumerator Run(string outcome,int xp)
+    IEnumerator Run(string outcome,int xp,int gold)
     {
         previousTime=Time.timeScale;restore=true;Time.timeScale=0;Build();
         title.text=outcome+" / BATTLE CHRONICLE";
-        summary.text=BattleQuestionReport.Summary()+"\nXP earned: "+xp;
+        summary.text=BattleQuestionReport.Summary()+"\nRewards: "+xp+" XP / "+gold+" gold";
         details.text=Details();
         SettingsUiVisibility.EnsureInstance();SettingsUiVisibility.RefreshNow();
         yield return Animate(true);ready=true;

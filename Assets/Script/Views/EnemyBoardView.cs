@@ -8,7 +8,7 @@ public class EnemyBoardView : MonoBehaviour
     [SerializeField] private List<Transform> slots;
     [SerializeField, Min(0.5f)] private float additionalEnemySpacing = 2.8f;
     public List<EnemyView> EnemyViews {get; private set; } = new();
-    public void AddEnemy(EnemyData enemyData)
+    public void AddEnemy(EnemyData enemyData,string sourceScene=null)
     {
         if (enemyData == null) return;
 
@@ -16,7 +16,7 @@ public class EnemyBoardView : MonoBehaviour
         {
             Transform slot = slots[EnemyViews.Count];
             int enemyIndex = EnemyViews.Count;
-            EnemyView enemyView = EnemyViewCreator.Instance.CreateEnemyView(enemyData, slot.position, slot.rotation);
+            EnemyView enemyView = EnemyViewCreator.Instance.CreateEnemyView(enemyData, slot.position, slot.rotation,sourceScene);
             enemyView.transform.SetParent(slot, true);
             enemyView.SetEnemyHealthBarRow(enemyIndex);
             EnemyViews.Add(enemyView);
@@ -27,7 +27,7 @@ public class EnemyBoardView : MonoBehaviour
         // the first slot so encounter assets can still spawn full enemy groups.
         Transform anchor = slots != null && slots.Count > 0 ? slots[0] : transform;
         Vector3 position = anchor.position + Vector3.left * additionalEnemySpacing * (EnemyViews.Count - (slots?.Count ?? 0) + 1);
-        EnemyView additionalEnemy = EnemyViewCreator.Instance.CreateEnemyView(enemyData, position, anchor.rotation);
+        EnemyView additionalEnemy = EnemyViewCreator.Instance.CreateEnemyView(enemyData, position, anchor.rotation,sourceScene);
         additionalEnemy.transform.SetParent(transform, true);
         additionalEnemy.SetEnemyHealthBarRow(EnemyViews.Count);
         EnemyViews.Add(additionalEnemy);

@@ -26,6 +26,8 @@ public sealed class BattleInfoPanel : MonoBehaviour
     public TMP_Text cardEmptyState;
     public GameObject portraitContainer;
     public Image characterPortrait;
+    [Tooltip("Use the wider, single-page exploration character profile layout.")]
+    public bool characterProfileLayout;
 
     [Header("Enemy Detail Icons")]
     public Sprite enemyHealthIcon;
@@ -202,8 +204,16 @@ public sealed class BattleInfoPanel : MonoBehaviour
         if (!showCards && cardEmptyState != null) cardEmptyState.gameObject.SetActive(false);
         if (bodyViewport != null)
         {
-            bodyViewport.anchoredPosition = showPortrait ? new Vector2(550f, -174f) : new Vector2(298f, -174f);
-            bodyViewport.sizeDelta = showPortrait ? new Vector2(680f, 490f) : new Vector2(940f, 490f);
+            if (characterProfileLayout && tab == 0)
+            {
+                bodyViewport.anchoredPosition = new Vector2(466f, -132f);
+                bodyViewport.sizeDelta = new Vector2(788f, 588f);
+            }
+            else
+            {
+                bodyViewport.anchoredPosition = showPortrait ? new Vector2(550f, -174f) : new Vector2(298f, -174f);
+                bodyViewport.sizeDelta = showPortrait ? new Vector2(680f, 490f) : new Vector2(940f, 490f);
+            }
         }
         if (bodyScroll != null)
             bodyScroll.content = tab == 1 && cardGridContent != null ? cardGridContent : bodyContent;
@@ -285,7 +295,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
 
         RectTransform list = CreateEnemyDetailsList("Character Details List");
         TMP_Text heading = CreateEnemyText("Character Name and Class", list,
-            "<size=29><b>" + name.ToUpperInvariant() + "</b></size>\n<size=17><color=#80602B>" +
+            "<size=29><b>" + name.ToUpperInvariant() + "</b></size>\n<size=20><color=#513916>" +
             EscapeRichText(language) + "  ·  LEVEL " + level + "</color></size>", 24f, FontStyles.Normal);
         heading.alignment = TextAlignmentOptions.MidlineLeft;
         heading.enableWordWrapping = false;
@@ -327,14 +337,6 @@ public sealed class BattleInfoPanel : MonoBehaviour
             new EnemyDetailStat("QUESTS COMPLETED", PlayerAdventureStats.CompletedQuests(saved) + " / " + PlayerAdventureStats.AvailableQuests, enemyRewardIcon, "QUEST", new Color(0.75f, 0.57f, 0.12f)),
             new EnemyDetailStat("BEST ANSWER STREAK", answers.bestStreak.ToString(), enemyRewardIcon, "BEST", new Color(0.75f, 0.57f, 0.12f))
         });
-        CreateInfoHeading(list, "LEARNING PROGRESSION");
-        string report=QuestionPerformanceTracker.BuildReport(MainMenuSaveSlots.CurrentUserId,
-            CharacterAlmanac.LanguageForCharacter(index),SaveSlots.Active);
-        TMP_Text reportText=CreateEnemyText("Character Learning Report",list,EscapeRichText(report),17f,FontStyles.Normal);
-        reportText.enableWordWrapping=true;
-        var reportLayout=reportText.gameObject.AddComponent<LayoutElement>();
-        reportLayout.minHeight=reportLayout.preferredHeight=reportText.GetPreferredValues(reportText.text,630f,float.PositiveInfinity).y+20f;
-
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(list);
         ResizeInfoListContent(list);
@@ -615,7 +617,7 @@ public sealed class BattleInfoPanel : MonoBehaviour
 
         var layout = listObject.GetComponent<VerticalLayoutGroup>();
         layout.padding = new RectOffset(14, 14, 14, 14);
-        layout.spacing = 12f;
+        layout.spacing = characterProfileLayout ? 8f : 12f;
         layout.childAlignment = TextAnchor.UpperLeft;
         layout.childControlWidth = true;
         layout.childControlHeight = true;
@@ -751,8 +753,8 @@ public sealed class BattleInfoPanel : MonoBehaviour
         gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         gridLayout.constraintCount = 2;
         float viewportWidth = bodyViewport != null ? bodyViewport.rect.width : 680f;
-        gridLayout.cellSize = new Vector2(Mathf.Max(190f, (viewportWidth - 102f) * 0.5f), 38f);
-        grid.GetComponent<LayoutElement>().preferredHeight = Mathf.CeilToInt(stats.Count / 2f) * 42f;
+        gridLayout.cellSize = new Vector2(Mathf.Max(190f, (viewportWidth - 102f) * 0.5f), characterProfileLayout ? 52f : 38f);
+        grid.GetComponent<LayoutElement>().preferredHeight = Mathf.CeilToInt(stats.Count / 2f) * (characterProfileLayout ? 56f : 42f);
 
         foreach (EnemyDetailStat stat in stats)
             CreateEnemyStatRow(grid.transform, stat);
@@ -781,6 +783,8 @@ public sealed class BattleInfoPanel : MonoBehaviour
         var iconLayout = iconObject.GetComponent<LayoutElement>();
         iconLayout.minWidth = iconLayout.preferredWidth = 30f;
         iconLayout.minHeight = iconLayout.preferredHeight = 30f;
+        // The profile spells out every stat, so tiny letter badges add clutter.
+        if (characterProfileLayout) iconObject.SetActive(false);
         if (stat.icon == null)
         {
             TMP_Text fallback = CreateEnemyText("Icon Lettering", iconObject.transform, stat.fallbackLabel, 10f, FontStyles.Bold);
@@ -803,6 +807,15 @@ public sealed class BattleInfoPanel : MonoBehaviour
         var labelLayout = label.gameObject.AddComponent<LayoutElement>();
         labelLayout.flexibleWidth = 1f;
         labelLayout.minHeight = labelLayout.preferredHeight = 34f;
+        if (characterProfileLayout)
+        {
+            label.text = "<size=18><b>" + stat.label + "</b></size>\n<size=22>" + EscapeRichText(stat.value) + "</size>";
+            label.color = new Color(0.10f, 0.055f, 0.025f, 1f);
+            label.enableAutoSizing = false;
+            label.fontSize = 22f;
+            label.rectTransform.sizeDelta = new Vector2(labelWidth + 38f, 52f);
+            labelLayout.minHeight = labelLayout.preferredHeight = 52f;
+        }
     }
 
     private static TMP_Text CreateEnemyText(string objectName, Transform parent, string value, float fontSize, FontStyles style)

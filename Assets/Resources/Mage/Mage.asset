@@ -43,6 +43,7 @@ MonoBehaviour:
   - {fileID: -3992399264991492348, guid: c22585029453c1945a55484a3378135d, type: 3}
   - {fileID: -1653630675152714288, guid: c22585029453c1945a55484a3378135d, type: 3}
   - {fileID: -5794778844162922957, guid: c22585029453c1945a55484a3378135d, type: 3}
+  sheatheFrames: []
   battleFramesPerSecond: 12
   attackFrameDurations:
   - 0.07
@@ -60,4 +61,7 @@ MonoBehaviour:
   - 0.06
   - 0.08
   - 0.12
+  attackFeedbackFrame: 7
   hoverBattleAnimation: 1
+  dashToBattleTarget: 0
+  battleDashFrames: []

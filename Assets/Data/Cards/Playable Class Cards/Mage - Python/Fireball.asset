@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Fireball
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: Deal 90% Attack Power to all enemies and apply 2 Burn.
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 90% Attack Power to all enemies and apply 2
+    Burn.
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 21300000, guid: d83ec8a2332a17f4d9310f3415b42b47, type: 3}
   <ManualTargetEffect>k__BackingField:
@@ -27,6 +30,17 @@ MonoBehaviour:
     <Effect>k__BackingField:
       rid: 504
   attackVfxType: 2
+  attackImpactFrames:
+  - {fileID: -4913982344839117222, guid: ad92ea79c8bb746ac9e385f1e1d45a9e, type: 3}
+  - {fileID: -575696589628924425, guid: c3e1091eb3e1b4b918e9acedaba89a9b, type: 3}
+  - {fileID: -1679085568475732275, guid: c84467fcb730b4a8283725062cf891bb, type: 3}
+  - {fileID: -4960229840327395196, guid: dd0e1b943d0424290982d3200a127f26, type: 3}
+  - {fileID: -8398409672689469449, guid: 9ba9c1246e0e7419d973138eb2cef79b, type: 3}
+  - {fileID: -6658418643737043593, guid: 30b9c6083c4f74a3fa5b41d67a4b5a70, type: 3}
+  - {fileID: 6490354421893865411, guid: 8573b5e2c1bfd4956b2d6839e44e860e, type: 3}
+  - {fileID: -3047093270054505527, guid: 45ddbc5a9dd174d8eaafc0d5b20f6482, type: 3}
+  attackImpactFramesPerSecond: 18
+  attackImpactScale: 1.2
   damageType: 1
   baseDamage: 0
   percentDamage: 90
@@ -38,15 +52,17 @@ MonoBehaviour:
       type: {class: , ns: , asm: }
     - rid: 501
       type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 502
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 503
       type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 504
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 1
         stackCount: 2
+        natureTurnsUntilHeal: 3
+        natureHealAmount: 10

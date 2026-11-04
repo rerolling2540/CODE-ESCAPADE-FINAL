@@ -12,12 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Void Prism
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 4 damage plus 3 for each Poison stack on one enemy."
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 4 damage plus 3 for each Poison stack on one
+    enemy.
   <Mana>k__BackingField: 3
   <Image>k__BackingField: {fileID: 21300000, guid: e21da6bbf16d05d49b3b4d4a74f5a53b, type: 3}
-  <OtherEffects>k__BackingField: []
   <ManualTargetEffect>k__BackingField:
     rid: 101
+  <OtherEffects>k__BackingField: []
+  attackVfxType: 0
+  attackImpactFrames:
+  - {fileID: -4913982344839117222, guid: 42410fc5970cf43b8ae0f08a66c1d337, type: 3}
+  - {fileID: -575696589628924425, guid: 8912e4625daa04cfb8ef44c3ffa7687b, type: 3}
+  - {fileID: -1679085568475732275, guid: f42b22db263c44a9eb048038ab7ec93c, type: 3}
+  - {fileID: -4960229840327395196, guid: 688642044b6e94c4e956d934e17d4f7d, type: 3}
+  - {fileID: -8398409672689469449, guid: 3eca67a670c5d42e5a3291b93432bfff, type: 3}
+  - {fileID: -6658418643737043593, guid: fab1ea27baa71494fa9051532623fbee, type: 3}
+  - {fileID: 6490354421893865411, guid: 8affcb18a75d541b2b38d1fdaff9c5e4, type: 3}
+  - {fileID: -3047093270054505527, guid: d8eee6cd5fca9438294df7f8fd2f10b4, type: 3}
+  - {fileID: 417835678940605132, guid: 3022b9eaccc7e428490070636fbab345, type: 3}
+  - {fileID: 6216626595070851197, guid: f0f145fb5c153403e81119a9e3fee49d, type: 3}
+  - {fileID: -609197253124883428, guid: 944b6cb49a0864bc1baab4b2c9e2e1fe, type: 3}
+  - {fileID: -4109647963036294930, guid: 6d91056b8ba1d4b00a2d8cb365665a5a, type: 3}
+  - {fileID: -3067493327820312267, guid: 73807891a9a5a4bae9c1046dea3b7437, type: 3}
+  - {fileID: 8051787128312575447, guid: a0df9f6820c1a4d17be15b6eb6e99284, type: 3}
+  - {fileID: -391791065217982268, guid: 5a9ad5ae47b4d4bc49e85e782d5b3823, type: 3}
+  - {fileID: -6625191455329246351, guid: 7bdebbfecbe4c420886dbb59bdd71676, type: 3}
+  - {fileID: 991369460418844821, guid: 3982a8a33f66f456089c50eeb912c949, type: 3}
+  attackImpactFramesPerSecond: 18
+  attackImpactScale: 1.2
   damageType: 0
   baseDamage: 0
   percentDamage: 0
@@ -25,8 +49,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
     - rid: 101
       type: {class: StatusComboDamageEffect, ns: , asm: Assembly-CSharp}
       data:

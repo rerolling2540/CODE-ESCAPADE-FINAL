@@ -563,8 +563,8 @@ public class CharacterInventory : MonoBehaviour
             try{target=JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey));}
             catch(ArgumentException){Debug.LogWarning("Enemy gold could not be saved: inventory data is unreadable.");return 0;}
         }
-        string receipt=scene+"/"+encounterId;
-        if(target==null||target.encounterGoldRewards?.Contains(receipt)==true)return 0;
+        string receipt=MapSceneNames.Resolve(scene)+"/"+encounterId;
+        if(target==null||target.encounterGoldRewards?.Exists(r=>MapSceneNames.ResolveProgressKey(r)==receipt)==true)return 0;
         int granted=ApplyEncounterGold(target,receipt,amount);
         if(live!=null)live.Save();
         else
@@ -577,8 +577,9 @@ public class CharacterInventory : MonoBehaviour
     static int ApplyEncounterGold(SaveData target,string receipt,int amount)
     {
         if(target==null||string.IsNullOrEmpty(receipt)||amount<=0)return 0;
+        receipt=MapSceneNames.ResolveProgressKey(receipt);
         if(target.encounterGoldRewards==null)target.encounterGoldRewards=new List<string>();
-        if(target.encounterGoldRewards.Contains(receipt))return 0;
+        if(target.encounterGoldRewards.Exists(r=>MapSceneNames.ResolveProgressKey(r)==receipt))return 0;
         int before=Mathf.Max(0,target.coins);
         target.coins=(int)Math.Min(int.MaxValue,(long)before+amount);
         target.encounterGoldRewards.Add(receipt);

@@ -25,7 +25,7 @@ public static class EnemyCounterattackChecks
                 try
                 {
                     data.openingAction=opening;data.attackStyle=style;data.appliesStatusEffect=true;
-                    var enemy=go.GetComponent<EnemyView>();enemy.SetUp(data,"Scene3");
+                    var enemy=go.GetComponent<EnemyView>();enemy.SetUp(data,"Shadowroot Depths");
                     // Exercise combat logic without generating transient status UI or playing VFX.
                     typeof(CombatantView).GetField("statusEffectsUI",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(enemy,null);
                     var counter=new AttackHeroGA(enemy,isCounterattack:true);

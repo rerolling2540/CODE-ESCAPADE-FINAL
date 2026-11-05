@@ -20,7 +20,7 @@ public static class WardenQuestPlacement
     {
         if(EditorApplication.isPlaying)throw new System.Exception("Stop Play Mode before authoring.");
         var active=SceneManager.GetActiveScene();var scenes=new List<Scene>();var opened=new List<Scene>();
-        foreach(string name in new[]{"Scene 2","Scene3","map 4","map 5"}){string path="Assets/Scenes/"+name+".unity";var s=SceneManager.GetSceneByPath(path);if(!s.IsValid()||!s.isLoaded){s=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);opened.Add(s);}if(s.isDirty)throw new System.Exception("Scene has unsaved changes: "+name);scenes.Add(s);}
+        foreach(string name in new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"}){string path="Assets/Scenes/"+name+".unity";var s=SceneManager.GetSceneByPath(path);if(!s.IsValid()||!s.isLoaded){s=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);opened.Add(s);}if(s.isDirty)throw new System.Exception("Scene has unsaved changes: "+name);scenes.Add(s);}
         System.IO.Directory.CreateDirectory(Folder);AssetDatabase.Refresh();
         var sourceElf=All<Npc_Talk>(scenes[0]).First(n=>n.offersElfQuest&&n.transform.Find("Elf NPC")!=null);
         string elfPath=Folder+"/Elf - Warden Guide.prefab";
@@ -55,8 +55,8 @@ public static class WardenQuestPlacement
             so.ApplyModifiedPropertiesWithoutUndo();string data=Folder+"/Warden Final Trial.asset";AssetDatabase.CreateAsset(encounter,data);e.battleEncounter=encounter;e.patrolSpeed=0;e.patrolRadius=.5f;go.transform.position=Floor(scenes[3],new Vector3(147,4,0))+Vector3.up;
             string path=Folder+"/Warden Final Trial.prefab";PrefabUtility.SaveAsPrefabAssetAndConnect(go,path,InteractionMode.AutomatedAction);
         }
-        Route(scenes[2],new Vector3(350,-139,0),"map 5","warden-map5",true);
-        Route(scenes[3],new Vector3(125,4,0),"map 4","warden-map4",false);
+        Route(scenes[2],new Vector3(350,-139,0),"Forest of Dawn","warden-map5",true);
+        Route(scenes[3],new Vector3(125,4,0),"Frostbound Passage","warden-map4",false);
         Arrival(scenes[2],"warden-map4",new Vector3(346,-139,0));Arrival(scenes[3],"warden-map5",new Vector3(129,4,0));
         var build=EditorBuildSettings.scenes.ToList();if(!build.Any(s=>s.path==scenes[3].path))build.Add(new EditorBuildSettingsScene(scenes[3].path,true));else build.First(s=>s.path==scenes[3].path).enabled=true;EditorBuildSettings.scenes=build.ToArray();
         foreach(var s in scenes){EditorSceneManager.MarkSceneDirty(s);EditorSceneManager.SaveScene(s);}AssetDatabase.SaveAssets();SceneManager.SetActiveScene(active);foreach(var s in opened)EditorSceneManager.CloseScene(s,true);

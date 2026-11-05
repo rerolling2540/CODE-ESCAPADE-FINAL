@@ -16,7 +16,7 @@ public static class HuntQuestProgress
         {this.title=title;this.story=story;this.target=target;this.advice=advice;encounterIds=ids;this.required=required;this.xp=xp;this.gold=gold;this.scraps=scraps;this.tokens=tokens;}
     }
     public static string Name(int giver)=>giver==0?"Eleonore":"Joanna";
-    public static string Scene(int giver)=>giver==0?"Scene 2":"Scene3";
+    public static string Scene(int giver)=>giver==0?"Whispering Hollow":"Shadowroot Depths";
     public static string Key(int giver,int stage)=>"hunt-v1-"+giver+"-"+stage;
     static readonly Contract[][] contracts={
         new[]{
@@ -69,6 +69,6 @@ public static class HuntQuestProgress
     {
         int stage=Stage(save,giver);if(stage>=Stages)return "<b>"+Name(giver).ToUpperInvariant()+"'S CONTRACTS</b>\nAll three contracts completed.";
         var c=Get(giver,stage);
-        return "<b>"+Name(giver).ToUpperInvariant()+"'S CONTRACT  •  "+(stage+1)+" / 3</b>\n"+c.title+"\n\n"+(Ready(save,giver)?"<color=#24552A><b>REWARD READY</b></color>\nReturn to "+Name(giver)+".":c.target+" ("+Count(save,giver,stage)+" / "+c.required+")\n"+c.advice)+"\nLocation: "+Scene(giver).Replace("Scene3","Scene 3")+"\n\n<b>Reward</b>\n"+Reward(c);
+        return "<b>"+Name(giver).ToUpperInvariant()+"'S CONTRACT  •  "+(stage+1)+" / 3</b>\n"+c.title+"\n\n"+(Ready(save,giver)?"<color=#24552A><b>REWARD READY</b></color>\nReturn to "+Name(giver)+".":c.target+" ("+Count(save,giver,stage)+" / "+c.required+")\n"+c.advice)+"\nLocation: "+Scene(giver)+"\n\n<b>Reward</b>\n"+Reward(c);
     }
 }

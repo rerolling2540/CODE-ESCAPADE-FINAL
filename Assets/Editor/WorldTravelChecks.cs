@@ -14,7 +14,7 @@ public static class WorldTravelChecks
         foreach(var d in catalog.destinations)check(EditorBuildSettings.scenes.Any(b=>b.enabled&&System.IO.Path.GetFileNameWithoutExtension(b.path)==d.sceneName&&System.IO.File.Exists(b.path)),"Destination cannot be loaded: "+d.sceneName);
         check(catalog.destinations.Select(d=>d.sceneName).Distinct().Count()==5,"Duplicate destinations");
         var active=SceneManager.GetActiveScene();
-        foreach(string name in new[]{"Scene 2","Scene3","map 4","map 5"})
+        foreach(string name in new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"})
         {
             string path="Assets/Scenes/"+name+".unity";var scene=SceneManager.GetSceneByPath(path);bool opened=!scene.IsValid()||!scene.isLoaded;if(opened)scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
             var components=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<MonoBehaviour>(true)).ToArray();var portals=components.OfType<MonolithTravel>().ToArray();

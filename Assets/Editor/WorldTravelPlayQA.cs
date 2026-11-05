@@ -42,8 +42,8 @@ public static class WorldTravelPlayQA
         if(!backup.prefs.Any(p=>p.key.StartsWith("CodeEscapade.Slot.")))throw new Exception("Could not locate save preferences for backup; play test was not started.");
         SessionState.SetString(Token+"backup",JsonUtility.ToJson(backup));SessionState.SetString(Token+"scene",SceneManager.GetActiveScene().path);SessionState.SetBool(Token+"armed",true);
         foreach(var p in backup.prefs)PlayerPrefs.DeleteKey(p.key);PlayerPrefs.SetInt("CodeEscapade.ActiveSlot",9);PlayerPrefs.SetInt("SelectedCharacter",0);PlayerPrefs.SetInt("CodeEscapade.SlotMigration.v1",1);PlayerPrefs.Save();
-        SessionState.SetString(Token+"pending","Scene3");SessionState.SetBool(Token+"arrival",false);SessionState.EraseString(Token+"error");
-        EditorSceneManager.OpenScene("Assets/Scenes/Scene3.unity",OpenSceneMode.Single);return "Prepared isolated travel test. Existing save/profile preferences are backed up and restore automatically when Play Mode stops.";
+        SessionState.SetString(Token+"pending","Shadowroot Depths");SessionState.SetBool(Token+"arrival",false);SessionState.EraseString(Token+"error");
+        EditorSceneManager.OpenScene("Assets/Scenes/Shadowroot Depths.unity",OpenSceneMode.Single);return "Prepared isolated travel test. Existing save/profile preferences are backed up and restore automatically when Play Mode stops.";
     }
     static void Changed(PlayModeStateChange state)
     {if(state==PlayModeStateChange.EnteredEditMode&&SessionState.GetBool(Token+"armed",false))EditorApplication.delayCall+=Restore;}

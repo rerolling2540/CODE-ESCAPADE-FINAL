@@ -60,7 +60,7 @@ public sealed class PlayerDeathFlow : MonoBehaviour
         if (saved != null && saved.hasCheckpoint && saved.checkpointScene == scene.name) yield break;
         if (player == null) player = FindFirstObjectByType<playerMovement>();
         if (player == null || PlayerHealth.CurrentHealth <= 0) yield break;
-        if (scene.name == "Scene 2" && animations != null)
+        if (scene.name == "Whispering Hollow" && animations != null)
             RecordCheckpoint(animations.villagePosition);
         else RecordCheckpoint(saved != null && saved.hasPosition && saved.scene == scene.name ? saved.position : player.transform.position);
     }

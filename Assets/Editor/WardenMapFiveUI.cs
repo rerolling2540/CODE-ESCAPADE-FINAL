@@ -10,7 +10,7 @@ public static class WardenMapFiveUI
 {
     public static string Apply()
     {
-        var active=SceneManager.GetActiveScene();var source=EditorSceneManager.OpenScene("Assets/Scenes/map 4.unity",OpenSceneMode.Additive);var target=EditorSceneManager.OpenScene("Assets/Scenes/map 5.unity",OpenSceneMode.Additive);
+        var active=SceneManager.GetActiveScene();var source=EditorSceneManager.OpenScene("Assets/Scenes/Frostbound Passage.unity",OpenSceneMode.Additive);var target=EditorSceneManager.OpenScene("Assets/Scenes/Forest of Dawn.unity",OpenSceneMode.Additive);
         if(target.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ExplorationHUD>(true)).Any()){EditorSceneManager.CloseScene(source,true);EditorSceneManager.CloseScene(target,true);return "Map 5 already has exploration UI.";}
         string[] names={"AudioManager","Exploration HUD and Inventory","Setting UI","EventSystem","Canvas","Exploration Health HUD","Quest Journal HUD","LobbyConfirmationManager","palitan ng sine"};
         var roots=source.GetRootGameObjects();var selected=roots.Where(r=>names.Contains(r.name)).ToArray();if(selected.Length!=names.Length)throw new Exception("Missing reusable Map 4 UI root.");

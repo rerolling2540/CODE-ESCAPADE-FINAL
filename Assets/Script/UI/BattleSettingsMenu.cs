@@ -308,6 +308,7 @@ public sealed class BattleSettingsMenu : MonoBehaviour
     /// <summary>Registers a runtime-created battle button for the shared Scene 2 click sound.</summary>
     public static void AttachClickSound(Button button)
     {
+        if (!GameAudio.UiClickSoundsEnabled) return;
         if (button == null || activeInstance == null) return;
         BattleButtonClickSound clickSound = button.GetComponent<BattleButtonClickSound>();
         if (clickSound == null) clickSound = button.gameObject.AddComponent<BattleButtonClickSound>();

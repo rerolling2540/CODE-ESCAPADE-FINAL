@@ -112,7 +112,7 @@ MonoBehaviour:
   maxEncounterHeightDifference: 3.5
   requireLineOfSight: 1
   flying: 0
-  patrolSpeed: 0.6
+  patrolSpeed: 0
   overworldHeight: 4.2
   patrolRadius: 2
   preserveAuthoredTransform: 1

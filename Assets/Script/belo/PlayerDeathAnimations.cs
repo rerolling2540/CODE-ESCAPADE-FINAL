@@ -7,7 +7,7 @@ public sealed class PlayerDeathAnimations : ScriptableObject
     public Sprite[] archer;
     public Sprite[] mage;
     [Min(1f)] public float framesPerSecond = 10f;
-    public string villageScene = "Scene 2";
+    public string villageScene = "Whispering Hollow";
     public Vector3 villagePosition;
 
     public Sprite[] ForCharacter(int character) => character == SelectedHero.ArcherIndex ? archer :

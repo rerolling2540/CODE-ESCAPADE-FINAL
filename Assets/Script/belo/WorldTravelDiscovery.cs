@@ -5,10 +5,10 @@ using UnityEngine.SceneManagement;
 /// <summary>Map discovery belongs to a save slot. Old saves retain their known save/checkpoint maps.</summary>
 public static class WorldTravelDiscovery
 {
-    public static string Canonical(string scene)=>scene=="Scene4"?"map 4":scene;
+    public static string Canonical(string scene)=>MapSceneNames.Resolve(scene);
     // The grove has no exploration entrance; the elf unlocks its first monolith journey.
     public static bool CanTravelTo(SaveSlots.Record save,string scene)=>scene=="MainMenu"||HasVisited(save,scene)||
-        Canonical(scene)=="map 5"&&save!=null&&save.wardenAccepted&&WardenQuest.Chapter(save)>=5;
+        Canonical(scene)=="Forest of Dawn"&&save!=null&&save.wardenAccepted&&WardenQuest.Chapter(save)>=5;
     public static bool HasVisited(SaveSlots.Record save,string scene)
     {
         scene=Canonical(scene);

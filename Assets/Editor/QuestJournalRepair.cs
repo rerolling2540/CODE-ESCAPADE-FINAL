@@ -10,7 +10,7 @@ public static class QuestJournalRepair
     public static string Apply()
     {
         if(EditorApplication.isPlaying)throw new Exception("Stop Play Mode before saving journal repairs.");var active=SceneManager.GetActiveScene();int repaired=0;
-        foreach(string name in new[]{"Scene 2","Scene3","map 4","map 5"})
+        foreach(string name in new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"})
         {
             string path="Assets/Scenes/"+name+".unity";var scene=SceneManager.GetSceneByPath(path);bool opened=!scene.IsValid()||!scene.isLoaded;if(opened)scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
             if(scene.isDirty)throw new Exception("Unsaved scene changes: "+name);
@@ -31,7 +31,7 @@ public static class QuestJournalRepair
         var round=JsonUtility.FromJson<SaveSlots.Record>(JsonUtility.ToJson(save));check(QuestReturnPanel.Ready(round).Count==1,"Readiness lost after reload");
         save.wardenChapter=6;check(QuestReturnPanel.Ready(save).Count==0,"Finished campaign still offers reward travel");
         var active=SceneManager.GetActiveScene();
-        foreach(string name in new[]{"Scene 2","Scene3","map 4","map 5"})
+        foreach(string name in new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"})
         {
             var path="Assets/Scenes/"+name+".unity";var scene=SceneManager.GetSceneByPath(path);bool opened=!scene.IsValid()||!scene.isLoaded;if(opened)scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
             var h=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<QuestJournalHud>(true)).Single();var so=new SerializedObject(h);

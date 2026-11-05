@@ -41,7 +41,7 @@ public static class WardenVisualAidChecks
         }
         finally{DialogueManager.Instance=previous;SceneManager.SetActiveScene(active);EditorSceneManager.CloseScene(temp,true);}
         int displays=0;
-        foreach(string name in new[]{"Scene 2","Scene3","map 4","map 5"})
+        foreach(string name in new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"})
         {
             string path="Assets/Scenes/"+name+".unity";var scene=SceneManager.GetSceneByPath(path);bool opened=!scene.IsValid()||!scene.isLoaded;if(opened)scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
             foreach(var aid in scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<WardenVisualAid>(true)))

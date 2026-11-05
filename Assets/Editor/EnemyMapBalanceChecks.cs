@@ -15,7 +15,7 @@ public static class EnemyMapBalanceChecks
         int count=0;Action<bool,string> check=(v,m)=>{if(!v)throw new Exception(m);count++;};
         string before=JsonUtility.ToJson(SaveSlots.Read(SaveSlots.Active));
         var enemies=AssetDatabase.FindAssets("t:EnemyData").Select(g=>AssetDatabase.LoadAssetAtPath<EnemyData>(AssetDatabase.GUIDToAssetPath(g))).ToArray();
-        string[] maps={"Scene 2","Scene3","map 4","map 5"};
+        string[] maps={"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"};
         foreach(var enemy in enemies)
         {
             string original=JsonUtility.ToJson(enemy);
@@ -33,17 +33,18 @@ public static class EnemyMapBalanceChecks
             check(original==JsonUtility.ToJson(enemy),"Shared enemy asset mutated during resolution");
         }
         var tutorial=enemies.Single(e=>e.progressionRank==EnemyProgressionRank.Tutorial);
-        check(EnemyMapBalance.Resolve(tutorial,"Scene 2").health==55&&EnemyMapBalance.Resolve(tutorial,"Scene 2").experience==10,"Tutorial became harder");
+        check(EnemyMapBalance.Resolve(tutorial,"Whispering Hollow").health==55&&EnemyMapBalance.Resolve(tutorial,"Whispering Hollow").experience==10,"Tutorial became harder");
         var sentinel=enemies.Single(e=>e.progressionRank==EnemyProgressionRank.LearningTrial);
-        var final=EnemyMapBalance.Resolve(sentinel,"map 5");
+        var final=EnemyMapBalance.Resolve(sentinel,"Forest of Dawn");
         check(final.health==190&&final.experience*2==280&&final.gold*2==100,"Two-sentinel reward mismatch");
         var boss=enemies.Single(e=>e.name=="Scene 3 Flying Demon");
-        check(EnemyMapBalance.Resolve(boss,"Scene3").health>EnemyMapBalance.Resolve(enemies.Single(e=>e.name=="Forest Demon"),"Scene3").health*2,"Boss is no stronger than normal enemy");
+        check(EnemyMapBalance.Resolve(boss,"Shadowroot Depths").health>EnemyMapBalance.Resolve(enemies.Single(e=>e.name=="Forest Demon"),"Shadowroot Depths").health*2,"Boss is no stronger than normal enemy");
         var dataType=typeof(CharacterInventory).GetNestedType("SaveData",BindingFlags.NonPublic);
         var grant=typeof(CharacterInventory).GetMethod("ApplyEncounterGold",BindingFlags.NonPublic|BindingFlags.Static);
         object inventory=Activator.CreateInstance(dataType,true);
         Func<string,int,int> award=(id,gold)=>(int)grant.Invoke(null,new[]{inventory,(object)id,gold});
         check(award("Scene3/enemy",30)==30&&award("Scene3/enemy",30)==0,"Duplicate gold paid");
+        check(award("Shadowroot Depths/enemy",30)==0,"Renamed map paid the same encounter twice");
         check(award("map 5/enemy",75)==75,"Another map lost its gold");
         inventory=JsonUtility.FromJson(JsonUtility.ToJson(inventory),dataType);
         check(award("Scene3/enemy",30)==0&&(int)dataType.GetField("coins").GetValue(inventory)==105,"Gold receipt lost on reload");

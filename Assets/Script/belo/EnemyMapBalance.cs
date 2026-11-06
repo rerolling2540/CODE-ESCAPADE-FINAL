@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>Fixed map progression, independent of player level and shared asset mutation.</summary>
 public static class EnemyMapBalance
 {
-    static readonly int[] Health={100,180,300,460},Experience={45,85,140,210},Gold={15,30,50,75};
+    static readonly int[] Health={200,450,600,800},Experience={45,85,140,210},Gold={15,30,50,75};
     public readonly struct Stats
     {
         public readonly int health,experience,gold;

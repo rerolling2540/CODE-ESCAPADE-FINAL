@@ -1013,13 +1013,9 @@ public static class BattleHudMedieval
 
     private const int MaxEp = 5;
     private const int EventsPerEpStar = 2;
-    // Temporary animation-testing switch: start each battle with Starfall ready.
-    // Set this to false when normal EP progression should resume.
-    private const bool StartWithFullEpForAnimationTesting = true;
-
     public static void ResetEpMeter()
     {
-        currentEp = StartWithFullEpForAnimationTesting ? MaxEp : 0;
+        currentEp = 0;
         cardsPlayedTowardEp = 0;
         enemyHitsTowardEp = 0;
         for (int i = 0; i < epStarFills.Length; i++) epStarFills[i] = null;

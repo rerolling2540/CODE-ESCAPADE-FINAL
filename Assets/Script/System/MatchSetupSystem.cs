@@ -1942,7 +1942,7 @@ public class EncounterBattleReturn : MonoBehaviour
         yield return BattleTutorialGuide.ExplainResult(victory);
         yield return BattleReportScroll.Present("VICTORY",awardedExperience,awardedGold);
         if (victory && caveBattle && !returning &&
-            MapSceneNames.Resolve(encounterScene) == "Forest of Dawn" && encounterId == "the final boss")
+            MapSceneNames.Resolve(encounterScene) == "Forest of Dawn" && encounterId == WardenQuest.FinalBossEncounter)
         {
             returning = true;
             FinalVictoryEnding.Show();
@@ -1951,18 +1951,18 @@ public class EncounterBattleReturn : MonoBehaviour
         Return();
     }
 
-    void Return()
+    void Return(bool retreated = false)
     {
         if (returning) return;
         returning = true;
         Time.timeScale = 1f;
         var saved = SaveSlots.Read(SaveSlots.Active);
         if (caveBattle && saved != null && Application.CanStreamedLevelBeLoaded(saved.scene))
-            GameSave.EnsureInstance().ReturnFromBattle();
+            GameSave.EnsureInstance().ReturnFromBattle(retreated);
         else SceneManager.LoadScene("MainMenu");
     }
 
-    public void ReturnToLobby() => Return();
+    public void ReturnToLobby() => Return(retreated: !BattleEnded);
 
     void OnDestroy() { BattleEnded = false; }
 }

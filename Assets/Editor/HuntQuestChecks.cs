@@ -52,8 +52,10 @@ public static class HuntQuestChecks
         var earlier=new SaveSlots.Record();earlier.defeatedEncounters.AddRange(HuntQuestProgress.Get(0,0).encounterIds);
         check(!HuntQuestProgress.Ready(earlier,0),"Earlier victories skipped acceptance");HuntQuestProgress.ApplyAccept(earlier,0,0);
         check(HuntQuestProgress.Ready(earlier,0),"Earlier victories did not count");
-        var renamed=new SaveSlots.Record();renamed.defeatedEncounters.AddRange(new[]{"boss","boss","Scene 2 - Bringer Of Death 01"});
-        check(HuntQuestProgress.Count(renamed,0,2)==1,"Renamed Bringer victory lost or counted twice");
+        var renamed=new SaveSlots.Record();renamed.defeatedEncounters.Add("Scene 2 - Bringer Of Death 01");
+        check(HuntQuestProgress.Count(renamed,0,2)==1,"Old Bringer victory lost after rename");
+        renamed.defeatedEncounters.AddRange(new[]{"boss","boss"});
+        check(HuntQuestProgress.Count(renamed,0,2)==1,"Renamed Bringer victory counted twice");
         check(HuntQuestProgress.Count(renamed,1,2)==0,"Bringer incorrectly completed Joanna's boss contract");
         check(!HuntQuestProgress.Ready(new SaveSlots.Record(),0),"Progress leaked between slots");
         var dataType=typeof(CharacterInventory).GetNestedType("SaveData",BindingFlags.NonPublic);var data=Activator.CreateInstance(dataType,true);
@@ -135,7 +137,7 @@ public static class HuntQuestChecks
     static void WriteCamera(Camera camera,string name,Action before=null)
     {
         var rt=new RenderTexture(1280,720,24);camera.targetTexture=rt;var old=RenderTexture.active;var tex=new Texture2D(1280,720,TextureFormat.RGB24,false);
-        try{before?.Invoke();camera.Render();RenderTexture.active=rt;tex.ReadPixels(new Rect(0,0,1280,720),0,0);tex.Apply();System.IO.File.WriteAllBytes("C:/Users/BURAT/.codex/visualizations/2026/10/10/01a12675-f56a-7032-8484-45c9ba6483bc/"+name,tex.EncodeToPNG());}
+        try{before?.Invoke();camera.Render();RenderTexture.active=rt;tex.ReadPixels(new Rect(0,0,1280,720),0,0);tex.Apply();System.IO.File.WriteAllBytes(System.IO.Path.Combine(System.IO.Path.GetTempPath(),name),tex.EncodeToPNG());}
         finally{RenderTexture.active=old;camera.targetTexture=null;UnityEngine.Object.DestroyImmediate(tex);UnityEngine.Object.DestroyImmediate(rt);}
     }
 }

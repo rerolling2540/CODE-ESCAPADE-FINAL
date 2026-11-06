@@ -8,7 +8,8 @@ public static class QuestJournalText
     public static string Main(SaveSlots.Record s)
     {
         int c=WardenQuest.Chapter(s);
-        if(c==6)return "<b>WARDEN OF THE HOLLOW</b>\nQuest complete. You earned the Warden title.";
+        if(c==6)return "<b>WARDEN OF THE HOLLOW</b>\nQuest complete. You earned the Warden title." +
+            (s.defeatedEncounters?.Contains(WardenQuest.FinalBossEncounter)==true ? "" : "\nYou can now challenge the final boss in Forest of Dawn.");
         if(s==null||!s.wardenAccepted)return "<b>MAIN QUEST</b>\nSpeak to the elf in Whispering Hollow to begin.";
         string status=WardenQuest.Ready(s)?"<color=#24552A><b>REWARD READY</b></color>\nSpeak to the elf to collect it.":"<b>Do next</b>\n"+QuestLearningRoute.Next(s);
         status+="\n\n<b>Chapter checklist</b>\n"+QuestLearningRoute.Checklist(QuestLearningRoute.Chapter(s));

@@ -31,7 +31,8 @@ public class EnemyData : ScriptableObject
     public EnemyAttackStyle attackStyle = EnemyAttackStyle.Melee;
     [Header("Battle Intent")]
     [Min(1)] public int attackCountdown = 15;
-    [Min(1)] public int breakMeterMax = 100;
+    [Min(1), Tooltip("Break meter capacity at 200 max HP. Scales with the enemy's battle max HP.")]
+    public int breakMeterMax = 100;
     [Header("Attack Projectile")]
     public Sprite[] projectileFrames;
     public Sprite[] impactFrames;

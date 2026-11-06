@@ -9,11 +9,12 @@ public class GameSave : MonoBehaviour
     private float nextAutoSave;
     private bool freshTutorialStart;
     private bool safeRecovery;
+    private bool pendingRetreat;
     private string battleReturnScene;
     private Vector3 battleReturnPosition;
     public void RememberBattleReturn(Transform player)
     {battleReturnScene=SceneManager.GetActiveScene().name;battleReturnPosition=player.position;}
-    public void ReturnFromBattle()=>LoadSaved(false,true);
+    public void ReturnFromBattle(bool retreated = false) => LoadSaved(false, true, retreated);
     public void ContinueFromCheckpoint()=>LoadSaved(true,false);
 
     public static GameSave EnsureInstance()
@@ -81,7 +82,7 @@ public class GameSave : MonoBehaviour
     public void ContinueGame()
     {LoadSaved(false,false);}
 
-    private void LoadSaved(bool recoverSafely,bool fromBattle)
+    private void LoadSaved(bool recoverSafely,bool fromBattle,bool retreated = false)
     {
         var saved = SaveSlots.Read(SaveSlots.Active);
         if(fromBattle&&saved!=null&&!string.IsNullOrEmpty(battleReturnScene))
@@ -92,6 +93,7 @@ public class GameSave : MonoBehaviour
             return;
         }
         pendingRestore = saved;
+        pendingRetreat = retreated;
         safeRecovery=recoverSafely;
         freshTutorialStart = false;
         PlayerPrefs.SetInt("SelectedCharacter", saved.character);
@@ -104,7 +106,14 @@ public class GameSave : MonoBehaviour
         WorldTravelDiscovery.RecordVisit(pendingRestore,scene.name);
         WorldTravelDiscovery.RecordCurrentScene();
         if (pendingRestore != null && scene.name == pendingRestore.scene)
+        {
+            if (pendingRetreat)
+            {
+                pendingRetreat = false;
+                CaveEnemyEncounter.BeginRetreatGracePeriod();
+            }
             StartCoroutine(RestorePlayer());
+        }
         else if (freshTutorialStart && scene.name == "Whispering Hollow")
             StartCoroutine(StartAtTutorial());
         nextAutoSave = Time.unscaledTime + 15f;

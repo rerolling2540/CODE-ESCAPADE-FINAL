@@ -20,11 +20,13 @@ public static class WardenQuestChecks
         for(int chapter=0;chapter<6;chapter++)
         {
             check(WardenQuest.Ready(s),"Chapter not ready: "+chapter);
+            check(!WardenQuest.CanFightFinalBoss(s),"Final boss unlocked before claiming chapter "+chapter);
             check(!WardenQuest.ApplyReward(s,chapter+1),"Wrong chapter paid");
             check(WardenQuest.ApplyReward(s,chapter),"Valid chapter not paid");
             check(!WardenQuest.ApplyReward(s,chapter),"Duplicate reward paid");
         }
         check(s.wardenChapter==6&&!WardenQuest.Ready(s),"Campaign did not finish");
+        check(WardenQuest.CanFightFinalBoss(s)&&!WardenQuest.CanFightFinalBoss(null),"Final boss unlock did not require completed quest");
         check(s.level==7&&s.experience==50,"XP curve/reward total mismatch");
         var roundTrip=JsonUtility.FromJson<SaveSlots.Record>(JsonUtility.ToJson(s));check(roundTrip.wardenChapter==6&&roundTrip.wardenProofs.Count==7,"Save round trip failed");
         var old=JsonUtility.FromJson<SaveSlots.Record>("{\"elfQuestStage\":4,\"level\":6}");check(old.elfQuestStage==4&&WardenQuest.Chapter(old)==0&&!WardenQuest.Ready(old),"Old save lost legacy state");
@@ -71,7 +73,27 @@ public static class WardenQuestChecks
             check(CharacterAlmanac.IsExplorationScene(name),"Missing exploration support");
             check(scene.GetRootGameObjects().Sum(r=>r.GetComponentsInChildren<CharacterInventory>(true).Length)==1,"Missing/duplicate inventory "+name);
             check(scene.GetRootGameObjects().Sum(r=>r.GetComponentsInChildren<QuestJournalHud>(true).Length)==1,"Missing/duplicate journal "+name);
-            if(name=="Forest of Dawn")foreach(var root in scene.GetRootGameObjects())foreach(var b in root.GetComponentsInChildren<UnityEngine.UI.Button>(true))for(int i=0;i<b.onClick.GetPersistentEventCount();i++)check(b.onClick.GetPersistentTarget(i)!=null,"Missing Map 5 menu target: "+b.name);
+            if(name=="Whispering Hollow")
+            {
+                var encounters=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<CaveEnemyEncounter>(true))
+                    .Where(e=>e.gameObject.activeInHierarchy).ToArray();
+                var legacy=new SaveSlots.Record{elfQuestStage=3};
+                legacy.defeatedEncounters.AddRange(encounters.Select(e=>e.name));
+                check(ElfQuestProgress.Ready(legacy),"The earlier cave contract cannot be finished with active encounters");
+                var tutorial=encounters.Single(e=>e.name==BattleTutorialGuide.EncounterId);
+                check(tutorial.PermanentlyDefeated,"Training goblin respawns after a victory");
+            }
+            if(name=="Forest of Dawn")
+            {
+                var trials=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<CaveEnemyEncounter>(true))
+                    .Where(e=>e.name==WardenQuest.FinalEncounter).ToArray();
+                check(trials.Length==1,"Forest of Dawn must have one Warden Final Trial");
+                var trial=trials[0];
+                check(trial.isActiveAndEnabled&&PrefabUtility.IsPartOfPrefabInstance(trial),"Final trial is not an active prefab instance");
+                check(trial.enemy!=null&&trial.battleEncounter!=null&&trial.battleEncounter.CreateEnemySquad().Count==2,"Final trial squad is incomplete");
+                check(trial.PermanentlyDefeated,"Final trial respawns after a victory");
+                foreach(var root in scene.GetRootGameObjects())foreach(var b in root.GetComponentsInChildren<UnityEngine.UI.Button>(true))for(int i=0;i<b.onClick.GetPersistentEventCount();i++)check(b.onClick.GetPersistentTarget(i)!=null,"Missing Map 5 menu target: "+b.name);
+            }
             if(opened)EditorSceneManager.CloseScene(scene,true);
         }
         SceneManager.SetActiveScene(active);check(EditorBuildSettings.scenes.Any(b=>b.path=="Assets/Scenes/Forest of Dawn.unity"&&b.enabled),"Map 5 absent from build");

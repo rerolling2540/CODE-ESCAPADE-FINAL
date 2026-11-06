@@ -6,11 +6,13 @@ using UnityEngine;
 public static class WardenQuest
 {
     public const string FinalEncounter = "Warden Final Trial";
+    public const string FinalBossEncounter = "the final boss";
     public static readonly string[] Titles={"Prepare for the Hollow","First Trial","Restore the Gate","Rekindle the Watchfires","The Scholar's Supplies","Warden of the Hollow"};
     public static readonly string[] Maps={"Whispering Hollow","Whispering Hollow","Shadowroot Depths","Shadowroot Depths","Frostbound Passage","Forest of Dawn"};
     public static readonly int[] XP={50,75,100,125,150,200};
     public static readonly int[] Gold={50,50,100,100,150,200};
     public static int Chapter(SaveSlots.Record s)=>Mathf.Clamp(s?.wardenChapter??0,0,6);
+    public static bool CanFightFinalBoss(SaveSlots.Record s) => s?.wardenAccepted == true && Chapter(s) == Titles.Length;
     public static string Proof(string id)=>LearningQuests.Language+"/"+id;
     public static bool Has(SaveSlots.Record s,string id)=>s?.wardenProofs?.Contains(Proof(id))==true;
     public static bool Lesson(SaveSlots.Record s,int topic)=>s?.workshopExercisesCompleted?.Contains(WorkshopProgression.Id(LearningQuests.Language,topic,0))==true || s?.learningQuestProofs?.Any(p=>p.StartsWith(LearningQuests.Language+"-teacher-")&&p.EndsWith("/"+VisualCodeLessons.Topics[topic]))==true;

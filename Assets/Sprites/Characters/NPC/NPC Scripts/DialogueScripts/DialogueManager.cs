@@ -8,7 +8,7 @@ public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance;
     public CanvasGroup canvasGroup;
-    public Image portrait;
+    public UnityEngine.UI.Image portrait;
     public TMP_Text actorName;
     public TMP_Text dialogueText;
     public Button[] choiceButtons;
@@ -82,6 +82,13 @@ public class DialogueManager : MonoBehaviour
         if (box != null) Place(box, new Vector2(180,120), new Vector2(1450,500));
         var portraitBox = transform.Find("PortraitBox") as RectTransform;
         if (portraitBox != null) Place(portraitBox,new Vector2(-560,110),new Vector2(450,450));
+        if (portrait != null && portrait.rectTransform.parent is RectTransform portraitMask &&
+            portraitMask.parent == portraitBox)
+        {
+            // Align the mask with the blue opening above the frame's lower lip.
+            Inset(portraitMask, new Vector2(.25f, .28f), new Vector2(.77f, .77f));
+            portrait.preserveAspect = true;
+        }
         var choices = transform.Find("Choices") as RectTransform;
         if (choices != null)
         {
@@ -123,6 +130,24 @@ public class DialogueManager : MonoBehaviour
     {rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(.5f,.5f);rect.anchoredPosition=position;rect.sizeDelta=size;rect.localScale=Vector3.one;}
     static void Inset(RectTransform rect,Vector2 min,Vector2 max)
     {rect.anchorMin=min;rect.anchorMax=max;rect.pivot=new Vector2(.5f,.5f);rect.offsetMin=rect.offsetMax=Vector2.zero;rect.localScale=Vector3.one;}
+
+    void FitPortrait(Sprite sprite)
+    {
+        portrait.sprite = sprite;
+        portrait.enabled = sprite != null;
+        if (sprite == null || !(portrait.rectTransform.parent is RectTransform mask)) return;
+
+        // Match Image's sprite padding so transparent margins don't shift or shrink the artwork.
+        Vector4 padding = UnityEngine.Sprites.DataUtility.GetPadding(sprite);
+        float left = Mathf.Round(padding.x), bottom = Mathf.Round(padding.y);
+        float right = Mathf.Round(padding.z), top = Mathf.Round(padding.w);
+        Vector2 spriteSize = sprite.rect.size;
+        float width = Mathf.Max(1f, spriteSize.x - left - right);
+        float height = Mathf.Max(1f, spriteSize.y - bottom - top);
+        float scale = Mathf.Min(mask.rect.width / width, mask.rect.height / height);
+        Vector2 offset = new Vector2(right - left, top - bottom) * (scale * .5f);
+        Place(portrait.rectTransform, offset, spriteSize * scale);
+    }
 
     private void OnDestroy()
     {
@@ -189,8 +214,7 @@ public class DialogueManager : MonoBehaviour
         var speaker = line.speaker != null ? line.speaker : fallbackSpeaker;
         if (speaker != null)
         {
-            portrait.sprite = speaker.portrait;
-            portrait.enabled = portrait.sprite != null;
+            FitPortrait(speaker.portrait);
             actorName.text = speaker.actorName;
         }
         else { portrait.enabled = false; actorName.text = "Traveller"; }

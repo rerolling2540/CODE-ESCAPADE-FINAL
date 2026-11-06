@@ -120,7 +120,7 @@ public class Npc_Talk : MonoBehaviour
         int coins = stage == 1 ? 100 : stage == 2 ? 200 : 350;
         int tokens = stage;
         string nextTask = stage == 1 ? "Next, prove your mastery: defeat at least one Skeleton, Goblin, Mushroom, and Flying Eye encounter. Earlier victories count." :
-            stage == 2 ? "One final duty remains: clear all twelve cave encounters. Return when the last passage is safe." :
+            stage == 2 ? $"One final duty remains: clear {ElfQuestProgress.FinalEncounterRequirement} different cave encounters. Return when the last passage is safe." :
             "The ward is restored. From this day forward, you are Warden of the Hollow.";
         var thanks = Node("Your reward: " + coins + " coins and " + tokens + " library token" + (tokens == 1 ? "." : "s."), nextTask);
         var complete = Node(stage == 1 ? "Three threats silenced. You have given the hollow room to breathe." :
@@ -164,6 +164,8 @@ public class Npc_Talk : MonoBehaviour
 
 public static class ElfQuestProgress
 {
+    public const int FinalEncounterRequirement = 11;
+
     public static int Cleared(SaveSlots.Record saved)
     {
         var names = new HashSet<string>();
@@ -176,7 +178,7 @@ public static class ElfQuestProgress
     static bool IsCaveEncounter(string id)
     {
         if (string.IsNullOrEmpty(id)) return false;
-        // Count only the twelve authored encounters, not arbitrary battle IDs.
+        // Older saves can still receive credit for the original first encounter.
         string[] types = { "Skeleton", "Goblin", "Mushroom", "Flying Eye" };
         for (int i = 1; i <= 12; i++)
             if (id == "Cave " + types[(i - 1) % 4] + " " + i.ToString("00")) return true;
@@ -197,7 +199,7 @@ public static class ElfQuestProgress
     public static bool Ready(SaveSlots.Record saved) => saved != null &&
         (saved.elfQuestStage == 1 && Cleared(saved) >= 3 ||
          saved.elfQuestStage == 2 && Kinds(saved) >= 4 ||
-         saved.elfQuestStage == 3 && Cleared(saved) >= 12);
+         saved.elfQuestStage == 3 && Cleared(saved) >= FinalEncounterRequirement);
 
     public static string Objective(SaveSlots.Record saved)
     {
@@ -216,7 +218,7 @@ public static class ElfQuestProgress
             }
             return "Know Your Enemy (" + Kinds(saved) + "/4). Still needed: " + string.Join(", ", missing) + ".";
         }
-        return "Restore the Ward: clear the cave (" + Cleared(saved) + "/12).";
+        return $"Restore the Ward: clear the cave ({Mathf.Min(Cleared(saved), FinalEncounterRequirement)}/{FinalEncounterRequirement}).";
     }
 }
 

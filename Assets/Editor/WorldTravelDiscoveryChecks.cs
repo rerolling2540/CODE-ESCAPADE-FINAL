@@ -26,7 +26,7 @@ public static class WorldTravelDiscoveryChecks
         check(!WorldTravelDiscovery.RecordVisit(first,"Battle Scene"),"Battle scene counted as map discovery");
         check(!WorldTravelDiscovery.HasVisited(null,"Shadowroot Depths"),"Empty slot unlocked a map");
         check(WorldTravelDiscovery.HasVisited(new SaveSlots.Record{scene="Scene4"},"Frostbound Passage"),"Legacy Map 4 alias not recognized");
-        check(MonolithTravelPanel.IsDiscovered(new WorldTravelCatalog.Destination{sceneName="MainMenu",lobby=true}),"Lobby locked");
+        check(!MonolithTravelPanel.IsDiscovered(new WorldTravelCatalog.Destination{sceneName="MainMenu",lobby=true}),"Lobby appeared in the map-only list");
         var warden=new SaveSlots.Record{scene="Frostbound Passage",wardenAccepted=true,wardenChapter=4};
         check(!WorldTravelDiscovery.CanTravelTo(warden,"Forest of Dawn"),"Final journey unlocked before Map 4 reward");
         warden.wardenChapter=5;

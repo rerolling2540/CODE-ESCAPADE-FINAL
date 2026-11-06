@@ -4,6 +4,7 @@ using System.Collections;
 
 public class EnemyView : CombatantView
 {
+   private const int BreakReferenceHealth = 200;
    [SerializeField] private TMP_Text attackText;
    private EnemyData data;
    private int attackCountdown;
@@ -32,7 +33,9 @@ public class EnemyView : CombatantView
         AttackPower = enemyData.AttackPower;
         maxAttackCountdown = Mathf.Max(1, enemyData.attackCountdown);
         attackCountdown = maxAttackCountdown;
-        maxBreakMeter = Mathf.Max(1, enemyData.breakMeterMax);
+        long scaledBreakMeter = (long)Mathf.Max(1, enemyData.breakMeterMax) * balance.health;
+        maxBreakMeter = (int)System.Math.Clamp(
+            (scaledBreakMeter + BreakReferenceHealth / 2) / BreakReferenceHealth, 1L, int.MaxValue);
         breakMeter = maxBreakMeter;
         breakRestorePending = false;
         openingActionResolved = false;

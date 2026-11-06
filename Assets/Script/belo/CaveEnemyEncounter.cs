@@ -4,6 +4,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(SpriteRenderer))]
 public class CaveEnemyEncounter : MonoBehaviour
 {
+    private const float RetreatGraceSeconds = 5f;
     public EnemyData enemy;
     [Tooltip("Optional battle squad. The overworld still displays this encounter as the single enemy above.")]
     public EncounterData battleEncounter;
@@ -32,16 +33,25 @@ public class CaveEnemyEncounter : MonoBehaviour
     public static string PendingEncounterScene;
     private static string suppressedEncounter;
     private static bool enteringBattle;
+    private static double retreatGraceEndsAt;
     private playerMovement player;
     private Vector3 restingPosition;
     private SpriteRenderer visual;
     private Rigidbody2D body;
     private float direction = 1f;
     private float readyAt;
+
+    public static void BeginRetreatGracePeriod()
+    {
+        suppressedEncounter = null;
+        retreatGraceEndsAt = Time.timeAsDouble + RetreatGraceSeconds;
+    }
+
     public bool PermanentlyDefeated
     {
         get
         {
+            if (gameObject.name == WardenQuest.FinalEncounter || gameObject.name == BattleTutorialGuide.EncounterId) return true;
             bool Special(EnemyData data)=>data!=null&&(data.progressionRank==EnemyProgressionRank.Elite||data.progressionRank==EnemyProgressionRank.Boss);
             if(Special(enemy))return true;
             if(battleEncounter!=null)foreach(var member in battleEncounter.CreateEnemySquad())if(Special(member))return true;
@@ -185,6 +195,7 @@ public class CaveEnemyEncounter : MonoBehaviour
 
     void TryStartBattle(playerMovement character)
     {
+        if (Time.timeAsDouble < retreatGraceEndsAt) return;
         if(gameObject.name==WardenQuest.FinalEncounter)
         {
             var saved=SaveSlots.Read(SaveSlots.Active);
@@ -198,6 +209,8 @@ public class CaveEnemyEncounter : MonoBehaviour
             suppressedEncounter == gameObject.name) return;
         if (!IsPlayerInRange(character) || PlayerHealth.CurrentHealth <= 0 ||
             !Application.CanStreamedLevelBeLoaded("Battle Scene")) return;
+        if (gameObject.name == WardenQuest.FinalBossEncounter && gameObject.scene.name == "Forest of Dawn" &&
+            !WardenQuest.CanFightFinalBoss(SaveSlots.Read(SaveSlots.Active))) return;
         enteringBattle = true;
         suppressedEncounter = gameObject.name;
         GameSave.EnsureInstance().RememberBattleReturn(character.transform);

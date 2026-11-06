@@ -28,10 +28,10 @@ public static class WorldTravelAuthoring
         const string catalogPath="Assets/Resources/Travel/WorldTravelCatalog.asset";var catalog=AssetDatabase.LoadAssetAtPath<WorldTravelCatalog>(catalogPath);
         if(catalog==null){catalog=ScriptableObject.CreateInstance<WorldTravelCatalog>();AssetDatabase.CreateAsset(catalog,catalogPath);}
         catalog.destinations=new[]{
-            new WorldTravelCatalog.Destination{sceneName="Scene 2",title="Scene 2 — Alden's camp",description="Output, variables, and the first battle"},
-            new WorldTravelCatalog.Destination{sceneName="Scene3",title="Scene 3 — Rowan's hollow",description="Conditions, loops, and cave exploration"},
-            new WorldTravelCatalog.Destination{sceneName="map 4",title="Map 4 — Mira's refuge",description="Arrays, lists, and functions"},
-            new WorldTravelCatalog.Destination{sceneName="map 5",title="Map 5 — The Warden's grove",description="Explore the grove and prepare for the final trial"},
+            new WorldTravelCatalog.Destination{sceneName="Whispering Hollow",title="Scene 2 — Alden's camp",description="Output, variables, and the first battle"},
+            new WorldTravelCatalog.Destination{sceneName="Shadowroot Depths",title="Scene 3 — Rowan's hollow",description="Conditions, loops, and cave exploration"},
+            new WorldTravelCatalog.Destination{sceneName="Frostbound Passage",title="Map 4 — Mira's refuge",description="Arrays, lists, and functions"},
+            new WorldTravelCatalog.Destination{sceneName="Forest of Dawn",title="Map 5 — The Warden's grove",description="Explore the grove and prepare for the final trial"},
             new WorldTravelCatalog.Destination{sceneName="MainMenu",title="Lobby",description="Return to character selection and save slots",lobby=true}};EditorUtility.SetDirty(catalog);
         var go=new GameObject("Travel Monolith",typeof(BoxCollider2D),typeof(PortalInteraction),typeof(MonolithTravel));
         var visual=new GameObject("Animated Monolith",typeof(SpriteRenderer));visual.transform.SetParent(go.transform,false);var sr=visual.GetComponent<SpriteRenderer>();sr.sprite=frames[0];sr.sortingOrder=3;visual.transform.localScale=Vector3.one*(3.4f/frames[0].bounds.size.y);
@@ -50,7 +50,7 @@ public static class WorldTravelAuthoring
             File.Copy(temp,"C:/Users/BURAT/.codex/visualizations/2026/10/10/01a12675-f56a-7032-8484-45c9ba6483bc/Scene2-before-monolith.unity",true);AssetDatabase.DeleteAsset(temp);
         }
         var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(Folder+"/Travel Monolith.prefab");int portals=0,aids=0;
-        foreach(string name in new[]{"Scene 2","Scene3","map 4","map 5"})
+        foreach(string name in new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"})
         {
             string path="Assets/Scenes/"+name+".unity";var scene=SceneManager.GetSceneByPath(path);bool opened=!scene.IsValid()||!scene.isLoaded;if(opened)scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
             if(opened&&scene.isDirty)throw new Exception("Unexpected unsaved changes in "+name);
@@ -63,8 +63,8 @@ public static class WorldTravelAuthoring
             var primary=All<MonolithTravel>(scene).FirstOrDefault(m=>m.name=="Travel Monolith - Camp");
             if(primary==null)
             {
-                if(name=="map 5")primary=All<MonolithTravel>(scene).FirstOrDefault();
-                if(primary==null){var go=(GameObject)PrefabUtility.InstantiatePrefab(prefab,scene);go.name="Travel Monolith - Camp";go.transform.position=Floor(scene,elf.transform.position+Vector3.right*(name=="map 4"?-13:name=="Scene3"?-12:12));PrefabUtility.RecordPrefabInstancePropertyModifications(go.transform);primary=go.GetComponent<MonolithTravel>();portals++;}
+                if(name=="Forest of Dawn")primary=All<MonolithTravel>(scene).FirstOrDefault();
+                if(primary==null){var go=(GameObject)PrefabUtility.InstantiatePrefab(prefab,scene);go.name="Travel Monolith - Camp";go.transform.position=Floor(scene,elf.transform.position+Vector3.right*(name=="Frostbound Passage"?-13:name=="Shadowroot Depths"?-12:12));PrefabUtility.RecordPrefabInstancePropertyModifications(go.transform);primary=go.GetComponent<MonolithTravel>();portals++;}
             }
             if(!All<PortalArrivalPoint>(scene).Any(a=>a.arrivalId==WorldTravelCatalog.ArrivalId))
             {
@@ -72,7 +72,7 @@ public static class WorldTravelAuthoring
             }
             foreach(var aid in All<WardenVisualAid>(scene))
             {
-                var at=elf.transform;aid.transform.SetParent(at,true);aid.transform.localPosition=new Vector3(name=="map 4"?-5:4,0,0);aid.teacher=elf;aid.contextualDisplay=true;
+                var at=elf.transform;aid.transform.SetParent(at,true);aid.transform.localPosition=new Vector3(name=="Frostbound Passage"?-5:4,0,0);aid.teacher=elf;aid.contextualDisplay=true;
                 
                 var label=aid.caption;label.fontSize=3.6f;label.rectTransform.sizeDelta=new Vector2(7,1.8f);label.transform.localPosition=new Vector3(1.2f,2.4f,-.05f);label.alignment=TMPro.TextAlignmentOptions.Center;label.color=new Color(1,.94f,.73f);label.fontStyle=TMPro.FontStyles.Bold;label.textWrappingMode=TMPro.TextWrappingModes.Normal;label.enabled=false;
                 foreach(var symbol in aid.symbols)if(symbol!=null)symbol.enabled=false;

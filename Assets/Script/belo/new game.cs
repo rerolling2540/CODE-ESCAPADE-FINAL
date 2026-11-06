@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class NewGameButton : MonoBehaviour
 {
-    public string gameScene = "Scene 2";
+    public string gameScene = "Whispering Hollow";
     public void StartNewGame()
     {
         var menu = FindFirstObjectByType<MainMenuSaveSlots>();

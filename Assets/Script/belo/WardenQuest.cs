@@ -7,7 +7,7 @@ public static class WardenQuest
 {
     public const string FinalEncounter = "Warden Final Trial";
     public static readonly string[] Titles={"Prepare for the Hollow","First Trial","Restore the Gate","Rekindle the Watchfires","The Scholar's Supplies","Warden of the Hollow"};
-    public static readonly string[] Maps={"Scene 2","Scene 2","Scene3","Scene3","map 4","map 5"};
+    public static readonly string[] Maps={"Whispering Hollow","Whispering Hollow","Shadowroot Depths","Shadowroot Depths","Frostbound Passage","Forest of Dawn"};
     public static readonly int[] XP={50,75,100,125,150,200};
     public static readonly int[] Gold={50,50,100,100,150,200};
     public static int Chapter(SaveSlots.Record s)=>Mathf.Clamp(s?.wardenChapter??0,0,6);

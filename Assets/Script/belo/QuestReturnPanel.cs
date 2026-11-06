@@ -20,8 +20,8 @@ public sealed class QuestReturnPanel : MonoBehaviour
     {
         var result=new List<Destination>();
         if(WardenQuest.Ready(s))result.Add(new Destination{giver=-1,scene=WardenQuest.Maps[WardenQuest.Chapter(s)],title="Elf — "+WardenQuest.Titles[WardenQuest.Chapter(s)],key="main-"+WardenQuest.Chapter(s),reward=WardenQuest.RewardText(WardenQuest.Chapter(s))});
-        for(int i=0;i<3;i++)if(LearningQuests.Accepted(s,i)&&!LearningQuests.Claimed(s,i)&&LearningQuests.Completed(s,i)==2)result.Add(new Destination{giver=i,scene=new[]{"Scene 2","Scene3","map 4"}[i],title=new[]{"Alden","Rowan","Mira"}[i]+" — "+LearningQuests.Title(i),key="teacher-"+i,reward=LearningQuests.Reward(i)+" XP"});
-        if(s!=null&&s.elfQuestStage>0&&s.elfQuestStage<4&&ElfQuestProgress.Ready(s))result.Add(new Destination{giver=-1,scene="Scene 2",title="Elf — Earlier cave contract",key="legacy-"+s.elfQuestStage,reward="Cave contract reward"});
+        for(int i=0;i<3;i++)if(LearningQuests.Accepted(s,i)&&!LearningQuests.Claimed(s,i)&&LearningQuests.Completed(s,i)==2)result.Add(new Destination{giver=i,scene=new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage"}[i],title=new[]{"Alden","Rowan","Mira"}[i]+" — "+LearningQuests.Title(i),key="teacher-"+i,reward=LearningQuests.Reward(i)+" XP"});
+        if(s!=null&&s.elfQuestStage>0&&s.elfQuestStage<4&&ElfQuestProgress.Ready(s))result.Add(new Destination{giver=-1,scene="Whispering Hollow",title="Elf — Earlier cave contract",key="legacy-"+s.elfQuestStage,reward="Cave contract reward"});
         for(int i=0;i<2;i++)if(HuntQuestProgress.Ready(s,i)){int stage=HuntQuestProgress.Stage(s,i);result.Add(new Destination{giver=HuntQuestProgress.ReturnGiverOffset+i,scene=HuntQuestProgress.Scene(i),title=HuntQuestProgress.Name(i)+" — "+HuntQuestProgress.Get(i,stage).title,key=HuntQuestProgress.Key(i,stage),reward=HuntQuestProgress.Reward(HuntQuestProgress.Get(i,stage))});}
         return result;
     }
@@ -82,7 +82,7 @@ public sealed class QuestReturnPanel : MonoBehaviour
         {
             var d=destinations[i];bool far=Far(d,player);
             var localNpc=FindNpc(d.giver);string map=localNpc!=null?localNpc.gameObject.scene.name:d.scene;
-            var b=Button(d.title+"\n"+(far?"Travel to "+map.Replace("Scene3","Scene 3"):"Nearby — close this panel and press E"),content.transform,0,0,684,76,()=>Travel(d));b.interactable=far;
+            var b=Button(d.title+"\n"+(far?"Travel to "+map:"Nearby — close this panel and press E"),content.transform,0,0,684,76,()=>Travel(d));b.interactable=far;
             b.gameObject.AddComponent<UnityEngine.UI.LayoutElement>().preferredHeight=76;
         }
         Button("Return later",paper.transform,222,580,320,52,Dismiss);

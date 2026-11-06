@@ -34,8 +34,7 @@ public sealed class Map4TrapBattleSetup : MonoBehaviour
 
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        string normalizedName = scene.name.Replace(" ", string.Empty).ToLowerInvariant();
-        if (!normalizedName.Contains("map4")) return;
+        if (MapSceneNames.Resolve(scene.name) != "Frostbound Passage") return;
         if (active != null) return;
 
         GameObject host = new GameObject("Map 4 Trap Battle HUD");

@@ -44,7 +44,7 @@ public static class CodeMentorAuthoring
     public static string CreateTeachers()
     {
         var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-        if(scene.path!="Assets/Scenes/Scene 2.unity")throw new System.InvalidOperationException("Open Scene 2 before authoring the tutorial teachers.");
+        if(scene.path!="Assets/Scenes/Whispering Hollow.unity")throw new System.InvalidOperationException("Open Scene 2 before authoring the tutorial teachers.");
         Directory.CreateDirectory(Folder);AssetDatabase.Refresh();
         string[] names={"Alden - Scrollkeeper","Rowan - Gate Warden","Mira - Potion Scholar"};
         string[][] clothes={new[]{"Character skin colors/Male Skin1.png","Male Clothing/Blue Pants.png","Male Clothing/Blue Shirt v2.png","Male Clothing/Boots.png","Male Hair/Male Hair1.png"},

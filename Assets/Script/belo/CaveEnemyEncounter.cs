@@ -183,6 +183,7 @@ public class CaveEnemyEncounter : MonoBehaviour
         }
         if (DialogueManager.Instance != null && DialogueManager.Instance.isDialogueActive) return;
         if (character == null || enemy == null || enteringBattle || Time.timeScale <= 0f ||
+            MapArrivalTitle.IsAnnouncing(gameObject.scene) ||
             GameControlsGuide.GameplayOverlayHidden || Time.unscaledTime < readyAt ||
             suppressedEncounter == gameObject.name) return;
         if (!IsPlayerInRange(character) || PlayerHealth.CurrentHealth <= 0 ||

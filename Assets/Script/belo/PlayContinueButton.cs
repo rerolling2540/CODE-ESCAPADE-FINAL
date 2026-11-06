@@ -4,7 +4,7 @@ using TMPro;
 public class PlayContinueButton : MonoBehaviour
 {
     public TMP_Text buttonText;
-    public string gameScene = "Scene 2";
+    public string gameScene = "Whispering Hollow";
     void Start()
     {
         SaveSlots.MigrateLegacy();

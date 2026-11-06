@@ -105,7 +105,7 @@ public class GameSave : MonoBehaviour
         WorldTravelDiscovery.RecordCurrentScene();
         if (pendingRestore != null && scene.name == pendingRestore.scene)
             StartCoroutine(RestorePlayer());
-        else if (freshTutorialStart && scene.name == "Scene 2")
+        else if (freshTutorialStart && scene.name == "Whispering Hollow")
             StartCoroutine(StartAtTutorial());
         nextAutoSave = Time.unscaledTime + 15f;
     }
@@ -144,7 +144,7 @@ public class GameSave : MonoBehaviour
             }
             else Debug.LogError("Could not find a player to restore the save position.");
         }
-        else if (saved.scene == "Scene 2")
+        else if (saved.scene == "Whispering Hollow")
         {
             var player = FindFirstObjectByType<playerMovement>();
             if (player != null) PlaceAtTutorial(player);

@@ -13,7 +13,7 @@ public sealed class MonolithTravelPanel : MonoBehaviour
     private bool restore;
     public static bool IsDiscovered(WorldTravelCatalog.Destination d)=>d!=null&&(d.sceneName=="MainMenu"||WorldTravelDiscovery.HasVisited(SaveSlots.Read(SaveSlots.Active),d.sceneName));
     public static bool CanTravel(WorldTravelCatalog.Destination d)=>d!=null&&!string.IsNullOrWhiteSpace(d.sceneName)&&Application.CanStreamedLevelBeLoaded(d.sceneName)&&WorldTravelDiscovery.CanTravelTo(SaveSlots.Read(SaveSlots.Active),d.sceneName);
-    static string LockedMessage(WorldTravelCatalog.Destination d)=>d?.sceneName=="map 5"?"Locked — claim the elf's Map 4 chapter reward":"Undiscovered — visit this map first";
+    static string LockedMessage(WorldTravelCatalog.Destination d)=>d?.sceneName=="Forest of Dawn"?"Locked — claim the elf's Map 4 chapter reward":"Undiscovered — visit this map first";
     public static void Open(MonolithTravel owner)
     {
         if(IsOpen||owner==null||Time.timeScale<=0||GameControlsGuide.GameplayOverlayHidden)return;

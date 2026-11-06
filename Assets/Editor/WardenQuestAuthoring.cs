@@ -10,7 +10,7 @@ public static class WardenQuestAuthoring
     public static string Inspect()
     {
         var result=new List<string>();var active=SceneManager.GetActiveScene();
-        foreach(string name in new[]{"Scene 2","Scene3","map 4","map 5"})
+        foreach(string name in new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"})
         {
             string path="Assets/Scenes/"+name+".unity";var scene=SceneManager.GetSceneByPath(path);bool opened=!scene.IsValid()||!scene.isLoaded;if(opened)scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
             foreach(var root in scene.GetRootGameObjects())foreach(var t in root.GetComponentsInChildren<Transform>(true))

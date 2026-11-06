@@ -42,7 +42,7 @@ MonoBehaviour:
   progressionRank: 2
   progressionWeight: 1
   battleMaterial: {fileID: 0}
-  battleVisualScale: 1
+  battleVisualScale: 1.5
   attackStyle: 0
   attackCountdown: 15
   breakMeterMax: 100

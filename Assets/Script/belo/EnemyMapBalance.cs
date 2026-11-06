@@ -9,7 +9,11 @@ public static class EnemyMapBalance
         public readonly int health,experience,gold;
         public Stats(int health,int experience,int gold){this.health=health;this.experience=experience;this.gold=gold;}
     }
-    public static int MapIndex(string scene)=>scene=="Scene 2"?0:scene=="Scene3"?1:scene=="map 4"||scene=="Scene4"?2:scene=="map 5"?3:-1;
+    public static int MapIndex(string scene)
+    {
+        scene=MapSceneNames.Resolve(scene);
+        return scene=="Whispering Hollow"?0:scene=="Shadowroot Depths"?1:scene=="Frostbound Passage"?2:scene=="Forest of Dawn"?3:-1;
+    }
     public static Stats Resolve(EnemyData enemy,string scene)
     {
         if(enemy==null)return new Stats(1,0,0);

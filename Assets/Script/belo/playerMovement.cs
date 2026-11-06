@@ -157,8 +157,6 @@ public class playerMovement : MonoBehaviour
         animator.SetBool("Falling", !groundedPose && !isDashing && rb.linearVelocity.y < -0.1f);
         if (smokeEffects != null)
             smokeEffects.UpdateRunning(runningPose && !isDashing, isGrounded, facingRight);
-        if (soundEffects != null)
-            soundEffects.UpdateRunning(runningPose && !isDashing, isGrounded, speed);
     }
 
     void FixedUpdate()

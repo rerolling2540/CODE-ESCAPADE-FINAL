@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-/// <summary>Plays the shared Scene 2 button sound without coupling it to onClick listeners.</summary>
+/// <summary>Plays UI clicks only while the main menu is active.</summary>
 public sealed class BattleButtonClickSound : MonoBehaviour, IPointerClickHandler, ISubmitHandler
 {
     private AudioSource source;
@@ -29,6 +29,7 @@ public sealed class BattleButtonClickSound : MonoBehaviour, IPointerClickHandler
 
     private void Play()
     {
+        if (!GameAudio.UiClickSoundsEnabled) return;
         if (!isActiveAndEnabled || source == null || clip == null) return;
         Button button = GetComponent<Button>();
         if (button != null && !button.IsInteractable()) return;

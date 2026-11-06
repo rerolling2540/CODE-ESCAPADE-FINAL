@@ -33,7 +33,7 @@ public static class ElfGuideRepair
     public static string Check()
     {
         int checks=0;var active=SceneManager.GetActiveScene();var source=UnityEngine.Object.FindObjectsByType<Npc_Talk>(FindObjectsInactive.Include,FindObjectsSortMode.None).First(n=>n.name=="NPC"&&n.offersElfQuest);var expected=source.transform.Find("Elf NPC").GetComponent<Animator>().runtimeAnimatorController;
-        foreach(string name in new[]{"Scene 2","Scene3","map 4","map 5"})
+        foreach(string name in new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"})
         {
             string path="Assets/Scenes/"+name+".unity";var s=SceneManager.GetSceneByPath(path);bool opened=!s.IsValid()||!s.isLoaded;if(opened)s=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
             foreach(var n in s.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<Npc_Talk>(true)).Where(n=>n.name=="Elf - Warden Guide"))

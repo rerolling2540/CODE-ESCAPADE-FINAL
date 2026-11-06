@@ -31,6 +31,6 @@ public class Settings : MonoBehaviour
     public void PlayGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Scene 2");
+        SceneManager.LoadScene("Whispering Hollow");
     }
 }

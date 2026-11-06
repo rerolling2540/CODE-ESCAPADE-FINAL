@@ -13,19 +13,19 @@ MonoBehaviour:
   m_Name: WorldTravelCatalog
   m_EditorClassIdentifier: Assembly-CSharp::WorldTravelCatalog
   destinations:
-  - sceneName: Scene 2
+  - sceneName: Whispering Hollow
     title: "Scene 2 \u2014 Alden's camp"
     description: Output, variables, and the first battle
     lobby: 0
-  - sceneName: Scene3
+  - sceneName: Shadowroot Depths
     title: "Scene 3 \u2014 Rowan's hollow"
     description: Conditions, loops, and cave exploration
     lobby: 0
-  - sceneName: map 4
+  - sceneName: Frostbound Passage
     title: "Map 4 \u2014 Mira's refuge"
     description: Arrays, lists, and functions
     lobby: 0
-  - sceneName: map 5
+  - sceneName: Forest of Dawn
     title: "Map 5 \u2014 The Warden's grove"
     description: Explore the grove and prepare for the final trial
     lobby: 0

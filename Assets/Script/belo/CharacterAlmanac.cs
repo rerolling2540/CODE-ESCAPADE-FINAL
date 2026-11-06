@@ -70,7 +70,11 @@ public sealed class CharacterAlmanac : MonoBehaviour
         if (opened && detail != null) RefreshList();
     }
     void OnEnable() { if (canvasRoot != null) ReloadLessons(); }
-    public static bool IsExplorationScene(string name) => name == "Scene 2" || name == "Scene3" || name == "Scene4" || name == "map 4" || name == "map 5";
+    public static bool IsExplorationScene(string name)
+    {
+        name = MapSceneNames.Resolve(name);
+        return name == "Whispering Hollow" || name == "Shadowroot Depths" || name == "Frostbound Passage" || name == "Forest of Dawn";
+    }
     private bool InExploration => IsExplorationScene(SceneManager.GetActiveScene().name) && gameObject.scene == SceneManager.GetActiveScene();
     void Update()
     {

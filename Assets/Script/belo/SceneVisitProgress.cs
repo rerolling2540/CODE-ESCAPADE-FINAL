@@ -7,7 +7,7 @@ public static class SceneVisitProgress
 {
     private static string previousScene;
 
-    public static bool SupportsScene(string scene) => scene == "Scene3" || scene == "map 4";
+    public static bool SupportsScene(string scene) => scene == "Shadowroot Depths" || scene == "Frostbound Passage";
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
@@ -37,8 +37,8 @@ public static class SceneVisitProgress
 
     public static void ResetVisit(SaveSlots.Record saved, string scene)
     {
-        if (scene == "Scene3") saved.scene3VisitDefeated = new List<string>();
-        else if (scene == "map 4") saved.map4VisitDefeated = new List<string>();
+        if (scene == "Shadowroot Depths") saved.scene3VisitDefeated = new List<string>();
+        else if (scene == "Frostbound Passage") saved.map4VisitDefeated = new List<string>();
     }
 
     public static bool RecordDefeat(SaveSlots.Record saved, string scene, string encounterId)
@@ -51,8 +51,8 @@ public static class SceneVisitProgress
         return true;
     }
 
-    private static List<string> Defeated(SaveSlots.Record saved, string scene) => scene == "Scene3"
-        ? saved?.scene3VisitDefeated : scene == "map 4" ? saved?.map4VisitDefeated : saved?.defeatedEncounters;
+    private static List<string> Defeated(SaveSlots.Record saved, string scene) => scene == "Shadowroot Depths"
+        ? saved?.scene3VisitDefeated : scene == "Frostbound Passage" ? saved?.map4VisitDefeated : saved?.defeatedEncounters;
 
     public static int Count(SaveSlots.Record saved, string scene)
     {

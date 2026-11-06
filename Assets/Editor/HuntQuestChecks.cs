@@ -34,7 +34,7 @@ public static class HuntQuestChecks
                 check(HuntQuestProgress.Count(save,giver,stage)==1,"Repeated enemy counted twice");
                 foreach(string id in c.encounterIds.Take(c.required))save.defeatedEncounters.Add(id);
                 check(HuntQuestProgress.Ready(save,giver),"Victories did not complete contract");
-                SceneVisitProgress.ResetVisit(save,"Scene3");
+                SceneVisitProgress.ResetVisit(save,"Shadowroot Depths");
                 check(HuntQuestProgress.Ready(save,giver),"Map revisit reset contract progress");
                 check(QuestReturnPanel.Ready(save).Any(d=>d.giver==giver+3&&d.key==HuntQuestProgress.Key(giver,stage)),"Missing NPC return destination");
                 check(HuntQuestProgress.ApplyReward(save,giver,stage),"Earned reward rejected");

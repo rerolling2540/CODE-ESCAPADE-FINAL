@@ -15,7 +15,7 @@ MonoBehaviour:
   <Image>k__BackingField: {fileID: -1890000687, guid: 11eb6ccb795ef4d1b816da20c09cda40, type: 3}
   <Health>k__BackingField: 120
   <AttackPower>k__BackingField: 35
-  battleSpriteFacesLeft: 0
+  battleSpriteFacesLeft: 1
   idleFrames:
   - {fileID: -1890000687, guid: 11eb6ccb795ef4d1b816da20c09cda40, type: 3}
   - {fileID: 161613163, guid: 799969c3fb8b540cc85e44f1f6b1c520, type: 3}
@@ -52,7 +52,7 @@ MonoBehaviour:
   progressionRank: 2
   progressionWeight: 1.25
   battleMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  battleVisualScale: 1.35
+  battleVisualScale: 1.6200001
   attackStyle: 0
   attackCountdown: 15
   breakMeterMax: 100

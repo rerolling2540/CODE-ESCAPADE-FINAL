@@ -13,8 +13,7 @@ public class HeroView : CombatantView
         if (target != null) FaceTowards(target);
         if (battleData == null || !battleData.dashToBattleTarget || target == null || target.CurrentHealth <= 0)
         {
-            PlayAttackFeedback(target, card, affectedTargets);
-            yield return PlayAttackAnimation();
+            yield return PlayAttackAnimation(()=>PlayAttackFeedback(target,card,affectedTargets),battleData!=null?battleData.attackFeedbackFrame:0);
             if (CurrentHealth > 0 && battleData != null)
                 yield return PlayBattleFramesOnce(battleData.sheatheFrames, battleData.battleFramesPerSecond);
             yield break;
@@ -31,8 +30,7 @@ public class HeroView : CombatantView
             float duration = Mathf.Clamp(Vector3.Distance(attackOrigin, destination) / 28f, 0.14f, 0.3f);
             yield return PlayBattleTravel(destination, duration, battleData.battleDashFrames);
             if (CurrentHealth <= 0 || target == null || target.CurrentHealth <= 0) yield break;
-            PlayAttackFeedback(target, card, affectedTargets);
-            yield return PlayAttackAnimation();
+            yield return PlayAttackAnimation(()=>PlayAttackFeedback(target,card,affectedTargets),battleData.attackFeedbackFrame);
             if (CurrentHealth <= 0) yield break;
             yield return PlayBattleTravel(attackOrigin, 0.24f, battleData.battleDashFrames);
             if (CurrentHealth > 0)
@@ -49,8 +47,7 @@ public class HeroView : CombatantView
     {
         if (card != null && !BattleAudio.IsAttackCard(card)) return;
 
-        // Trigger the existing class-specific sound and the visual on the same
-        // frame, after any dash and immediately before the attack animation.
+        // The attack animation invokes this on its authored release frame.
         BattleAudio.HeroAttack(card);
         // Sprite-based card effects render with Unity's normal SpriteRenderer,
         // avoiding the incompatible imported particle shader that showed pink.

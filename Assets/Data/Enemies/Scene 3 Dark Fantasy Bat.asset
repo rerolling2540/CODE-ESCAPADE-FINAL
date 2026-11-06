@@ -48,6 +48,9 @@ MonoBehaviour:
   battleFramesPerSecond: 10
   hovering: 1
   experienceReward: 35
+  goldReward: 10
+  progressionRank: 0
+  progressionWeight: 0.8
   battleMaterial: {fileID: 0}
   battleVisualScale: 1.5
   attackStyle: 0

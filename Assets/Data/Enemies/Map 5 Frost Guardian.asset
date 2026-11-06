@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280afb1261d3c5144ad838d8ba94c37b, type: 3}
+  m_Name: Map 5 Frost Guardian
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  <Image>k__BackingField: {fileID: -1623698860, guid: 88feac4bba5144b1e9fc3996b4ebb651, type: 3}
+  <Health>k__BackingField: 270
+  <AttackPower>k__BackingField: 28
+  battleSpriteFacesLeft: 1
+  idleFrames:
+  - {fileID: -1623698860, guid: 88feac4bba5144b1e9fc3996b4ebb651, type: 3}
+  - {fileID: 1890124369, guid: 500a73f3df89c41efa2fd432443d3e42, type: 3}
+  - {fileID: 1329086776, guid: 4805d64ce7c8845a8a39f3fb5316ff90, type: 3}
+  - {fileID: 211425197, guid: 975f0130aae294d5eb4d62de8d53b4cd, type: 3}
+  - {fileID: 1463030839, guid: e003ad12acd2f4482968aa2c937e2d78, type: 3}
+  - {fileID: -944313842, guid: 221a37c2e7910480b9906ceb201d3642, type: 3}
+  walkFrames:
+  - {fileID: -293279042, guid: 2dcacf0dd150b4e4f9104dd06dc66250, type: 3}
+  - {fileID: 456611362, guid: 10b1cb9a9b8ec480a9b1ae1ae92778ed, type: 3}
+  - {fileID: 1820475516, guid: 4947ef15775244358ab4ed204ff89e58, type: 3}
+  - {fileID: -1731086512, guid: 9e7f1b02e308a41f8a8a9bdfafeb1d81, type: 3}
+  - {fileID: -927937580, guid: 58aa0644a82f84ef8a0b3a70c322de44, type: 3}
+  - {fileID: 479228543, guid: b96a6a8c24b244dcf80fc55fe2045937, type: 3}
+  - {fileID: -1516993115, guid: 1178985b4dbff4802930f7940f2baf84, type: 3}
+  - {fileID: 288981942, guid: 1757908ba2f16402f8d16bb0d31be2a3, type: 3}
+  - {fileID: 1142367953, guid: 1317cfbd76f2f43449b1b1341ed951e6, type: 3}
+  - {fileID: 746766781, guid: 1a98e059380634d9f99a7b272ead7061, type: 3}
+  attackFrames:
+  - {fileID: 1792921858, guid: 49425bab1890d49b884c36c3390435c9, type: 3}
+  - {fileID: -1618037346, guid: 2f4cec4bdd6074bbf9563277d59a738c, type: 3}
+  - {fileID: -714014525, guid: 8161b6509779644f8a4c718a1569c9f5, type: 3}
+  - {fileID: 992273925, guid: 644145fbf9ca8444eabcd5b385074da8, type: 3}
+  - {fileID: -1339345140, guid: 544954edbe5f848818e6bfcab8e04e5b, type: 3}
+  - {fileID: 848551616, guid: ba11e39c02a404ec5b73bb04b8a2fdbb, type: 3}
+  - {fileID: 623055135, guid: bb4196096032b428aac0ae7c1acd1674, type: 3}
+  - {fileID: -2090580561, guid: 7eebffa868fd14de7a5afa6612d960e1, type: 3}
+  - {fileID: -820541059, guid: 51baf911d497c49b894f3a786f7368b9, type: 3}
+  - {fileID: 783714644, guid: 59485e922b5c34c18972b812d269e3c5, type: 3}
+  - {fileID: -1030367791, guid: 730daa30119a845a19b27564a5c4d042, type: 3}
+  - {fileID: -1319753232, guid: 0d8e7071f25c54b7a911b99b002a83d8, type: 3}
+  - {fileID: 410146434, guid: d0ab9cfc0383d41bb85cf04fb6a63fbc, type: 3}
+  - {fileID: 583347701, guid: 29d704747770243ecbdbd4222ac17a6a, type: 3}
+  battleFramesPerSecond: 10
+  hovering: 0
+  experienceReward: 210
+  goldReward: 75
+  progressionRank: 0
+  progressionWeight: 1
+  battleMaterial: {fileID: 2100000, guid: 9273f91ed6cf19c47982af24702941ff, type: 2}
+  battleVisualScale: 1.5
+  attackStyle: 0
+  attackCountdown: 15
+  breakMeterMax: 100
+  projectileFrames: []
+  impactFrames: []
+  projectileSpeed: 10
+  projectileFrameRate: 16
+  projectileArc: 0
+  appliesStatusEffect: 0
+  onHitStatus: 1
+  onHitStacks: 1
+  natureHealAmount: 10
+  openingAction: 0
+  openingShield: 8
+  openingDamageBonus: 3
+  openingDamageBuffAttacks: 3

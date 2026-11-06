@@ -12,16 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Comet Array
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 18 damage to all enemies."
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 18 damage to all enemies.
   <Mana>k__BackingField: 3
   <Image>k__BackingField: {fileID: 21300000, guid: dd9553335d5e8ac4f8cd1bf7715b004f, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101
     <Effect>k__BackingField:
       rid: 102
-  <ManualTargetEffect>k__BackingField:
-    rid: -2
+  attackVfxType: 0
+  attackImpactFrames:
+  - {fileID: -4913982344839117222, guid: fdca82f1278c4467ab354966a50a2ac3, type: 3}
+  - {fileID: -575696589628924425, guid: 94e6d30fa358441e18ac163c099453df, type: 3}
+  - {fileID: -1679085568475732275, guid: 60d6b7b49c0e8444d8af7b8a8feae7a8, type: 3}
+  - {fileID: -4960229840327395196, guid: 64d463cdb517d4ac89d6ebe5bd5b4501, type: 3}
+  - {fileID: -8398409672689469449, guid: 9f563cabd9f5f4b6192304395607ff2e, type: 3}
+  - {fileID: -6658418643737043593, guid: 81083cb0d36274006951705f8f42cadb, type: 3}
+  - {fileID: 6490354421893865411, guid: cc663705196d04f94b333b0fe54dccd0, type: 3}
+  - {fileID: -3047093270054505527, guid: fe35b4755cc874cadb9baab407a67902, type: 3}
+  - {fileID: 417835678940605132, guid: 1745cb5eab76346baaaa3e6c1f59bafe, type: 3}
+  attackImpactFramesPerSecond: 18
+  attackImpactScale: 1.2
   damageType: 0
   baseDamage: 18
   percentDamage: 0
@@ -33,7 +48,7 @@ MonoBehaviour:
       type: {class: , ns: , asm: }
     - rid: 101
       type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 102
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

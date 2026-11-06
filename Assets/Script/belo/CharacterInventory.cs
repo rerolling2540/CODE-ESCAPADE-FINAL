@@ -23,6 +23,7 @@ public class CharacterInventory : MonoBehaviour
         public List<string> openedChests = new List<string>();
         public List<string> wardenRewards = new List<string>();
         public List<string> huntRewards = new List<string>();
+        public List<string> encounterGoldRewards = new List<string>();
         public int starterCardsVersion;
     }
 
@@ -604,6 +605,39 @@ public class CharacterInventory : MonoBehaviour
         if (amount <= 0) return;
         data.coins = (int)Math.Min(int.MaxValue, (long)data.coins + amount);
         Save();
+    }
+
+    public static int AwardEncounterGold(string scene,string encounterId,int amount)
+    {
+        if(amount<=0||string.IsNullOrEmpty(scene)||string.IsNullOrEmpty(encounterId)||SaveSlots.Read(SaveSlots.Active)==null)return 0;
+        var live=activeInstance!=null&&activeInstance.IsCurrentSlot?activeInstance:null;
+        SaveData target=live!=null?live.data:null;
+        if(target==null)
+        {
+            if(!PlayerPrefs.HasKey(SaveKey))return 0;
+            try{target=JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey));}
+            catch(ArgumentException){Debug.LogWarning("Enemy gold could not be saved: inventory data is unreadable.");return 0;}
+        }
+        string receipt=scene+"/"+encounterId;
+        if(target==null||target.encounterGoldRewards?.Contains(receipt)==true)return 0;
+        int granted=ApplyEncounterGold(target,receipt,amount);
+        if(live!=null)live.Save();
+        else
+        {
+            PlayerPrefs.SetString(SaveKey,JsonUtility.ToJson(target));PlayerPrefs.Save();
+            SaveSlots.NotifyLocalSaveChanged();InventoryChanged?.Invoke();
+        }
+        return granted;
+    }
+    static int ApplyEncounterGold(SaveData target,string receipt,int amount)
+    {
+        if(target==null||string.IsNullOrEmpty(receipt)||amount<=0)return 0;
+        if(target.encounterGoldRewards==null)target.encounterGoldRewards=new List<string>();
+        if(target.encounterGoldRewards.Contains(receipt))return 0;
+        int before=Mathf.Max(0,target.coins);
+        target.coins=(int)Math.Min(int.MaxValue,(long)before+amount);
+        target.encounterGoldRewards.Add(receipt);
+        return target.coins-before;
     }
 
     public void GrantWardenReward(int chapter,int gold,int scraps,int tokens)

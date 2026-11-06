@@ -1980,11 +1980,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3017027755433777950, guid: 4ded57f852460c64299e65fe5b929bcf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 276
+      value: 284.57
       objectReference: {fileID: 0}
     - target: {fileID: 3017027755433777950, guid: 4ded57f852460c64299e65fe5b929bcf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -16.93757
+      value: -17.97
       objectReference: {fileID: 0}
     - target: {fileID: 3017027755433777950, guid: 4ded57f852460c64299e65fe5b929bcf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9349,6 +9349,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Exploration Health HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 1305259469152584312, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 58b9b01c615f349108bcea001e520b7d, type: 2}
+    - target: {fileID: 1305259469152584312, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2215070874801027073, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_sharedMaterial
       value: 
@@ -9464,6 +9472,30 @@ PrefabInstance:
     - target: {fileID: 5472222300061021961, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5653472233643422168, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5653472233643422168, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5653472233643422168, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5653472233643422168, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5653472233643422168, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 138
+      objectReference: {fileID: 0}
+    - target: {fileID: 5653472233643422168, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 138
       objectReference: {fileID: 0}
     - target: {fileID: 6821384060145742320, guid: 7afa0ed009e85442e81357a3839f7708, type: 3}
       propertyPath: panel
@@ -11500,7 +11532,7 @@ Transform:
   m_GameObject: {fileID: 606382705}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 343.11, y: -27.474, z: -10}
+  m_LocalPosition: {x: 278.38998, y: -16.094002, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18882,7 +18914,7 @@ Transform:
   m_GameObject: {fileID: 887760080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 325.48, y: -16.831512, z: 0}
+  m_LocalPosition: {x: 329.95, y: -16.831512, z: 0}
   m_LocalScale: {x: 6.143992, y: 6.6104646, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19476,6 +19508,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardRewardChest
   chestId: scene2-chest-1
   reward: {fileID: 11400000, guid: 57bda2eea1d346ff947e822961fb5b35, type: 2}
+  warriorReward: {fileID: 0}
+  archerReward: {fileID: 0}
+  mageReward: {fileID: 0}
   spriteSheet: {fileID: 2800000, guid: 8743a033e87f432499b708bf634c9860, type: 3}
   variant: 0
   interactionDistance: 2.5
@@ -19585,6 +19620,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardRewardChest
   chestId: scene2-chest-2
   reward: {fileID: 11400000, guid: 9cd134dd9f53466dabcd09b9b9f2c9ea, type: 2}
+  warriorReward: {fileID: 0}
+  archerReward: {fileID: 0}
+  mageReward: {fileID: 0}
   spriteSheet: {fileID: 2800000, guid: 8743a033e87f432499b708bf634c9860, type: 3}
   variant: 1
   interactionDistance: 2.5
@@ -19694,6 +19732,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardRewardChest
   chestId: scene2-chest-3
   reward: {fileID: 11400000, guid: 25e4cad91f284680a14b3264a3d0f6df, type: 2}
+  warriorReward: {fileID: 0}
+  archerReward: {fileID: 0}
+  mageReward: {fileID: 0}
   spriteSheet: {fileID: 2800000, guid: 8743a033e87f432499b708bf634c9860, type: 3}
   variant: 2
   interactionDistance: 2.5
@@ -27305,11 +27346,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 343.9
+      value: 279.18
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -27.9
+      value: -16.52
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -35036,7 +35077,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4594753920082053267, guid: ed4fc1d945ed5844fb44d068b3b68682, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 286.52
+      value: 295.1
       objectReference: {fileID: 0}
     - target: {fileID: 4594753920082053267, guid: ed4fc1d945ed5844fb44d068b3b68682, type: 3}
       propertyPath: m_LocalPosition.y
@@ -59915,6 +59956,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 782904360882936151, guid: 9b3a89fbb87224949a1278a1c34e4263, type: 3}
+      propertyPath: m_SortingOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1041036757768241158, guid: 9b3a89fbb87224949a1278a1c34e4263, type: 3}
+      propertyPath: m_SortingOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 1241524732469914455, guid: 9b3a89fbb87224949a1278a1c34e4263, type: 3}
       propertyPath: m_LocalPosition.x
       value: 32.73
@@ -59955,9 +60004,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6067157245163875273, guid: 9b3a89fbb87224949a1278a1c34e4263, type: 3}
+      propertyPath: m_SortingOrder
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 6281956550267992773, guid: 9b3a89fbb87224949a1278a1c34e4263, type: 3}
       propertyPath: m_Name
       value: Alden - Scrollkeeper
+      objectReference: {fileID: 0}
+    - target: {fileID: 6532672647169696927, guid: 9b3a89fbb87224949a1278a1c34e4263, type: 3}
+      propertyPath: m_SortingOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183423388940363667, guid: 9b3a89fbb87224949a1278a1c34e4263, type: 3}
+      propertyPath: m_SortingOrder
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -298002,7 +298063,7 @@ Transform:
   m_GameObject: {fileID: 2095482350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 343.11, y: -27.474, z: -10}
+  m_LocalPosition: {x: 278.38998, y: -16.094002, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

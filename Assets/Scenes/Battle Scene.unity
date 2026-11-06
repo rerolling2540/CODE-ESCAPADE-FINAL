@@ -1460,12 +1460,12 @@ MonoBehaviour:
   cardEmptyState: {fileID: 780952774}
   portraitContainer: {fileID: 1921564867}
   characterPortrait: {fileID: 1406673282}
-  enemyHealthIcon: {fileID: 7517441769618101431, guid: 28244d5463af34340b729aeb3063aa59, type: 3}
-  enemyAttackIcon: {fileID: 860910309584662230, guid: 23450567bedfb472eb6f8efd4ad515da, type: 3}
-  enemyDefenseIcon: {fileID: -5233972180137678507, guid: a1ce5e93205074fa0b03cc1070dbdeca, type: 3}
-  enemyRangedIcon: {fileID: 2186627556539719362, guid: cab0b50b00d4ac047a7e3648a7129b43, type: 3}
-  enemyRewardIcon: {fileID: -4580478257267805742, guid: 73dc167d28b736846b13e9ea6eaabb2c, type: 3}
-  enemyBurnIcon: {fileID: 8763505882382083093, guid: 9806fe5dfcaae424ca07e7a30643a537, type: 3}
+  enemyHealthIcon: {fileID: 21300000, guid: 77d7018450196774a99cc2be5ed47a3f, type: 3}
+  enemyAttackIcon: {fileID: 21300000, guid: e5ae71054316343489054c3d3ba02600, type: 3}
+  enemyDefenseIcon: {fileID: 21300000, guid: 03b0d95c839f48c43af808e21b70b8ab, type: 3}
+  enemyRangedIcon: {fileID: 21300000, guid: 9f615d42db3730d4da2c4b350f05b4e4, type: 3}
+  enemyRewardIcon: {fileID: 21300000, guid: 947dc59ca98778343ac3ecb3eabf8a34, type: 3}
+  enemyBurnIcon: {fileID: 21300000, guid: 3d374cd3dfe286347a286e36190046e0, type: 3}
   characterDeckIcon: {fileID: 0}
 --- !u!225 &307758298
 CanvasGroup:
@@ -9916,7 +9916,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 138, y: 156}
+  m_SizeDelta: {x: 138, y: 138}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1525030794
 MonoBehaviour:
@@ -9938,9 +9938,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1938354968663525734, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3c9b464f83dbe495caef25f425c6bb25, type: 2}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

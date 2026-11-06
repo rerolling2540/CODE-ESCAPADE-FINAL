@@ -93,12 +93,12 @@ public sealed class QuestJournalHud : MonoBehaviour
             if(objectiveLabel==null&&r.name.Contains("Objective"))objectiveLabel=r.GetComponent<TMP_Text>();
         }
         if(panel==null)return;
-        panel.sizeDelta=new Vector2(520,480);panel.pivot=new Vector2(1,1);
+        panel.sizeDelta=new Vector2(640,600);panel.pivot=new Vector2(1,1);
         panelVisibility=panel.GetComponent<CanvasGroup>();if(panelVisibility==null)panelVisibility=panel.gameObject.AddComponent<CanvasGroup>();
         foreach(var t in panel.GetComponentsInChildren<TMP_Text>(true))
         {
-            if(t.name=="Journal Header"){t.text="QUEST JOURNAL  [Q]";t.fontSize=28;Top(t.rectTransform,18,12,484,38);}
-            if(t.name=="Quest Name"){t.text="Your journey and rewards";t.fontSize=23;Top(t.rectTransform,18,54,484,32);}
+            if(t.name=="Journal Header"){t.text="QUEST JOURNAL  [Q]";t.fontSize=32;Top(t.rectTransform,18,12,604,42);}
+            if(t.name=="Quest Name"){t.text="Your journey and rewards";t.fontSize=26;Top(t.rectTransform,18,58,604,36);}
         }
         objectiveScroll=panel.GetComponentInChildren<UnityEngine.UI.ScrollRect>(true);
         if(objectiveLabel==null)return;
@@ -109,7 +109,7 @@ public sealed class QuestJournalHud : MonoBehaviour
             var view=new GameObject("Viewport",typeof(RectTransform),typeof(UnityEngine.UI.Image),typeof(UnityEngine.UI.Mask));view.transform.SetParent(go.transform,false);var v=view.GetComponent<RectTransform>();v.anchorMin=Vector2.zero;v.anchorMax=Vector2.one;v.offsetMin=v.offsetMax=Vector2.zero;view.GetComponent<UnityEngine.UI.Mask>().showMaskGraphic=false;
             objectiveScroll.viewport=v;objectiveLabel.transform.SetParent(v,false);
         }
-        objectiveLabel.fontSize=26;objectiveLabel.enableAutoSizing=false;objectiveLabel.lineSpacing=4;objectiveLabel.paragraphSpacing=6;objectiveLabel.color=new Color(.19f,.12f,.06f);objectiveLabel.richText=true;objectiveLabel.textWrappingMode=TextWrappingModes.Normal;
+        objectiveLabel.fontSize=30;objectiveLabel.enableAutoSizing=false;objectiveLabel.lineSpacing=4;objectiveLabel.paragraphSpacing=6;objectiveLabel.color=new Color(.19f,.12f,.06f);objectiveLabel.richText=true;objectiveLabel.textWrappingMode=TextWrappingModes.Normal;
         var readableFont=Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");if(readableFont!=null){objectiveLabel.font=readableFont;objectiveLabel.fontSharedMaterial=readableFont.material;}objectiveLabel.fontStyle=FontStyles.Normal;objectiveLabel.alignment=TextAlignmentOptions.TopLeft;
         if(objectiveScroll!=null)
         {
@@ -128,6 +128,7 @@ public sealed class QuestJournalHud : MonoBehaviour
             existing=go.transform;
         }
         var button=existing.GetComponent<UnityEngine.UI.Button>();button.onClick.RemoveListener(OpenReturnPanel);button.onClick.AddListener(OpenReturnPanel);
+        var actionLabel=existing.GetComponentInChildren<TMP_Text>(true);if(actionLabel!=null)actionLabel.fontSize=28;
         FitToCanvas();
     }
     void FitToCanvas()
@@ -135,11 +136,21 @@ public sealed class QuestJournalHud : MonoBehaviour
         var canvas=GetComponent<Canvas>();if(canvas==null||panel==null||slideRoot==null)return;
         float pixelHeight=canvas.renderMode==RenderMode.ScreenSpaceCamera&&canvas.worldCamera!=null?canvas.worldCamera.pixelHeight:canvas.pixelRect.height;
         float canvasHeight=pixelHeight/Mathf.Max(.01f,canvas.scaleFactor);
-        float height=Mathf.Min(480,Mathf.Max(240,canvasHeight-160));
+        float pixelWidth=canvas.renderMode==RenderMode.ScreenSpaceCamera&&canvas.worldCamera!=null?canvas.worldCamera.pixelWidth:canvas.pixelRect.width;
+        float canvasWidth=pixelWidth/Mathf.Max(.01f,canvas.scaleFactor);
+        float width=Mathf.Min(640,Mathf.Max(280,canvasWidth-136));
+        float contentWidth=width-36;
+        float height=Mathf.Min(600,Mathf.Max(240,canvasHeight-160));
+        panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,width);
         panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,height);
         slideRoot.anchoredPosition=new Vector2(slideRoot.anchoredPosition.x,-Mathf.Min(264,Mathf.Max(96,canvasHeight-height-24)));
-        if(objectiveScroll!=null)Top((RectTransform)objectiveScroll.transform,18,98,484,height-162);
-        var action=panel.Find("Return to quest NPC") as RectTransform;if(action!=null)Top(action,18,height-52,484,40);
+        foreach(var t in panel.GetComponentsInChildren<TMP_Text>(true))
+        {
+            if(t.name=="Journal Header")Top(t.rectTransform,18,12,contentWidth,42);
+            if(t.name=="Quest Name")Top(t.rectTransform,18,58,contentWidth,36);
+        }
+        if(objectiveScroll!=null)Top((RectTransform)objectiveScroll.transform,18,106,contentWidth,height-180);
+        var action=panel.Find("Return to quest NPC") as RectTransform;if(action!=null)Top(action,18,height-60,contentWidth,48);
     }
     void OpenReturnPanel(){GetComponent<QuestReturnPanel>()?.OpenManually();}
     static void Top(RectTransform r,float x,float y,float w,float h){r.anchorMin=r.anchorMax=r.pivot=new Vector2(0,1);r.anchoredPosition=new Vector2(x,-y);r.sizeDelta=new Vector2(w,h);r.localScale=Vector3.one;}

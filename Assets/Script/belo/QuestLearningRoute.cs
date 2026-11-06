@@ -36,8 +36,8 @@ public static class QuestLearningRoute
                 steps.Add(Lesson(save,5));steps.Add(new Step("Apply it: prepare a healing spell","Speak to the elf in Map 4. Choose the input that gives the requested healing result.",WardenQuest.Has(save,"heal")));break;
             case 5:
                 for(int topic=0;topic<6;topic++)steps.Add(Lesson(save,topic));
-                steps.Add(new Step("Win the Warden Final Trial","Travel to Map 5 and defeat the Warden Final Trial. Its questions draw on your six foundation topics.",save?.defeatedEncounters?.Contains(WardenQuest.FinalEncounter)==true));
-                steps.Add(new Step("Review the final battle","Read the final battle report and press Continue.",WardenQuest.Has(save,"final-report")));break;
+                steps.Add(new Step("Win the Warden Final Trial","Use a travel monolith to reach Map 5 and defeat the Warden Final Trial. Its questions draw on your six foundation topics.",save?.defeatedEncounters?.Contains(WardenQuest.FinalEncounter)==true));
+                steps.Add(new Step("Review the final battle","Read the final battle report and press Continue. If your victory is already saved, ask the elf to review it.",WardenQuest.Has(save,"final-report")));break;
         }
         return steps;
     }

@@ -12,16 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5705f0a81d9f70a45a42e2c1a28b8d0b, type: 3}
   m_Name: Ember Orb
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  <Description>k__BackingField: "Deal 7 damage and apply 2 Burn to one enemy."
+  minimumQuestionTier: 1
+  maximumQuestionTier: 3
+  <Description>k__BackingField: Deal 7 damage and apply 2 Burn to one enemy.
   <Mana>k__BackingField: 1
   <Image>k__BackingField: {fileID: 21300000, guid: 85f6db0efa996b342ac40bb7aa6eb2f9, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: 103
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
       rid: 101
     <Effect>k__BackingField:
       rid: 102
-  <ManualTargetEffect>k__BackingField:
-    rid: 103
+  attackVfxType: 0
+  attackImpactFrames:
+  - {fileID: -4913982344839117222, guid: ad92ea79c8bb746ac9e385f1e1d45a9e, type: 3}
+  - {fileID: -575696589628924425, guid: c3e1091eb3e1b4b918e9acedaba89a9b, type: 3}
+  - {fileID: -1679085568475732275, guid: c84467fcb730b4a8283725062cf891bb, type: 3}
+  - {fileID: -4960229840327395196, guid: dd0e1b943d0424290982d3200a127f26, type: 3}
+  - {fileID: -8398409672689469449, guid: 9ba9c1246e0e7419d973138eb2cef79b, type: 3}
+  - {fileID: -6658418643737043593, guid: 30b9c6083c4f74a3fa5b41d67a4b5a70, type: 3}
+  - {fileID: 6490354421893865411, guid: 8573b5e2c1bfd4956b2d6839e44e860e, type: 3}
+  - {fileID: -3047093270054505527, guid: 45ddbc5a9dd174d8eaafc0d5b20f6482, type: 3}
+  attackImpactFramesPerSecond: 18
+  attackImpactScale: 1.2
   damageType: 0
   baseDamage: 7
   percentDamage: 0
@@ -29,11 +43,9 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
     - rid: 101
       type: {class: SelectedEnemyTM, ns: , asm: Assembly-CSharp}
-      data:
+      data: 
     - rid: 102
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -43,4 +55,4 @@ MonoBehaviour:
         natureHealAmount: 10
     - rid: 103
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
+      data: 

@@ -33,12 +33,12 @@ public class EnemySystem : Singleton<EnemySystem>
         ActionSystem.DetachPerformer<ResetEnemyBreakMetersGA>();
     }
 
-    public void Setup(List<EnemyData> enemyDatas)
+    public void Setup(List<EnemyData> enemyDatas,string sourceScene=null)
     {
         enemyPhaseCount = 0;
         foreach (var enemyData in enemyDatas)
         {
-            enemyBoardView.AddEnemy(enemyData);
+            enemyBoardView.AddEnemy(enemyData,sourceScene);
         }
     }
     // Performers
@@ -132,7 +132,8 @@ public class EnemySystem : Singleton<EnemySystem>
     {
         EnemyView attacker = attackHeroGA.Attacker;
 
-        if (attacker == null || attacker.CurrentHealth <= 0 || attacker.IsBroken || !attacker.OpeningActionResolved)
+        // A wrong answer must retaliate even before the normal opening buff turn.
+        if (!attackHeroGA.CanAttack)
             yield break;
 
         CombatantView hero = HeroSystem.Instance != null ? HeroSystem.Instance.HeroView : null;

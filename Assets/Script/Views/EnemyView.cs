@@ -19,12 +19,16 @@ public class EnemyView : CombatantView
    public int BreakMeter => breakMeter;
    public int MaxBreakMeter => maxBreakMeter;
    public bool IsBroken => breakMeter <= 0;
-   public int ExperienceReward => data!=null?Mathf.Max(0,data.experienceReward):0;
+   public int ExperienceReward {get;private set;}
+   public int GoldReward {get;private set;}
    public bool IsRanged => data != null && data.attackStyle == EnemyAttackStyle.Ranged;
    public bool HasProjectile => data != null && data.projectileFrames != null && data.projectileFrames.Length > 0;
-   public void SetUp(EnemyData enemyData)
+   public void SetUp(EnemyData enemyData,string sourceScene=null)
     {
         data = enemyData;
+        var balance=EnemyMapBalance.Resolve(enemyData,sourceScene);
+        ExperienceReward=balance.experience;
+        GoldReward=balance.gold;
         AttackPower = enemyData.AttackPower;
         maxAttackCountdown = Mathf.Max(1, enemyData.attackCountdown);
         attackCountdown = maxAttackCountdown;
@@ -34,7 +38,7 @@ public class EnemyView : CombatantView
         openingActionResolved = false;
         openingDamageBuffBonus = 0;
         if (attackText != null) attackText.gameObject.SetActive(false);
-        SetUpBase(enemyData.Health, enemyData.Image);
+        SetUpBase(balance.health, enemyData.Image);
         SetBattleMaterial(enemyData.battleMaterial);
         EnlargeEnemyVisual(2.8f * Mathf.Max(0.1f, enemyData.battleVisualScale));
         EnsureEnemyHealthBar();

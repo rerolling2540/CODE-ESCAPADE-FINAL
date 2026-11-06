@@ -4910,7 +4910,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7774328059154094043, guid: 4a5e64a0ffada4c7cace8c116a02b0cc, type: 3}
       propertyPath: m_Name
-      value: Map 4 - Fantasy Mimic 02
+      value: Map 5 - Fantasy Mimic 01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7395,7 +7395,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7076337099082640491, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_SortingOrder
-      value: 10
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 7076337099082640491, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -13766,10 +13766,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 457411671}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -12, y: -12}
+  m_SizeDelta: {x: 138, y: 138}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &933015276
 MonoBehaviour:
@@ -13791,9 +13791,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8321102221490951993, guid: 0c61d681fff48644bbe823946e2796c8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3c9b464f83dbe495caef25f425c6bb25, type: 2}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -55100,7 +55100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7774328059154094043, guid: 4a5e64a0ffada4c7cace8c116a02b0cc, type: 3}
       propertyPath: m_Name
-      value: Map 4 - Fantasy Mimic 02 (1)
+      value: Map 5 - Fantasy Mimic 02
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -65829,7 +65829,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 637817271503574290, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
       propertyPath: m_Name
-      value: Map 4 - Demon Slime 02
+      value: Map 5 - Demon Slime 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 637817271503574290, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 713318597489514674, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
       propertyPath: m_LocalScale.x

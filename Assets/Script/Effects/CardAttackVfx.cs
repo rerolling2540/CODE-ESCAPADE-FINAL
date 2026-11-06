@@ -38,6 +38,12 @@ public static class CardAttackVfx
 
         int sortingLayer = sortingReference != null ? sortingReference.sortingLayerID : 0;
         int sortingOrder = sortingReference != null ? sortingReference.sortingOrder + 15 : 15;
+        if(card.attackImpactFrames!=null&&card.attackImpactFrames.Length>0)
+        {
+            foreach(var target in targets)
+                owner.StartCoroutine(PlayAuthoredImpact(card,target,sortingLayer,sortingOrder));
+            return;
+        }
         CardAttackVfxType type = ResolveType(card);
 
         switch (type)
@@ -62,6 +68,36 @@ public static class CardAttackVfx
                     owner.StartCoroutine(PlayImpact(owner, TargetPoint(target), sortingLayer, sortingOrder, 0.72f, 0.42f));
                 break;
         }
+    }
+
+    private static IEnumerator PlayAuthoredImpact(CardData card,CombatantView target,int sortingLayer,int sortingOrder)
+    {
+        if(target==null)yield break;
+        var frames=card.attackImpactFrames;
+        float largest=0f;
+        foreach(var frame in frames)if(frame!=null)largest=Mathf.Max(largest,frame.bounds.size.x,frame.bounds.size.y);
+        if(largest<=0f)yield break;
+        var effect=new GameObject("Card VFX "+card.name,typeof(SpriteRenderer));
+        var renderer=effect.GetComponent<SpriteRenderer>();
+        renderer.sortingLayerID=sortingLayer;renderer.sortingOrder=sortingOrder;
+        effect.transform.position=TargetPoint(target);
+        effect.transform.localScale=Vector3.one*(Mathf.Clamp(target.VisualBounds.size.y*1.15f,2.4f,5f)*Mathf.Clamp(card.attackImpactScale,.5f,2f)/largest);
+        float fps=Mathf.Clamp(card.attackImpactFramesPerSecond,8f,40f);
+        float duration=frames.Length/fps;
+        // Scheduled cleanup also handles an owner coroutine stopped by death or disabling.
+        Object.Destroy(effect,duration+.2f);
+        try
+        {
+            float elapsed=0f;
+            while(elapsed<duration&&effect!=null)
+            {
+                if(target!=null)effect.transform.position=TargetPoint(target);
+                renderer.sprite=frames[Mathf.Min(frames.Length-1,Mathf.FloorToInt(elapsed*fps))];
+                elapsed+=Time.deltaTime;
+                yield return null;
+            }
+        }
+        finally{if(effect!=null)Object.Destroy(effect);}
     }
 
     private static List<CombatantView> CollectTargets(CombatantView primaryTarget, IList<CombatantView> affectedTargets)

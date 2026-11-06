@@ -28,7 +28,7 @@ Rewards use the existing gold, refinement-material, and token economy. Card-choi
 - Instructions, code, and hints are separate dialogue pages. Players can advance with left click, E, or Space.
 - Wrong answers explain the relevant rule and offer free retries. Hinted answers and answers after a wrong attempt are stored as assisted completion, separately from independent completion. Quest completion does not set statistical topic mastery.
 - Scene-authored visual aids show coin, gate, watchfire, shelf, and healing states. Watchfires use animated Tiny Swords particle frames. These are constrained demonstrations, not an arbitrary-code interpreter.
-- The final encounter rotates through applied examples from the six taught topics, in the character's language. It keeps card question tier boundaries and player-level tier caps. Two low-damage training sentinels (70 HP / 3 attack each) provide an approachable capstone; balance still needs a full player walkthrough.
+- The final encounter rotates through applied examples from the six taught topics, in the character's language. It keeps card question tier boundaries and player-level tier caps. Two low-damage training sentinels (190 HP / 3 attack each after map progression) provide an approachable capstone; balance still needs a full player walkthrough.
 
 ## Saving and compatibility
 - Main chapter and proofs belong to the active save slot; lesson and challenge proofs include the selected language.

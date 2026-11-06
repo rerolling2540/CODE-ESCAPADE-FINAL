@@ -21,9 +21,25 @@ MonoBehaviour:
     rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: 401
+      rid: 1001
     <Effect>k__BackingField:
-      rid: 402
+      rid: 1002
+  - <TargetMode>k__BackingField:
+      rid: 1003
+    <Effect>k__BackingField:
+      rid: 1004
+  - <TargetMode>k__BackingField:
+      rid: 1005
+    <Effect>k__BackingField:
+      rid: 1006
+  - <TargetMode>k__BackingField:
+      rid: 1007
+    <Effect>k__BackingField:
+      rid: 1008
+  - <TargetMode>k__BackingField:
+      rid: 1009
+    <Effect>k__BackingField:
+      rid: 1010
   attackVfxType: 1
   damageType: 1
   baseDamage: 0
@@ -32,11 +48,33 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 401
-      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 402
+    - rid: 1001
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1002
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+    - rid: 1003
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1004
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1005
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1006
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1007
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1008
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1009
+      type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1010
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:

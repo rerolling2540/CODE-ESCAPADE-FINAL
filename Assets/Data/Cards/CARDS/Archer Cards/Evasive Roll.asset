@@ -18,8 +18,12 @@ MonoBehaviour:
   <Mana>k__BackingField: 3
   <Image>k__BackingField: {fileID: 21300000, guid: c17805f8911a60848b487c77559dffc4, type: 3}
   <ManualTargetEffect>k__BackingField:
-    rid: 8493059999646613558
-  <OtherEffects>k__BackingField: []
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 1001
+    <Effect>k__BackingField:
+      rid: 1002
   attackVfxType: 0
   damageType: 0
   baseDamage: 9
@@ -28,7 +32,10 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8493059999646613558
+    - rid: 1001
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1002
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 0

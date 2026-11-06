@@ -18,8 +18,12 @@ MonoBehaviour:
   <Mana>k__BackingField: 1
   <Image>k__BackingField: {fileID: 21300000, guid: 46a80354147dba446b27fbe725925dca, type: 3}
   <ManualTargetEffect>k__BackingField:
-    rid: 8493059999646613557
-  <OtherEffects>k__BackingField: []
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - <TargetMode>k__BackingField:
+      rid: 1001
+    <Effect>k__BackingField:
+      rid: 1002
   attackVfxType: 0
   damageType: 3
   baseDamage: 0
@@ -28,7 +32,10 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8493059999646613557
+    - rid: 1001
+      type: {class: NoTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1002
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
         drawAmount: 2

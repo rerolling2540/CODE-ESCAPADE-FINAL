@@ -18,12 +18,12 @@ MonoBehaviour:
   <Mana>k__BackingField: 3
   <Image>k__BackingField: {fileID: 21300000, guid: 047740e49c6b8e34288323d4941d8882, type: 3}
   <ManualTargetEffect>k__BackingField:
-    rid: 8493059999646613587
+    rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: 401
+      rid: 1001
     <Effect>k__BackingField:
-      rid: 402
+      rid: 1002
   attackVfxType: 6
   damageType: 1
   baseDamage: 0
@@ -32,12 +32,9 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 401
+    - rid: 1001
       type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 402
+      data:
+    - rid: 1002
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 8493059999646613587
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
+      data:

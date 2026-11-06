@@ -18,12 +18,16 @@ MonoBehaviour:
   <Mana>k__BackingField: 1
   <Image>k__BackingField: {fileID: 21300000, guid: 2b908f5f20beff14fa10bdef4506d4d1, type: 3}
   <ManualTargetEffect>k__BackingField:
-    rid: 8493059999646613542
+    rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: 8493059999646613543
+      rid: 1001
     <Effect>k__BackingField:
-      rid: 8493059999646613544
+      rid: 1002
+  - <TargetMode>k__BackingField:
+      rid: 1003
+    <Effect>k__BackingField:
+      rid: 1004
   attackVfxType: 0
   damageType: 0
   baseDamage: 10
@@ -32,20 +36,23 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8493059999646613542
-      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
-      data:
-        statusEffectType: 0
-        stackCount: 1
-        natureTurnsUntilHeal: 3
-        natureHealAmount: 10
-    - rid: 8493059999646613543
+    - rid: 1001
       type: {class: HeroTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 8493059999646613544
+      data:
+    - rid: 1002
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 6
         stackCount: 3
+        natureTurnsUntilHeal: 3
+        natureHealAmount: 10
+    - rid: 1003
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1004
+      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 1
         natureTurnsUntilHeal: 3
         natureHealAmount: 10

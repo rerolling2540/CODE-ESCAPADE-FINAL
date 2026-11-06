@@ -18,16 +18,20 @@ MonoBehaviour:
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 21300000, guid: 8c56241a9e7fb5246a867ca422ff61e0, type: 3}
   <ManualTargetEffect>k__BackingField:
-    rid: 8493059999646613585
+    rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: 401
+      rid: 1001
     <Effect>k__BackingField:
-      rid: 8493059999646613584
+      rid: 1002
   - <TargetMode>k__BackingField:
-      rid: 403
+      rid: 1003
     <Effect>k__BackingField:
-      rid: 404
+      rid: 1004
+  - <TargetMode>k__BackingField:
+      rid: 1005
+    <Effect>k__BackingField:
+      rid: 1006
   attackVfxType: 6
   damageType: 1
   baseDamage: 0
@@ -36,26 +40,29 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 401
+    - rid: 1001
       type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 403
-      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 404
-      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
-        statusEffectType: 4
-        stackCount: 1
-        natureTurnsUntilHeal: 3
-        natureHealAmount: 10
-    - rid: 8493059999646613584
+    - rid: 1002
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1003
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1004
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 4
         stackCount: 5
         natureTurnsUntilHeal: 3
         natureHealAmount: 10
-    - rid: 8493059999646613585
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
+    - rid: 1005
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data:
+    - rid: 1006
+      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 4
+        stackCount: 1
+        natureTurnsUntilHeal: 3
+        natureHealAmount: 10

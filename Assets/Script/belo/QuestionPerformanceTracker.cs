@@ -225,7 +225,12 @@ public static class QuestionPerformanceTracker
 
     public static string RecommendedTopic(string language, int slot)
     {
-        return GetLearningHistory(language, slot).Where(AdaptiveQuestionSelector.Resolved)
+        return RecommendedTopic(GetLearningHistory(language, slot));
+    }
+
+    private static string RecommendedTopic(IEnumerable<QuestionAttempt> history)
+    {
+        return history.Where(AdaptiveQuestionSelector.Resolved)
             .GroupBy(a => QuestionCurriculum.Topic(a.topic, a.question_id))
             .Select(g => new { Topic = g.Key, Progress = AdaptiveQuestionSelector.Summarize(g) })
             .Where(g => g.Progress.NeedsReview && g.Progress.RecentMistakes >= 2)
@@ -255,14 +260,15 @@ public static class QuestionPerformanceTracker
             "Attempts shown: " + total,
             "Answered or timed out: " + resolved,
             "Correct: " + correct + "    Incorrect: " + wrong + "    Timed out: " + timedOut + "    Left: " + abandoned,
-            "Accuracy: " + accuracy.ToString("0.#") + "%    Completion: " + completion.ToString("0.#") + "%",
+            "Accuracy: " + (resolved == 0 ? "N/A" : accuracy.ToString("0.#") + "%") +
+                "    Completion: " + (total == 0 ? "N/A" : completion.ToString("0.#") + "%"),
             "",
             "TOPIC MASTERY",
             "Mastery = 5+ of the latest 10 responses, 3 different questions, and 80% accuracy.",
             "Repeated answers alone do not demonstrate topic mastery."
         };
 
-        var groups = records.Where(item => item.outcome != "abandoned")
+        var groups = records.Where(AdaptiveQuestionSelector.Resolved)
             .GroupBy(item => NormalizeLanguage(item.language) + "|" + QuestionCurriculum.Topic(item.topic, item.question_id))
             .OrderBy(group => group.Key, StringComparer.OrdinalIgnoreCase);
         bool any = false;
@@ -285,8 +291,11 @@ public static class QuestionPerformanceTracker
         if (!any) lines.Add("\nAnswer questions in battles, at doors, or in Almanac practice to build your report.");
         string language = languageFilter ?? CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
         int reportSlot = slot ?? SaveSlots.Active;
-        string recommended = RecommendedTopic(language, reportSlot);
-        int learningTier = AdaptiveQuestionSelector.LearningTier(GetLearningHistory(language, reportSlot), GetCurrentPlayerLevel());
+        // Derive suggestions from the same account, language and slot as the report.
+        var learningHistory = records.Where(a => a.slot_index == reportSlot &&
+            NormalizeLanguage(a.language) == NormalizeLanguage(language)).ToList();
+        string recommended = RecommendedTopic(learningHistory);
+        int learningTier = AdaptiveQuestionSelector.LearningTier(learningHistory, GetCurrentPlayerLevel());
         lines.Add("\n" + LanguageDisplay(NormalizeLanguage(language)).ToUpperInvariant() + " / SAVE SLOT " + (reportSlot + 1));
         lines.Add("Learning pace: " + TitleCase(QuestionCurriculum.Difficulty(learningTier)) + ". Earlier topics may appear for review.");
         if (recommended != null) lines.Add("Study suggestion: review " + TitleCase(recommended) + " using Recommended book.");
@@ -300,8 +309,10 @@ public static class QuestionPerformanceTracker
 
     public static int GetCurrentPlayerLevel()
     {
+        var saved=SaveSlots.Read(SaveSlots.Active);
+        if(saved!=null)return Mathf.Max(1,saved.level);
         PlayerStats player = UnityEngine.Object.FindFirstObjectByType<PlayerStats>();
-        return Mathf.Max(1, player != null ? player.CurrentLevel : PlayerPrefs.GetInt("PlayerLevel", 1));
+        return Mathf.Max(1, player != null ? player.CurrentLevel : PlayerPrefs.GetInt("PlayerLevel", 5));
     }
 
     private static string DifficultyForLevel(int level) => level <= 5 ? "easy" : level <= 15 ? "medium" : "hard";

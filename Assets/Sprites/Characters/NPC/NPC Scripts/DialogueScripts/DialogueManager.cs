@@ -194,7 +194,7 @@ public class DialogueManager : MonoBehaviour
             actorName.text = speaker.actorName;
         }
         else { portrait.enabled = false; actorName.text = "Traveller"; }
-        dialogueText.text = line.text + "\n<size=75%><b><color=#342014>[Left click / E / Space] Continue    [Esc] Close</color></b></size>";
+        dialogueText.text = MapSceneNames.DisplayText(line.text) + "\n<size=75%><b><color=#342014>[Left click / E / Space] Continue    [Esc] Close</color></b></size>";
         dialogueText.maxVisibleCharacters = 0;
         typing = StartCoroutine(RevealText());
     }
@@ -308,7 +308,7 @@ public class DialogueManager : MonoBehaviour
             label.textWrappingMode = TextWrappingModes.Normal;
             label.overflowMode = TextOverflowModes.Ellipsis;
             label.raycastTarget = false;
-            label.text = text;
+            label.text = MapSceneNames.DisplayText(text);
         }
         button.gameObject.SetActive(true);
         button.onClick.AddListener(action);

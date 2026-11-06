@@ -61,7 +61,8 @@ for (const file of await walk(path.join(root, 'Assets/Data/Cards/CARDS'))) {
   changed++;
   console.log(`${path.basename(file, '.asset')}: ${selected ? 'choose one enemy' : dealsDamage ? target : 'automatic self/status effect'}`);
   let nextId = 1001;
-  const definitions = [];
+  // Unity requires the null sentinel in RefIds whenever a field uses rid -2.
+  const definitions = wantedManual ? [] : ['    - rid: -2\n      type: {class: , ns: , asm: }\n'];
   function add(effect) {
     const id = nextId++;
     definitions.push(`    - rid: ${id}\n      type: {class: ${effect.cls}, ns: , asm: Assembly-CSharp}\n      data:${effect.data ? '\n' + effect.data : ''}\n`);

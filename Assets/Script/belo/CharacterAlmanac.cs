@@ -70,7 +70,11 @@ public sealed class CharacterAlmanac : MonoBehaviour
         if (opened && detail != null) RefreshList();
     }
     void OnEnable() { if (canvasRoot != null) ReloadLessons(); }
-    public static bool IsExplorationScene(string name) => name == "Scene 2" || name == "Scene3" || name == "Scene4" || name == "map 4" || name == "map 5";
+    public static bool IsExplorationScene(string name)
+    {
+        name = MapSceneNames.Resolve(name);
+        return name == "Whispering Hollow" || name == "Shadowroot Depths" || name == "Frostbound Passage" || name == "Forest of Dawn";
+    }
     private bool InExploration => IsExplorationScene(SceneManager.GetActiveScene().name) && gameObject.scene == SceneManager.GetActiveScene();
     void Update()
     {
@@ -347,6 +351,11 @@ public sealed class CharacterAlmanac : MonoBehaviour
         for(int i=0;i<tiers.Length;i++){int index=i;var button=MakeButton("Difficulty "+tiers[i],library.transform,tiers[i],()=>{tier=index;RefreshList();});Position(button.gameObject,new Vector2(355+i*197,-76),new Vector2(185,42));tierButtons.Add(button);}
         countLabel=Label("Book Count",library.transform,"",18,Gold);Position(countLabel.gameObject,new Vector2(28,-126),new Vector2(590,30));
         recommendedBookButton=MakeButton("Recommended Book",library.transform,"Recommended book",OpenRecommendedBook);Position(recommendedBookButton.gameObject,new Vector2(640,-120),new Vector2(250,38));
+        var reference=MakeButton("W3Schools Reference",library.transform,"W3Schools reference (web)",()=>{
+            string language=LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter",0));
+            Application.OpenURL(W3SchoolsReference(language));
+        });
+        Position(reference.gameObject,new Vector2(910,-120),new Vector2(270,38));
         // Learning progression lives beside the hero's stats in Character Information.
         libraryScroll=MakeScroll("Bookshelf",library.transform,false);Stretch(libraryScroll.gameObject,24,164,24,48);listContent=libraryScroll.content.gameObject;
         var grid=listContent.AddComponent<UnityEngine.UI.GridLayoutGroup>();grid.cellSize=new Vector2(175,226);grid.spacing=new Vector2(12,16);grid.padding=new RectOffset(12,12,14,14);grid.constraint=UnityEngine.UI.GridLayoutGroup.Constraint.FixedColumnCount;grid.constraintCount=6;grid.childAlignment=TextAnchor.UpperCenter;
@@ -364,6 +373,15 @@ public sealed class CharacterAlmanac : MonoBehaviour
         progressText=progressScroll.content.gameObject.AddComponent<TextMeshProUGUI>();ApplyReadableFont(progressText);progressText.fontSize=22;progressText.color=Ink;progressText.richText=false;progressText.textWrappingMode=TextWrappingModes.Normal;progressText.lineSpacing=5;progressText.paragraphSpacing=8;progressText.margin=new Vector4(44,28,44,34);progressScroll.content.GetComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
         status=Label("Almanac Status",frame.transform,"Offline edition",16,Gold);var sr=(RectTransform)status.transform;sr.anchorMin=Vector2.zero;sr.anchorMax=new Vector2(1,0);sr.pivot=new Vector2(.5f,0);sr.offsetMin=new Vector2(26,12);sr.offsetMax=new Vector2(-26,40);
         reader.SetActive(false); progressPanel.SetActive(false); modal.SetActive(false);
+    }
+    public static string W3SchoolsReference(string language)
+    {
+        switch(QuestionCurriculum.Language(language))
+        {
+            case "csharp":return "https://www.w3schools.com/cs/";
+            case "python":return "https://www.w3schools.com/python/";
+            default:return "https://www.w3schools.com/java/";
+        }
     }
     static GameObject Panel(string name,Transform parent,Color color,bool paper)
     {

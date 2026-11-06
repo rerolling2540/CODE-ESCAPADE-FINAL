@@ -13,6 +13,12 @@ public sealed class SceneTransitionFader : MonoBehaviour
 
     public static void Load(string sceneName)
     {
+        sceneName = MapSceneNames.Resolve(sceneName);
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError("Scene destination is unavailable: " + sceneName);
+            return;
+        }
         if (instance == null)
             Create();
 

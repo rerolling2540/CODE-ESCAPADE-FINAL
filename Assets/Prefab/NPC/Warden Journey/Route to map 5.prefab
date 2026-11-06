@@ -151,6 +151,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5295dbdd1602c594e90e36fb3ec10628, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WardenTravelGate
-  destinationScene: map 5
+  destinationScene: Forest of Dawn
   arrivalId: warden-map5
   finalRoute: 1

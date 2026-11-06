@@ -42,11 +42,12 @@ public static class SaveSlots
 
     [Serializable] public class Record
     {
-        public string scene = "Scene 2";
+        public string scene = "Whispering Hollow";
         public int character;
         public int level;
         public int experience;
         public System.Collections.Generic.List<string> visitedScenes = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> shownMapTitles = new System.Collections.Generic.List<string>();
         public PlayerAdventureStats.AnswerTotals answerStats;
         public int battlesWon = -1;
         public System.Collections.Generic.List<string> seenTutorialTips = new System.Collections.Generic.List<string>();
@@ -281,11 +282,17 @@ public static class SaveSlots
     public static Record Read(int slot)
     {
         if (slot < 0 || slot >= Count || !PlayerPrefs.HasKey(Key(slot))) return null;
-        try { return JsonUtility.FromJson<Record>(PlayerPrefs.GetString(Key(slot))); }
+        try
+        {
+            var record = JsonUtility.FromJson<Record>(PlayerPrefs.GetString(Key(slot)));
+            MapSceneNames.NormalizeSave(record);
+            return record;
+        }
         catch (ArgumentException) { return null; }
     }
     public static void Write(Record record)
     {
+        MapSceneNames.NormalizeSave(record);
         record.savedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
         PlayerPrefs.SetString(Key(Active), JsonUtility.ToJson(record));
         PlayerPrefs.Save();
@@ -494,7 +501,7 @@ public static class SaveSlots
         {
             int previous = Active;
             Active = 0;
-            Write(new Record { scene = PlayerPrefs.GetString("SavedScene", "Scene 2"),
+            Write(new Record { scene = PlayerPrefs.GetString("SavedScene", "Whispering Hollow"),
                 character = PlayerPrefs.GetInt("SelectedCharacter", 0), hasPosition = true,
                 position = new Vector3(PlayerPrefs.GetFloat("PlayerX"), PlayerPrefs.GetFloat("PlayerY"), PlayerPrefs.GetFloat("PlayerZ")) });
             if (PlayerPrefs.HasKey("CodeEscapade.Inventory.v1"))

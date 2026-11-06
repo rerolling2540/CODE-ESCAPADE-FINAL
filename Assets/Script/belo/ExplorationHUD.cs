@@ -30,6 +30,8 @@ public class ExplorationHUD : MonoBehaviour
     private bool showingDraftCards;
     private CharacterInfoData characterInfo;
     private Vector2 characterInfoScroll;
+    private string characterReport;
+    private string characterReportContext;
     private CardDraftCatalog cardDraftCatalog;
     public bool IsMapVisible => showMap && !inventoryOpen && !GameControlsGuide.MapHidden &&
         !SceneTransitionFader.IsTransitioning && CharacterAlmanac.IsExplorationScene(SceneManager.GetActiveScene().name);
@@ -46,6 +48,14 @@ public class ExplorationHUD : MonoBehaviour
     private static readonly Color Ink = new Color(0.08f, 0.035f, 0.015f, 1f);
     private static readonly Color Brass = new Color(0.72f, 0.52f, 0.23f);
     private static readonly Color Parchment = new Color(0.87f, 0.78f, 0.59f);
+
+    void OnEnable()
+    {
+        QuestionPerformanceTracker.HistoryChanged += InvalidateCharacterReport;
+        SaveSlots.ProfileChanged += InvalidateCharacterReport;
+    }
+
+    void InvalidateCharacterReport() { characterReport = null; }
 
     void Start()
     {
@@ -124,6 +134,7 @@ public class ExplorationHUD : MonoBehaviour
 
         previousTimeScale = Time.timeScale;
         inventoryOpen = true;
+        InvalidateCharacterReport();
         characterInfoScroll = Vector2.zero;
         Time.timeScale = 0f;
     }
@@ -139,6 +150,8 @@ public class ExplorationHUD : MonoBehaviour
 
     void OnDisable()
     {
+        QuestionPerformanceTracker.HistoryChanged -= InvalidateCharacterReport;
+        SaveSlots.ProfileChanged -= InvalidateCharacterReport;
         EndMapDrag();
         CloseInventory();
     }
@@ -762,7 +775,7 @@ public class ExplorationHUD : MonoBehaviour
         var portrait = characterInfo.GetPortraitTexture(index);
         if(portrait!=null)GUI.DrawTexture(new Rect(100,175,310,310),portrait,ScaleMode.ScaleToFit,true);
         GUI.Label(new Rect(110,540,300,45),titles[index],headingStyle);
-        GUI.Label(new Rect(100,585,310,30),"Character level and combat stats",smallStyle);
+        GUI.Label(new Rect(100,585,310,30),"Scroll details for learning progress",smallStyle);
         GUI.Label(new Rect(480,155,700,50),titles[index]+"  /  LEVEL "+level+"  /  "+languages[index],headingStyle);
         Fill(new Rect(480,218,700,2),Brass);
         string details="XP: "+PlayerProgression.Experience+" / "+PlayerProgression.RequiredExperience(level)+"\n\nHealth: "+PlayerHealth.CurrentHealth+" / "+PlayerHealth.MaxHealth;
@@ -771,9 +784,21 @@ public class ExplorationHUD : MonoBehaviour
         details=details.Replace("\n\n","\n");
         const float contentWidth=660f;
         float statsHeight=textStyle.CalcHeight(new GUIContent(details),contentWidth);
+        string reportContext=(MainMenuSaveSlots.CurrentUserId??"")+"|"+SaveSlots.Active+"|"+index+"|"+level;
+        if(characterReport==null||characterReportContext!=reportContext)
+        {
+            characterReport=QuestionPerformanceTracker.BuildReport(MainMenuSaveSlots.CurrentUserId,
+                CharacterAlmanac.LanguageForCharacter(index),SaveSlots.Active);
+            if(characterReportContext!=reportContext)characterInfoScroll=Vector2.zero;
+            characterReportContext=reportContext;
+        }
+        float reportHeight=textStyle.CalcHeight(new GUIContent(characterReport),contentWidth);
         characterInfoScroll=GUI.BeginScrollView(new Rect(480,240,710,420),characterInfoScroll,
-            new Rect(0,0,contentWidth,Mathf.Max(420f,statsHeight+20f)));
+            new Rect(0,0,contentWidth,Mathf.Max(420f,statsHeight+reportHeight+104f)));
         GUI.Label(new Rect(5,0,contentWidth,statsHeight),details,textStyle);
+        Fill(new Rect(5,statsHeight+18f,contentWidth,2),Brass);
+        GUI.Label(new Rect(5,statsHeight+28f,contentWidth,44),"LEARNING PROGRESSION",headingStyle);
+        GUI.Label(new Rect(5,statsHeight+80f,contentWidth,reportHeight),characterReport,textStyle);
         GUI.EndScrollView();
     }
 

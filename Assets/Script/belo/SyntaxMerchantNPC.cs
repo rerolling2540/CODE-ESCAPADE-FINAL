@@ -5,7 +5,7 @@ public sealed class SyntaxMerchantNPC : MonoBehaviour,INPCDialogueProvider
 {
     public DialogueSO BuildDialogue(Npc_Talk host)
     {
-        var greeting=host.Node("Welcome, traveller. Spare cards need not gather dust. Trade them for Library Tokens, or browse the syntax I have gathered for your class.");
+        var greeting=host.Node("Well met, traveller. My shelves hold knowledge for the road ahead. Trade spare cards for Library Tokens, or browse the cards and supplies gathered for your calling.");
         var help=host.Node("One spare card earns one Library Token. You can also recycle it into three low-logic scraps, then exchange three scraps for one token. Your last copy and its refinement level are protected.",
             "Coins buy card copies. Tokens buy syntax shards and scholar titles. Shards buy an advanced card for your chosen hero. Purchased cards join your battle deck, and you can take duplicates to the blacksmith.");
         System.Action open=()=>

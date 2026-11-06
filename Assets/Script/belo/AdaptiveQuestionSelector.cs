@@ -50,7 +50,7 @@ public static class AdaptiveQuestionSelector
         int learningTier = Mathf.Clamp(LearningTier(records, level), floor, cap);
         var candidates = (pool ?? Enumerable.Empty<QuestionData>()).Where(q => q != null &&
             QuestionCurriculum.Language(q) == language && Math.Max(q.minLevel,QuestionCurriculum.MinimumLevel(QuestionCurriculum.Topic(q))) <= level &&
-            QuestionCurriculum.Tier(q.difficulty) >= floor && QuestionCurriculum.Tier(q.difficulty) <= cap)
+            QuestionCurriculum.EffectiveTier(q) >= floor && QuestionCurriculum.EffectiveTier(q) <= cap)
             .GroupBy(QuestionCurriculum.Id).Select(g => g.First()).ToList();
         if (candidates.Count == 0) return null;
 
@@ -70,8 +70,8 @@ public static class AdaptiveQuestionSelector
         {
             var progress = Summarize(records.Where(a => QuestionCurriculum.Topic(a.topic, a.question_id) == group.Key));
             int desired = progress.NeedsReview ? Math.Max(floor, learningTier - 1) : learningTier;
-            int nearest = group.Min(q => Math.Abs(QuestionCurriculum.Tier(q.difficulty) - desired));
-            var choices = group.Where(q => Math.Abs(QuestionCurriculum.Tier(q.difficulty) - desired) == nearest).ToList();
+            int nearest = group.Min(q => Math.Abs(QuestionCurriculum.EffectiveTier(q) - desired));
+            var choices = group.Where(q => Math.Abs(QuestionCurriculum.EffectiveTier(q) - desired) == nearest).ToList();
             float topicWeight = progress.NeedsReview ? 3f : progress.Responses == 0 ? 1.5f : progress.Mastered ? .65f : 1f;
             if(frontier!=null&&group.Key==frontier.Key)topicWeight*=4f;
             foreach (var q in choices) weighted.Add(new KeyValuePair<QuestionData, float>(q, topicWeight / choices.Count));

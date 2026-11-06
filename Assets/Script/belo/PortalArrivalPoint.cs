@@ -20,7 +20,7 @@ public sealed class PortalArrivalPoint : MonoBehaviour
 
     public static void Prepare(string sceneName, string destinationId)
     {
-        pendingScene = string.IsNullOrWhiteSpace(destinationId) ? null : sceneName;
+        pendingScene = string.IsNullOrWhiteSpace(destinationId) ? null : MapSceneNames.Resolve(sceneName);
         pendingArrival = destinationId;
     }
 

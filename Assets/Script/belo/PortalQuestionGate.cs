@@ -36,12 +36,8 @@ public sealed class PortalQuestionGate : MonoBehaviour
     {
         if (!isActiveAndEnabled || asking || DoorJavaQuestionPanel.IsOpen) return;
         if (unlocked) { enter?.Invoke(); return; }
-        var questions = QuestionSystem.Instance != null
-            ? QuestionSystem.Instance.GetQuestionsForCurrentPlayer() : null;
-        if (questions == null || !Array.Exists(questions, q => q != null)) questions = puzzleQuestions;
-        if (questions == null || !Array.Exists(questions, q => q != null)) return;
         asking = true;
-        DoorJavaQuestionPanel.Show(questions, () => Accept(enter), () => { if (this != null) asking = false; }, forPortal: true);
+        DoorJavaQuestionPanel.Show(() => Accept(enter), () => { if (this != null) asking = false; }, forPortal: true);
     }
 
     private void Accept(Action enter)

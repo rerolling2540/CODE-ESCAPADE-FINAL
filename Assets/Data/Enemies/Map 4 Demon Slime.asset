@@ -15,7 +15,7 @@ MonoBehaviour:
   <Image>k__BackingField: {fileID: 974506607, guid: 2bbbe9ca11fd4472c9daafb01c1ccd4a, type: 3}
   <Health>k__BackingField: 160
   <AttackPower>k__BackingField: 45
-  battleSpriteFacesLeft: 0
+  battleSpriteFacesLeft: 1
   idleFrames:
   - {fileID: 974506607, guid: 2bbbe9ca11fd4472c9daafb01c1ccd4a, type: 3}
   - {fileID: -55144378, guid: 14f7d24ed415340a4b22683cde7ad557, type: 3}

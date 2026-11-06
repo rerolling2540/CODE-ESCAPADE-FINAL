@@ -1,4 +1,5 @@
 using TMPro;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,9 +12,10 @@ public sealed class MonolithTravelPanel : MonoBehaviour
     private CanvasGroup group;
     private TMP_Text notice;
     private bool restore;
-    public static bool IsDiscovered(WorldTravelCatalog.Destination d)=>d!=null&&(d.sceneName=="MainMenu"||WorldTravelDiscovery.HasVisited(SaveSlots.Read(SaveSlots.Active),d.sceneName));
-    public static bool CanTravel(WorldTravelCatalog.Destination d)=>d!=null&&!string.IsNullOrWhiteSpace(d.sceneName)&&Application.CanStreamedLevelBeLoaded(d.sceneName)&&WorldTravelDiscovery.CanTravelTo(SaveSlots.Read(SaveSlots.Active),d.sceneName);
-    static string LockedMessage(WorldTravelCatalog.Destination d)=>d?.sceneName=="map 5"?"Locked — claim the elf's Map 4 chapter reward":"Undiscovered — visit this map first";
+    static bool IsMapDestination(WorldTravelCatalog.Destination d)=>d!=null&&!d.lobby&&!string.IsNullOrWhiteSpace(d.sceneName)&&d.sceneName!="MainMenu";
+    public static bool IsDiscovered(WorldTravelCatalog.Destination d)=>IsMapDestination(d)&&WorldTravelDiscovery.HasVisited(SaveSlots.Read(SaveSlots.Active),d.sceneName);
+    public static bool CanTravel(WorldTravelCatalog.Destination d)=>IsMapDestination(d)&&Application.CanStreamedLevelBeLoaded(d.sceneName)&&WorldTravelDiscovery.CanTravelTo(SaveSlots.Read(SaveSlots.Active),d.sceneName);
+    static string LockedMessage(WorldTravelCatalog.Destination d)=>d?.sceneName=="Forest of Dawn"?"Locked — claim the elf's Frostbound Passage chapter reward":"Undiscovered — visit this map first";
     public static void Open(MonolithTravel owner)
     {
         if(IsOpen||owner==null||Time.timeScale<=0||GameControlsGuide.GameplayOverlayHidden)return;
@@ -34,7 +36,7 @@ public sealed class MonolithTravelPanel : MonoBehaviour
         if(!CanTravel(d)){notice.text=WorldTravelDiscovery.CanTravelTo(SaveSlots.Read(SaveSlots.Active),d?.sceneName)?"This destination is unavailable. Choose another location.":LockedMessage(d);return;}
         if(d.sceneName==SceneManager.GetActiveScene().name)return;
         GameSave.EnsureInstance().SaveCurrentPlayer();
-        PortalArrivalPoint.Prepare(d.sceneName,d.lobby?null:WorldTravelCatalog.ArrivalId);
+        PortalArrivalPoint.Prepare(d.sceneName,WorldTravelCatalog.ArrivalId);
         Time.timeScale=previousTime;restore=false;current=null;Destroy(gameObject);
         SceneTransitionFader.Load(d.sceneName);
     }
@@ -42,25 +44,26 @@ public sealed class MonolithTravelPanel : MonoBehaviour
     void OnDestroy(){if(current==this)current=null;if(restore&&!GameControlsGuide.SettingsOpen)Time.timeScale=previousTime;}
     public void Build(WorldTravelCatalog catalog,string currentScene)
     {
+        var destinations=catalog?.destinations?.Where(IsMapDestination).Take(5).ToArray()??System.Array.Empty<WorldTravelCatalog.Destination>();
+        float closeY=160+destinations.Length*84;
         var canvas=GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=1150;group=GetComponent<CanvasGroup>();
         var scaler=GetComponent<UnityEngine.UI.CanvasScaler>();scaler.uiScaleMode=UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1280,720);scaler.matchWidthOrHeight=.5f;
         var shade=Image("Backdrop",transform,new Color(0,0,0,.7f));Stretch(shade.rectTransform);
-        var frame=Image("Monolith travel",shade.transform,new Color(.24f,.14f,.065f));var rt=frame.rectTransform;rt.anchorMin=rt.anchorMax=rt.pivot=Vector2.one*.5f;rt.sizeDelta=new Vector2(820,660);
+        var frame=Image("Monolith travel",shade.transform,new Color(.24f,.14f,.065f));var rt=frame.rectTransform;rt.anchorMin=rt.anchorMax=rt.pivot=Vector2.one*.5f;rt.sizeDelta=new Vector2(820,closeY+80);
         var paper=Image("Parchment",frame.transform,new Color(.91f,.83f,.65f));Stretch(paper.rectTransform,8);
         Text("MONOLITH TRAVEL",paper.transform,28,20,748,44,32,true);
-        notice=Text("Return to visited maps for free. The elf unlocks Map 5\nafter you claim the Map 4 chapter reward.",paper.transform,28,75,748,64,23,false);
-        if(catalog?.destinations!=null)
+        notice=Text("Return to visited maps for free. The elf unlocks Forest of Dawn\nafter you claim the Frostbound Passage chapter reward.",paper.transform,28,75,748,64,23,false);
+        if(destinations.Length>0)
         {
-            int count=Mathf.Min(5,catalog.destinations.Length);
-            for(int i=0;i<count;i++)
+            for(int i=0;i<destinations.Length;i++)
             {
-                var destination=catalog.destinations[i];bool here=destination.sceneName==currentScene;bool available=CanTravel(destination);
+                var destination=destinations[i];bool here=destination.sceneName==currentScene;bool available=CanTravel(destination);
                 string label=destination.title+"\n"+(here?"You are here":available?destination.description:WorldTravelDiscovery.CanTravelTo(SaveSlots.Read(SaveSlots.Active),destination.sceneName)?"Destination unavailable":LockedMessage(destination));
                 var b=Button(label,paper.transform,28,150+i*84,748,76,()=>Travel(destination));b.interactable=!here&&available;
             }
         }
         else notice.text="No destinations are configured. Close this panel and try another monolith.";
-        Button("Close  [Esc]",paper.transform,242,580,320,52,Close);
+        Button("Close  [Esc]",paper.transform,242,closeY,320,52,Close);
     }
     static UnityEngine.UI.Image Image(string name,Transform parent,Color color){var go=new GameObject(name,typeof(RectTransform),typeof(UnityEngine.UI.Image));go.transform.SetParent(parent,false);var i=go.GetComponent<UnityEngine.UI.Image>();i.color=color;return i;}
     static void Stretch(RectTransform r,float inset=0){r.anchorMin=Vector2.zero;r.anchorMax=Vector2.one;r.offsetMin=Vector2.one*inset;r.offsetMax=-Vector2.one*inset;}

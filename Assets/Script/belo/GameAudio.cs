@@ -6,6 +6,7 @@ public static class GameAudio
 {
     private static AudioMixer mixer;
     public static event Action VolumesChanged;
+    public static bool UiClickSoundsEnabled => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu";
     public static float MusicVolume => Mathf.Clamp01(PlayerPrefs.GetFloat("musicVolume", 0.75f));
     public static float SfxVolume => Mathf.Clamp01(PlayerPrefs.GetFloat("sfxVolume", 0.75f));
 

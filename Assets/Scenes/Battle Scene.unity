@@ -1460,6 +1460,7 @@ MonoBehaviour:
   cardEmptyState: {fileID: 780952774}
   portraitContainer: {fileID: 1921564867}
   characterPortrait: {fileID: 1406673282}
+  characterProfileLayout: 0
   enemyHealthIcon: {fileID: 21300000, guid: 77d7018450196774a99cc2be5ed47a3f, type: 3}
   enemyAttackIcon: {fileID: 21300000, guid: e5ae71054316343489054c3d3ba02600, type: 3}
   enemyDefenseIcon: {fileID: 21300000, guid: 03b0d95c839f48c43af808e21b70b8ab, type: 3}
@@ -14292,7 +14293,7 @@ RectTransform:
   m_GameObject: {fileID: 7000000000000001000}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.3333334, y: 1.3333334, z: 1.3333334}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7000000000000001012}

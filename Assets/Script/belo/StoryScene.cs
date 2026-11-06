@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 // A self-contained story scene. Copy is serialized so it can be revised in the Inspector.
 public class StoryScene : MonoBehaviour
 {
-    [SerializeField] string destinationScene = "Scene 2";
+    [SerializeField] string destinationScene = "Whispering Hollow";
     [SerializeField] string[] titles = { "THE TOWER CALLS", "KNOWLEDGE IS YOUR WEAPON", "BEYOND THE GATE", "YOUR FIRST CHAPTER" };
     [SerializeField, TextArea(3, 8)] string[] passages = {
         "At The RiftSpire, an elf awaits a new adventurer. Beyond its walls lie unfamiliar paths, restless creatures, and questions that cannot be answered by a blade alone.",
@@ -43,6 +43,7 @@ public class StoryScene : MonoBehaviour
     void BeginAdventure()
     {
         if (leaving) return;
+        destinationScene = MapSceneNames.Resolve(destinationScene);
         if (!Application.CanStreamedLevelBeLoaded(destinationScene))
         {
             Debug.LogError("Story destination is missing from Build Settings: " + destinationScene);

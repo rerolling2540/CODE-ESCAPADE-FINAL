@@ -34,7 +34,7 @@ public static class HuntQuestChecks
                 check(HuntQuestProgress.Count(save,giver,stage)==1,"Repeated enemy counted twice");
                 foreach(string id in c.encounterIds.Take(c.required))save.defeatedEncounters.Add(id);
                 check(HuntQuestProgress.Ready(save,giver),"Victories did not complete contract");
-                SceneVisitProgress.ResetVisit(save,"Scene3");
+                SceneVisitProgress.ResetVisit(save,"Shadowroot Depths");
                 check(HuntQuestProgress.Ready(save,giver),"Map revisit reset contract progress");
                 check(QuestReturnPanel.Ready(save).Any(d=>d.giver==giver+3&&d.key==HuntQuestProgress.Key(giver,stage)),"Missing NPC return destination");
                 check(HuntQuestProgress.ApplyReward(save,giver,stage),"Earned reward rejected");
@@ -52,6 +52,9 @@ public static class HuntQuestChecks
         var earlier=new SaveSlots.Record();earlier.defeatedEncounters.AddRange(HuntQuestProgress.Get(0,0).encounterIds);
         check(!HuntQuestProgress.Ready(earlier,0),"Earlier victories skipped acceptance");HuntQuestProgress.ApplyAccept(earlier,0,0);
         check(HuntQuestProgress.Ready(earlier,0),"Earlier victories did not count");
+        var renamed=new SaveSlots.Record();renamed.defeatedEncounters.AddRange(new[]{"boss","boss","Scene 2 - Bringer Of Death 01"});
+        check(HuntQuestProgress.Count(renamed,0,2)==1,"Renamed Bringer victory lost or counted twice");
+        check(HuntQuestProgress.Count(renamed,1,2)==0,"Bringer incorrectly completed Joanna's boss contract");
         check(!HuntQuestProgress.Ready(new SaveSlots.Record(),0),"Progress leaked between slots");
         var dataType=typeof(CharacterInventory).GetNestedType("SaveData",BindingFlags.NonPublic);var data=Activator.CreateInstance(dataType,true);
         var grant=typeof(CharacterInventory).GetMethod("ApplyHuntGrant",BindingFlags.NonPublic|BindingFlags.Static);

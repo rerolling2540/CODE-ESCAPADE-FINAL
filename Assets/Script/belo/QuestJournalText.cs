@@ -9,7 +9,7 @@ public static class QuestJournalText
     {
         int c=WardenQuest.Chapter(s);
         if(c==6)return "<b>WARDEN OF THE HOLLOW</b>\nQuest complete. You earned the Warden title.";
-        if(s==null||!s.wardenAccepted)return "<b>MAIN QUEST</b>\nSpeak to the elf in Scene 2 to begin.";
+        if(s==null||!s.wardenAccepted)return "<b>MAIN QUEST</b>\nSpeak to the elf in Whispering Hollow to begin.";
         string status=WardenQuest.Ready(s)?"<color=#24552A><b>REWARD READY</b></color>\nSpeak to the elf to collect it.":"<b>Do next</b>\n"+QuestLearningRoute.Next(s);
         status+="\n\n<b>Chapter checklist</b>\n"+QuestLearningRoute.Checklist(QuestLearningRoute.Chapter(s));
         return "<b>MAIN QUEST  •  "+(c+1)+" / 6</b>\n<b>"+WardenQuest.Titles[c]+"</b>\n\n"+status+"\n\n<b>Reward</b>\n"+WardenQuest.RewardText(c);

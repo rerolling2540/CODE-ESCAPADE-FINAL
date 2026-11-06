@@ -1138,6 +1138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ExperienceHud
   fill: {fileID: 7325014042552501730}
   label: {fileID: 2906189871757021601}
+  levelLabel: {fileID: 0}
 --- !u!1 &1514411571734498604
 GameObject:
   m_ObjectHideFlags: 0
@@ -6643,7 +6644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8589e42040fe245d49391f6363c0d09b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  loadScene: Scene4
+  loadScene: Frostbound Passage
   requiredDefeatedEncounters: 0
 --- !u!1 &7784584185056376475
 GameObject:
@@ -7341,6 +7342,10 @@ MonoBehaviour:
   startingLevel: 5
   healthSlider: {fileID: 2374361038056421968}
   healthLabel: {fileID: 309154668513667844}
+  portraitImage: {fileID: 0}
+  warriorPortrait: {fileID: 0}
+  magePortrait: {fileID: 0}
+  archerPortrait: {fileID: 0}
 --- !u!1 &8157955940373119321
 GameObject:
   m_ObjectHideFlags: 0

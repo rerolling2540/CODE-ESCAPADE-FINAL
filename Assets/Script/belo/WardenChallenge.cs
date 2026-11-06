@@ -8,7 +8,7 @@ public static class WardenChallenge
     {
         var s=SaveSlots.Read(SaveSlots.Active);int first=task==0?0:task==1?2:task==2?3:4;
         if(!WardenQuest.Lesson(s,first)||(task==0&&!WardenQuest.Lesson(s,1))||(task==4&&!WardenQuest.Lesson(s,5)))
-            return host.Node("Before trying this task, complete the matching foundation lesson. "+new[]{"Visit Alden in Scene 2 for output and variables.","Visit Rowan in Scene3 for conditions.","Visit Rowan in Scene3 for loops.","Visit Mira in Map 4 for arrays or lists.","Visit Mira in Map 4 for functions."}[task]+" Your earlier completed lessons count.");
+            return host.Node("Before trying this task, complete the matching foundation lesson. "+new[]{"Visit Alden in Whispering Hollow for output and variables.","Visit Rowan in Shadowroot Depths for conditions.","Visit Rowan in Shadowroot Depths for loops.","Visit Mira in Frostbound Passage for arrays or lists.","Visit Mira in Frostbound Passage for functions."}[task]+" Your earlier completed lessons count.");
         bool py=LearningQuests.Language=="python",cs=LearningQuests.Language=="csharp";
         string print=py?"print":""+(cs?"Console.WriteLine":"System.out.println");
         string[] code={py?"coins = 3\ncoins = coins + 4\nprint(coins)":"int coins = 3;\ncoins = coins + 4;\n"+print+"(coins);",py?"keys = 2\nif keys __ 2:\n    print('Open')":"int keys = 2;\nif (keys __ 2) { "+print+"(\"Open\"); }",py?"for tower in range(__):\n    print('Light')":"for (int tower = 0; tower < __; tower++) {\n    "+print+"(\"Light\");\n}",py?"potions = [3, 6, 9]\nprint(potions[__])":"int[] potions = {3, 6, 9};\n"+print+"(potions[__]);",py?"def heal(hp):\n    return hp + 3\nprint(heal(__))":"static int Heal(int hp) { return hp + 3; }\n"+print+"(Heal(__));"};

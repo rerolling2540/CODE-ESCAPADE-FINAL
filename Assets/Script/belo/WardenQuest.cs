@@ -7,7 +7,7 @@ public static class WardenQuest
 {
     public const string FinalEncounter = "Warden Final Trial";
     public static readonly string[] Titles={"Prepare for the Hollow","First Trial","Restore the Gate","Rekindle the Watchfires","The Scholar's Supplies","Warden of the Hollow"};
-    public static readonly string[] Maps={"Scene 2","Scene 2","Scene3","Scene3","map 4","map 5"};
+    public static readonly string[] Maps={"Whispering Hollow","Whispering Hollow","Shadowroot Depths","Shadowroot Depths","Frostbound Passage","Forest of Dawn"};
     public static readonly int[] XP={50,75,100,125,150,200};
     public static readonly int[] Gold={50,50,100,100,150,200};
     public static int Chapter(SaveSlots.Record s)=>Mathf.Clamp(s?.wardenChapter??0,0,6);
@@ -37,7 +37,7 @@ public static class WardenQuest
     public static string Objective(SaveSlots.Record s)
     {
         int c=Chapter(s);if(c==6)return "Warden of the Hollow: complete. Your title is earned; teachers remain available for review.";
-        if(s==null||!s.wardenAccepted)return "Warden of the Hollow: speak to the elf in Scene 2 [E] to begin.";
+        if(s==null||!s.wardenAccepted)return "Warden of the Hollow: speak to the elf in Whispering Hollow [E] to begin.";
         return "Chapter "+(c+1)+"/6: "+Titles[c]+"\n"+QuestLearningRoute.Next(s)+"\nReward: "+RewardText(c)+".";
     }
     public static void Accept()
@@ -86,7 +86,7 @@ public static class WardenQuest
     {
         int c=Chapter(s);
         if(c==6)return host.Node("You are Warden of the Hollow. You learned to read code, follow its changing values, and apply it to new problems. Your teachers will still welcome you for practice.");
-        var root=host.Node("I travel ahead to tend the wards. Wherever you meet me, we will continue the same journey; you do not need to start again.",Objective(s));
+        var root=host.Node("Well met, traveller. I journey ahead to tend the realm's fading wards. Wherever our paths cross, your deeds remain known. Let us continue your charge as Warden of the Hollow.",Objective(s));
         if(s==null||!s.wardenAccepted)root.options=new[]{new DialogueOption{optionText="Accept: Warden of the Hollow",onSelected=Accept},new DialogueOption{optionText="Not yet"}};
         else if(Ready(s))root.options=new[]{new DialogueOption{optionText="Claim chapter reward",onSelected=()=>Claim(c)},new DialogueOption{optionText="Later"}};
         else if(PendingBattleReview(s)!=null)
@@ -101,7 +101,7 @@ public static class WardenQuest
         }
         else {
             int task=c==0?0:c==2?1:c==3?2:c==4?(!Has(s,"shelf")?3:4):-1;
-            var help=host.Node("First read the lesson, then watch one line at a time. Predict what changes. If you are unsure, replay the example or open the almanac [L]. Hints and retries are free; you do not need perfect accuracy.","Alden is in Scene 2. Rowan is in Scene3. Mira is in Map 4. Completed foundation lessons count even if you did them before accepting this chapter.");
+            var help=host.Node("First read the lesson, then watch one line at a time. Predict what changes. If you are unsure, replay the example or open the almanac [L]. Hints and retries are free; you do not need perfect accuracy.","Alden is in Whispering Hollow. Rowan is in Shadowroot Depths. Mira is in Frostbound Passage. Completed foundation lessons count even if you did them before accepting this chapter.");
             root.options=task>=0&&host.gameObject.scene.name==Maps[c]?new[]{new DialogueOption{optionText="Try the chapter challenge",nextDialogue=WardenChallenge.Build(host,task)},new DialogueOption{optionText="Learning route / help",nextDialogue=help},new DialogueOption{optionText="Farewell"}}:new[]{new DialogueOption{optionText="Learning route / help",nextDialogue=help},new DialogueOption{optionText="Farewell"}};
         }
         return root;

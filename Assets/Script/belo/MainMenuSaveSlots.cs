@@ -198,6 +198,7 @@ public class MainMenuSaveSlots : MonoBehaviour
 
     void PlayClickSound()
     {
+        if (!GameAudio.UiClickSoundsEnabled) return;
         if (buttonAudioSource != null &&
             buttonClickSound != null)
         {

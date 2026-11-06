@@ -62,6 +62,7 @@ public class MatchSetupSystem : MonoBehaviour
             enemy.FaceTowards(HeroSystem.Instance.HeroView);
         if (EnemySystem.Instance.Enemies.Count > 0)
             HeroSystem.Instance.HeroView.FaceTowards(EnemySystem.Instance.Enemies[0]);
+        BattleEncounterNames.Show(EnemySystem.Instance.Enemies);
         gameObject.AddComponent<EncounterBattleReturn>().Configure(caveBattle, encounterId, encounterScene);
         List<CardData> ownedBattleDeck = CharacterInventory.WithChestRewards(heroData.Deck);
         Debug.Log($"Battle deck created from this save slot's owned inventory: {ownedBattleDeck.Count} card(s). Unowned catalog cards are excluded.");
@@ -1944,6 +1945,13 @@ public class EncounterBattleReturn : MonoBehaviour
     {
         yield return BattleTutorialGuide.ExplainResult(victory);
         yield return BattleReportScroll.Present("VICTORY",awardedExperience,awardedGold);
+        if (victory && caveBattle && !returning &&
+            MapSceneNames.Resolve(encounterScene) == "Forest of Dawn" && encounterId == "the final boss")
+        {
+            returning = true;
+            FinalVictoryEnding.Show();
+            yield break;
+        }
         Return();
     }
 
@@ -1959,17 +1967,6 @@ public class EncounterBattleReturn : MonoBehaviour
     }
 
     public void ReturnToLobby() => Return();
-
-    void OnGUI()
-    {
-        if (GameControlsGuide.GameplayOverlayHidden) return;
-        if (returning) return;
-        if (BattleEnded)
-        {
-            BattleUITheme.DrawResultPanel(new Rect(Screen.width / 2f - 240, Screen.height / 2f - 65, 480, 130),
-                victory ? "VICTORY  +"+awardedExperience+" XP / +"+awardedGold+" gold\nLevel "+PlayerProgression.Level+" / Returning from battle..." : "DEFEAT\nReturning from battle...");
-        }
-    }
 
     void OnDestroy() { BattleEnded = false; }
 }

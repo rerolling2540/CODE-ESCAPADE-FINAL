@@ -45,6 +45,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayButtonSound()
     {
+        if (!GameAudio.UiClickSoundsEnabled) return;
         if (SFXSource != null && buttonClick != null) SFXSource.PlayOneShot(buttonClick);
     }
 
@@ -90,6 +91,6 @@ public class AudioManager : MonoBehaviour
 
     public void LoadScene2()
     {
-        PlayButtonSoundAndLoadScene("Scene 2");
+        PlayButtonSoundAndLoadScene("Whispering Hollow");
     }
 }

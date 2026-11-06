@@ -9,6 +9,15 @@ public static class PlayerProgression
         get{var saved=SaveSlots.Read(SaveSlots.Active);if(saved==null)return 5;Ensure(saved);return saved.level;}
     }
     public static int Experience=>Mathf.Max(0,SaveSlots.Read(SaveSlots.Active)?.experience??0);
+    public static int RevivalExperienceCost(int experience) => (int)(((long)Mathf.Max(0,experience)+9)/10);
+    public static int ApplyRevivalPenalty(SaveSlots.Record saved)
+    {
+        if(saved==null)return 0;
+        int experience=Mathf.Max(0,saved.experience);
+        int cost=RevivalExperienceCost(experience);
+        saved.experience=experience-cost;
+        return cost;
+    }
     public static HeroClassData Class=>Resources.Load<CharacterInfoData>("UI/CharacterInfo")?.battleClass;
     private static void Ensure(SaveSlots.Record saved)
     {

@@ -11532,7 +11532,7 @@ Transform:
   m_GameObject: {fileID: 606382705}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 225.31001, y: 0.025999755, z: -10}
+  m_LocalPosition: {x: 277.91, y: -41.474, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18402,7 +18402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 608dd62a84d7457bb656e9ee7aa6384d, type: 2}
-  battleEncounter: {fileID: 0}
+  battleEncounter: {fileID: 11400000, guid: 35e2b6bf5b832e84a83e09adf4547871, type: 2}
   interactionDistance: 9
   maxEncounterHeightDifference: 3.5
   requireLineOfSight: 0
@@ -18874,7 +18874,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 608dd62a84d7457bb656e9ee7aa6384d, type: 2}
-  battleEncounter: {fileID: 0}
+  battleEncounter: {fileID: 11400000, guid: 35e2b6bf5b832e84a83e09adf4547871, type: 2}
   interactionDistance: 9
   maxEncounterHeightDifference: 4.5
   requireLineOfSight: 0
@@ -19228,7 +19228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CaveEnemyEncounter
   enemy: {fileID: 11400000, guid: 38f3a9a19b7b4605a7b475d5584e1b5a, type: 2}
-  battleEncounter: {fileID: 0}
+  battleEncounter: {fileID: 11400000, guid: e277aecf2d4e4d5da0cdddf10fd89fc2, type: 2}
   interactionDistance: 9
   maxEncounterHeightDifference: 3.5
   requireLineOfSight: 0
@@ -27346,11 +27346,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 226.1
+      value: 278.7
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.4
+      value: -41.9
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -298063,7 +298063,7 @@ Transform:
   m_GameObject: {fileID: 2095482350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 225.31001, y: 0.025999755, z: -10}
+  m_LocalPosition: {x: 277.91, y: -41.474, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

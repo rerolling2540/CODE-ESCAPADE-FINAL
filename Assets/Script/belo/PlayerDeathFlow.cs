@@ -198,6 +198,7 @@ public sealed class PlayerDeathFlow : MonoBehaviour
         saved.hasCheckpoint = true;
         saved.checkpointScene = destination;
         saved.checkpointPosition = position;
+        SceneVisitProgress.ResetVisit(saved,destination);
         SaveSlots.Write(saved);
         CaveEnemyEncounter.PendingEnemies = null;
         CaveEnemyEncounter.PendingEncounterId = null;

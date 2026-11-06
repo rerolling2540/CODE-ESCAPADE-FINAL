@@ -31,7 +31,7 @@ public sealed class DemonSlimeTransformation : MonoBehaviour
     void Start()
     {
         // sceneLoaded resets a new visit after Awake and before Start.
-        if (SceneVisitProgress.IsDefeated(SaveSlots.Read(SaveSlots.Active), gameObject.scene.name, gameObject.name))
+        if (SceneVisitProgress.IsDefeated(SaveSlots.Read(SaveSlots.Active), gameObject.scene.name, gameObject.name,encounter.PermanentlyDefeated))
             gameObject.SetActive(false);
     }
 

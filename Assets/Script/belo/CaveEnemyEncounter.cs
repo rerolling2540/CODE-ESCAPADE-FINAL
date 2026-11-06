@@ -38,11 +38,21 @@ public class CaveEnemyEncounter : MonoBehaviour
     private Rigidbody2D body;
     private float direction = 1f;
     private float readyAt;
+    public bool PermanentlyDefeated
+    {
+        get
+        {
+            bool Special(EnemyData data)=>data!=null&&(data.progressionRank==EnemyProgressionRank.Elite||data.progressionRank==EnemyProgressionRank.Boss);
+            if(Special(enemy))return true;
+            if(battleEncounter!=null)foreach(var member in battleEncounter.CreateEnemySquad())if(Special(member))return true;
+            return false;
+        }
+    }
 
     void Start()
     {
         var saved = SaveSlots.Read(SaveSlots.Active);
-        if (SceneVisitProgress.IsDefeated(saved, gameObject.scene.name, gameObject.name))
+        if (SceneVisitProgress.IsDefeated(saved, gameObject.scene.name, gameObject.name,PermanentlyDefeated))
         { gameObject.SetActive(false); return; }
         enteringBattle = false;
         readyAt = Time.unscaledTime + 2f;

@@ -74,6 +74,8 @@ public static class SaveSlots
         public System.Collections.Generic.List<string> huntQuestsAccepted = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> huntQuestsClaimed = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> scene3VisitDefeated = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> scene2VisitDefeated = new System.Collections.Generic.List<string>();
+        public System.Collections.Generic.List<string> map5VisitDefeated = new System.Collections.Generic.List<string>();
         public System.Collections.Generic.List<string> map4VisitDefeated = new System.Collections.Generic.List<string>();
     }
     public static int Active

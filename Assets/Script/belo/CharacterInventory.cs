@@ -161,7 +161,8 @@ public class CharacterInventory : MonoBehaviour
         InventoryChanged?.Invoke();
     }
 
-    public CardData GetCard(string id) => GameplayCardCatalog.Resolve(catalog.Find(e => e != null && e.id == id)?.card);
+    public CardData GetCard(string id) => GameplayCardCatalog.Resolve(catalog.Find(e => e != null && e.id == id)?.card)
+        ?? GameplayCardCatalog.FindById(id);
     public int GetLevel(string id) => CardRefinementRules.Level(data.cards.Find(s => s.id == id)?.level ?? 1);
     public int GetQuantity(string id) => Mathf.Max(0, data.cards.Find(s => s.id == id)?.quantity ?? 0);
 
@@ -169,6 +170,8 @@ public class CharacterInventory : MonoBehaviour
     {
         card = GameplayCardCatalog.Resolve(card);
         if (card == null) return null;
+        string primary = GameplayCardCatalog.PrimaryId(card);
+        if (!string.IsNullOrEmpty(primary)) return primary;
         if (Array.Exists(Resources.LoadAll<CardData>("ChestCards"), c => c == card)) return "chest." + card.name;
         string id=Resources.Load<InventoryCardCatalog>("InventoryCardCatalog")?.cards.Find(e => e != null && e.card == card)?.id;
         return id ?? SyntaxMerchantCatalog.Load()?.offers.Find(o=>o!=null&&o.kind==MerchantItemKind.Card&&o.card==card)?.cardId;
@@ -185,8 +188,8 @@ public class CharacterInventory : MonoBehaviour
             var shared = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
             if (saved?.cards != null && shared != null)
                 foreach (var stack in saved.cards)
-                    if (stack != null && shared.cards.Exists(e => e != null && e.id == stack.id &&
-                        GameplayCardCatalog.Resolve(e.card) == GameplayCardCatalog.Resolve(card)))
+                    if (stack != null && (stack.id == id || shared.cards.Exists(e => e != null && e.id == stack.id &&
+                        GameplayCardCatalog.Resolve(e.card) == GameplayCardCatalog.Resolve(card))))
                         bestLevel = Mathf.Max(bestLevel, stack.level);
             return CardRefinementRules.Level(bestLevel);
         }
@@ -375,7 +378,8 @@ public class CharacterInventory : MonoBehaviour
         }
         foreach (var stack in uniqueStacks)
         {
-            if (!byId.TryGetValue(stack.Key, out var card)) continue;
+            if (!byId.TryGetValue(stack.Key, out var card)) card = GameplayCardCatalog.FindById(stack.Key);
+            if (card == null) continue;
             result.TryGetValue(card, out int quantity);
             result[card] = (int)Math.Min(int.MaxValue, (long)quantity + stack.Value);
         }
@@ -414,10 +418,25 @@ public class CharacterInventory : MonoBehaviour
                 if (string.IsNullOrWhiteSpace(cardKey)) continue;
                 int level = 1;
                 foreach (var stack in saved.cards)
-                    if (stack != null && shared != null && shared.cards.Exists(entry => entry != null &&
-                        entry.id == stack.id && GameplayCardCatalog.Resolve(entry.card) == owned.Key))
+                    if (stack != null && (stack.id == cardKey || (shared != null && shared.cards.Exists(entry => entry != null &&
+                        entry.id == stack.id && GameplayCardCatalog.Resolve(entry.card) == owned.Key))))
                         level = Mathf.Max(level, CardRefinementRules.Level(stack.level));
                 result.Add(new CloudCardStack { card_key = cardKey, quantity = owned.Value, level = level });
+            }
+            // A definition download can fail independently of private save sync.
+            // Preserve remote ownership even when this device cannot resolve its template yet.
+            foreach (var stack in saved.cards)
+            {
+                if (stack == null || stack.quantity <= 0 || string.IsNullOrEmpty(stack.id) ||
+                    !stack.id.StartsWith("remote.", StringComparison.Ordinal)) continue;
+                var known = result.Find(item => item.card_key == stack.id);
+                if (known == null) result.Add(new CloudCardStack { card_key = stack.id, quantity = stack.quantity,
+                    level = CardRefinementRules.Level(stack.level) });
+                else
+                {
+                    known.quantity = Math.Max(known.quantity, stack.quantity);
+                    known.level = Math.Max(known.level, CardRefinementRules.Level(stack.level));
+                }
             }
             return result;
         }
@@ -572,8 +591,13 @@ public class CharacterInventory : MonoBehaviour
     bool AddCardInternal(CardData card, int amount)
     {
         card = GameplayCardCatalog.Resolve(card);
-        if (card == null || amount <= 0) return false;
-        var entry = catalog.Find(e => e != null && e.card == card);
+        if (card == null || amount <= 0 || !GameplayCardCatalog.CanObtain(card)) return false;
+        var entry = catalog.Find(e => e != null && GameplayCardCatalog.Resolve(e.card) == card);
+        if (entry == null)
+        {
+            string id = GameplayCardCatalog.PrimaryId(card);
+            if (!string.IsNullOrEmpty(id)) { entry = new CatalogEntry { id = id, card = card }; catalog.Add(entry); }
+        }
         if (entry == null || string.IsNullOrEmpty(entry.id)) return false;
         var stack = data.cards.Find(s => s.id == entry.id);
         if (stack == null) data.cards.Add(new Stack { id = entry.id, quantity = amount });
@@ -591,7 +615,7 @@ public class CharacterInventory : MonoBehaviour
     public bool RemoveCard(CardData card, int amount = 1)
     {
         card = GameplayCardCatalog.Resolve(card);
-        var entry = catalog.Find(e => e != null && e.card == card);
+        var entry = catalog.Find(e => e != null && GameplayCardCatalog.Resolve(e.card) == card);
         var stack = entry == null ? null : data.cards.Find(s => s.id == entry.id);
         if (amount <= 0 || stack == null || stack.quantity < amount) return false;
         stack.quantity -= amount;

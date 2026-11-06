@@ -25,6 +25,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
         public string question_type;
         public string prompt;
         public string code_snippet;
+        public string explanation;
         public string[] choices;
         public int correct_index;
         public int min_level;
@@ -33,6 +34,8 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private readonly List<MultipleChoiceQuestionData> runtimeQuestions = new List<MultipleChoiceQuestionData>();
     private static List<MultipleChoiceQuestionData> bundledQuestions;
+    private static string publishedQuestionsJson;
+    private static List<MultipleChoiceQuestionData> publishedQuestions;
     private bool remoteLoadFinished;
     private string activeAttemptId;
 
@@ -168,6 +171,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private IEnumerable<QuestionData> GetQuestionPool()
     {
+        if (GameContentSync.HasQuestionSnapshot) return GetBundledQuestions();
         if (runtimeQuestions.Count > 0) return runtimeQuestions;
         return database != null && database.questions != null ? database.questions : Array.Empty<QuestionData>();
     }
@@ -176,9 +180,9 @@ public class QuestionSystem : Singleton<QuestionSystem>
     {
         string language = CurrentPlayerLanguage;
         var card = playedCard?.CardData;
-        var available = (pool ?? Array.Empty<QuestionData>()).Where(q => q != null).ToList();
+        var available = (GameContentSync.HasQuestionSnapshot ? GetBundledQuestions().Cast<QuestionData>() : pool ?? Array.Empty<QuestionData>()).Where(q => q != null).ToList();
         // Scene-authored legacy doors may only contain Java questions. Use the matching bundled language instead.
-        if (!available.Any(q => QuestionCurriculum.Language(q) == language)) available = GetBundledQuestions().Cast<QuestionData>().ToList();
+        if (!GameContentSync.HasQuestionSnapshot && !available.Any(q => QuestionCurriculum.Language(q) == language)) available = GetBundledQuestions().Cast<QuestionData>().ToList();
         return AdaptiveQuestionSelector.Select(available, language, QuestionPerformanceTracker.GetCurrentPlayerLevel(),
             QuestionPerformanceTracker.GetLearningHistory(language, SaveSlots.Active), UnityEngine.Random.value, avoidId,
             card != null ? card.minimumQuestionTier : 1, card != null ? card.maximumQuestionTier : 3);
@@ -186,6 +190,17 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private static List<MultipleChoiceQuestionData> GetBundledQuestions()
     {
+        if (GameContentSync.HasQuestionSnapshot)
+        {
+            if (publishedQuestionsJson != GameContentSync.QuestionJson || publishedQuestions == null || publishedQuestions.Any(q => q == null))
+            {
+                publishedQuestionsJson = GameContentSync.QuestionJson;
+                publishedQuestions = new List<MultipleChoiceQuestionData>();
+                var data = JsonUtility.FromJson<QuestionRows>("{\"items\":" + publishedQuestionsJson + "}").items;
+                foreach (var row in data ?? Array.Empty<QuestionRow>()) publishedQuestions.Add(CreatePublishedQuestion(row));
+            }
+            return publishedQuestions;
+        }
         if (bundledQuestions != null && bundledQuestions.All(q => q != null)) return bundledQuestions;
         bundledQuestions = new List<MultipleChoiceQuestionData>();
         var asset = Resources.Load<TextAsset>("QuestionBanks/StarterQuestions");
@@ -208,88 +223,34 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     private IEnumerator LoadRemoteQuestions()
     {
-        // Same authored seed questions as the SQL bank; supports a first offline launch in every language.
+        GameContentSync.Configure(supabaseProjectUrl, supabasePublishableKey);
         var starterBank = Resources.Load<TextAsset>("QuestionBanks/StarterQuestions");
-        if (starterBank != null) ApplyQuestionRows(starterBank.text);
-        string root = string.IsNullOrWhiteSpace(supabaseProjectUrl) ? "" : supabaseProjectUrl.Trim().TrimEnd('/');
-        string key = string.IsNullOrWhiteSpace(supabasePublishableKey) ? "" : supabasePublishableKey.Trim();
-        string cachePath = GetQuestionCachePath(root);
-        if (!string.IsNullOrEmpty(cachePath) && File.Exists(cachePath))
-        {
-            try
-            {
-                string cachedJson = File.ReadAllText(cachePath);
-                int cachedCount = ApplyQuestionRows(cachedJson);
-                if (cachedCount > 0)
-                    Debug.Log("Loaded " + cachedCount + " cached Supabase question(s) for offline play.", this);
-            }
-            catch (Exception exception)
-            {
-                Debug.LogWarning("Could not read the local question cache: " + exception.Message, this);
-            }
-        }
-        // Cached questions (or the local QuestionDatabase fallback) can be used immediately.
+        if (!GameContentSync.HasQuestionSnapshot && starterBank != null) ApplyQuestionRows(starterBank.text);
         remoteLoadFinished = true;
-
-        if (string.IsNullOrEmpty(root) || string.IsNullOrEmpty(key))
-        {
-            if (runtimeQuestions.Count == 0)
-                Debug.LogWarning("Supabase question bank is not configured. Card questions will use the local QuestionDatabase.", this);
-            yield break;
-        }
-
-        string url = root + "/rest/v1/question_bank?select=id,language,topic,difficulty,question_type,prompt,code_snippet,choices,correct_index,min_level,max_level&published=eq.true&order=id.asc";
+        string applied = null;
         while (true)
         {
-            bool refreshed = false;
-            using (var request = UnityWebRequest.Get(url))
+            string json = GameContentSync.QuestionJson;
+            if (json != null && json != applied && string.IsNullOrEmpty(activeAttemptId))
             {
-                request.timeout = 12;
-                request.SetRequestHeader("apikey", key);
-                request.SetRequestHeader("Accept", "application/json");
-                request.downloadHandler = new DownloadHandlerBuffer();
-                yield return request.SendWebRequest();
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    string responseJson = request.downloadHandler.text;
-                    // An active popup must retain its ScriptableObject until its answer is resolved.
-                    while (!string.IsNullOrEmpty(activeAttemptId)) yield return null;
-                    int loadedCount = ApplyQuestionRows(responseJson);
-                    if (loadedCount > 0)
-                    {
-                        try
-                        {
-                            string directory = Path.GetDirectoryName(cachePath);
-                            if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
-                            File.WriteAllText(cachePath, responseJson);
-                        }
-                        catch (Exception exception)
-                        {
-                            Debug.LogWarning("Questions loaded, but the offline cache could not be saved: " + exception.Message, this);
-                        }
-                        Debug.Log("Loaded " + loadedCount + " Supabase question(s) and refreshed the offline cache.", this);
-                        refreshed = true;
-                    }
-                    else if (string.Equals(responseJson.Trim(), "[]", StringComparison.Ordinal))
-                    {
-                        refreshed = true;
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Supabase returned no usable question rows. Keeping the current cache and retrying.", this);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Could not refresh Supabase questions. Cached/local questions remain available. " +
-                        request.error + " " + request.downloadHandler.text, this);
-                }
+                ApplyQuestionRows(json);
+                applied = json;
             }
-
-            if (refreshed) break;
-            // Keep trying in the background so the cache refreshes after connectivity returns.
-            yield return new WaitForSecondsRealtime(60f);
+            yield return new WaitForSecondsRealtime(.25f);
         }
+    }
+
+    private static MultipleChoiceQuestionData CreatePublishedQuestion(QuestionRow row)
+    {
+        var asset = ScriptableObject.CreateInstance<MultipleChoiceQuestionData>();
+        asset.name = asset.questionId = row.id;
+        asset.topic = row.topic; asset.language = row.language; asset.difficulty = row.difficulty;
+        asset.minLevel = row.min_level; asset.maxLevel = row.max_level;
+        asset.questionText = row.prompt; asset.codeSnippet = (row.code_snippet ?? "").Replace("\\n", "\n");
+        asset.options = row.choices; asset.correctAnswerIndex = row.correct_index;
+        asset.hintText = row.explanation ?? ""; asset.timeLimitInSeconds = 25f;
+        asset.questionType = row.question_type == "predict_output" ? QuestionType.WhatsTheOutput : QuestionType.MultipleChoice;
+        return asset;
     }
 
     private int ApplyQuestionRows(string json)
@@ -297,7 +258,13 @@ public class QuestionSystem : Singleton<QuestionSystem>
         try
         {
             QuestionRow[] rows = JsonUtility.FromJson<QuestionRows>("{\"items\":" + json + "}").items;
-            if (rows == null || rows.Length == 0) return 0;
+            if (rows == null) return 0;
+            if (rows.Length == 0)
+            {
+                foreach (var old in runtimeQuestions) if (old != null) Destroy(old);
+                runtimeQuestions.Clear();
+                return 0;
+            }
 
             var parsedQuestions = new List<MultipleChoiceQuestionData>();
             foreach (QuestionRow row in rows)

@@ -782,7 +782,7 @@ public class CombatantView : MonoBehaviour
 
         // Recoil only the artwork: moving the combatant root can flip its facing
         // when a melee enemy stands close to the player.
-        hitTime = Time.time + 0.18f;
+        if (CurrentHealth < healthBefore) hitTime = Time.time + 0.18f;
         hitDirection = spriteRenderer != null && spriteRenderer.transform.TransformVector(Vector3.right).x * (spriteRenderer.flipX ? -1f : 1f) > 0f ? -1f : 1f;
         UpdateHealthUI();
         int healthDamage = healthBefore - CurrentHealth;

@@ -17,43 +17,35 @@ alter table public.player_question_attempts drop constraint if exists player_que
 alter table public.player_question_attempts add constraint player_question_attempts_slot_index_check check (slot_index between 0 and 9);
 
 create or replace function public.replace_player_card_inventory(
-    p_slot_index integer,
-    p_cards jsonb,
-    p_updated_at text default null
+    p_slot_index integer, p_cards jsonb, p_updated_at text default null
 )
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
+returns void language plpgsql security definer set search_path = public as $$
+declare existing_time timestamptz; snapshot_time timestamptz; incoming_time timestamptz;
 begin
-    if auth.uid() is null then
-        raise exception 'Sign in required';
+    if auth.uid() is null then raise exception 'Sign in required'; end if;
+    if p_slot_index is null or p_slot_index < 0 or p_slot_index > 9 then raise exception 'Invalid save slot'; end if;
+    if jsonb_typeof(p_cards) is distinct from 'array' then raise exception 'Card stacks must be a JSON array'; end if;
+    incoming_time := nullif(p_updated_at,'')::timestamptz;
+    if incoming_time is null then raise exception 'Inventory timestamp required'; end if;
+
+    -- Same row lock as save synchronization; no upload can race a newer deletion.
+    select nullif(save_data->'slotModifiedUtc'->>p_slot_index,'')::timestamptz
+        into snapshot_time from public.player_saves where user_id = auth.uid() for update;
+    perform pg_advisory_xact_lock(hashtextextended(auth.uid()::text || ':' || p_slot_index,0));
+    select updated_at into existing_time from public.player_card_inventory_slots
+        where user_id = auth.uid() and slot_index = p_slot_index for update;
+    if snapshot_time is null or incoming_time <> snapshot_time or incoming_time < existing_time then
+        raise exception 'Newer inventory exists; download and merge before uploading' using errcode = '40001';
     end if;
-    if p_slot_index < 0 or p_slot_index > 9 then
-        raise exception 'Invalid save slot';
-    end if;
-    if coalesce(jsonb_typeof(p_cards), '') <> 'array' then
-        raise exception 'Card stacks must be a JSON array';
-    end if;
-
-    insert into public.player_card_inventory_slots (user_id, slot_index, updated_at)
-    values (auth.uid(), p_slot_index, coalesce(nullif(p_updated_at, '')::timestamptz, now()))
-    on conflict (user_id, slot_index)
-    do update set updated_at = excluded.updated_at;
-
-    delete from public.player_card_inventory
-    where user_id = auth.uid() and slot_index = p_slot_index;
-
-    insert into public.player_card_inventory (user_id, slot_index, game_card_key, quantity, level)
-    select auth.uid(), p_slot_index, item.card_key, item.quantity, coalesce(item.level, 1)
-    from jsonb_to_recordset(p_cards) as item(card_key text, quantity integer, level integer)
-    where item.card_key is not null and item.quantity > 0;
-end;
-$$;
-
-revoke all on function public.replace_player_card_inventory(integer, jsonb, text) from public;
-grant execute on function public.replace_player_card_inventory(integer, jsonb, text) to authenticated;
-
-
+    insert into public.player_card_inventory_slots(user_id,slot_index,updated_at)
+        values(auth.uid(),p_slot_index,incoming_time)
+        on conflict(user_id,slot_index) do update set updated_at = excluded.updated_at;
+    delete from public.player_card_inventory where user_id = auth.uid() and slot_index = p_slot_index;
+    insert into public.player_card_inventory(user_id,slot_index,game_card_key,quantity,level)
+        select auth.uid(),p_slot_index,item.card_key,item.quantity,coalesce(item.level,1)
+        from jsonb_to_recordset(p_cards) as item(card_key text,quantity integer,level integer)
+        where item.card_key is not null and item.quantity > 0;
+end $$;
+revoke all on function public.replace_player_card_inventory(integer,jsonb,text) from public;
+grant execute on function public.replace_player_card_inventory(integer,jsonb,text) to authenticated;
 commit;

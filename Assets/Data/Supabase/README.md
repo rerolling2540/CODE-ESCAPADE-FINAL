@@ -1,5 +1,34 @@
 # Card Data Editor
 
+## Required ASAP database update
+
+For the current Unity client, run **`asap_database_fixes.sql`** in the existing
+project's Supabase SQL Editor. It replaces the older ten-slot-only migration as
+the one-step update. Run the whole file; it preserves existing saves and card
+ownership. New projects should run the base table schemas first, then this update.
+
+This update restricts card changes to `adeventurerank60@gmail.com`, enables ten
+slots, and installs `sync_player_save`. Direct client save upserts are disabled:
+the RPC locks the account row, merges independent slots, preserves deletions,
+and checks the last server version observed by each device before accepting a
+change to a slot. Older game builds must be updated to use this RPC.
+
+Unity refreshes short-lived access tokens in memory, retaining the rotated refresh
+token. Failed initial synchronization and pending progress retry every 15 seconds
+while signed in; failed inventory/history also retain their local retry queues.
+Logout or restarting the game leaves account progress in its separate local cache
+for the next login. No token is written to disk.
+
+When two devices edit the same slot from different versions, the existing account
+branch stays active. Unity stores the conflicting device snapshot under
+`Application.persistentDataPath/CloudSaveConflicts` before replacing it and shows
+a notice in the account panel. Different slots continue to merge independently.
+An unreadable server response is never interpreted as an empty inventory/save.
+
+The runtime and SQL changes must be deployed together. Until this update is run,
+the game keeps pending progress locally and reports that the database needs the
+ASAP migration; it does not fall back to unsafe REST upserts.
+
 Open `Assets/Scenes/Card Data Editor.unity` and enter Play mode. The scene builds its editor UI at runtime.
 
 ## Supabase setup
@@ -9,7 +38,7 @@ Open `Assets/Scenes/Card Data Editor.unity` and enter Play mode. The scene build
 3. The editor uses the Supabase REST Data API on the `public.cards` table. It can list, create, update, and delete records. Each playable card needs a `game_card_key` matching its Unity `InventoryCardCatalog` ID; chest cards use `chest.<card asset name>`, and merchant-only cards use the `merchant.card.advanced.*` keys. The inventory key links an editable database catalog row to the matching Unity effect asset.
 4. `image_url` is a URL reference, such as a public Supabase Storage URL. Upload the image to Storage separately and paste its public URL into the editor.
 
-The service-role key must never be placed in the Unity client. The SQL policy allows authenticated users to manage the table; the editor uses the current user's access token so row-level security remains enabled. The JWT is held in memory only and is never saved to PlayerPrefs or project files. The project URL and publishable key are safe client configuration and are saved in the scene.
+The service-role key must never be placed in the Unity client. The SQL policy allows only the admin to manage cards; the editor uses the current user's access token so row-level security remains enabled. The JWT is held in memory only and is never saved to PlayerPrefs or project files. The project URL and publishable key are safe client configuration and are saved in the scene.
 
 ## Cross-device player saves
 
@@ -123,8 +152,60 @@ included. `card_definition` preserves the full serialized Unity effect graph,
 including targeting, status stacks, repeated hits and damage caps.
 
 Icons remain bundled Unity assets; this import records their references and
-does not upload images to Storage or invent public image URLs. The game still
-executes the local CARDS assets; storing the effect graph in Supabase does not
-add runtime deserialization of arbitrary database effects. Cloud inventory
+does not upload images to Storage or invent public image URLs. The game uses local CARDS assets as trusted templates, with database values applied
+to runtime copies after the content migration below. Stored YAML is never executed. Cloud inventory
 exports resolve legacy IDs to current CARDS keys and combine owned quantities
 so they match the imported rows.
+
+
+### Admin card and question editing flow
+
+Run **content_catalog_flow.sql** in the Supabase SQL Editor after the already-installed
+ASAP migration and current CARDS seed. This file is safe to rerun and does not
+replace saves, inventory or answer history. No live database migration is performed
+by editing Unity files. For a fresh project, install the existing schemas and CARDS
+seed first. Do not rerun the seed to publish editor changes: it overwrites matching
+catalog values with the exported asset values.
+
+1. Sign in as the admin and open Card Data Editor. Select a card, change its fields,
+   then Save Changes. Its immutable ownership key stays the same. Existing owners
+   use the updated definition after content refresh, without losing quantity or level.
+2. For a new card, choose a **gameplay template** (class, targeting, hit count,
+   status effects and other behavior), then choose an icon and edit the visible
+   fields. Descriptions are text; they do not create or alter effect graphs.
+   Damage type/base/percentage/multiplier apply to damage effects that use those
+   fields. Heal amounts, shield values and status stacks remain defined by the
+   selected template. Adding brand-new behavior still requires a Unity template
+   and a new game build. The template determines the class, preventing accidental
+   cross-class ownership changes from a free-text field.
+3. Min/max question difficulty are 1 easy, 2 medium, 3 hard. Choose the shop toggle
+   and positive price. New shop offers cost coins; existing offers retain their
+   configured currency. Seeded CARDS become shop-enabled at migration time with
+   the default price 100. Adding a definition does **not** add it to player inventory.
+   Players obtain it through the shop or an authored reward. Existing chest rewards
+   still use their configured card; no random catalog-wide rewards are introduced.
+4. **Retire** stops new rewards and purchases; owned copies remain resolvable and
+   playable. Select a retired card and choose Restore to offer it again. If retiring
+   a starter card, first update its authored starter/reward references in Unity so
+   new characters still receive the intended starting deck.
+5. In Question Data Editor, choose language, topic, difficulty, level range, question
+   type, prompt, snippet, choices, correct answer, explanation and Published. Save
+   publishes changes. **Unpublish** withdraws it from future selections after sync,
+   preserving its ID and past reports. To restore, select it, tick Published and Save.
+   Saved question IDs cannot be changed. Current question types still use answer
+   choices; changing the type does not introduce a code-execution interaction.
+
+Public content refreshes at startup/login, after editor writes, and every 60 seconds
+while running online. Card changes are deferred during Battle Scene until leaving
+that battle. An already-open question keeps its existing answer data. Successful
+complete downloads replace the local cache, including an empty question bank, so
+withdrawn questions do not return through a fallback. Failed requests preserve the
+last valid cache. Offline devices use the last downloaded version; they need an
+internet connection to receive later edits. Private save/inventory sync is separate.
+
+Manual verification: change an owned card's mana, save and return to gameplay;
+check the new mana with the same quantity. Add a template-based card and verify it
+appears in the shop but is absent from inventory until purchased. Retire it and
+check the owned copy still plays. Unpublish a question, synchronize, then test
+again offline: it should remain absent. UI and gameplay verification requires
+running Unity; the automated checks use disposable PostgreSQL fixtures.

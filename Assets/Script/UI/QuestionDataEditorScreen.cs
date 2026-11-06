@@ -161,8 +161,11 @@ public class QuestionDataEditorScreen : MonoBehaviour
         else
         {
             GUILayout.BeginHorizontal();
+            bool formEnabled = GUI.enabled;
+            GUI.enabled = formEnabled && !requestInProgress;
             DrawQuestionList();
             DrawQuestionForm();
+            GUI.enabled = formEnabled;
             GUILayout.EndHorizontal();
             GUILayout.Space(8);
             GUIStyle currentStatusStyle = statusIsError ? errorStatusStyle : statusStyle;
@@ -239,7 +242,10 @@ public class QuestionDataEditorScreen : MonoBehaviour
         GUILayout.Label("Question ID  (generated automatically for new questions)", labelStyle);
         bool idEnabled = GUI.enabled;
         GUI.enabled = idEnabled && string.IsNullOrEmpty(selectedId);
+        bool idEditable = GUI.enabled;
+        GUI.enabled = idEditable && string.IsNullOrEmpty(selectedId);
         idInput = GUILayout.TextField(idInput ?? string.Empty, fieldStyle, GUILayout.Height(36));
+        GUI.enabled = idEditable;
         GUI.enabled = idEnabled;
 
         GUILayout.Space(8);
@@ -315,7 +321,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
         GUI.enabled = oldEnabled && !requestInProgress;
         if (GUILayout.Button("SAVE QUESTION", buttonStyle, GUILayout.Width(190), GUILayout.Height(40)))
             StartCoroutine(SaveRoutine());
-        if (!string.IsNullOrEmpty(selectedId) && GUILayout.Button("DELETE", dangerButtonStyle,
+        if (!string.IsNullOrEmpty(selectedId) && GUILayout.Button("UNPUBLISH", dangerButtonStyle,
                 GUILayout.Width(120), GUILayout.Height(40)))
             confirmDelete = true;
         GUI.enabled = oldEnabled;
@@ -486,34 +492,23 @@ public class QuestionDataEditorScreen : MonoBehaviour
 
     private IEnumerator RefreshRoutine()
     {
-        if (!EnsureAdminConfiguration()) yield break;
+        if (requestInProgress || !EnsureAdminConfiguration()) yield break;
         requestInProgress = true;
-        SetStatus("Loading questions from Supabase…", false);
-        string endpoint = BuildEndpoint();
-        string url = endpoint + "?select=id,language,topic,difficulty,min_level,max_level,question_type,prompt,code_snippet,choices,correct_index,explanation,published&order=id.asc";
-        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        SetStatus("Loading question bank…", false);
+        string json = null, error = null;
+        yield return GameContentSync.ReadEditorPages(BuildEndpoint() + "?select=*&order=id.asc", SetHeaders,
+            (data, failure) => { json = data; error = failure; });
+        if (json == null) SetStatus(error, true);
+        else
         {
-            SetHeaders(request);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
-            if (!Succeeded(request))
-            {
-                SetStatus(FormatError("Could not load questions", request), true);
-                requestInProgress = false;
-                yield break;
-            }
-
             try
             {
-                QuestionRows result = JsonUtility.FromJson<QuestionRows>("{\"items\":" + request.downloadHandler.text + "}");
+                var result = JsonUtility.FromJson<QuestionRows>("{\"items\":" + json + "}");
                 questions.Clear();
-                if (result != null && result.items != null) questions.AddRange(result.items);
-                SetStatus("Connected. Loaded " + questions.Count + " question(s) from public." + TableName + ".", false);
+                if (result?.items != null) questions.AddRange(result.items);
+                SetStatus("Loaded " + questions.Count + " questions, including unpublished drafts.", false);
             }
-            catch (Exception exception)
-            {
-                SetStatus("Supabase returned question data in an unexpected format: " + exception.Message, true);
-            }
+            catch (Exception exception) { SetStatus("Invalid question bank: " + exception.Message, true); }
         }
         requestInProgress = false;
     }
@@ -540,7 +535,7 @@ public class QuestionDataEditorScreen : MonoBehaviour
             request.SetRequestHeader("Prefer", "return=representation");
             requestInProgress = true;
             SetStatus(creating ? "Adding question…" : "Saving question changes…", false);
-            yield return request.SendWebRequest();
+            yield return SupabaseSession.Send(request);
             if (!Succeeded(request))
             {
                 SetStatus(FormatError("Save failed", request), true);
@@ -550,6 +545,8 @@ public class QuestionDataEditorScreen : MonoBehaviour
         }
 
         selectedId = rowId;
+        var content = GameContentSync.Configure(projectUrl, publishableKey);
+        if (content != null) yield return content.RefreshNow();
         requestInProgress = false;
         yield return RefreshRoutine();
         QuestionRecord saved = questions.Find(q => q != null && string.Equals(q.id, rowId, StringComparison.Ordinal));
@@ -562,38 +559,41 @@ public class QuestionDataEditorScreen : MonoBehaviour
         if (requestInProgress || !EnsureAdminConfiguration()) yield break;
         if (string.IsNullOrWhiteSpace(selectedId))
         {
-            SetStatus("Select a saved question before deleting it.", true);
+            SetStatus("Select a saved question before unpublishing it.", true);
             yield break;
         }
 
         string deletingId = selectedId;
         using (UnityWebRequest request = new UnityWebRequest(
-                   BuildEndpoint() + "?id=eq." + UnityWebRequest.EscapeURL(deletingId), "DELETE"))
+                   BuildEndpoint() + "?id=eq." + UnityWebRequest.EscapeURL(deletingId), "PATCH"))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
             SetHeaders(request);
             request.SetRequestHeader("Prefer", "return=minimal");
             requestInProgress = true;
-            SetStatus("Deleting question…", false);
-            yield return request.SendWebRequest();
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes("{\"published\":false}"));
+            SetStatus("Unpublishing question…", false);
+            yield return SupabaseSession.Send(request);
             if (!Succeeded(request))
             {
-                SetStatus(FormatError("Delete failed", request), true);
+                SetStatus(FormatError("Unpublish failed", request), true);
                 requestInProgress = false;
                 yield break;
             }
         }
 
-        requestInProgress = false;
         ResetForm();
+        var content = GameContentSync.Configure(projectUrl, publishableKey);
+        if (content != null) yield return content.RefreshNow();
+        requestInProgress = false;
         yield return RefreshRoutine();
-        SetStatus("Question deleted and list refreshed.", false);
+        SetStatus("Question unpublished. Past answer reports are preserved.", false);
     }
 
     private bool TryBuildJson(out string json)
     {
         json = string.Empty;
-        string id = (idInput ?? string.Empty).Trim();
+        string id = string.IsNullOrEmpty(selectedId) ? (idInput ?? string.Empty).Trim() : selectedId;
         string prompt = (promptInput ?? string.Empty).Trim();
         if (string.IsNullOrWhiteSpace(id)) { SetStatus("Question ID is required.", true); return false; }
         if (string.IsNullOrWhiteSpace(prompt)) { SetStatus("Enter the question prompt.", true); return false; }
@@ -736,6 +736,8 @@ public class QuestionDataEditorScreen : MonoBehaviour
 
     private static string FormatError(string prefix, UnityWebRequest request)
     {
+        if (request.responseCode == 0 && !string.IsNullOrEmpty(SupabaseSession.LastError))
+            return prefix + ": " + SupabaseSession.LastError;
         string body = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
         if (body.Length > 360) body = body.Substring(0, 360) + "…";
         return string.IsNullOrWhiteSpace(body)
@@ -768,12 +770,12 @@ public class QuestionDataEditorScreen : MonoBehaviour
         Rect dialog = new Rect(470, 345, 660, 220);
         GUI.Box(dialog, GUIContent.none, panelStyle);
         GUILayout.BeginArea(new Rect(dialog.x + 28, dialog.y + 24, dialog.width - 56, dialog.height - 48));
-        GUILayout.Label("DELETE THIS QUESTION?", headingStyle);
-        GUILayout.Label("This permanently removes it from the Supabase question bank.", labelStyle);
+        GUILayout.Label("UNPUBLISH THIS QUESTION?", headingStyle);
+        GUILayout.Label("This removes it from future questions after players synchronize. Past reports are preserved.", labelStyle);
         GUILayout.FlexibleSpace();
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("CANCEL", buttonStyle, GUILayout.Height(42))) confirmDelete = false;
-        if (GUILayout.Button("DELETE QUESTION", dangerButtonStyle, GUILayout.Height(42)) && !requestInProgress)
+        if (GUILayout.Button("UNPUBLISH QUESTION", dangerButtonStyle, GUILayout.Height(42)) && !requestInProgress)
         {
             confirmDelete = false;
             StartCoroutine(DeleteRoutine());

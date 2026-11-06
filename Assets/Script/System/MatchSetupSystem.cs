@@ -119,11 +119,842 @@ public class MatchSetupSystem : MonoBehaviour
         if (hero == null || hero.CurrentHealth <= 0 || targets.Count == 0 || !BattleHudMedieval.TrySpendFullEp())
             yield break;
 
-        yield return hero.PlayBattleAttack(targets[0], null);
+        yield return PlayStarfallCutscene(hero, targets);
         if (hero == null || hero.CurrentHealth <= 0) yield break;
 
         int damage = Mathf.Max(1, hero.AttackPower * 2);
         ActionSystem.Instance.AddReaction(new DealDamageGA(damage, targets, hero));
+    }
+
+    public static bool StarfallCutsceneActive { get; private set; }
+
+    private IEnumerator PlayStarfallCutscene(HeroView hero, List<CombatantView> targets)
+    {
+        // Clear the hover before capturing renderer visibility for the cinematic.
+        CardViewHoverSystem.Instance?.Hide();
+        float duration = 6f;
+        const float originalTimelineDuration = 3f;
+        Camera battleCamera = Camera.main;
+        Vector3 cameraStartPosition = battleCamera != null ? battleCamera.transform.position : Vector3.zero;
+        float cameraStartSize = battleCamera != null && battleCamera.orthographic ? battleCamera.orthographicSize : 0f;
+        Color cameraStartColor = battleCamera != null ? battleCamera.backgroundColor : Color.black;
+        CameraClearFlags cameraStartClearFlags = battleCamera != null ? battleCamera.clearFlags : CameraClearFlags.Skybox;
+        Vector3 heroFocus = hero.VisualCenter;
+        Vector3 targetFocus = heroFocus;
+        float targetCameraSize = cameraStartSize;
+        if (battleCamera != null && battleCamera.orthographic)
+        {
+            float minX = float.PositiveInfinity, maxX = float.NegativeInfinity;
+            float minY = float.PositiveInfinity, maxY = float.NegativeInfinity;
+            int visibleTargetCount = 0;
+            foreach (CombatantView enemy in targets)
+            {
+                if (enemy == null || enemy.CurrentHealth <= 0) continue;
+                Vector3 center = enemy.VisualCenter;
+                minX = Mathf.Min(minX, center.x); maxX = Mathf.Max(maxX, center.x);
+                minY = Mathf.Min(minY, center.y); maxY = Mathf.Max(maxY, center.y);
+                targetFocus += center;
+                visibleTargetCount++;
+            }
+            if (visibleTargetCount > 0)
+            {
+                targetFocus = (targetFocus - heroFocus) / visibleTargetCount;
+                // Fit the enemy group and leave enough room for the slash bursts around
+                // their bodies, instead of keeping the camera tightly on the Warrior.
+                float halfWidth = (maxX - minX) * 0.5f + 1.0f;
+                float halfHeight = (maxY - minY) * 0.5f + 1.15f;
+                targetCameraSize = Mathf.Clamp(Mathf.Max(halfHeight, halfWidth / battleCamera.aspect),
+                    cameraStartSize * 0.55f, cameraStartSize);
+            }
+        }
+        BattleCaveBackground cave = FindFirstObjectByType<BattleCaveBackground>();
+        bool caveWasEnabled = cave != null && cave.enabled;
+        bool archer = SelectedHero.IsArcher;
+        bool mage = SelectedHero.IsMage;
+        bool warrior = !archer && !mage;
+        var hiddenRenderers = new List<(Renderer renderer, bool enabled)>();
+        var hiddenCanvases = new List<(Canvas canvas, bool enabled)>();
+        var warriorRenderers = new List<(Renderer renderer, bool enabled)>();
+        var warriorSpriteColors = new List<(SpriteRenderer renderer, Color color)>();
+        var visibleEnemyRenderers = new List<(Renderer renderer, bool enabled)>();
+        var visibleEnemyCanvases = new List<(Canvas canvas, bool enabled)>();
+        if (cave != null)
+        {
+            cave.enabled = false;
+        }
+        if (warrior || mage || archer)
+        {
+            // Keep enemies visible throughout the Warrior and Mage cinematics. Hide
+            // the hand, piles, HUD, and other gameplay art, but preserve enemy visuals.
+            var capturedEnemyRenderers = new HashSet<Renderer>();
+            var capturedEnemyCanvases = new HashSet<Canvas>();
+            bool IsEnemyHierarchy(Transform candidate)
+            {
+                if (candidate == null || targets == null) return false;
+                foreach (CombatantView enemy in targets)
+                    if (enemy != null && (candidate == enemy.transform || candidate.IsChildOf(enemy.transform)))
+                        return true;
+                return false;
+            }
+            if (targets != null)
+            {
+                foreach (CombatantView enemy in targets)
+                {
+                    if (enemy == null) continue;
+
+                    // Some enemies can enter the cutscene with their sprite or
+                    // world-space health UI disabled. Snapshot then enable them so
+                    // they remain visible for the vanish, attack, and slash beats.
+                    foreach (Renderer renderer in enemy.GetComponentsInChildren<Renderer>(true))
+                    {
+                        if (renderer == null || !capturedEnemyRenderers.Add(renderer)) continue;
+                        visibleEnemyRenderers.Add((renderer, renderer.enabled));
+                        renderer.enabled = true;
+                    }
+                    foreach (Canvas canvas in enemy.GetComponentsInChildren<Canvas>(true))
+                    {
+                        if (canvas == null || !capturedEnemyCanvases.Add(canvas)) continue;
+                        visibleEnemyCanvases.Add((canvas, canvas.enabled));
+                        canvas.enabled = !archer;
+                    }
+                }
+            }
+            foreach (Renderer renderer in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            {
+                if (renderer == null || renderer.transform == hero.transform || renderer.transform.IsChildOf(hero.transform)
+                    || IsEnemyHierarchy(renderer.transform)) continue;
+                hiddenRenderers.Add((renderer, renderer.enabled));
+                renderer.enabled = false;
+            }
+            foreach (Canvas canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+            {
+                if (canvas == null || canvas.transform == hero.transform || canvas.transform.IsChildOf(hero.transform)
+                    || IsEnemyHierarchy(canvas.transform)) continue;
+                hiddenCanvases.Add((canvas, canvas.enabled));
+                canvas.enabled = false;
+            }
+            if (archer)
+            {
+                foreach (Canvas canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+                {
+                    if (hiddenCanvases.Exists(item => item.canvas == canvas)) continue;
+                    hiddenCanvases.Add((canvas, canvas.enabled));
+                    canvas.enabled = false;
+                }
+            }
+            foreach (Renderer renderer in hero.GetComponentsInChildren<Renderer>(true))
+            {
+                if (renderer == null) continue;
+                warriorRenderers.Add((renderer, renderer.enabled));
+                if (renderer is SpriteRenderer spriteRenderer)
+                    warriorSpriteColors.Add((spriteRenderer, spriteRenderer.color));
+            }
+        }
+        else
+        {
+            foreach (CombatantView target in targets)
+            {
+                if (target == null) continue;
+                foreach (Renderer renderer in target.GetComponentsInChildren<Renderer>(true))
+                {
+                    hiddenRenderers.Add((renderer, renderer.enabled));
+                    renderer.enabled = false;
+                }
+                foreach (Canvas canvas in target.GetComponentsInChildren<Canvas>(true))
+                {
+                    hiddenCanvases.Add((canvas, canvas.enabled));
+                    canvas.enabled = false;
+                }
+            }
+        }
+
+        Color accent = archer ? new Color(0.25f, 1f, 0.4f) : mage
+            ? new Color(0.22f, 0.68f, 1f) : new Color(1f, 0.16f, 0.12f);
+        string title = BattleHudMedieval.SpecialSkillTitle;
+
+        if (!archer) BattleMessageUI.Instance?.ShowAt(title, "Special skill unleashed!", hero.VisualCenter + Vector3.up * 1.2f);
+        CombatantView primaryTarget = targets.Find(target => target != null && target.CurrentHealth > 0);
+        StarfallCutsceneVisual cutsceneVfx = CreateStarfallCutsceneVfx(hero, primaryTarget, targets, accent, archer, mage);
+        float elapsed = 0f;
+        bool attackPlayed = false;
+        bool attackFinished = false;
+        bool warriorBlurStarted = false;
+        float attackFinishedAt = -1f;
+        float enemyVfxStartAt = -1f;
+        float enemyVfxEndAt = -1f;
+        float cameraPanBackAt = -1f;
+
+        bool previousCutsceneActive = StarfallCutsceneActive;
+        StarfallCutsceneActive = true;
+        try
+        {
+            if (battleCamera != null)
+            {
+                battleCamera.clearFlags = CameraClearFlags.SolidColor;
+                battleCamera.backgroundColor = new Color(0.025f, 0.018f, 0.09f);
+            }
+            while ((elapsed < duration || (warrior && attackPlayed && !attackFinished)) && hero != null && hero.CurrentHealth > 0)
+            {
+                // Keep the authored three-second sequence intact, but play it across
+                // the requested six-second cutscene so every action has room to read.
+                float timelineTime = elapsed * (originalTimelineDuration / duration);
+                // Warrior gets a vanish, reappearance, attack, then enemy-focused
+                // slashes. Mage gets a readable charge, scythe travel, and ghost impact.
+                float zoomIn = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(warrior || mage ? elapsed / 0.8f : timelineTime / 0.55f));
+                if (warrior && attackFinished && attackFinishedAt < 0f)
+                    attackFinishedAt = elapsed;
+                float panStartAt = warrior && attackFinishedAt >= 0f ? attackFinishedAt + .08f : float.PositiveInfinity;
+                float magePanStartAt = mage ? 3.25f : archer && cutsceneVfx != null && cutsceneVfx.ArcherShotAt >= 0f ? cutsceneVfx.ArcherShotAt + .15f : float.PositiveInfinity;
+                float magePanBackAt = mage || archer ? 5.5f : float.PositiveInfinity;
+                float zoomOutStartAt = warrior && cameraPanBackAt >= 0f ? cameraPanBackAt : float.PositiveInfinity;
+                float zoomOut = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(warrior
+                    ? (elapsed - zoomOutStartAt) / 0.65f
+                    : mage || archer
+                        ? (elapsed - magePanBackAt) / 0.55f
+                        : (timelineTime - 2.15f) / 0.85f));
+                // Keep the Warrior visible for the opening beat, fade through a short
+                // motion-blur trail, then restore her before the attack animation starts.
+                if (warrior && elapsed >= 1f && !warriorBlurStarted)
+                {
+                    warriorBlurStarted = true;
+                    if (cutsceneVfx != null) cutsceneVfx.BeginWarriorVanishBlur(elapsed);
+                }
+                if (warrior && warriorBlurStarted)
+                {
+                    float vanishProgress = Mathf.Clamp01((elapsed - 1f) / .22f);
+                    foreach (var item in warriorSpriteColors)
+                    {
+                        if (item.renderer == null) continue;
+                        Color color = item.color;
+                        color.a *= 1f - vanishProgress;
+                        item.renderer.color = color;
+                    }
+                    foreach (var item in warriorRenderers)
+                        if (item.renderer != null)
+                            item.renderer.enabled = elapsed >= 1.22f ? elapsed >= 1.72f && item.enabled : item.enabled;
+                    if (elapsed >= 1.72f)
+                        foreach (var item in warriorSpriteColors)
+                            if (item.renderer != null) item.renderer.color = item.color;
+                }
+                if (battleCamera != null)
+                {
+                    float panToTargets = warrior
+                        ? Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((elapsed - panStartAt) / 0.7f))
+                            * (1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((elapsed - (cameraPanBackAt >= 0f ? cameraPanBackAt : float.PositiveInfinity)) / 0.55f)))
+                        : mage || archer
+                            ? Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((elapsed - magePanStartAt) / 0.65f))
+                                * (1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((elapsed - magePanBackAt) / 0.55f)))
+                            : 0f;
+                    Vector3 closeFocus = warrior || mage || archer ? Vector3.Lerp(heroFocus, targetFocus, panToTargets) : heroFocus;
+                    Vector3 cinematicPosition = Vector3.Lerp(cameraStartPosition,
+                        new Vector3(closeFocus.x, closeFocus.y, cameraStartPosition.z), zoomIn);
+                    battleCamera.transform.position = Vector3.Lerp(cinematicPosition, cameraStartPosition, zoomOut);
+                    if (battleCamera.orthographic)
+                    {
+                        float closeSize = warrior
+                            ? Mathf.Lerp(cameraStartSize * 0.72f, targetCameraSize, panToTargets)
+                            : mage ? Mathf.Lerp(cameraStartSize * 0.78f, targetCameraSize, panToTargets)
+                            : Mathf.Lerp(cameraStartSize * 0.78f, targetCameraSize, panToTargets);
+                        battleCamera.orthographicSize = Mathf.Lerp(Mathf.Lerp(cameraStartSize, closeSize, zoomIn),
+                            cameraStartSize, zoomOut);
+                    }
+                }
+
+                if (!attackPlayed && (warrior ? elapsed >= 1.9f : mage ? elapsed >= 2.35f : elapsed >= .8f))
+                {
+                    attackPlayed = true;
+                    if (primaryTarget != null)
+                    {
+                        hero.FaceTowards(primaryTarget);
+                        if (archer)
+                            StartCoroutine(PlayArcherStarfallAttack(hero,
+                                () => { if (cutsceneVfx != null) cutsceneVfx.BeginArcherShot(elapsed); },
+                                () => attackFinished = true));
+                        else
+                            StartCoroutine(PlayStarfallAttack(hero, () => attackFinished = true));
+                    }
+                    else attackFinished = true;
+                }
+
+                // Start the Warrior's slash frames only after her clean attack
+                // animation has finished and the camera has reached the enemies.
+                if (warrior && enemyVfxStartAt < 0f && attackFinishedAt >= 0f
+                    && elapsed >= panStartAt + .7f)
+                {
+                    enemyVfxStartAt = elapsed;
+                    if (cutsceneVfx != null)
+                        cutsceneVfx.BeginWarriorBursts(elapsed);
+                    enemyVfxEndAt = elapsed + (cutsceneVfx != null ? cutsceneVfx.WarriorBurstDuration : .1f);
+                    cameraPanBackAt = enemyVfxEndAt + .35f;
+                    duration = Mathf.Max(duration, cameraPanBackAt + .65f);
+                }
+
+                elapsed += Time.unscaledDeltaTime;
+                if (cutsceneVfx != null) cutsceneVfx.Update(elapsed);
+                yield return null;
+            }
+        }
+        finally
+        {
+            StarfallCutsceneActive = previousCutsceneActive;
+            if (cutsceneVfx != null) cutsceneVfx.Dispose();
+            foreach (var item in hiddenRenderers)
+                if (item.renderer != null) item.renderer.enabled = item.enabled;
+            foreach (var item in hiddenCanvases)
+                if (item.canvas != null) item.canvas.enabled = item.enabled;
+            foreach (var item in warriorRenderers)
+                if (item.renderer != null) item.renderer.enabled = item.enabled;
+            foreach (var item in warriorSpriteColors)
+                if (item.renderer != null) item.renderer.color = item.color;
+            foreach (var item in visibleEnemyRenderers)
+                if (item.renderer != null) item.renderer.enabled = item.enabled;
+            foreach (var item in visibleEnemyCanvases)
+                if (item.canvas != null) item.canvas.enabled = item.enabled;
+            if (cave != null) cave.enabled = caveWasEnabled;
+            if (battleCamera != null)
+            {
+                battleCamera.transform.position = cameraStartPosition;
+                battleCamera.clearFlags = cameraStartClearFlags;
+                battleCamera.backgroundColor = cameraStartColor;
+                if (battleCamera.orthographic) battleCamera.orthographicSize = cameraStartSize;
+            }
+        }
+    }
+
+    private static IEnumerator PlayArcherStarfallAttack(HeroView hero, System.Action onRelease, System.Action onComplete)
+    {
+        if (hero != null && hero.CurrentHealth > 0)
+            yield return hero.PlayChargedBowAttack(onRelease);
+        onComplete?.Invoke();
+    }
+
+    private static IEnumerator PlayStarfallAttack(HeroView hero, System.Action onComplete)
+    {
+        if (hero != null && hero.CurrentHealth > 0)
+            yield return hero.PlayAttackAnimation();
+        onComplete?.Invoke();
+    }
+
+    private static StarfallCutsceneVisual CreateStarfallCutsceneVfx(HeroView hero, CombatantView target, List<CombatantView> targets, Color accent, bool archer, bool mage)
+    {
+        if (hero == null) return null;
+        return new StarfallCutsceneVisual(hero, target, targets, accent, archer, mage);
+    }
+
+    private sealed class StarfallCutsceneVisual
+    {
+        private readonly HeroView hero;
+        private readonly CombatantView target;
+        private readonly List<CombatantView> targets;
+        private readonly bool archer, mage;
+        private readonly Color accent;
+        private readonly GameObject root;
+        private readonly LineRenderer aura;
+        private readonly SpriteRenderer lightningArrow;
+        private readonly Sprite[] lightningArrowFrames;
+        private readonly List<LineRenderer> lightningStrikes = new List<LineRenderer>();
+        private readonly Sprite[] warriorSlashFrames, warriorImpactFrames;
+        private readonly List<WarriorVfxBurst> warriorBursts = new List<WarriorVfxBurst>();
+        private readonly List<WarriorAfterimage> warriorAfterimages = new List<WarriorAfterimage>();
+        private readonly List<SpriteRenderer> nightStars = new List<SpriteRenderer>();
+        private readonly SpriteRenderer scythe, ghost;
+        private readonly Sprite[] scytheFrames, ghostFrames;
+        private readonly Material material;
+        private readonly Sprite pixel;
+        private readonly Texture2D pixelTexture;
+        public float ArcherShotAt { get; private set; } = -1f;
+
+        public void BeginArcherShot(float elapsed)
+        {
+            ArcherShotAt = elapsed;
+        }
+
+        private float warriorBurstsStartAt = -1f;
+        private float warriorBlurStartAt = -1f;
+
+        public float WarriorBurstDuration
+        {
+            get
+            {
+                float end = 0f;
+                foreach (WarriorVfxBurst burst in warriorBursts)
+                    end = Mathf.Max(end, burst.startTime + burst.duration);
+                return end;
+            }
+        }
+
+        public void BeginWarriorBursts(float elapsed)
+        {
+            warriorBurstsStartAt = elapsed;
+        }
+
+        public void BeginWarriorVanishBlur(float elapsed)
+        {
+            if (warriorBlurStartAt >= 0f || hero == null) return;
+            warriorBlurStartAt = elapsed;
+            SpriteRenderer[] sources = hero.GetComponentsInChildren<SpriteRenderer>(true);
+            Vector3 direction = target != null ? (target.VisualCenter - hero.VisualCenter).normalized : Vector3.right;
+            if (direction.sqrMagnitude < .01f) direction = Vector3.right;
+
+            foreach (SpriteRenderer source in sources)
+            {
+                if (source == null || source.sprite == null || !source.enabled) continue;
+                // Two translucent snapshots leave a quick directional blur as the hero fades.
+                for (int trail = 0; trail < 2; trail++)
+                    warriorAfterimages.Add(new WarriorAfterimage(root.transform, source, direction,
+                        trail * .055f, trail == 0 ? .48f : .28f, trail));
+            }
+        }
+
+        public StarfallCutsceneVisual(HeroView owner, CombatantView enemy, List<CombatantView> allTargets, Color color, bool isArcher, bool isMage)
+        {
+            hero = owner; target = enemy; targets = allTargets; accent = color; archer = isArcher; mage = isMage;
+            root = new GameObject("Starfall Special Skill Cutscene VFX");
+            Shader shader = Shader.Find("Sprites/Default") ?? Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
+            if (shader != null) material = new Material(shader);
+            pixelTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            pixelTexture.SetPixel(0, 0, Color.white); pixelTexture.Apply(); pixel = Sprite.Create(pixelTexture, new Rect(0, 0, 1, 1), new Vector2(.5f, .5f), 1f);
+            Camera camera = Camera.main;
+            float viewHeight = camera != null && camera.orthographic ? camera.orthographicSize * 1.2f : 7f;
+            float viewWidth = viewHeight * (camera != null ? camera.aspect : 1.78f);
+            for (int i = 0; i < 46; i++)
+            {
+                var starObject = new GameObject("Night sky star " + i);
+                starObject.transform.SetParent(root.transform, false);
+                starObject.transform.position = owner.VisualCenter + new Vector3(
+                    Mathf.Lerp(-viewWidth, viewWidth, Mathf.Repeat(i * .6180339f, 1f)),
+                    Mathf.Lerp(-viewHeight, viewHeight, Mathf.Repeat(i * .7548777f, 1f)),
+                    .5f);
+                var star = starObject.AddComponent<SpriteRenderer>();
+                star.sprite = pixel;
+                star.sortingOrder = -20;
+                if (owner.MainSpriteRenderer != null) star.sortingLayerID = owner.MainSpriteRenderer.sortingLayerID;
+                float size = .018f + Mathf.Repeat(i * .371f, 1f) * .034f;
+                star.transform.localScale = new Vector3(size, size, 1f);
+                float brightness = .28f + Mathf.Repeat(i * .217f, 1f) * .58f;
+                star.color = new Color(.72f, .79f, 1f, brightness);
+                nightStars.Add(star);
+            }
+            Vector3 floor = new Vector3(owner.VisualCenter.x, owner.BattleGroundY + .04f, owner.transform.position.z - .4f);
+            aura = MakeLine("Class-colored foot aura", 40, .09f, color, 50);
+            aura.loop = true;
+            for (int i = 0; i < aura.positionCount; i++)
+            {
+                float angle = Mathf.PI * 2f * i / aura.positionCount;
+                aura.SetPosition(i, floor + new Vector3(Mathf.Cos(angle) * .48f, Mathf.Sin(angle) * .12f, 0));
+            }
+
+            if (isArcher)
+            {
+                Texture2D sheet = Resources.Load<Texture2D>("StarfallArcherVfx/LightningArrow");
+                if (sheet != null)
+                {
+                    lightningArrowFrames = new Sprite[32];
+                    int w = sheet.width / 4, h = sheet.height / 8;
+                    for (int i = 0; i < 32; i++)
+                        lightningArrowFrames[i] = Sprite.Create(sheet,
+                            new Rect((i % 4) * w, sheet.height - (i / 4 + 1) * h, w, h),
+                            new Vector2(.5f, .5f), 100f);
+                }
+                lightningArrow = MakeSprite("Lightning Arrow projectile", 75, Color.clear);
+                foreach (CombatantView enemyTarget in targets)
+                {
+                    if (enemyTarget == null) continue;
+                    // Each jagged path has a broad blue halo and a thin white core.
+                    for (int path = 0; path < 4; path++)
+                    {
+                        for (int layer = 0; layer < 2; layer++)
+                        {
+                            bool halo = layer == 0;
+                            float width = (path == 0 ? .05f : .025f) * (halo ? 4f : 1f);
+                            LineRenderer bolt = MakeLine("Lightning " + enemyTarget.name + " path " + path
+                                + (halo ? " glow" : " core"), path == 0 ? 17 : 9, width, Color.clear, halo ? 76 : 77);
+                            bolt.numCapVertices = 0;
+                            bolt.numCornerVertices = 0;
+                            bolt.widthCurve = AnimationCurve.Linear(0f, 1f, 1f, path == 0 ? .45f : .02f);
+                            if (owner.MainSpriteRenderer != null) bolt.sortingLayerID = owner.MainSpriteRenderer.sortingLayerID;
+                            lightningStrikes.Add(bolt);
+                        }
+                    }
+                }
+            }
+            else if (isMage)
+            {
+                scytheFrames = LoadFrameSprites("StarfallMageVfx/DarkVfx1");
+                ghostFrames = LoadFrameSprites("StarfallMageVfx/DarkVfx2");
+                scythe = MakeSprite("Dark VFX scythe", 70, new Color(1f, .45f, 1f, 1f));
+                ghost = MakeSprite("Ghost leaving enemy", 71, new Color(.85f, .75f, 1f, 0f));
+            }
+            else
+            {
+                warriorSlashFrames = LoadFrameSprites("WarriorStarfallVfx/Slashes");
+                warriorImpactFrames = LoadFrameSprites("WarriorStarfallVfx/Impacts");
+                if (targets != null)
+                {
+                    for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++)
+                    {
+                        CombatantView slashTarget = targets[targetIndex];
+                        if (slashTarget == null || slashTarget.CurrentHealth <= 0) continue;
+
+                        // Start these only after the camera has reached the enemy group.
+                        // Each slash is a frame animation sourced from VFX WARRIOR.
+                        float enemyStart = targetIndex * .18f;
+                        Vector2[] offsets = { new Vector2(-.16f, .22f), new Vector2(.18f, .06f), new Vector2(-.04f, -.14f) };
+                        float[] rotations = { -24f, 28f, 8f };
+                        for (int slashIndex = 0; slashIndex < offsets.Length; slashIndex++)
+                        {
+                            warriorBursts.Add(new WarriorVfxBurst(root.transform, slashTarget, warriorSlashFrames,
+                                enemyStart + slashIndex * .23f, .34f, offsets[slashIndex], rotations[slashIndex],
+                                1.8f, 68 + slashIndex));
+                        }
+                        warriorBursts.Add(new WarriorVfxBurst(root.transform, slashTarget, warriorImpactFrames,
+                            enemyStart + .72f, .38f, Vector2.zero, 0f, 1.45f, 72));
+                    }
+                }
+            }
+        }
+
+        private LineRenderer MakeLine(string name, int points, float width, Color color, int order)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(root.transform, false);
+            var line = go.AddComponent<LineRenderer>();
+            line.useWorldSpace = true; line.positionCount = points; line.startWidth = line.endWidth = width;
+            line.numCapVertices = 4; line.sortingOrder = order;
+            if (material != null) line.material = material;
+            line.startColor = line.endColor = color;
+            return line;
+        }
+
+        private SpriteRenderer MakeSprite(string name, int order, Color color)
+        {
+            var go = new GameObject(name); go.transform.SetParent(root.transform, false);
+            var renderer = go.AddComponent<SpriteRenderer>(); renderer.sortingOrder = order; renderer.color = color;
+            if (hero.MainSpriteRenderer != null) renderer.sortingLayerID = hero.MainSpriteRenderer.sortingLayerID;
+            return renderer;
+        }
+
+        public void Update(float elapsed)
+        {
+            if (hero == null) return;
+            if (warriorBurstsStartAt >= 0f)
+                UpdateWarriorBursts(elapsed - warriorBurstsStartAt);
+            if (warriorBlurStartAt >= 0f)
+                foreach (WarriorAfterimage afterimage in warriorAfterimages)
+                    afterimage.Update(elapsed - warriorBlurStartAt);
+            Vector3 floor = new Vector3(hero.VisualCenter.x, hero.BattleGroundY + .04f, hero.transform.position.z - .4f);
+            float auraPulse = .8f + .2f * Mathf.Sin(elapsed * 9f);
+            float auraRadius = .48f * auraPulse;
+            for (int i = 0; i < aura.positionCount; i++)
+            {
+                float angle = Mathf.PI * 2f * i / aura.positionCount;
+                aura.SetPosition(i, floor + new Vector3(Mathf.Cos(angle) * auraRadius, Mathf.Sin(angle) * .12f * auraPulse, 0));
+            }
+
+            if (target == null) return;
+            Vector3 hit = target.VisualCenter;
+            if (archer)
+            {
+                // The release animation frame supplies the timestamp.
+                if (ArcherShotAt < 0f) return;
+                float launchAt = ArcherShotAt;
+                float impactAt = launchAt + 1f;
+                float impactEnd = Mathf.Min(impactAt + 1.5f, 5.5f);
+                float flight = Mathf.Clamp01((elapsed - launchAt) / (impactAt - launchAt));
+                Vector3 start = hero.VisualCenter + Vector3.up * .35f;
+                Vector3 end = hit + Vector3.up * .15f;
+                if (lightningArrow != null && lightningArrowFrames != null)
+                {
+                    bool flying = elapsed >= launchAt && elapsed < impactAt;
+                    bool impact = elapsed >= impactAt && elapsed < impactEnd;
+                    lightningArrow.enabled = flying || impact;
+                    int index = flying ? 4 + Mathf.FloorToInt((elapsed - launchAt) * 14f) % 16
+                        : 20 + Mathf.Clamp(Mathf.FloorToInt((elapsed - impactAt) / ((impactEnd - impactAt) / 12f)), 0, 11);
+                    lightningArrow.sprite = lightningArrowFrames[index];
+                    lightningArrow.transform.position = flying ? Vector3.Lerp(start, end, flight) : end;
+                    lightningArrow.transform.localScale = Vector3.one * (flying ? 3f : 2.5f);
+                    lightningArrow.transform.rotation = flying
+                        ? Quaternion.Euler(0f, 0f, Mathf.Atan2(end.y - start.y, end.x - start.x) * Mathf.Rad2Deg)
+                        : Quaternion.identity;
+                    lightningArrow.color = Color.white;
+                }
+                int boltIndex = 0;
+                int enemyIndex = 0;
+                foreach (CombatantView enemyTarget in targets)
+                {
+                    if (enemyTarget == null) continue;
+                    float age = elapsed - impactAt - enemyIndex * .045f;
+                    // Brief return strokes, with dark gaps between them. The shape
+                    // stays fixed during each flash rather than wriggling every frame.
+                    int stroke = age < .26f ? 0 : age < .64f ? 1 : age < .98f ? 2 : 3;
+                    float strokeStart = stroke == 0 ? 0f : stroke == 1 ? .26f : stroke == 2 ? .64f : .98f;
+                    float flashAge = age - strokeStart;
+                    float flashDuration = stroke == 0 ? .22f : .16f;
+                    float intensity = Mathf.Clamp01(1f - flashAge / flashDuration);
+                    intensity *= intensity;
+                    bool visible = age >= 0f && flashAge >= 0f && flashAge < flashDuration
+                        && elapsed < impactEnd && enemyTarget.CurrentHealth > 0;
+                    Vector3 contact = enemyTarget.VisualCenter;
+                    float seed = enemyIndex * 31f + stroke * 17f;
+                    for (int path = 0; path < 4; path++)
+                    {
+                        for (int layer = 0; layer < 2; layer++)
+                        {
+                            LineRenderer bolt = lightningStrikes[boltIndex++];
+                            bolt.enabled = visible;
+                            if (!visible) continue;
+                            for (int point = 0; point < bolt.positionCount; point++)
+                            {
+                                Vector3 position;
+                                if (path == 0)
+                                    position = ArcherLightningPoint(contact, seed, point / 16f);
+                                else
+                                {
+                                    float progress = point / 8f;
+                                    float attach = .25f + (path - 1) * .1875f;
+                                    Vector3 origin = ArcherLightningPoint(contact, seed, attach);
+                                    float side = path == 2 ? -1f : 1f;
+                                    float jag = point == 0 || point == 8 ? 0f
+                                        : LightningNoise(seed + path * 23f + point * 7f) * .12f;
+                                    position = origin + new Vector3(side * (.55f + path * .12f) * progress + jag,
+                                        -(.65f + path * .12f) * progress, 0f);
+                                }
+                                bolt.SetPosition(point, position);
+                            }
+                            Color color = layer == 0 ? new Color(.12f, .46f, 1f, intensity * .35f)
+                                : new Color(.83f, .98f, 1f, intensity);
+                            bolt.startColor = bolt.endColor = color;
+                        }
+                    }
+                    enemyIndex++;
+                }
+            }
+            else if (mage)
+            {
+                // Mage sequence: charge in the first beat, send the DarkVfx1
+                // scythe across the arena, then lift a DarkVfx2 soul from impact.
+                const float scytheStart = 2.35f;
+                const float scytheTravelDuration = 1.2f;
+                const float soulStart = 3.7f;
+                const float soulDuration = 1.35f;
+                Vector3 start = hero.VisualCenter + Vector3.up * .55f;
+                Vector3 end = hit + Vector3.up * .12f;
+                float travel = Mathf.Clamp01((elapsed - scytheStart) / scytheTravelDuration);
+
+                if (scythe != null && elapsed >= scytheStart && elapsed < soulStart)
+                {
+                    SetFrame(scythe, scytheFrames, elapsed - scytheStart, .055f);
+                    scythe.transform.position = Vector3.Lerp(start, end, Mathf.SmoothStep(0f, 1f, travel));
+                    scythe.transform.localScale = Vector3.one * 1.08f;
+                    scythe.flipX = target.VisualCenter.x < hero.VisualCenter.x;
+                    float fadeIn = Mathf.Clamp01((elapsed - scytheStart) / .12f);
+                    float fadeOut = Mathf.Clamp01((soulStart - elapsed) / .12f);
+                    scythe.color = new Color(.72f, .82f, 1f, fadeIn * fadeOut);
+                }
+                else if (scythe != null)
+                    scythe.color = new Color(.72f, .82f, 1f, 0f);
+
+                if (ghost != null && elapsed >= soulStart && elapsed < soulStart + soulDuration)
+                {
+                    float soulElapsed = elapsed - soulStart;
+                    float soulProgress = Mathf.Clamp01(soulElapsed / soulDuration);
+                    SetFrame(ghost, ghostFrames, soulElapsed, .075f);
+                    ghost.transform.position = hit + Vector3.Lerp(Vector3.zero, new Vector3(.18f, 1.3f, 0f),
+                        Mathf.SmoothStep(0f, 1f, soulProgress));
+                    float soulScale = 1.25f + Mathf.Sin(soulProgress * Mathf.PI) * .12f;
+                    ghost.transform.localScale = Vector3.one * soulScale;
+                    float soulAlpha = Mathf.Clamp01(Mathf.Min(soulElapsed / .12f, (1f - soulProgress) * 2f));
+                    ghost.color = new Color(.78f, .84f, 1f, soulAlpha);
+                    ghost.flipX = target.MainSpriteRenderer != null && target.MainSpriteRenderer.flipX;
+                }
+                else if (ghost != null)
+                    ghost.color = new Color(.78f, .84f, 1f, 0f);
+            }
+            else
+            {
+                // Warrior VFX are positioned on enemies by UpdateWarriorBursts; keep
+                // the Warrior's own attack animation clean, with no aura or slash overlay.
+            }
+        }
+
+        private void UpdateWarriorBursts(float elapsed)
+        {
+            foreach (WarriorVfxBurst burst in warriorBursts)
+            {
+                if (burst.renderer == null || burst.target == null || burst.frames == null || burst.frames.Length == 0)
+                    continue;
+
+                float age = elapsed - burst.startTime;
+                bool visible = age >= 0f && age < burst.duration && burst.target.CurrentHealth > 0;
+                burst.renderer.enabled = visible;
+                if (!visible) continue;
+
+                int frameIndex = Mathf.Clamp(Mathf.FloorToInt(age / (burst.duration / burst.frames.Length)),
+                    0, burst.frames.Length - 1);
+                burst.renderer.sprite = burst.frames[frameIndex];
+                burst.renderer.transform.position = burst.target.VisualCenter
+                    + new Vector3(burst.offset.x, burst.offset.y, -0.65f);
+                burst.renderer.transform.rotation = Quaternion.Euler(0f, 0f, burst.rotation);
+
+                float targetWidth = 1f, targetHeight = 1.4f;
+                if (burst.target.MainSpriteRenderer != null)
+                {
+                    Bounds bounds = burst.target.MainSpriteRenderer.bounds;
+                    targetWidth = Mathf.Max(.45f, bounds.size.x);
+                    targetHeight = Mathf.Max(.6f, bounds.size.y);
+                    burst.renderer.sortingLayerID = burst.target.MainSpriteRenderer.sortingLayerID;
+                    burst.renderer.sortingOrder = burst.target.MainSpriteRenderer.sortingOrder + burst.sortingOffset;
+                }
+                Vector2 spriteSize = burst.renderer.sprite.bounds.size;
+                burst.renderer.transform.localScale = new Vector3(
+                    targetWidth * burst.sizeMultiplier / Mathf.Max(.01f, spriteSize.x),
+                    targetHeight * burst.sizeMultiplier / Mathf.Max(.01f, spriteSize.y), 1f);
+            }
+        }
+
+        private sealed class WarriorVfxBurst
+        {
+            public readonly CombatantView target;
+            public readonly Sprite[] frames;
+            public readonly float startTime, duration, rotation, sizeMultiplier;
+            public readonly Vector2 offset;
+            public readonly int sortingOffset;
+            public readonly SpriteRenderer renderer;
+
+            public WarriorVfxBurst(Transform cutsceneRoot, CombatantView target, Sprite[] frames, float startTime, float duration,
+                Vector2 offset, float rotation, float sizeMultiplier, int sortingOffset)
+            {
+                this.target = target;
+                this.frames = frames;
+                this.startTime = startTime;
+                this.duration = duration;
+                this.offset = offset;
+                this.rotation = rotation;
+                this.sizeMultiplier = sizeMultiplier;
+                this.sortingOffset = sortingOffset;
+                var effect = new GameObject("Warrior slash VFX on enemy");
+                effect.transform.SetParent(cutsceneRoot, false);
+                renderer = effect.AddComponent<SpriteRenderer>();
+                renderer.enabled = false;
+            }
+        }
+
+        private sealed class WarriorAfterimage
+        {
+            private const float Lifetime = .24f;
+            private readonly GameObject gameObject;
+            private readonly SpriteRenderer renderer;
+            private readonly Vector3 origin;
+            private readonly Vector3 trailDirection;
+            private readonly Color startColor;
+            private readonly float delay;
+
+            public WarriorAfterimage(Transform cutsceneRoot, SpriteRenderer source, Vector3 direction,
+                float delay, float opacity, int index)
+            {
+                this.delay = delay;
+                origin = source.transform.position;
+                trailDirection = -direction;
+                startColor = source.color;
+                startColor.a *= opacity;
+                gameObject = new GameObject("Warrior vanish blur " + index);
+                gameObject.transform.SetParent(cutsceneRoot, true);
+                gameObject.transform.position = origin + trailDirection * (.06f + index * .055f);
+                gameObject.transform.rotation = source.transform.rotation;
+                gameObject.transform.localScale = source.transform.lossyScale;
+                renderer = gameObject.AddComponent<SpriteRenderer>();
+                renderer.sprite = source.sprite;
+                renderer.flipX = source.flipX;
+                renderer.flipY = source.flipY;
+                renderer.drawMode = source.drawMode;
+                renderer.size = source.size;
+                renderer.sharedMaterial = source.sharedMaterial;
+                renderer.maskInteraction = source.maskInteraction;
+                renderer.sortingLayerID = source.sortingLayerID;
+                renderer.sortingOrder = source.sortingOrder + 3 + index;
+                renderer.color = startColor;
+                renderer.enabled = false;
+            }
+
+            public void Update(float elapsed)
+            {
+                float localTime = elapsed - delay;
+                if (renderer == null || localTime < 0f) return;
+                float progress = Mathf.Clamp01(localTime / Lifetime);
+                renderer.enabled = progress < 1f;
+                if (!renderer.enabled) return;
+                gameObject.transform.position = origin + trailDirection * (.06f + progress * .2f);
+                Color color = startColor;
+                color.a *= 1f - progress;
+                renderer.color = color;
+            }
+
+            public void Dispose()
+            {
+                if (gameObject != null) UnityEngine.Object.Destroy(gameObject);
+            }
+        }
+
+        private static float LightningNoise(float seed)
+        {
+            return Mathf.Repeat(Mathf.Sin(seed * 12.9898f + 78.233f) * 43758.5453f, 1f) * 2f - 1f;
+        }
+
+        private static Vector3 ArcherLightningPoint(Vector3 contact, float seed, float progress)
+        {
+            // End exactly on the enemy; coarse bends give the bolt an irregular silhouette.
+            float index = Mathf.Round(progress * 16f);
+            float envelope = Mathf.Sin(progress * Mathf.PI);
+            float bend = LightningNoise(seed + Mathf.Floor(index / 3f) * 11f) * .28f;
+            float detail = LightningNoise(seed + index * 5f) * .16f;
+            return contact + new Vector3((bend + detail) * envelope,
+                Mathf.Lerp(3.2f, 0f, progress), 0f);
+        }
+
+        private static Sprite[] LoadFrameSprites(string path)
+        {
+            Texture2D[] textures = Resources.LoadAll<Texture2D>(path);
+            System.Array.Sort(textures, (left, right) => System.StringComparer.Ordinal.Compare(left.name, right.name));
+            var sprites = new Sprite[textures.Length];
+            for (int i = 0; i < textures.Length; i++)
+            {
+                Texture2D texture = textures[i];
+                sprites[i] = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 48f);
+            }
+            return sprites;
+        }
+
+        private static void SetFrame(SpriteRenderer renderer, Sprite[] frames, float elapsed, float frameSeconds)
+        {
+            if (frames == null || frames.Length == 0) return;
+            renderer.sprite = frames[Mathf.Clamp(Mathf.FloorToInt(Mathf.Max(0f, elapsed) / frameSeconds), 0, frames.Length - 1)];
+        }
+
+        public void Dispose()
+        {
+            foreach (WarriorAfterimage afterimage in warriorAfterimages)
+                afterimage.Dispose();
+            warriorAfterimages.Clear();
+            if (root != null) UnityEngine.Object.Destroy(root);
+            if (material != null) UnityEngine.Object.Destroy(material);
+            if (pixel != null) UnityEngine.Object.Destroy(pixel);
+            if (pixelTexture != null) UnityEngine.Object.Destroy(pixelTexture);
+            if (lightningArrowFrames != null)
+                foreach (Sprite frame in lightningArrowFrames)
+                    if (frame != null) UnityEngine.Object.Destroy(frame);
+            if (scytheFrames != null)
+                foreach (Sprite frame in scytheFrames)
+                    if (frame != null) UnityEngine.Object.Destroy(frame);
+            if (ghostFrames != null)
+                foreach (Sprite frame in ghostFrames)
+                    if (frame != null) UnityEngine.Object.Destroy(frame);
+            if (warriorSlashFrames != null)
+                foreach (Sprite frame in warriorSlashFrames)
+                    if (frame != null) UnityEngine.Object.Destroy(frame);
+            if (warriorImpactFrames != null)
+                foreach (Sprite frame in warriorImpactFrames)
+                    if (frame != null) UnityEngine.Object.Destroy(frame);
+        }
     }
 
     private Sprite ResolveHudPortrait()
@@ -163,17 +994,34 @@ public static class BattleHudMedieval
     private static Sprite epStarFillSprite;
     private static readonly Image[] epStarFills = new Image[5];
     private static int currentEp;
+    private static int cardsPlayedTowardEp;
+    private static int enemyHitsTowardEp;
     private static Button epSkillButton;
     private static Image epSkillBackground;
     private static Image epSkillIcon;
     private static Outline epSkillOutline;
     private static CanvasGroup epSkillCanvasGroup;
     private static TMP_Text epCounterText;
+    public static string SpecialSkillTitle => SelectedHero.IsArcher ? "Thunderfall Arrow"
+        : SelectedHero.IsMage ? "Soul Eclipse" : "Mugengiri Higan";
+
+    public static string SpecialSkillDescription => SelectedHero.IsArcher
+        ? "Loose a giant lightning arrow and call down thunder. Deal 200% ATK damage to all enemies."
+        : SelectedHero.IsMage
+            ? "Unleash a spectral scythe to reap enemy souls. Deal 200% ATK damage to all enemies."
+            : "Vanish in a blur and unleash countless slashes. Deal 200% ATK damage to all enemies.";
+
     private const int MaxEp = 5;
+    private const int EventsPerEpStar = 2;
+    // Temporary animation-testing switch: start each battle with Starfall ready.
+    // Set this to false when normal EP progression should resume.
+    private const bool StartWithFullEpForAnimationTesting = true;
 
     public static void ResetEpMeter()
     {
-        currentEp = 0;
+        currentEp = StartWithFullEpForAnimationTesting ? MaxEp : 0;
+        cardsPlayedTowardEp = 0;
+        enemyHitsTowardEp = 0;
         for (int i = 0; i < epStarFills.Length; i++) epStarFills[i] = null;
         epSkillButton = null;
         epSkillBackground = null;
@@ -186,10 +1034,25 @@ public static class BattleHudMedieval
 
     public static void GainEpFromCard()
     {
-        AddEp(1);
+        cardsPlayedTowardEp++;
+        if (cardsPlayedTowardEp >= EventsPerEpStar)
+        {
+            cardsPlayedTowardEp -= EventsPerEpStar;
+            AddEp(1);
+        }
     }
 
-    public static void GainEpFromDamage()
+    public static void GainEpFromEnemyHit()
+    {
+        enemyHitsTowardEp++;
+        if (enemyHitsTowardEp >= EventsPerEpStar)
+        {
+            enemyHitsTowardEp -= EventsPerEpStar;
+            AddEp(1);
+        }
+    }
+
+    public static void GainEpFromTurnEnd()
     {
         AddEp(1);
     }
@@ -212,7 +1075,7 @@ public static class BattleHudMedieval
     {
         if (epSkillButton == null) return;
         bool resolving = ActionSystem.Instance != null && ActionSystem.Instance.IsPerforming;
-        bool ready = currentEp >= MaxEp && !resolving && !QuestionUI.IsQuestionActive &&
+        bool ready = currentEp >= MaxEp && !GameControlsGuide.GameplayOverlayHidden && !resolving && !QuestionUI.IsQuestionActive &&
             !BattleTutorialGuide.BlocksInput && !EncounterBattleReturn.BattleEnded &&
             EnemySystem.Instance != null && EnemySystem.Instance.Enemies.Exists(enemy => enemy != null && enemy.CurrentHealth > 0);
         epSkillButton.interactable = ready;
@@ -223,7 +1086,12 @@ public static class BattleHudMedieval
             epSkillOutline.effectColor = ready ? new Color(1f, 0.83f, 0.3f, 1f) : new Color(0.62f, 0.46f, 0.25f, 0.9f);
             epSkillOutline.effectDistance = ready ? new Vector2(4f, -4f) : new Vector2(2f, -2f);
         }
-        if (epSkillCanvasGroup != null) epSkillCanvasGroup.alpha = ready ? 1f : 0.34f;
+        if (epSkillCanvasGroup != null)
+        {
+            epSkillCanvasGroup.alpha = ready ? 1f : 0f;
+            epSkillCanvasGroup.interactable = ready;
+            epSkillCanvasGroup.blocksRaycasts = ready;
+        }
         if (epSkillIcon != null) epSkillIcon.color = Color.white;
     }
 
@@ -608,23 +1476,28 @@ public static class BattleHudMedieval
         button.onClick.RemoveListener(OnEpSkillClick);
         button.onClick.AddListener(OnEpSkillClick);
 
-        CreateEpCardText(cardRect, "EP Skill Title", "STARFALL", new Vector2(0f, -8f), new Vector2(106f, 24f),
+        CreateEpCardText(cardRect, "EP Skill Title", SpecialSkillTitle, new Vector2(0f, -8f), new Vector2(106f, 24f),
             TextAlignmentOptions.Center, 15f, new Color(1f, 0.88f, 0.58f, 1f), topAnchored: true);
         Transform oldSkillIcon = cardRect.Find("EP Skill Star Icon");
         if (oldSkillIcon != null) oldSkillIcon.name = "EP Skill Icon";
-        CardData skillCard = Resources.Load<CardData>("MerchantCards/Arcane Tempest");
+        string skillArt = SelectedHero.IsArcher ? "Storm Volley" : SelectedHero.IsMage ? "Arcane Tempest" : "Runic Cleave";
+        CardData skillCard = Resources.Load<CardData>("MerchantCards/" + skillArt);
         Sprite skillSprite = skillCard != null && skillCard.Image != null ? skillCard.Image : CreateEpSkillFallbackSprite();
         Image skillIcon = GetOrCreateImage(cardRect, "EP Skill Icon", skillSprite);
         if (skillIcon.rectTransform.sizeDelta == Vector2.zero)
             PositionEpStarImage(skillIcon.rectTransform, new Vector2(58f, 80f), new Vector2(42f, 42f));
+        skillIcon.sprite = skillSprite;
         skillIcon.color = Color.white;
         skillIcon.preserveAspect = true;
         epSkillIcon = skillIcon;
-        CreateEpCardText(cardRect, "EP Skill Description", "Deal 2x ATK\nto all enemies.", new Vector2(0f, 31f), new Vector2(106f, 42f),
+        CreateEpCardText(cardRect, "EP Skill Description", SpecialSkillDescription, new Vector2(0f, 31f), new Vector2(106f, 42f),
             TextAlignmentOptions.Center, 12f, new Color(1f, 0.94f, 0.82f, 1f));
         Transform oldCharge = cardRect.Find("EP Skill Charge");
         if (oldCharge != null) oldCharge.gameObject.SetActive(false);
 
+        var skillUi = cardObject.GetComponent<SpecialSkillCardUI>();
+        if (skillUi == null) skillUi = cardObject.AddComponent<SpecialSkillCardUI>();
+        skillUi.Configure();
         epSkillButton = button;
     }
 

@@ -1,0 +1,1105 @@
+fileFormatVersion: 2
+guid: 01f5910174d19a14f8c6d7dbc32d203c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8307929075545887889
+    second: wpn_lightning_arrow_0
+  - first:
+      213: -8324290014318205961
+    second: wpn_lightning_arrow_1
+  - first:
+      213: 7347834894292862206
+    second: wpn_lightning_arrow_2
+  - first:
+      213: -163745177864564058
+    second: wpn_lightning_arrow_3
+  - first:
+      213: -5904098660216986883
+    second: wpn_lightning_arrow_4
+  - first:
+      213: 1037669241217898024
+    second: wpn_lightning_arrow_5
+  - first:
+      213: 1175539885967737618
+    second: wpn_lightning_arrow_6
+  - first:
+      213: -1469655172019016858
+    second: wpn_lightning_arrow_7
+  - first:
+      213: -426730205096345376
+    second: wpn_lightning_arrow_8
+  - first:
+      213: -6040827545034231438
+    second: wpn_lightning_arrow_9
+  - first:
+      213: 7084908020512060447
+    second: wpn_lightning_arrow_10
+  - first:
+      213: 1482794942473711293
+    second: wpn_lightning_arrow_11
+  - first:
+      213: -7968834788250249178
+    second: wpn_lightning_arrow_12
+  - first:
+      213: -2650164112602480703
+    second: wpn_lightning_arrow_13
+  - first:
+      213: 4617279876574003407
+    second: wpn_lightning_arrow_14
+  - first:
+      213: -218225784472418502
+    second: wpn_lightning_arrow_15
+  - first:
+      213: -6902173939907453331
+    second: wpn_lightning_arrow_16
+  - first:
+      213: 5886165205647700390
+    second: wpn_lightning_arrow_17
+  - first:
+      213: 4871453690405455593
+    second: wpn_lightning_arrow_18
+  - first:
+      213: -4168346608332910649
+    second: wpn_lightning_arrow_19
+  - first:
+      213: 1135900991049470307
+    second: wpn_lightning_arrow_20
+  - first:
+      213: 6554905321462915340
+    second: wpn_lightning_arrow_21
+  - first:
+      213: -5312109743253872933
+    second: wpn_lightning_arrow_22
+  - first:
+      213: 6917864542628006634
+    second: wpn_lightning_arrow_23
+  - first:
+      213: 7797475872577762691
+    second: wpn_lightning_arrow_24
+  - first:
+      213: 7188211107845038021
+    second: wpn_lightning_arrow_25
+  - first:
+      213: 6779145419877621296
+    second: wpn_lightning_arrow_26
+  - first:
+      213: 4260469580060826323
+    second: wpn_lightning_arrow_27
+  - first:
+      213: -4398097700598249251
+    second: wpn_lightning_arrow_28
+  - first:
+      213: 7328364323992159765
+    second: wpn_lightning_arrow_29
+  - first:
+      213: -250479909108924898
+    second: wpn_lightning_arrow_30
+  - first:
+      213: -5052027425653493796
+    second: wpn_lightning_arrow_31
+  - first:
+      213: -187799242478362963
+    second: wpn_lightning_arrow_32
+  - first:
+      213: 7224111130191580933
+    second: wpn_lightning_arrow_33
+  - first:
+      213: 629204219569963215
+    second: wpn_lightning_arrow_34
+  - first:
+      213: -3430758070296460443
+    second: wpn_lightning_arrow_35
+  - first:
+      213: -7835779515531636575
+    second: wpn_lightning_arrow_36
+  - first:
+      213: 2089124190867665522
+    second: wpn_lightning_arrow_37
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_0
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 715
+        width: 17
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6ba2f8e58e44bc80800000000000000
+      internalID: -8307929075545887889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_1
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 712
+        width: 24
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f36b31065e2a7c80800000000000000
+      internalID: -8324290014318205961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_2
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 713
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef4cb86e7e0c8f560800000000000000
+      internalID: 7347834894292862206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_3
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 709
+        width: 27
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a213b7d0a24abdf0800000000000000
+      internalID: -163745177864564058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_4
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 715
+        width: 25
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df228eebc8d601ea0800000000000000
+      internalID: -5904098660216986883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_5
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 705
+        width: 22
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82654255daa866e00800000000000000
+      internalID: 1037669241217898024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_6
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 615
+        width: 68
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 213096a4c4b505010800000000000000
+      internalID: 1175539885967737618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_7
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 616
+        width: 71
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66bad79586cba9be0800000000000000
+      internalID: -1469655172019016858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_8
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 598
+        width: 69
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e08d4ea323f31af0800000000000000
+      internalID: -426730205096345376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_9
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 618
+        width: 65
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 271f6dc7a5baa2ca0800000000000000
+      internalID: -6040827545034231438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_10
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 605
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f14ffe4ae46a25260800000000000000
+      internalID: 7084908020512060447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_11
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 601
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbe24ecd422f39410800000000000000
+      internalID: 1482794942473711293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_12
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 521
+        width: 67
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62891941bf2096190800000000000000
+      internalID: -7968834788250249178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_13
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 521
+        width: 66
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cf37dfd7c9b83bd0800000000000000
+      internalID: -2650164112602480703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_14
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 521
+        width: 67
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc0c0c7959fd31040800000000000000
+      internalID: 4617279876574003407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_15
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 519
+        width: 66
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a37c0b32ec4b8fcf0800000000000000
+      internalID: -218225784472418502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_16
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 424
+        width: 67
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6e9bd5fe5d8630a0800000000000000
+      internalID: -6902173939907453331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_17
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 424
+        width: 66
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a135eb711cdfa150800000000000000
+      internalID: 5886165205647700390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_18
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 424
+        width: 66
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e602644251ea9340800000000000000
+      internalID: 4871453690405455593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_19
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 424
+        width: 67
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cfcc9538de0726c0800000000000000
+      internalID: -4168346608332910649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_20
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 330
+        width: 67
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 361948fdee783cf00800000000000000
+      internalID: 1135900991049470307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_21
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 329
+        width: 67
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c016d1619a3b7fa50800000000000000
+      internalID: 6554905321462915340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_22
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 328
+        width: 67
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bde167155589746b0800000000000000
+      internalID: -5312109743253872933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_23
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 330
+        width: 65
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aeacc9b2621310060800000000000000
+      internalID: 6917864542628006634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_24
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 234
+        width: 32
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3853da94ef2363c60800000000000000
+      internalID: 7797475872577762691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_25
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 233
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cfde95fae7a1c360800000000000000
+      internalID: 7188211107845038021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_26
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 233
+        width: 34
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03e958887dc541e50800000000000000
+      internalID: 6779145419877621296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_27
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 229
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3da12e7928a302b30800000000000000
+      internalID: 4260469580060826323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_28
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 227
+        width: 27
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd801648171d6f2c0800000000000000
+      internalID: -4398097700598249251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_29
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 224
+        width: 31
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 516c23c768493b560800000000000000
+      internalID: 7328364323992159765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_30
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 48
+        width: 35
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1eb03a89dd168cf0800000000000000
+      internalID: -250479909108924898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_31
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 129
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdf646ab2d793e9b0800000000000000
+      internalID: -5052027425653493796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_32
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 47
+        width: 34
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dae5dfe759dc46df0800000000000000
+      internalID: -187799242478362963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_33
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 134
+        width: 35
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50fc3054cc2314460800000000000000
+      internalID: 7224111130191580933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_34
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 138
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc005ae67e16bb800800000000000000
+      internalID: 629204219569963215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_35
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 135
+        width: 31
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 563cca546bf7360d0800000000000000
+      internalID: -3430758070296460443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_36
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 48
+        width: 27
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a0547edb08b14390800000000000000
+      internalID: -7835779515531636575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wpn_lightning_arrow_37
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 122
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 272b758026f0efc10800000000000000
+      internalID: 2089124190867665522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      wpn_lightning_arrow_0: -8307929075545887889
+      wpn_lightning_arrow_1: -8324290014318205961
+      wpn_lightning_arrow_10: 7084908020512060447
+      wpn_lightning_arrow_11: 1482794942473711293
+      wpn_lightning_arrow_12: -7968834788250249178
+      wpn_lightning_arrow_13: -2650164112602480703
+      wpn_lightning_arrow_14: 4617279876574003407
+      wpn_lightning_arrow_15: -218225784472418502
+      wpn_lightning_arrow_16: -6902173939907453331
+      wpn_lightning_arrow_17: 5886165205647700390
+      wpn_lightning_arrow_18: 4871453690405455593
+      wpn_lightning_arrow_19: -4168346608332910649
+      wpn_lightning_arrow_2: 7347834894292862206
+      wpn_lightning_arrow_20: 1135900991049470307
+      wpn_lightning_arrow_21: 6554905321462915340
+      wpn_lightning_arrow_22: -5312109743253872933
+      wpn_lightning_arrow_23: 6917864542628006634
+      wpn_lightning_arrow_24: 7797475872577762691
+      wpn_lightning_arrow_25: 7188211107845038021
+      wpn_lightning_arrow_26: 6779145419877621296
+      wpn_lightning_arrow_27: 4260469580060826323
+      wpn_lightning_arrow_28: -4398097700598249251
+      wpn_lightning_arrow_29: 7328364323992159765
+      wpn_lightning_arrow_3: -163745177864564058
+      wpn_lightning_arrow_30: -250479909108924898
+      wpn_lightning_arrow_31: -5052027425653493796
+      wpn_lightning_arrow_32: -187799242478362963
+      wpn_lightning_arrow_33: 7224111130191580933
+      wpn_lightning_arrow_34: 629204219569963215
+      wpn_lightning_arrow_35: -3430758070296460443
+      wpn_lightning_arrow_36: -7835779515531636575
+      wpn_lightning_arrow_37: 2089124190867665522
+      wpn_lightning_arrow_4: -5904098660216986883
+      wpn_lightning_arrow_5: 1037669241217898024
+      wpn_lightning_arrow_6: 1175539885967737618
+      wpn_lightning_arrow_7: -1469655172019016858
+      wpn_lightning_arrow_8: -426730205096345376
+      wpn_lightning_arrow_9: -6040827545034231438
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

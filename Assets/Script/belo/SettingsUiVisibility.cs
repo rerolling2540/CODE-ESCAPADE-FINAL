@@ -8,6 +8,9 @@ public sealed class SettingsUiVisibility : MonoBehaviour
     private readonly Dictionary<CanvasGroup, State> hidden = new Dictionary<CanvasGroup, State>();
     private readonly Dictionary<CanvasGroup, bool> overrides = new Dictionary<CanvasGroup, bool>();
     private readonly HashSet<Canvas> roots = new HashSet<Canvas>();
+    private readonly Dictionary<Renderer, bool> hiddenWorldUi = new Dictionary<Renderer, bool>();
+    private readonly Dictionary<Collider, bool> hiddenWorldHits = new Dictionary<Collider, bool>();
+    private readonly Dictionary<Collider2D, bool> hiddenWorldHits2D = new Dictionary<Collider2D, bool>();
     private const float DynamicUiRefreshInterval = 1f;
     private float nextDynamicUiRefresh;
     private bool lastSettingsOpen;
@@ -44,7 +47,8 @@ public sealed class SettingsUiVisibility : MonoBehaviour
         bool travelOpen=MonolithTravelPanel.IsOpen;
         if (!settingsOpen&&!travelOpen)
         {
-            if (hidden.Count > 0 || overrides.Count > 0) Restore();
+            if (hidden.Count > 0 || overrides.Count > 0 || hiddenWorldUi.Count > 0 ||
+                hiddenWorldHits.Count > 0 || hiddenWorldHits2D.Count > 0) Restore();
             lastSettingsOpen = false;
             lastTravelOpen = false;
             return;
@@ -74,6 +78,33 @@ public sealed class SettingsUiVisibility : MonoBehaviour
         foreach (var canvas in roots)
             if(GameControlsGuide.SettingsOpen)HideOutsideSettings(canvas.transform);
             else if(canvas.GetComponent<MonolithTravelPanel>()==null)HideBranch(canvas.transform);
+        if (GameControlsGuide.SettingsOpen)
+        {
+            // Hand cards and pile artwork are world sprites, outside CanvasGroups.
+            // Hide visuals and hit targets without disabling gameplay objects.
+            foreach (CardView card in FindObjectsByType<CardView>(FindObjectsSortMode.None))
+                HideWorldUi(card.transform);
+            foreach (CardPileView pile in FindObjectsByType<CardPileView>(FindObjectsSortMode.None))
+                HideWorldUi(pile.transform);
+        }
+    }
+    void HideWorldUi(Transform branch)
+    {
+        foreach (Renderer renderer in branch.GetComponentsInChildren<Renderer>(true))
+        {
+            if (!hiddenWorldUi.ContainsKey(renderer)) hiddenWorldUi.Add(renderer, renderer.enabled);
+            renderer.enabled = false;
+        }
+        foreach (Collider hit in branch.GetComponentsInChildren<Collider>(true))
+        {
+            if (!hiddenWorldHits.ContainsKey(hit)) hiddenWorldHits.Add(hit, hit.enabled);
+            hit.enabled = false;
+        }
+        foreach (Collider2D hit in branch.GetComponentsInChildren<Collider2D>(true))
+        {
+            if (!hiddenWorldHits2D.ContainsKey(hit)) hiddenWorldHits2D.Add(hit, hit.enabled);
+            hit.enabled = false;
+        }
     }
     void HideOutsideSettings(Transform branch)
     {
@@ -99,6 +130,10 @@ public sealed class SettingsUiVisibility : MonoBehaviour
     }
     void Restore()
     {
+        foreach (var entry in hiddenWorldUi) if (entry.Key != null) entry.Key.enabled = entry.Value;
+        foreach (var entry in hiddenWorldHits) if (entry.Key != null) entry.Key.enabled = entry.Value;
+        foreach (var entry in hiddenWorldHits2D) if (entry.Key != null) entry.Key.enabled = entry.Value;
+        hiddenWorldUi.Clear(); hiddenWorldHits.Clear(); hiddenWorldHits2D.Clear();
         foreach (var entry in hidden)
             if (entry.Key != null) { entry.Key.alpha=entry.Value.alpha; entry.Key.interactable=entry.Value.interactable; entry.Key.blocksRaycasts=entry.Value.raycasts; }
         foreach (var entry in overrides) if(entry.Key!=null)entry.Key.ignoreParentGroups=entry.Value;

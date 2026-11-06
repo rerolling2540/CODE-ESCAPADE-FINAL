@@ -12,7 +12,8 @@ public static class SelectedHero
     public static HeroData Resolve(HeroData fallback)
     {
         if (IsMage) return Resources.Load<HeroData>("Mage/Mage") ?? fallback;
-        return IsArcher ? Resources.Load<HeroData>("Archer/Archer") ?? fallback : fallback;
+        return IsArcher ? Resources.Load<HeroData>("Archer/Archer") ?? fallback
+            : Resources.Load<HeroData>("Warrior/Warrior") ?? fallback;
     }
 
     public static SpriteRenderer ApplyArcher(playerMovement movement, SpriteRenderer original)

@@ -13,8 +13,8 @@ public class Card
 
     public Card(CardData cardData)
     {
-        Data = cardData;
-        Level = CharacterInventory.SavedCardLevel(cardData);
+        Data = GameplayCardCatalog.Resolve(cardData);
+        Level = CharacterInventory.SavedCardLevel(Data);
     }
 
     public int Level { get; }

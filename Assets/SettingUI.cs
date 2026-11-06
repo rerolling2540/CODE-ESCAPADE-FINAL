@@ -94,7 +94,7 @@ public static class GameControlsGuide
         if (!settingsPanels.Contains(panel)) settingsPanels.Add(panel);
         if (Application.isPlaying) SettingsUiVisibility.EnsureInstance();
     }
-    public static bool GameplayOverlayHidden => MonolithTravelPanel.IsOpen || QuestReturnTravel.IsTravelling || QuestReturnPanel.IsOpen || BattleReportScroll.IsOpen || FinalVictoryEnding.IsOpen || PlayerDeathFlow.IsActive || SettingsOpen || CodeWorkshopUI.IsOpen || CharacterAlmanac.IsOpen || CardRefinementUI.IsOpen || SyntaxMerchantUI.IsOpen || BattleTutorialGuide.BlocksInput;
+    public static bool GameplayOverlayHidden => MatchSetupSystem.StarfallCutsceneActive || MonolithTravelPanel.IsOpen || QuestReturnTravel.IsTravelling || QuestReturnPanel.IsOpen || BattleReportScroll.IsOpen || FinalVictoryEnding.IsOpen || PlayerDeathFlow.IsActive || SettingsOpen || CodeWorkshopUI.IsOpen || CharacterAlmanac.IsOpen || CardRefinementUI.IsOpen || SyntaxMerchantUI.IsOpen || BattleTutorialGuide.BlocksInput;
     private static readonly System.Collections.Generic.List<GameObject> mapBlockingPanels = new System.Collections.Generic.List<GameObject>();
     public static void RegisterMapBlocker(GameObject panel)
     {

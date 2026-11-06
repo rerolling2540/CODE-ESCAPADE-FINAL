@@ -516,6 +516,11 @@ public class CloudSaveSync : MonoBehaviour
         for (int slot = 0; slot < SaveSlots.Count; slot++)
         {
             var localCards = CharacterInventory.ReadSavedCards(slot);
+            bool hasCloudSlot = stateRows?.rows != null &&
+                Array.Exists(stateRows.rows, row => row != null && row.slot_index == slot);
+            // A never-synced empty slot has nothing to upload. Existing cloud
+            // slots must still receive empty lists so removed cards stay removed.
+            if (localCards.Count == 0 && !hasCloudSlot) continue;
             var payload = new InventoryRpcPayload
             {
                 p_slot_index = slot,

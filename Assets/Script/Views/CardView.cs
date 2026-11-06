@@ -196,14 +196,20 @@ public class CardView : MonoBehaviour
         }
     }
 
+    public void RestoreHoverVisual()
+    {
+        if (wrapper != null) wrapper.SetActive(true);
+    }
+
     void OnMouseEnter()
     {
+        if (MatchSetupSystem.StarfallCutsceneActive) return;
         var interactions = Interactions.Instance;
         var hoverSystem = CardViewHoverSystem.Instance;
         if (interactions == null || !interactions.PlayerCanHover() || hoverSystem == null || Card == null) return;
         if (wrapper != null) wrapper.SetActive(false);
         Vector3 pos = new(transform.position.x, -2, 0);
-        hoverSystem.Show(Card, pos);
+        hoverSystem.Show(Card, pos, this);
     }
 
     void OnMouseExit()

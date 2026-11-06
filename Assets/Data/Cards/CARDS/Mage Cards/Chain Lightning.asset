@@ -18,20 +18,20 @@ MonoBehaviour:
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 21300000, guid: 59b442e247231ae4c8c4c4f93ca51b00, type: 3}
   <ManualTargetEffect>k__BackingField:
-    rid: 8493059999646613588
+    rid: -2
   <OtherEffects>k__BackingField:
   - <TargetMode>k__BackingField:
-      rid: 401
+      rid: 1001
     <Effect>k__BackingField:
-      rid: 402
+      rid: 1002
   - <TargetMode>k__BackingField:
-      rid: 403
+      rid: 1003
     <Effect>k__BackingField:
-      rid: 404
+      rid: 1004
   - <TargetMode>k__BackingField:
-      rid: 405
+      rid: 1005
     <Effect>k__BackingField:
-      rid: 406
+      rid: 1006
   attackVfxType: 4
   damageType: 1
   baseDamage: 0
@@ -40,24 +40,21 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 401
+    - rid: 1001
       type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 402
+      data:
+    - rid: 1002
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 403
+      data:
+    - rid: 1003
       type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 404
+      data:
+    - rid: 1004
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 405
+      data:
+    - rid: 1005
       type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 406
+      data:
+    - rid: 1006
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 8493059999646613588
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data: 
+      data:

@@ -25,7 +25,22 @@ public sealed class SyntaxMerchantCatalog : ScriptableObject
         public bool AvailableFor(int character) => hero < 0 || hero == character;
     }
     public List<Offer> offers=new List<Offer>();
-    public static SyntaxMerchantCatalog Load() => Resources.Load<SyntaxMerchantCatalog>("NPC/SyntaxMerchantCatalog");
+    public static SyntaxMerchantCatalog Load()
+    {
+        var catalog = Resources.Load<SyntaxMerchantCatalog>("NPC/SyntaxMerchantCatalog");
+        if (catalog != null)
+            foreach (var offer in catalog.offers)
+                if (offer != null && offer.kind == MerchantItemKind.Card)
+                {
+                    offer.card = GameplayCardCatalog.Resolve(offer.card);
+                    if (offer.card != null)
+                    {
+                        offer.title = offer.card.name;
+                        offer.description = offer.card.Description;
+                    }
+                }
+        return catalog;
+    }
     public Offer Find(string id) => offers.Find(o=>o!=null&&o.id==id);
     public static string CurrencyName(MerchantCurrency currency) => currency==MerchantCurrency.Coins?"coins":currency==MerchantCurrency.LibraryTokens?"Library Tokens":"syntax shards";
     public const int ScrapsPerCard=3;

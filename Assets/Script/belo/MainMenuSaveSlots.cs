@@ -1477,19 +1477,6 @@ public class MainMenuSaveSlots : MonoBehaviour
                 confirmTitleStyle
             );
 
-            GUI.Label(
-                new Rect(350, 300, 580, 28),
-                "USER ID",
-                fieldLabelStyle
-            );
-            GUI.Label(
-                new Rect(350, 330, 580, 38),
-                string.IsNullOrWhiteSpace(authenticatedUserId)
-                    ? "Available for this session"
-                    : authenticatedUserId,
-                subtitleStyle
-            );
-
             DrawActionButton(
                 adminAccount
                     ? new Rect(277, 430, 160, 52)

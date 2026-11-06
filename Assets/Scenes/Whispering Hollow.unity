@@ -10722,7 +10722,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1491992170222762025, guid: 7b38df6ab3d90486a8305b5b5c155c22, type: 3}
       propertyPath: m_Name
-      value: Scene 2 - Bringer Of Death 01
+      value: boss
       objectReference: {fileID: 0}
     - target: {fileID: 2864441745180243557, guid: 7b38df6ab3d90486a8305b5b5c155c22, type: 3}
       propertyPath: m_LocalScale.x
@@ -11532,7 +11532,7 @@ Transform:
   m_GameObject: {fileID: 606382705}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 515.31, y: -29.274002, z: -10}
+  m_LocalPosition: {x: 276.66, y: -42.794, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27346,11 +27346,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 516.1
+      value: 277.45
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -29.7
+      value: -43.22
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z
@@ -298063,7 +298063,7 @@ Transform:
   m_GameObject: {fileID: 2095482350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 515.31, y: -29.274002, z: -10}
+  m_LocalPosition: {x: 276.66, y: -42.794, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

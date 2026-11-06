@@ -53,10 +53,10 @@ MonoBehaviour:
   hovering: 0
   experienceReward: 210
   goldReward: 75
-  progressionRank: 0
+  progressionRank: 2
   progressionWeight: 1
   battleMaterial: {fileID: 2100000, guid: 9273f91ed6cf19c47982af24702941ff, type: 2}
-  battleVisualScale: 1.5
+  battleVisualScale: 1.8000001
   attackStyle: 0
   attackCountdown: 15
   breakMeterMax: 100

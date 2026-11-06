@@ -336860,6 +336860,10 @@ PrefabInstance:
       propertyPath: m_text
       value: SHADOWROOT DEPTHS
       objectReference: {fileID: 0}
+    - target: {fileID: 1456530318162912164, guid: 5be59e6ff7cea49969e5da45e6055eed, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 7110690626698726557, guid: 5be59e6ff7cea49969e5da45e6055eed, type: 3}
       propertyPath: m_Name
       value: Map Arrival Title
@@ -726343,7 +726347,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 637817271503574290, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
       propertyPath: m_Name
-      value: Map 4 - Demon Slime 02
+      value: boss
       objectReference: {fileID: 0}
     - target: {fileID: 713318597489514674, guid: 07a546dd362be4147be80c2592947ef4, type: 3}
       propertyPath: m_LocalScale.x

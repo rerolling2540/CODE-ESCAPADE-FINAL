@@ -94,7 +94,7 @@ public static class GameControlsGuide
         if (!settingsPanels.Contains(panel)) settingsPanels.Add(panel);
         if (Application.isPlaying) SettingsUiVisibility.EnsureInstance();
     }
-    public static bool GameplayOverlayHidden => MonolithTravelPanel.IsOpen || QuestReturnTravel.IsTravelling || QuestReturnPanel.IsOpen || BattleReportScroll.IsOpen || PlayerDeathFlow.IsActive || SettingsOpen || CodeWorkshopUI.IsOpen || CharacterAlmanac.IsOpen || CardRefinementUI.IsOpen || SyntaxMerchantUI.IsOpen || BattleTutorialGuide.BlocksInput;
+    public static bool GameplayOverlayHidden => MonolithTravelPanel.IsOpen || QuestReturnTravel.IsTravelling || QuestReturnPanel.IsOpen || BattleReportScroll.IsOpen || FinalVictoryEnding.IsOpen || PlayerDeathFlow.IsActive || SettingsOpen || CodeWorkshopUI.IsOpen || CharacterAlmanac.IsOpen || CardRefinementUI.IsOpen || SyntaxMerchantUI.IsOpen || BattleTutorialGuide.BlocksInput;
     private static readonly System.Collections.Generic.List<GameObject> mapBlockingPanels = new System.Collections.Generic.List<GameObject>();
     public static void RegisterMapBlocker(GameObject panel)
     {
@@ -256,6 +256,7 @@ public static class GameControlsGuide
             foreach (var hud in Object.FindObjectsByType<ExplorationHUD>(FindObjectsSortMode.None)) hud.CloseInventoryFromButton();
         RegisterSettings(panel);
         TryCloseSettingsGuide(panel);
+        DisplaySettingsUI.Ensure(panel);
         if(panel.scene.name=="MainMenu")
         {
             foreach(string name in new[]{"Controls Guide Button","Tutorial Tips Button","Settings Controls Guide","Settings Tutorial Tips"})
@@ -511,7 +512,7 @@ public static class GameControlsGuide
     public static bool TryCloseSettingsGuide(GameObject panel)
     {
         if(panel==null)return false;
-        foreach(string name in new[]{"Settings Tutorial Tips","Settings Controls Guide"})
+        foreach(string name in new[]{"Settings Display","Settings Tutorial Tips","Settings Controls Guide"})
         {
             var guide=panel.transform.Find(name);
             if(guide!=null&&guide.gameObject.activeSelf){guide.gameObject.SetActive(false);return true;}

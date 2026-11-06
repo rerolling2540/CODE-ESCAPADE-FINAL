@@ -1016,6 +1016,7 @@ GameObject:
   - component: {fileID: 79909421}
   - component: {fileID: 79909420}
   - component: {fileID: 79909419}
+  - component: {fileID: 79909425}
   m_Layer: 0
   m_Name: portal in map 5
   m_TagString: Untagged
@@ -1249,7 +1250,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 79909418}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b4f255b37cbc4de8b1abd5d1517be76, type: 3}
   m_Name: 
@@ -1272,8 +1273,28 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 92004758}
+  - {fileID: 787841481}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &79909425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79909418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 140ba6fd17e004e099bf5ab54766f9cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalNextScene
+  nextSceneName: Forest of Dawn
+  destinationArrivalId: forest-dawn-paired-portal
+  portalSound: {fileID: 0}
+  requiredDefeatedEncounters: 0
+  hideUntilUnlocked: 1
+  countAllDefeatedEnemies: 0
+  soundVolume: 1
 --- !u!1 &86302244
 GameObject:
   m_ObjectHideFlags: 0
@@ -13938,6 +13959,10 @@ PrefabInstance:
     - target: {fileID: 1225940852211436752, guid: 5be59e6ff7cea49969e5da45e6055eed, type: 3}
       propertyPath: m_text
       value: FROSTBOUND PASSAGE
+      objectReference: {fileID: 0}
+    - target: {fileID: 1456530318162912164, guid: 5be59e6ff7cea49969e5da45e6055eed, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7110690626698726557, guid: 5be59e6ff7cea49969e5da45e6055eed, type: 3}
       propertyPath: m_Name
@@ -147400,6 +147425,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 787530330}
   m_CullTransparentMesh: 1
+--- !u!1 &787841480
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 787841481}
+  - component: {fileID: 787841482}
+  m_Layer: 0
+  m_Name: Arrival from Forest of Dawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &787841481
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787841480}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.80999756, y: -1.1900024, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 79909424}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &787841482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787841480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2796daa6514be41a49d51e09aa802dc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalArrivalPoint
+  arrivalId: frostbound-paired-portal
+  landingPoint: {fileID: 0}
+  requireSafeLanding: 1
 --- !u!1001 &796052996
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -147882,7 +147954,7 @@ Transform:
   m_GameObject: {fileID: 813388511}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -33.034, y: -171.074, z: -10}
+  m_LocalPosition: {x: 349.486, y: -138.354, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -182753,6 +182825,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1258818084823118722, guid: e961cdec5bffe4cddb0661b131558aa1, type: 3}
+      propertyPath: interactionDistance
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 3270977140908949099, guid: e961cdec5bffe4cddb0661b131558aa1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 333.83
@@ -182795,7 +182871,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3910759118394459628, guid: e961cdec5bffe4cddb0661b131558aa1, type: 3}
       propertyPath: m_Name
-      value: Map 5 - Frost Guardian 01
+      value: boss
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -184072,7 +184148,7 @@ Transform:
   m_GameObject: {fileID: 2025787674}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -33.034, y: -171.074, z: -10}
+  m_LocalPosition: {x: 349.486, y: -138.354, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -184165,11 +184241,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -32.98
+      value: 349.54
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -173.48
+      value: -140.76
       objectReference: {fileID: 0}
     - target: {fileID: 4495199614701710680, guid: 32278ba3a463e214b82ece39a69d1732, type: 3}
       propertyPath: m_LocalPosition.z

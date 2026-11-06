@@ -32,6 +32,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 1001
       type: {class: RandomEnemiesTM, ns: , asm: Assembly-CSharp}
       data:

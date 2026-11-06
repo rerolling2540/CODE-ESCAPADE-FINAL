@@ -60,6 +60,23 @@ public class CardData : ScriptableObject
     [Tooltip("1.0 = 100%, 1.2 = 120%, 1.5 = 150%")]
     public float damageMultiplier = 1.0f;
 
+    // Applied only to runtime clones; authored templates and their effect graphs stay intact.
+    public void SetCatalogIcon(Sprite icon) { Image = icon; }
+
+    public void ApplyCatalogValues(GameContentSync.CardRow row, Sprite icon)
+    {
+        name = row.name;
+        Description = row.description ?? "";
+        Mana = row.mana;
+        Image = icon;
+        damageType = (DamageType)row.damage_type;
+        baseDamage = row.base_damage;
+        percentDamage = row.percent_damage;
+        damageMultiplier = row.damage_multiplier;
+        minimumQuestionTier = row.minimum_question_tier;
+        maximumQuestionTier = row.maximum_question_tier;
+    }
+
     public int GetCalculatedDamage(CombatantView caster, CombatantView target = null, int cardLevel = 1)
     {
         float calculatedBase = 0f;

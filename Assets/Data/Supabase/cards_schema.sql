@@ -25,11 +25,18 @@ alter table public.cards add constraint cards_damage_type_check
 alter table public.cards enable row level security;
 
 drop policy if exists "Authenticated users can manage cards" on public.cards;
-create policy "Authenticated users can manage cards"
+drop policy if exists "Admin can manage cards" on public.cards;
+create policy "Admin can manage cards"
     on public.cards
     for all
     to authenticated
-    using (true)
-    with check (true);
+    using (lower(coalesce(auth.jwt() ->> 'email', '')) = 'adeventurerank60@gmail.com')
+    with check (lower(coalesce(auth.jwt() ->> 'email', '')) = 'adeventurerank60@gmail.com');
+
+drop policy if exists "Signed-in players can read cards" on public.cards;
+create policy "Signed-in players can read cards" on public.cards
+    for select to authenticated using (true);
 
 grant select, insert, update, delete on public.cards to authenticated;
+revoke insert, update, delete, truncate, references, trigger on public.cards from anon;
+revoke truncate, references, trigger on public.cards from authenticated;

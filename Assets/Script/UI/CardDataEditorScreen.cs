@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using TMPro;
@@ -37,6 +38,9 @@ public class CardDataEditorScreen : MonoBehaviour
         public int base_damage;
         public float percent_damage;
         public float damage_multiplier = 1f;
+        public string template_key, icon_template_key, character_class;
+        public bool is_active = true, shop_available;
+        public int minimum_question_tier = 1, maximum_question_tier = 3, shop_price = 100;
     }
 
     [Serializable]
@@ -51,6 +55,9 @@ public class CardDataEditorScreen : MonoBehaviour
         public int base_damage;
         public float percent_damage;
         public float damage_multiplier;
+        public string template_key, icon_template_key, character_class;
+        public bool is_active = true, shop_available;
+        public int minimum_question_tier = 1, maximum_question_tier = 3, shop_price = 100;
     }
 
     [Serializable]
@@ -70,6 +77,11 @@ public class CardDataEditorScreen : MonoBehaviour
     private string selectedId = string.Empty;
     private bool requestInProgress;
     private bool lastRefreshSucceeded;
+    private string selectedTemplateKey, selectedIconKey;
+    private bool activeCard = true, shopAvailable;
+    private Button templateButton, iconButton, shopButton;
+    private TMP_InputField minTierInput, maxTierInput, shopPriceInput;
+    private GameObject picker;
     private Coroutine imagePreviewRoutine;
     private Texture2D previewTexture;
     private Sprite previewSprite;
@@ -99,6 +111,10 @@ public class CardDataEditorScreen : MonoBehaviour
 
     private void Start()
     {
+        if (!string.IsNullOrWhiteSpace(MainMenuSaveSlots.CurrentSupabaseProjectUrl))
+            supabaseProjectUrl = MainMenuSaveSlots.CurrentSupabaseProjectUrl;
+        if (!string.IsNullOrWhiteSpace(MainMenuSaveSlots.CurrentSupabasePublishableKey))
+            supabasePublishableKey = MainMenuSaveSlots.CurrentSupabasePublishableKey;
         EnsureRenderCamera();
         BuildInterface();
         if (!string.IsNullOrWhiteSpace(MainMenuSaveSlots.CurrentAccessToken))
@@ -162,6 +178,11 @@ public class CardDataEditorScreen : MonoBehaviour
         anonKeyInput.text = supabasePublishableKey;
         connectButton = AddButton(root, "Connect", new Vector2(1170, -102), new Vector2(170, 46), Connect);
         refreshButton = AddButton(root, "Refresh", new Vector2(1350, -102), new Vector2(220, 46), Refresh);
+        // Connection settings come from the game configuration; keep the editor header clean.
+        projectUrlInput.gameObject.SetActive(false);
+        anonKeyInput.gameObject.SetActive(false);
+        connectButton.gameObject.SetActive(false);
+        refreshButton.gameObject.SetActive(false);
 
         RectTransform listPanel = AddPanel(root, "Cards List Panel", new Vector2(30, -170), new Vector2(430, 690));
         AddText(listPanel, "List Heading", "CARDS", 23, FontStyles.Bold, TextAlignmentOptions.Left,
@@ -180,11 +201,19 @@ public class CardDataEditorScreen : MonoBehaviour
         AddText(editPanel, "Name Label", "Name", 16, FontStyles.Bold, TextAlignmentOptions.Left,
             new Vector2(22, -66), new Vector2(420, 25), TextColor);
         nameInput = AddInput(editPanel, "Card name", "Card name", new Vector2(20, -94), new Vector2(430, 48));
-        AddText(editPanel, "Game Card Key Label", "Inventory key (Unity catalog ID)", 16,
+        AddText(editPanel, "Game Card Key Label", "Gameplay template / targeting and effects", 16,
             FontStyles.Bold, TextAlignmentOptions.Left, new Vector2(480, -66), new Vector2(540, 25), TextColor);
         gameCardKeyInput = AddInput(editPanel, "Game Card Key", "Required to grant this card", new Vector2(478, -94), new Vector2(272, 48));
 
-        AddText(editPanel, "Description Label", "Description", 16, FontStyles.Bold, TextAlignmentOptions.Left,
+        gameCardKeyInput.gameObject.SetActive(false);
+        templateButton = AddButton(editPanel, "Choose template", new Vector2(478, -94), new Vector2(560, 48), () => OpenTemplatePicker(false));
+        minTierInput = AddLabeledInput(editPanel, "Min difficulty", "1-3", new Vector2(760, -430), new Vector2(120, 48));
+        maxTierInput = AddLabeledInput(editPanel, "Max difficulty", "1-3", new Vector2(900, -430), new Vector2(120, 48));
+        shopPriceInput = AddLabeledInput(editPanel, "Shop price", "Price", new Vector2(760, -520), new Vector2(120, 48));
+        shopButton = AddButton(editPanel, "SHOP: OFF", new Vector2(900, -555), new Vector2(150, 48), () => { shopAvailable = !shopAvailable; UpdateContentButtons(); });
+        iconButton = AddButton(editPanel, "Choose icon", new Vector2(900, -371), new Vector2(150, 52), () => OpenTemplatePicker(true));
+
+        AddText(editPanel, "Description Label", "Description (does not change template effects)", 16, FontStyles.Bold, TextAlignmentOptions.Left,
             new Vector2(22, -153), new Vector2(650, 25), TextColor);
         descriptionInput = AddInput(editPanel, "Card description", "Card effect and rules text",
             new Vector2(20, -181), new Vector2(710, 145), false, true);
@@ -201,14 +230,14 @@ public class CardDataEditorScreen : MonoBehaviour
         imageUrlInput = AddInput(editPanel, "Image URL", "https://...", new Vector2(20, -458), new Vector2(710, 48));
         imageUrlInput.onEndEdit.AddListener(LoadPreview);
 
-        previewImage = AddImage(editPanel, "Card Image Preview", new Vector2(760, -70), new Vector2(290, 330),
+        previewImage = AddImage(editPanel, "Card Image Preview", new Vector2(780, -150), new Vector2(270, 185),
             new Color32(28, 34, 42, 255));
         previewImage.preserveAspect = true;
         previewPlaceholderText = AddText(editPanel, "Image Placeholder", "IMAGE PREVIEW", 14, FontStyles.Bold,
-            TextAlignmentOptions.Center, new Vector2(770, -198), new Vector2(270, 34), MutedTextColor);
+            TextAlignmentOptions.Center, new Vector2(780, -225), new Vector2(270, 34), MutedTextColor);
 
         saveButton = AddButton(editPanel, "Save Changes", new Vector2(20, -555), new Vector2(190, 48), Save);
-        deleteButton = AddButton(editPanel, "Delete", new Vector2(222, -555), new Vector2(140, 48), Delete);
+        deleteButton = AddButton(editPanel, "Retire", new Vector2(222, -555), new Vector2(140, 48), Delete);
         AddButton(editPanel, "Clear Form", new Vector2(372, -555), new Vector2(160, 48), NewCard);
         statusText = AddText(editPanel, "Status", "Enter your Supabase settings, then connect.", 15,
             FontStyles.Normal, TextAlignmentOptions.Left, new Vector2(20, -615), new Vector2(1010, 48), MutedTextColor);
@@ -356,7 +385,7 @@ public class CardDataEditorScreen : MonoBehaviour
         image.color = label == "Delete" ? new Color32(135, 59, 53, 255) : new Color32(110, 78, 43, 255);
         Button button = obj.GetComponent<Button>();
         button.targetGraphic = image;
-        button.onClick.AddListener(() => action?.Invoke());
+        button.onClick.AddListener(() => { if (!requestInProgress) action?.Invoke(); });
         TMP_Text text = AddText(rect, "Label", label, 17, FontStyles.Bold, TextAlignmentOptions.Center,
             new Vector2(5, -3), new Vector2(size.x - 10, size.y - 6), TextColor);
         text.raycastTarget = false;
@@ -403,32 +432,22 @@ public class CardDataEditorScreen : MonoBehaviour
         if (requestInProgress) yield break;
         lastRefreshSucceeded = false;
         if (!TryBuildEndpoint(out string endpoint)) yield break;
-        SetBusy(true, "Connecting and loading cards…");
-        using (UnityWebRequest request = UnityWebRequest.Get(endpoint + "?select=*&order=name.asc"))
+        SetBusy(true, "Loading card catalog…");
+        string json = null, error = null;
+        yield return GameContentSync.ReadEditorPages(endpoint + "?select=*&order=name.asc,id.asc", SetHeaders, (data, failure) => { json = data; error = failure; });
+        if (json == null) SetStatus(error, true);
+        else
         {
-            SetHeaders(request);
-            yield return request.SendWebRequest();
-            if (!Succeeded(request))
-            {
-                SetStatus(FormatRequestError("Could not load cards", request), true);
-                SetBusy(false);
-                yield break;
-            }
-
             try
             {
-                string wrapped = "{\"items\":" + request.downloadHandler.text + "}";
-                CardListEnvelope result = JsonUtility.FromJson<CardListEnvelope>(wrapped);
+                var result = JsonUtility.FromJson<CardListEnvelope>("{\"items\":" + json + "}");
                 cards.Clear();
-                if (result != null && result.items != null) cards.AddRange(result.items);
-                RebuildCardList();
-                lastRefreshSucceeded = true;
-                SetStatus($"Connected. Loaded {cards.Count} card(s) from public.{DefaultTableName}.", false);
+                if (result?.items != null) cards.AddRange(result.items.Where(r => r != null &&
+                    GameplayCardCatalog.Load().cards.Any(e => e != null && (e.id == r.game_card_key || e.id == r.template_key))));
+                RebuildCardList(); lastRefreshSucceeded = true;
+                SetStatus("Loaded " + cards.Count + " gameplay cards.", false);
             }
-            catch (Exception exception)
-            {
-                SetStatus("Supabase returned JSON that does not match the cards schema: " + exception.Message, true);
-            }
+            catch (Exception exception) { SetStatus("Invalid catalog: " + exception.Message, true); }
         }
         SetBusy(false);
     }
@@ -449,17 +468,23 @@ public class CardDataEditorScreen : MonoBehaviour
             SetHeaders(request);
             request.SetRequestHeader("Prefer", "return=representation");
             SetBusy(true, isNew ? "Creating card…" : "Saving card changes…");
-            yield return request.SendWebRequest();
+            yield return SupabaseSession.Send(request);
             if (!Succeeded(request))
             {
                 SetStatus(FormatRequestError("Save failed", request), true);
                 SetBusy(false);
                 yield break;
             }
+            var written = JsonUtility.FromJson<CardListEnvelope>("{\"items\":" + request.downloadHandler.text + "}");
+            if (written?.items != null && written.items.Length > 0) selectedId = written.items[0].id;
         }
 
+        var content = GameContentSync.Configure(projectUrl, anonKey);
+        if (content != null) yield return content.RefreshNow();
         SetBusy(false);
         yield return RefreshRoutine();
+        var saved = cards.Find(r => r.id == selectedId);
+        if (saved != null) LoadCard(saved);
         if (lastRefreshSucceeded)
             SetStatus(isNew ? "Card created and list refreshed." : "Card updated and list refreshed.", false);
     }
@@ -469,35 +494,43 @@ public class CardDataEditorScreen : MonoBehaviour
         if (requestInProgress) yield break;
         if (string.IsNullOrWhiteSpace(selectedId))
         {
-            SetStatus("Select a saved card before deleting it.", true);
+            SetStatus("Select a saved card before retiring or restoring it.", true);
             yield break;
         }
         if (!TryBuildEndpoint(out string endpoint)) yield break;
         string url = endpoint + "?id=eq." + UnityWebRequest.EscapeURL(selectedId);
-        using (var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbDELETE))
+        using (var request = new UnityWebRequest(url, "PATCH"))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
             SetHeaders(request);
             request.SetRequestHeader("Prefer", "return=minimal");
-            SetBusy(true, "Deleting card…");
-            yield return request.SendWebRequest();
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(activeCard ? "{\"is_active\":false}" : "{\"is_active\":true}"));
+            SetBusy(true, activeCard ? "Retiring card…" : "Restoring card…");
+            yield return SupabaseSession.Send(request);
             if (!Succeeded(request))
             {
-                SetStatus(FormatRequestError("Delete failed", request), true);
+                SetStatus(FormatRequestError("Availability update failed", request), true);
                 SetBusy(false);
                 yield break;
             }
         }
 
         ClearEditor();
+        var content = GameContentSync.Configure(projectUrl, anonKey);
+        if (content != null) yield return content.RefreshNow();
         SetBusy(false);
         yield return RefreshRoutine();
-        if (lastRefreshSucceeded) SetStatus("Card deleted and list refreshed.", false);
+        if (lastRefreshSucceeded) SetStatus("Card availability updated. Existing owned copies are preserved.", false);
     }
 
     private bool TryBuildEndpoint(out string endpoint)
     {
         endpoint = string.Empty;
+        if (!MainMenuSaveSlots.HasAdminSession)
+        {
+            SetStatus("Sign in with the admin account to edit cards.", true);
+            return false;
+        }
         if (!TryBuildBaseUrl(out _))
         {
             endpoint = string.Empty;
@@ -563,15 +596,26 @@ public class CardDataEditorScreen : MonoBehaviour
             !int.TryParse(damageTypeInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int damageType) ||
                 (damageType != 0 && damageType != 1 && damageType != 2 && damageType != 3) ||
             !int.TryParse(baseDamageInput.text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int baseDamage) || baseDamage < 0 ||
-            !float.TryParse(percentDamageInput.text, NumberStyles.Float, CultureInfo.InvariantCulture, out float percentDamage) || percentDamage < 0 ||
-            !float.TryParse(multiplierInput.text, NumberStyles.Float, CultureInfo.InvariantCulture, out float multiplier) || multiplier < 0)
+            !float.TryParse(percentDamageInput.text, NumberStyles.Float, CultureInfo.InvariantCulture, out float percentDamage) || percentDamage < 0 || float.IsNaN(percentDamage) || float.IsInfinity(percentDamage) ||
+            !float.TryParse(multiplierInput.text, NumberStyles.Float, CultureInfo.InvariantCulture, out float multiplier) || multiplier < 0 || float.IsNaN(multiplier) || float.IsInfinity(multiplier))
         {
             SetStatus("Enter valid numbers. Damage type: 0 flat, 1 attack %, or 3 target max-health %.", true);
             return false;
         }
 
+        var template = GameplayCardCatalog.Load()?.cards.Find(e => e != null && e.id == selectedTemplateKey);
+        if (template == null) { SetStatus("Choose a gameplay template first.", true); return false; }
+        if (!int.TryParse(minTierInput.text, out int minTier) || !int.TryParse(maxTierInput.text, out int maxTier) || minTier < 1 || maxTier > 3 || maxTier < minTier ||
+            !int.TryParse(shopPriceInput.text, out int price) || price < 1)
+        { SetStatus("Difficulty must be 1-3 with min <= max; shop price must be positive.", true); return false; }
+        if (!string.IsNullOrWhiteSpace(imageUrlInput.text) && (!Uri.TryCreate(imageUrlInput.text, UriKind.Absolute, out var iconUri) || iconUri.Scheme != "https"))
+        { SetStatus("Use an HTTPS image URL, or leave it blank for the selected icon.", true); return false; }
         record = new CardWriteRecord
         {
+            template_key = selectedTemplateKey, icon_template_key = selectedIconKey,
+            character_class = template.hero == 0 ? "warrior" : template.hero == 1 ? "archer" : template.hero == 2 ? "mage" : "universal",
+            is_active = activeCard, shop_available = shopAvailable, shop_price = price,
+            minimum_question_tier = minTier, maximum_question_tier = maxTier,
             game_card_key = gameCardKeyInput.text.Trim(),
             name = nameInput.text.Trim(),
             description = descriptionInput.text,
@@ -603,7 +647,7 @@ public class CardDataEditorScreen : MonoBehaviour
             button.targetGraphic = image;
             CardRecord selected = record;
             button.onClick.AddListener(() => LoadCard(selected));
-            AddText(rect, "Card Name", string.IsNullOrEmpty(record.name) ? "Unnamed card" : record.name,
+            AddText(rect, "Card Name", (record.is_active ? "" : "[RETIRED] ") + (record.name ?? "Unnamed card"),
                 17, FontStyles.Bold, TextAlignmentOptions.Left, new Vector2(12, -7), new Vector2(290, 28), TextColor);
             AddText(rect, "Card Summary", $"Mana {record.mana}   •   {record.description}", 13,
                 FontStyles.Normal, TextAlignmentOptions.Left, new Vector2(12, -34), new Vector2(365, 24), MutedTextColor);
@@ -614,6 +658,11 @@ public class CardDataEditorScreen : MonoBehaviour
 
     private void LoadCard(CardRecord record)
     {
+        selectedTemplateKey = string.IsNullOrEmpty(record.template_key) ? record.game_card_key : record.template_key;
+        selectedIconKey = record.icon_template_key; activeCard = record.is_active; shopAvailable = record.shop_available;
+        minTierInput.text = record.minimum_question_tier.ToString(); maxTierInput.text = record.maximum_question_tier.ToString();
+        shopPriceInput.text = Math.Max(1, record.shop_price).ToString();
+        UpdateContentButtons();
         selectedId = record.id ?? string.Empty;
         selectedIdText.text = "ID: " + selectedId;
         gameCardKeyInput.text = record.game_card_key ?? string.Empty;
@@ -626,6 +675,11 @@ public class CardDataEditorScreen : MonoBehaviour
         multiplierInput.text = record.damage_multiplier.ToString(CultureInfo.InvariantCulture);
         imageUrlInput.text = record.image_url ?? string.Empty;
         LoadPreview(record.image_url);
+        if (string.IsNullOrWhiteSpace(record.image_url))
+        {
+            previewImage.sprite = GameplayCardCatalog.Load()?.cards.Find(e => e != null && e.id == (selectedIconKey ?? selectedTemplateKey))?.card?.Image;
+            previewPlaceholderText.gameObject.SetActive(previewImage.sprite == null);
+        }
         SetStatus("Editing “" + (record.name ?? "card") + "”. Save to update the Supabase row.", false);
     }
 
@@ -638,9 +692,14 @@ public class CardDataEditorScreen : MonoBehaviour
     private void ClearEditor()
     {
         selectedId = string.Empty;
+        selectedTemplateKey = selectedIconKey = null; activeCard = true; shopAvailable = true;
+        if (minTierInput != null) minTierInput.text = "1";
+        if (maxTierInput != null) maxTierInput.text = "3";
+        if (shopPriceInput != null) shopPriceInput.text = "100";
+        UpdateContentButtons();
         if (selectedIdText != null) selectedIdText.text = "New card";
         if (nameInput != null) nameInput.text = string.Empty;
-        if (gameCardKeyInput != null) gameCardKeyInput.text = string.Empty;
+        if (gameCardKeyInput != null) gameCardKeyInput.text = "remote." + Guid.NewGuid().ToString("N");
         if (descriptionInput != null) descriptionInput.text = string.Empty;
         if (manaInput != null) manaInput.text = "0";
         if (damageTypeInput != null) damageTypeInput.text = "0";
@@ -720,11 +779,101 @@ public class CardDataEditorScreen : MonoBehaviour
 
     private static string FormatRequestError(string prefix, UnityWebRequest request)
     {
+        if (request.responseCode == 0 && !string.IsNullOrEmpty(SupabaseSession.LastError))
+            return prefix + ": " + SupabaseSession.LastError;
         string body = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
         if (body.Length > 360) body = body.Substring(0, 360) + "…";
         return string.IsNullOrWhiteSpace(body)
             ? $"{prefix}: {request.error} (HTTP {request.responseCode})."
             : $"{prefix}: HTTP {request.responseCode}. {body}";
+    }
+
+    private void UpdateContentButtons()
+    {
+        if (templateButton != null) templateButton.GetComponentInChildren<TMP_Text>().text = GameplayCardCatalog.Load()?.cards.Find(e => e != null && e.id == selectedTemplateKey)?.card?.name ?? "Choose gameplay template";
+        if (shopButton != null) shopButton.GetComponentInChildren<TMP_Text>().text = shopAvailable ? "SHOP: ON" : "SHOP: OFF";
+        if (deleteButton != null) deleteButton.GetComponentInChildren<TMP_Text>().text = activeCard ? "Retire" : "Restore";
+    }
+    private void OpenTemplatePicker(bool chooseIcon)
+    {
+        if (chooseIcon) { StartCoroutine(OpenIconPicker()); return; }
+        if (picker != null) Destroy(picker);
+        var canvas = templateButton.GetComponentInParent<Canvas>().transform as RectTransform;
+        var blocker = AddPanel(canvas, "Template picker modal", Vector2.zero, new Vector2(1600, 900));
+        blocker.GetComponent<Image>().color = new Color(0, 0, 0, .7f);
+        picker = blocker.gameObject; blocker.SetAsLastSibling();
+        var panel = AddPanel(blocker, "Template picker", new Vector2(350, -100), new Vector2(900, 700));
+        AddText(panel, "Heading", chooseIcon ? "CHOOSE CARD ICON" : "CHOOSE GAMEPLAY TEMPLATE", 24, FontStyles.Bold, TextAlignmentOptions.Left, new Vector2(20, -20), new Vector2(670, 40), GoldColor);
+        AddButton(panel, "Close", new Vector2(760, -20), new Vector2(115, 40), () => Destroy(picker));
+        var viewport = AddPanel(panel, "Viewport", new Vector2(20, -75), new Vector2(855, 600));
+        viewport.gameObject.AddComponent<RectMask2D>();
+        var content = new GameObject("Templates", typeof(RectTransform)).GetComponent<RectTransform>();
+        content.SetParent(viewport, false);
+        var entries = GameplayCardCatalog.Load().cards.Where(e => e != null && e.card != null).OrderBy(e => e.hero).ThenBy(e => e.card.name).ToArray();
+        SetTopLeftRect(content, Vector2.zero, new Vector2(835, entries.Length * 50 + 10));
+        var scroll = viewport.gameObject.AddComponent<ScrollRect>(); scroll.viewport = viewport; scroll.content = content; scroll.horizontal = false;
+        for (int i = 0; i < entries.Length; i++)
+        {
+            var entry = entries[i];
+            string hero = entry.hero == 0 ? "Warrior" : entry.hero == 1 ? "Archer" : "Mage";
+            AddButton(content, hero + " / " + entry.card.name, new Vector2(5, -5 - i * 50), new Vector2(820, 44), () =>
+            {
+                if (chooseIcon) selectedIconKey = entry.id;
+                else
+                {
+                    selectedTemplateKey = entry.id;
+                    if (string.IsNullOrEmpty(selectedId))
+                    {
+                        nameInput.text = entry.card.name + " Copy"; descriptionInput.text = entry.card.Description;
+                        manaInput.text = entry.card.Mana.ToString(); damageTypeInput.text = ((int)entry.card.damageType).ToString();
+                        baseDamageInput.text = entry.card.baseDamage.ToString(); percentDamageInput.text = entry.card.percentDamage.ToString(CultureInfo.InvariantCulture);
+                        multiplierInput.text = entry.card.damageMultiplier.ToString(CultureInfo.InvariantCulture);
+                    }
+                }
+                imageUrlInput.text = ""; ClearPreviewTexture(); previewImage.color = Color.white; previewImage.sprite = entry.card.Image; previewPlaceholderText.gameObject.SetActive(false);
+                UpdateContentButtons(); Destroy(picker);
+            });
+        }
+    }
+
+    [Serializable] private class IconChoice { public string id, name, icon_template_key; }
+    [Serializable] private class IconChoices { public IconChoice[] items; }
+    private IEnumerator OpenIconPicker()
+    {
+        if (!TryBuildEndpoint(out _)) yield break;
+        string json = null, error = null;
+        SetBusy(true, "Loading five icon choices…");
+        yield return GameContentSync.ReadEditorPages(projectUrl + "/rest/v1/card_icon_choices?select=id,name,icon_template_key&order=name.asc",
+            SetHeaders, (data, failure) => { json = data; error = failure; });
+        SetBusy(false);
+        if (json == null) { SetStatus("Run card_icon_choices.sql in Supabase first. " + error, true); yield break; }
+        IconChoice[] choices;
+        try { choices = JsonUtility.FromJson<IconChoices>("{\"items\":" + json + "}").items; }
+        catch (Exception) { SetStatus("Could not read icon choices.", true); yield break; }
+        if (picker != null) Destroy(picker);
+        var canvas = templateButton.GetComponentInParent<Canvas>().transform;
+        var blocker = AddPanel(canvas, "Icon picker modal", Vector2.zero, new Vector2(1600, 900));
+        blocker.GetComponent<Image>().color = new Color(0, 0, 0, .7f);
+        picker = blocker.gameObject;
+        var panel = AddPanel(blocker, "Choose icon", new Vector2(350, -220), new Vector2(900, 350));
+        AddText(panel, "Heading", "CHOOSE CARD ICON", 26, FontStyles.Bold, TextAlignmentOptions.Left,
+            new Vector2(20, -20), new Vector2(650, 45), GoldColor);
+        AddButton(panel, "Close", new Vector2(760, -20), new Vector2(115, 40), () => Destroy(picker));
+        int index = 0;
+        foreach (var choice in (choices ?? Array.Empty<IconChoice>()).Take(5))
+        {
+            var entry = GameplayCardCatalog.Load()?.cards.Find(e => e != null && e.id == choice.icon_template_key);
+            if (entry?.card == null) continue;
+            float x = 20 + index++ * 174;
+            AddButton(panel, choice.name, new Vector2(x, -90), new Vector2(160, 215), () =>
+            {
+                selectedIconKey = entry.id; imageUrlInput.text = "";
+                if (imagePreviewRoutine != null) StopCoroutine(imagePreviewRoutine);
+                ClearPreviewTexture(); previewImage.color = Color.white; previewImage.sprite = entry.card.Image;
+                previewPlaceholderText.gameObject.SetActive(false); Destroy(picker);
+            });
+            AddImage(panel, choice.name + " Preview", new Vector2(x + 15, -100), new Vector2(130, 130), Color.white).sprite = entry.card.Image;
+        }
     }
 
     private void OnDestroy()

@@ -15,20 +15,31 @@ public sealed class GameplayCardCatalog : ScriptableObject
     public static CardData Resolve(CardData source)
     {
         if (source == null) return null;
+        string runtimeKey = GameContentSync.RuntimeKey(source);
+        if (runtimeKey != null) return GameContentSync.Find(runtimeKey);
         var catalog = Load();
         if (catalog == null) { Debug.LogError("GameplayCardCatalog is missing; refusing legacy card data."); return null; }
-        if (catalog.cards.Exists(e => e != null && e.card == source)) return source;
-        return catalog.legacyAliases.Find(e => e != null && e.source == source)?.replacement;
+        var bundled = catalog.cards.Exists(e => e != null && e.card == source) ? source
+            : catalog.legacyAliases.Find(e => e != null && e.source == source)?.replacement;
+        string id = catalog.cards.Find(e => e != null && e.card == bundled)?.id;
+        return GameContentSync.Find(id) ?? bundled;
     }
     public static string PrimaryId(CardData card)
     {
-        var resolved = Resolve(card);
-        return resolved != null ? Load()?.cards.Find(e => e != null && e.card == resolved)?.id : null;
+        string runtimeKey = GameContentSync.RuntimeKey(card);
+        if (runtimeKey != null) return runtimeKey;
+        var catalog = Load();
+        var bundled = catalog?.cards.Exists(e => e != null && e.card == card) == true ? card
+            : catalog?.legacyAliases.Find(e => e != null && e.source == card)?.replacement;
+        return catalog?.cards.Find(e => e != null && e.card == bundled)?.id;
     }
+    public static CardData FindById(string id) => GameContentSync.Find(id);
+    public static bool CanObtain(CardData card) => card != null && GameContentSync.CanObtain(PrimaryId(card));
     public static bool ForCurrentHero(CardData card)
     {
         var resolved = Resolve(card);
-        var entry = resolved != null ? Load()?.cards.Find(e => e != null && e.card == resolved) : null;
-        return entry != null && (entry.hero < 0 || entry.hero == PlayerPrefs.GetInt("SelectedCharacter", 0));
+        if (resolved == null) return false;
+        int hero = GameContentSync.HeroFor(PrimaryId(resolved));
+        return hero < 0 || hero == PlayerPrefs.GetInt("SelectedCharacter", 0);
     }
 }

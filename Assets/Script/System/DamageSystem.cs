@@ -35,9 +35,13 @@ public class DamageSystem : MonoBehaviour
             {
                 BattleBloodEffect.Play(target);
                 StatusEffectSystem.PlayImpactAnimation(target);
+                if (damageVFX != null)
+                {
+                    var effect = Instantiate(damageVFX, target.transform.position, Quaternion.identity);
+                    Destroy(effect, 2f);
+                }
             }
             BattleAudio.Impact(dealDamageGA, target, previousHealth);
-            if (damageVFX != null) Instantiate(damageVFX, target.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.15f);
         }
     }

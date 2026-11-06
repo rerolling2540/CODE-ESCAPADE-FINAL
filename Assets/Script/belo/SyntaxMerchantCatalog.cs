@@ -20,12 +20,34 @@ public sealed class SyntaxMerchantCatalog : ScriptableObject
         public string cardId;
         public string cosmeticTitle;
         public Color titleColor=Color.white;
-        public bool AvailableFor(int character) => hero < 0 || hero == character;
+        public bool AvailableFor(int character) => (hero < 0 || hero == character) &&
+            (kind != MerchantItemKind.Card || GameplayCardCatalog.CanObtain(card));
     }
     public List<Offer> offers=new List<Offer>();
+    private static SyntaxMerchantCatalog runtimeCatalog;
+    private static int contentVersion = -1;
+    private static List<Offer> authoredOffers;
     public static SyntaxMerchantCatalog Load()
     {
-        var catalog = Resources.Load<SyntaxMerchantCatalog>("NPC/SyntaxMerchantCatalog");
+        if (runtimeCatalog == null)
+        {
+            var authored = Resources.Load<SyntaxMerchantCatalog>("NPC/SyntaxMerchantCatalog");
+            if (authored == null) return null;
+            runtimeCatalog = Instantiate(authored);
+            authoredOffers = new List<Offer>(runtimeCatalog.offers);
+        }
+        var catalog = runtimeCatalog;
+        if (contentVersion != GameContentSync.Version)
+        {
+            catalog.offers = authoredOffers.FindAll(o => o == null || o.kind != MerchantItemKind.Card || GameContentSync.Metadata(GameplayCardCatalog.PrimaryId(o.card)) == null);
+            foreach (var row in GameContentSync.ShopCards)
+                if (!catalog.offers.Exists(o => o != null && o.kind == MerchantItemKind.Card &&
+                    GameplayCardCatalog.PrimaryId(o.card) == row.game_card_key))
+                    catalog.offers.Add(new Offer { id = "remote.offer." + row.game_card_key, cardId = row.game_card_key,
+                        card = GameplayCardCatalog.FindById(row.game_card_key), hero = GameContentSync.HeroFor(row.game_card_key),
+                        kind = MerchantItemKind.Card, currency = authoredOffers.Find(o => o != null && o.kind == MerchantItemKind.Card && GameplayCardCatalog.PrimaryId(o.card) == row.game_card_key)?.currency ?? MerchantCurrency.Coins, price = row.shop_price });
+            contentVersion = GameContentSync.Version;
+        }
         if (catalog != null)
             foreach (var offer in catalog.offers)
                 if (offer != null && offer.kind == MerchantItemKind.Card)

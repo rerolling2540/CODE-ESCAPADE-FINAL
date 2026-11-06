@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -12,6 +13,7 @@ public class CloudSaveSync : MonoBehaviour
     private class SaveRow
     {
         public SaveSlots.CloudSnapshot save_data;
+        public int[] conflicted_slots;
     }
 
     [Serializable]
@@ -21,12 +23,12 @@ public class CloudSaveSync : MonoBehaviour
     }
 
     [Serializable]
-    private class SaveUpsert
+    private class SaveSyncPayload
     {
-        public string user_id;
-        public SaveSlots.CloudSnapshot save_data;
-        public string updated_at;
+        public SaveSlots.CloudSnapshot p_save_data;
+        public string[] p_base_slot_timestamps;
     }
+    [Serializable] private class SaveBase { public string[] slots; }
 
     [Serializable] private class InventoryStateRow { public int slot_index; public string updated_at; }
     [Serializable] private class InventoryStateRows { public InventoryStateRow[] rows; }
@@ -56,9 +58,22 @@ public class CloudSaveSync : MonoBehaviour
 
     private string projectUrl;
     private string publishableKey;
-    private string accessToken;
     private string userId;
     private bool sessionReady;
+    private bool sessionActive;
+    private bool initialSyncRunning;
+    private bool pendingProgress;
+    private bool applyingRemote;
+    private int saveGeneration;
+    private int inventoryGeneration;
+    private SaveSlots.CloudSnapshot pendingGuestBootstrap;
+    private string[] knownCloudTimes = new string[SaveSlots.Count];
+    private bool saveConflictDetected;
+    public string Status { get; private set; } = "";
+    private string SuccessfulProgressStatus => saveConflictDetected
+        ? "Newer account progress was kept. A copy of the conflicting device save is stored locally."
+        : "Device and account progress synchronized.";
+    private string SaveBaseKey => "CodeEscapade.CloudBase.v1." + UnityWebRequest.EscapeURL(projectUrl) + "." + userId;
     private bool requestRunning;
     private bool uploadQueued;
     private bool inventorySyncRunning;
@@ -104,18 +119,33 @@ public class CloudSaveSync : MonoBehaviour
 
     public void BeginSession(string url, string key, string token, string accountId)
     {
+        EndSession();
+        sessionActive = true;
         projectUrl = url.Trim().TrimEnd('/');
         publishableKey = key.Trim();
-        accessToken = token;
         userId = accountId;
+        try
+        {
+            var savedBase = JsonUtility.FromJson<SaveBase>(PlayerPrefs.GetString(SaveBaseKey, "{}"));
+            if (savedBase?.slots?.Length == SaveSlots.Count) knownCloudTimes = savedBase.slots;
+        }
+        catch (ArgumentException) { }
         sessionReady = false;
         questionHistorySyncNeeded = true;
         inventorySyncNeeded = true;
+        StartCoroutine(RecoverSession());
     }
 
     public void EndSession()
     {
         StopAllCoroutines();
+        SupabaseSession.CancelPendingRefresh();
+        sessionActive = initialSyncRunning = pendingProgress = applyingRemote = false;
+        saveGeneration = inventoryGeneration = 0;
+        pendingGuestBootstrap = null;
+        knownCloudTimes = new string[SaveSlots.Count];
+        saveConflictDetected = false;
+        Status = "";
         questionAttemptRetryCoroutine = null;
         inventoryRetryCoroutine = null;
         questionAttemptSyncQueued = false;
@@ -125,7 +155,7 @@ public class CloudSaveSync : MonoBehaviour
         uploadQueued = false;
         requestRunning = false;
         sessionReady = false;
-        projectUrl = publishableKey = accessToken = userId = "";
+        projectUrl = publishableKey = userId = "";
         questionHistorySyncNeeded = false;
         inventorySyncNeeded = false;
         if (questionAttemptRetryCoroutine != null)
@@ -156,6 +186,7 @@ public class CloudSaveSync : MonoBehaviour
         SaveSlots.CloudSnapshot guestBootstrap,
         Action<string> completed)
     {
+        pendingGuestBootstrap = guestBootstrap;
         StartCoroutine(InitialSyncRoutine(hasLocalProgress, guestBootstrap, completed));
     }
 
@@ -164,89 +195,102 @@ public class CloudSaveSync : MonoBehaviour
         SaveSlots.CloudSnapshot guestBootstrap,
         Action<string> completed)
     {
-        using (var request = CreateRequest(
-                   projectUrl + "/rest/v1/player_saves?user_id=eq." + userId + "&select=save_data",
-                   UnityWebRequest.kHttpVerbGET))
+        if (initialSyncRunning || !sessionActive) yield break;
+        initialSyncRunning = true;
+        try
         {
-            request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
+            using (var request = CreateRequest(
+                projectUrl + "/rest/v1/player_saves?user_id=eq." + userId + "&select=save_data", "GET"))
             {
-                completed?.Invoke("Could not check cloud saves: " + GetError(request));
-                yield break;
-            }
-
-            SaveRows rows = null;
-            try
-            {
-                string json = request.downloadHandler.text;
-                rows = JsonUtility.FromJson<SaveRows>("{\"rows\":" + json + "}");
-            }
-            catch (ArgumentException) { }
-
-            SaveSlots.CloudSnapshot cloud = rows != null && rows.rows != null && rows.rows.Length > 0
-                ? rows.rows[0].save_data
-                : null;
-
-            if (cloud == null)
-            {
-                bool includeGuestProgress = SaveSlots.HasProgress(guestBootstrap);
-                if (hasLocalProgress || includeGuestProgress)
+                request.downloadHandler = new DownloadHandlerBuffer();
+                yield return SupabaseSession.Send(request);
+                if (request.result != UnityWebRequest.Result.Success)
                 {
-                    SaveSlots.CloudSnapshot snapshot = hasLocalProgress
-                        ? SaveSlots.CaptureCloudSnapshot()
-                        : guestBootstrap;
-
-                    if (hasLocalProgress && includeGuestProgress)
-                    {
-                        snapshot = SaveSlots.MergeCloudSnapshots(snapshot, guestBootstrap);
-                    }
-
-                    if (includeGuestProgress || !hasLocalProgress)
-                    {
-                        SaveSlots.ApplyCloudSnapshot(snapshot);
-                    }
-
-                    yield return UploadRoutine(snapshot, message =>
-                    {
-                        sessionReady = string.IsNullOrEmpty(message);
-                        if (sessionReady) SaveSlots.MarkActiveProfileBootstrapComplete();
-                        StartCoroutine(FinishInitialSync(sessionReady
-                            ? includeGuestProgress
-                                ? "Guest progress was copied to this account. The guest save stays on this device."
-                                : "Account progress uploaded from this device."
-                            : "Could not upload account progress: " + message, completed));
-                    });
+                    Status = "Cloud sync is unavailable. Your progress is saved locally and will retry.";
+                    Debug.LogWarning("Could not check cloud saves: " + GetError(request));
+                    completed?.Invoke(Status);
+                    yield break;
                 }
-                else
+                SaveRows rows = null;
+                try { rows = JsonUtility.FromJson<SaveRows>("{\"rows\":" + request.downloadHandler.text + "}"); }
+                catch (ArgumentException) { }
+                // Never treat a malformed response as an empty account and overwrite it.
+                if (rows?.rows == null || (rows.rows.Length > 0 && rows.rows[0]?.save_data == null))
                 {
-                    sessionReady = true;
-                    yield return FinishInitialSync("No cloud save yet. Progress on this device will sync to this account.", completed);
+                    Status = "Cloud save could not be read. Local progress is safe; syncing will retry.";
+                    completed?.Invoke(Status);
+                    yield break;
                 }
-                yield break;
-            }
-
-            SaveSlots.MarkActiveProfileBootstrapComplete();
-
-            if (!hasLocalProgress)
-            {
-                SaveSlots.ApplyCloudSnapshot(cloud);
+                var cloud = rows.rows.Length == 0 ? null : rows.rows[0].save_data;
+                var local = SaveSlots.CaptureCloudSnapshot();
+                if (cloud != null && !SaveSlots.HasLocalProgress() && !pendingProgress &&
+                    Array.TrueForAll(local.slotModifiedUtc, string.IsNullOrWhiteSpace))
+                {
+                    // A fresh account cache must restore the account's selected
+                    // hero/slot, rather than treating guest-menu defaults as newer.
+                    local.activeSlot = cloud.activeSlot;
+                    local.selectedCharacter = cloud.selectedCharacter;
+                    local.modifiedUtc = cloud.modifiedUtc;
+                    ApplySnapshotIfChanged(local);
+                }
+                var merged = cloud != null ? local
+                    : SaveSlots.MergeCloudSnapshots(local, guestBootstrap);
+                // For an existing account, let the locked RPC resolve the versions
+                // before replacing any device data (it can report a conflict).
+                if (cloud == null && merged != null) ApplySnapshotIfChanged(merged);
+                if (cloud != null || SaveSlots.HasProgress(merged) || pendingProgress)
+                {
+                    string error = null;
+                    yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), value => error = value);
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        Status = "Progress is saved locally. Cloud sync will retry. " + error;
+                        completed?.Invoke(Status);
+                        yield break;
+                    }
+                }
                 sessionReady = true;
-                yield return FinishInitialSync("Cloud progress downloaded to this device.", completed);
-                yield break;
+                pendingGuestBootstrap = null;
+                SaveSlots.MarkActiveProfileBootstrapComplete();
+                Status = SuccessfulProgressStatus;
+                yield return FinishInitialSync(Status, completed);
             }
+        }
+        finally { initialSyncRunning = false; }
+    }
 
-            SaveSlots.CloudSnapshot merged = SaveSlots.MergeCloudSnapshots(
-                SaveSlots.CaptureCloudSnapshot(), cloud);
-            SaveSlots.ApplyCloudSnapshot(merged);
-            yield return UploadRoutine(merged, message =>
+    void ApplySnapshotIfChanged(SaveSlots.CloudSnapshot snapshot)
+    {
+        if (JsonUtility.ToJson(SaveSlots.CaptureCloudSnapshot()) == JsonUtility.ToJson(snapshot)) return;
+        applyingRemote = true;
+        try { SaveSlots.ApplyCloudSnapshot(snapshot); }
+        finally { applyingRemote = false; }
+    }
+
+    IEnumerator RecoverSession()
+    {
+        while (sessionActive)
+        {
+            yield return new WaitForSecondsRealtime(15f);
+            if (!sessionActive) yield break;
+            if (!sessionReady)
             {
-                sessionReady = string.IsNullOrEmpty(message);
-                StartCoroutine(FinishInitialSync(sessionReady
-                    ? "Device and account progress synchronized automatically."
-                    : "Progress was combined locally, but cloud upload failed: " + message, completed));
-            });
-            yield break;
+                if (!initialSyncRunning)
+                    yield return InitialSyncRoutine(SaveSlots.HasLocalProgress(), pendingGuestBootstrap, null);
+                continue;
+            }
+            bool tokenReady = false;
+            yield return SupabaseSession.EnsureAccessToken(value => tokenReady = value);
+            if (!tokenReady) { Status = SupabaseSession.LastError; continue; }
+            if (pendingProgress && !requestRunning && !inventorySyncRunning)
+                yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), error =>
+                {
+                    Status = string.IsNullOrEmpty(error) ? SuccessfulProgressStatus
+                        : "Progress is saved locally. Cloud sync will retry. " + error;
+                });
+            RetryPendingInventoryNow();
+            if (questionHistorySyncNeeded && !questionAttemptSyncRunning && !questionAttemptSyncQueued)
+                OnQuestionAttemptsChanged();
         }
     }
 
@@ -267,8 +311,9 @@ public class CloudSaveSync : MonoBehaviour
         if (!string.IsNullOrEmpty(inventoryWarning))
             Debug.LogWarning(inventoryWarning);
         if (sessionReady) yield return SyncQuestionAttemptsRoutine();
-        completed?.Invoke(string.IsNullOrEmpty(status) ? inventoryWarning :
-            status + (string.IsNullOrEmpty(inventoryWarning) ? "" : "\n" + inventoryWarning));
+        Status = string.IsNullOrEmpty(status) ? inventoryWarning :
+            status + (string.IsNullOrEmpty(inventoryWarning) ? "" : "\n" + inventoryWarning);
+        completed?.Invoke(Status);
     }
 
     void OnQuestionAttemptsChanged()
@@ -303,7 +348,7 @@ public class CloudSaveSync : MonoBehaviour
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
                 request.SetRequestHeader("Prefer", "resolution=merge-duplicates,return=minimal");
-                yield return request.SendWebRequest();
+                yield return SupabaseSession.Send(request);
                 if (request.result != UnityWebRequest.Result.Success)
                 {
                     QuestionPerformanceTracker.SetSyncStatus("Offline or sync failed. Attempts remain saved on this device. Run question_performance_schema.sql if the table is missing. " + GetError(request));
@@ -325,7 +370,7 @@ public class CloudSaveSync : MonoBehaviour
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Range-Unit", "items");
                 request.SetRequestHeader("Range", offset + "-" + (offset + pageSize - 1));
-                yield return request.SendWebRequest();
+                yield return SupabaseSession.Send(request);
                 if (request.result != UnityWebRequest.Result.Success)
                 {
                     QuestionPerformanceTracker.SetSyncStatus("Attempts are saved locally; cloud history could not be loaded. Run question_performance_schema.sql if the table is missing. " + GetError(request));
@@ -379,6 +424,9 @@ public class CloudSaveSync : MonoBehaviour
 
     void OnLocalSaveChanged()
     {
+        if (applyingRemote || !sessionActive) return;
+        saveGeneration++;
+        pendingProgress = true;
         if (!sessionReady || uploadQueued) return;
         uploadQueued = true;
         StartCoroutine(UploadAfterDelay());
@@ -386,6 +434,8 @@ public class CloudSaveSync : MonoBehaviour
 
     void OnInventoryChanged()
     {
+        if (applyingRemote || !sessionActive) return;
+        inventoryGeneration++;
         inventorySyncNeeded = true;
         if (!sessionReady || inventoryChangeSyncQueued) return;
         inventoryChangeSyncQueued = true;
@@ -452,7 +502,11 @@ public class CloudSaveSync : MonoBehaviour
         yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), message =>
         {
             if (!string.IsNullOrEmpty(message))
+            {
+                Status = "Progress is saved locally. Cloud sync will retry. " + message;
                 Debug.LogWarning("Cloud save sync failed: " + message);
+            }
+            else Status = SuccessfulProgressStatus;
         });
         if (sessionReady)
             yield return SyncCardInventoryRoutine(message =>
@@ -465,13 +519,24 @@ public class CloudSaveSync : MonoBehaviour
     {
         while (inventorySyncRunning) yield return null;
         inventorySyncRunning = true;
+        int inventoryVersion = inventoryGeneration;
+        if (pendingProgress)
+        {
+            string error = null;
+            yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), value => error = value);
+            if (!string.IsNullOrEmpty(error))
+            {
+                InventorySyncFailed("Cards remain saved locally. " + error, completed);
+                yield break;
+            }
+        }
         string statesUrl = projectUrl + "/rest/v1/player_card_inventory_slots?user_id=eq." +
                            UnityWebRequest.EscapeURL(userId) + "&select=slot_index,updated_at";
         InventoryStateRows stateRows = null;
         using (var request = CreateRequest(statesUrl, UnityWebRequest.kHttpVerbGET))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
+            yield return SupabaseSession.Send(request);
             if (request.result != UnityWebRequest.Result.Success)
             {
                 InventorySyncFailed("Card inventory table is not ready yet. Run card_inventory_schema.sql in Supabase. " + GetError(request), completed);
@@ -480,13 +545,18 @@ public class CloudSaveSync : MonoBehaviour
             try { stateRows = JsonUtility.FromJson<InventoryStateRows>("{\"rows\":" + request.downloadHandler.text + "}"); }
             catch (ArgumentException) { }
         }
+        if (stateRows?.rows == null)
+        {
+            InventorySyncFailed("Cloud inventory timestamps could not be read; no inventory was changed.", completed);
+            yield break;
+        }
 
         InventoryCardRows cardRows = null;
         using (var request = CreateRequest(projectUrl + "/rest/v1/player_card_inventory?user_id=eq." +
                    UnityWebRequest.EscapeURL(userId) + "&select=slot_index,card_key:game_card_key,quantity,level", UnityWebRequest.kHttpVerbGET))
         {
             request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
+            yield return SupabaseSession.Send(request);
             if (request.result != UnityWebRequest.Result.Success)
             {
                 InventorySyncFailed("Could not read owned card rows: " + GetError(request), completed);
@@ -494,6 +564,11 @@ public class CloudSaveSync : MonoBehaviour
             }
             try { cardRows = JsonUtility.FromJson<InventoryCardRows>("{\"rows\":" + request.downloadHandler.text + "}"); }
             catch (ArgumentException) { }
+        }
+        if (cardRows?.rows == null)
+        {
+            InventorySyncFailed("Cloud inventory could not be read; local cards remain unchanged.", completed);
+            yield break;
         }
 
         bool appliedRemote = false;
@@ -511,6 +586,17 @@ public class CloudSaveSync : MonoBehaviour
             CharacterInventory.ApplyCloudCards(slot, remoteCards);
             SaveSlots.ApplyCloudSlotModifiedUtc(slot, state.updated_at);
             appliedRemote = true;
+        }
+
+        if (appliedRemote)
+        {
+            string saveError = null;
+            yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), message => saveError = message);
+            if (!string.IsNullOrEmpty(saveError))
+            {
+                InventorySyncFailed("Owned cards downloaded, but the combined save snapshot could not be updated: " + saveError, completed);
+                yield break;
+            }
         }
 
         for (int slot = 0; slot < SaveSlots.Count; slot++)
@@ -534,27 +620,25 @@ public class CloudSaveSync : MonoBehaviour
                 request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonUtility.ToJson(payload)));
                 request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
-                yield return request.SendWebRequest();
+                yield return SupabaseSession.Send(request);
                 if (request.result != UnityWebRequest.Result.Success)
                 {
+                    if (request.downloadHandler.text.Contains("40001"))
+                    {
+                        // The full account snapshot changed since this inventory read.
+                        // Reconcile it before attempting another inventory replacement.
+                        sessionReady = false;
+                        pendingProgress = true;
+                    }
                     InventorySyncFailed("Could not sync owned cards for save slot " + (slot + 1) + ": " + GetError(request), completed);
                     yield break;
                 }
             }
         }
 
-        if (appliedRemote)
-        {
-            string saveError = null;
-            yield return UploadRoutine(SaveSlots.CaptureCloudSnapshot(), message => saveError = message);
-            if (!string.IsNullOrEmpty(saveError))
-            {
-                InventorySyncFailed("Owned cards downloaded, but the combined save snapshot could not be updated: " + saveError, completed);
-                yield break;
-            }
-        }
         inventorySyncRunning = false;
-        inventorySyncNeeded = false;
+        inventorySyncNeeded = inventoryVersion != inventoryGeneration;
+        if (inventorySyncNeeded) ScheduleInventoryRetry();
         completed?.Invoke("");
     }
 
@@ -569,42 +653,105 @@ public class CloudSaveSync : MonoBehaviour
 
     IEnumerator UploadRoutine(SaveSlots.CloudSnapshot snapshot, Action<string> completed)
     {
-        if (requestRunning) yield break;
+        while (requestRunning && sessionActive) yield return null;
+        if (!sessionActive) { completed?.Invoke("Sign in again to sync."); yield break; }
         requestRunning = true;
-
-        var payload = new SaveUpsert
+        // Another queued upload may have reconciled a conflict while we waited.
+        // Never send its obsolete captured branch with the newly observed versions.
+        snapshot = SaveSlots.CaptureCloudSnapshot();
+        int generation = saveGeneration;
+        pendingProgress = true;
+        try
         {
-            user_id = userId,
-            save_data = snapshot,
-            updated_at = DateTime.UtcNow.ToString("o")
-        };
+            // The RPC locks and merges the server row. Direct REST upserts are disabled
+            // by asap_database_fixes.sql so older clients cannot overwrite newer saves.
+            var payload = new SaveSyncPayload { p_save_data = snapshot, p_base_slot_timestamps = knownCloudTimes };
+            using (var request = CreateRequest(projectUrl + "/rest/v1/rpc/sync_player_save", "POST"))
+            {
+                request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonUtility.ToJson(payload)));
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+                yield return SupabaseSession.Send(request);
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    completed?.Invoke(GetError(request));
+                    yield break;
+                }
+                SaveRow result = null;
+                try { result = JsonUtility.FromJson<SaveRow>(request.downloadHandler.text); }
+                catch (ArgumentException) { }
+                if (result?.save_data?.slots?.Length != SaveSlots.Count ||
+                    result.save_data.inventories?.Length != SaveSlots.Count ||
+                    result.save_data.slotModifiedUtc?.Length != SaveSlots.Count)
+                {
+                    completed?.Invoke("The server returned an unreadable save. Local progress remains pending.");
+                    yield break;
+                }
+                var current = SaveSlots.CaptureCloudSnapshot();
+                var combined = SaveSlots.MergeCloudSnapshots(current, result.save_data);
+                saveConflictDetected = result.conflicted_slots != null && result.conflicted_slots.Length > 0;
+                if (saveConflictDetected)
+                {
+                    // Preserve both versions: keep the newer account branch active and
+                    // retain the full device branch, including edits made during this request.
+                    if (!SaveConflictBackup(current))
+                    {
+                        completed?.Invoke("A save conflict was found, but its backup could not be written. Local progress was left unchanged.");
+                        yield break;
+                    }
+                    foreach (int slot in result.conflicted_slots)
+                    {
+                        if (slot < 0 || slot >= SaveSlots.Count) continue;
+                        combined.slots[slot] = result.save_data.slots[slot];
+                        combined.inventories[slot] = result.save_data.inventories[slot];
+                        combined.slotModifiedUtc[slot] = result.save_data.slotModifiedUtc[slot];
+                    }
+                }
+                knownCloudTimes = (string[])result.save_data.slotModifiedUtc.Clone();
+                PlayerPrefs.SetString(SaveBaseKey, JsonUtility.ToJson(new SaveBase { slots = knownCloudTimes }));
+                PlayerPrefs.Save();
+                ApplySnapshotIfChanged(combined);
+                pendingProgress = generation != saveGeneration;
+                completed?.Invoke("");
+            }
+        }
+        finally { requestRunning = false; }
+    }
 
-        using (var request = CreateRequest(
-                   projectUrl + "/rest/v1/player_saves?on_conflict=user_id",
-                   UnityWebRequest.kHttpVerbPOST))
+    bool SaveConflictBackup(SaveSlots.CloudSnapshot snapshot)
+    {
+        try
         {
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonUtility.ToJson(payload)));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Prefer", "resolution=merge-duplicates,return=minimal");
-            yield return request.SendWebRequest();
-            requestRunning = false;
-            completed?.Invoke(request.result == UnityWebRequest.Result.Success ? "" : GetError(request));
+            string folder = Path.Combine(Application.persistentDataPath, "CloudSaveConflicts");
+            Directory.CreateDirectory(folder);
+            string name = userId + "_" + DateTime.UtcNow.ToString("yyyyMMdd_HHmmss_fff") + "_" + Guid.NewGuid().ToString("N") + ".json";
+            File.WriteAllText(Path.Combine(folder, name), JsonUtility.ToJson(snapshot));
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning("Could not keep a local cloud-conflict backup: " + exception.Message);
+            return false;
         }
     }
 
     UnityWebRequest CreateRequest(string url, string method)
     {
         var request = new UnityWebRequest(url, method);
+        request.timeout = 20;
         request.SetRequestHeader("apikey", publishableKey);
-        request.SetRequestHeader("Authorization", "Bearer " + accessToken);
+        request.SetRequestHeader("Authorization", "Bearer " + MainMenuSaveSlots.CurrentAccessToken);
         request.SetRequestHeader("Accept", "application/json");
         return request;
     }
 
     static string GetError(UnityWebRequest request)
     {
-        string body = request.downloadHandler != null ? request.downloadHandler.text : "";
+        string body = request.downloadHandler != null ? request.downloadHandler.text ?? "" : "";
+        if (request.responseCode == 0 && !string.IsNullOrEmpty(SupabaseSession.LastError)) return SupabaseSession.LastError;
+        if (body.Contains("PGRST202") || body.Contains("Invalid save slot"))
+            return "The database needs the ASAP fixes migration before cloud sync can finish.";
+        if (body.Contains("40001")) return "Newer progress was found on another device. Syncing will retry safely.";
         return string.IsNullOrWhiteSpace(body) ? request.error : body;
     }
 }

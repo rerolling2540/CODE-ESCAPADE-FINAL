@@ -23,6 +23,13 @@ public class MainMenuSaveSlots : MonoBehaviour
     public static string CurrentUserId { get; private set; }
     public static string CurrentSupabaseProjectUrl { get; private set; }
     public static string CurrentSupabasePublishableKey { get; private set; }
+    internal static bool AcceptRefreshedSession(string userId, string previousToken, string token, string refreshToken)
+    {
+        if (CurrentUserId != userId || CurrentAccessToken != previousToken) return false;
+        CurrentAccessToken = token;
+        if (!string.IsNullOrWhiteSpace(refreshToken)) CurrentRefreshToken = refreshToken;
+        return true;
+    }
     public static bool HasAdminSession =>
         !string.IsNullOrWhiteSpace(CurrentAccessToken) &&
         string.Equals(CurrentUserEmail?.Trim(), AdminEmail, System.StringComparison.OrdinalIgnoreCase);
@@ -165,6 +172,7 @@ public class MainMenuSaveSlots : MonoBehaviour
     {
         CurrentSupabaseProjectUrl = supabaseProjectUrl;
         CurrentSupabasePublishableKey = supabasePublishableKey;
+        GameContentSync.Configure(supabaseProjectUrl, supabasePublishableKey);
         if (string.IsNullOrWhiteSpace(CurrentUserId))
         {
             SaveSlots.RestoreGuestForNewSession();
@@ -902,6 +910,15 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         authRequestInProgress = true;
         authStatus = "Checking your account save...";
+        StartCoroutine(RefreshContentThenSync(guestBootstrap));
+    }
+
+    IEnumerator RefreshContentThenSync(SaveSlots.CloudSnapshot guestBootstrap)
+    {
+        string owner = CurrentUserId;
+        var content = GameContentSync.Configure(supabaseProjectUrl, supabasePublishableKey);
+        if (content != null) yield return content.RefreshNow();
+        if (string.IsNullOrEmpty(owner) || CurrentUserId != owner) yield break;
         cloudSaveSync.StartInitialSync(
             SaveSlots.HasLocalProgress(),
             guestBootstrap,
@@ -1688,11 +1705,14 @@ public class MainMenuSaveSlots : MonoBehaviour
 
         GUI.enabled = oldEnabled;
 
-        if (!string.IsNullOrWhiteSpace(authStatus))
+        string displayedStatus = loginComplete && CloudSaveSync.Instance != null &&
+            !string.IsNullOrWhiteSpace(CloudSaveSync.Instance.Status)
+            ? CloudSaveSync.Instance.Status : authStatus;
+        if (!string.IsNullOrWhiteSpace(displayedStatus))
         {
             GUI.Label(
                 new Rect(290, 578, 700, 42),
-                authStatus,
+                displayedStatus,
                 subtitleStyle
             );
         }

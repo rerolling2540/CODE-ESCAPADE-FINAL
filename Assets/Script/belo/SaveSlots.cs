@@ -81,8 +81,12 @@ public static class SaveSlots
         set
         {
             PlayerPrefs.SetInt("CodeEscapade.ActiveSlot", Mathf.Clamp(value, 0, Count - 1));
+            // Selecting a slot is metadata, not a change to that slot's progress.
+            // Otherwise simply opening an old slot could overwrite a newer device save.
+            PlayerPrefs.SetString("CodeEscapade.SaveModifiedUtc", DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
             PlayerPrefs.Save();
-            NotifyLocalSaveChanged();
+            PersistCurrentProfileSnapshot();
+            if (!applyingCloudSnapshot) LocalSaveChanged?.Invoke();
         }
     }
     static string Key(int slot) => "CodeEscapade.Slot." + slot;
@@ -375,7 +379,8 @@ public static class SaveSlots
             snapshot.slots[i] = PlayerPrefs.HasKey(slotKey) ? PlayerPrefs.GetString(slotKey) : "";
             snapshot.inventories[i] = PlayerPrefs.HasKey(inventoryKey) ? PlayerPrefs.GetString(inventoryKey) : "";
             snapshot.slotModifiedUtc[i] = PlayerPrefs.GetString(ModifiedKey(i), "");
-            if (!string.IsNullOrEmpty(snapshot.slots[i]) && string.IsNullOrEmpty(snapshot.slotModifiedUtc[i]))
+            if ((!string.IsNullOrEmpty(snapshot.slots[i]) || !string.IsNullOrEmpty(snapshot.inventories[i])) &&
+                string.IsNullOrEmpty(snapshot.slotModifiedUtc[i]))
             {
                 DateTime legacyTime;
                 var record = Read(i);
@@ -414,8 +419,13 @@ public static class SaveSlots
         {
             string localSlot = GetAt(local.slots, i);
             string cloudSlot = GetAt(cloud.slots, i);
-            bool chooseLocal = string.IsNullOrEmpty(cloudSlot) ||
-                (!string.IsNullOrEmpty(localSlot) && IsNewer(GetAt(local.slotModifiedUtc, i), GetAt(cloud.slotModifiedUtc, i)));
+            // Empty slots with a timestamp are deletions, not missing data.
+            // Compare their timestamps too, so a newer deletion wins on either device.
+            string localTime = GetAt(local.slotModifiedUtc, i);
+            string cloudTime = GetAt(cloud.slotModifiedUtc, i);
+            bool chooseLocal = IsNewer(localTime, cloudTime) ||
+                (string.IsNullOrEmpty(localTime) && string.IsNullOrEmpty(cloudTime) &&
+                 string.IsNullOrEmpty(cloudSlot));
             merged.slots[i] = chooseLocal ? localSlot : cloudSlot;
             merged.inventories[i] = chooseLocal ? GetAt(local.inventories, i) : GetAt(cloud.inventories, i);
             merged.slotModifiedUtc[i] = chooseLocal ? GetAt(local.slotModifiedUtc, i) : GetAt(cloud.slotModifiedUtc, i);

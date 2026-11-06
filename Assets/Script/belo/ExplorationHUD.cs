@@ -902,7 +902,7 @@ public class ExplorationHUD : MonoBehaviour
             if (showingDraftCards)
             {
                 if (draftCards == null || i >= draftCards.Count) continue;
-                card = draftCards[i];
+                card = GameplayCardCatalog.Resolve(draftCards[i]);
             }
             else
             {
@@ -954,7 +954,7 @@ public class ExplorationHUD : MonoBehaviour
             int quantity = 0;
             if (showingDraftCards)
             {
-                card = draftCards != null ? draftCards[selected] : null;
+                card = draftCards != null ? GameplayCardCatalog.Resolve(draftCards[selected]) : null;
             }
             else
             {

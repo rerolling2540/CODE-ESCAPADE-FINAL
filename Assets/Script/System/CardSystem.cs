@@ -52,16 +52,22 @@ public class CardSystem : Singleton<CardSystem>
             return;
         }
 
+        bool hasInventory = CharacterInventory.TryReadOwnedCopyCounts(out var ownedCopies);
+        var addedCopies = new Dictionary<CardData, int>();
         for (int i = 0; i < deckData.Count; i++)
         {
-            CardData cardData = deckData[i];
-            if (cardData == null)
+            CardData cardData = GameplayCardCatalog.Resolve(deckData[i]);
+            if (cardData == null || !GameplayCardCatalog.ForCurrentHero(cardData))
             {
                 Debug.LogError($"CardSystem skipped missing card reference at HeroData.Deck index {i}.");
                 continue;
             }
 
-            // Repeated CardData references represent separate copies in the deck.
+            addedCopies.TryGetValue(cardData, out int added);
+            int allowed = hasInventory && ownedCopies.TryGetValue(cardData, out int owned) ? owned : hasInventory ? 0 : 1;
+            if (added >= allowed) continue;
+            addedCopies[cardData] = added + 1;
+            // Each physical battle copy must be backed by an owned copy.
             drawPile.Add(new Card(cardData));
         }
 
@@ -395,7 +401,7 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator DrawCard()
     {
         Card card = drawPile.Draw();
-        if (card == null) yield break;
+        if (card == null || hand.Contains(card) || discardPile.Contains(card)) yield break;
 
         hand.Add(card);
         CardView cardView = CardViewCreator.Instance.CreateCardView(card, drawPilePoint.position, drawPilePoint.rotation);
@@ -404,7 +410,9 @@ public class CardSystem : Singleton<CardSystem>
 
     private void RefillDeck()
     {
-        drawPile.AddRange(discardPile);
+        foreach (Card card in discardPile)
+            if (card != null && !hand.Contains(card) && !drawPile.Contains(card))
+                drawPile.Add(card);
         discardPile.Clear();
     }
 
@@ -412,7 +420,8 @@ public class CardSystem : Singleton<CardSystem>
     {
         if (cardView == null || cardView.Card == null) yield break;
 
-        discardPile.Add(cardView.Card);
+        if (!discardPile.Contains(cardView.Card) && !drawPile.Contains(cardView.Card))
+            discardPile.Add(cardView.Card);
         cardView.transform.DOScale(Vector3.zero, 0.15f);
         Tween tween = cardView.transform.DOMove(discardPilePoint.position, 0.15f);
         yield return tween.WaitForCompletion();

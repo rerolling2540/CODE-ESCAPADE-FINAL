@@ -193,6 +193,10 @@ public class EnemySystem : Singleton<EnemySystem>
         else
             HeroSystem.Instance.HeroView.Damage(attackDamage);
 
+        // Count each resolved enemy attack once. Damage-over-time effects do not
+        // pass through this path, and two attacks charge one EP star.
+        BattleHudMedieval.GainEpFromEnemyHit();
+
         // The sword icon counts empowered attacks. Consume one after each attack;
         // when it reaches zero, remove the temporary attack-power bonus.
         attacker.ConsumeDamageBuffAttack();

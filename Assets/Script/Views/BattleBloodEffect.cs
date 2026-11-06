@@ -14,17 +14,26 @@ public sealed class BattleBloodEffect : MonoBehaviour
     {
         if (target == null) return;
 
-        if (impactFrames == null) impactFrames = LoadImpactFrames();
-        if (impactFrames == null) return;
-
         Vector3 position = target.VisualCenter;
         position.x += Random.Range(-0.12f, 0.12f);
         position.y += Random.Range(-0.08f, 0.12f);
         position.z -= 0.05f;
+        PlayAt(target, position, Random.Range(0.9f, 1.12f));
+    }
+
+    /// <summary>Plays a blood impact at an authored position, for scripted attacks.</summary>
+    public static void PlayAt(CombatantView target, Vector3 position, float scale = 1f)
+    {
+        if (target == null) return;
+
+        if (impactFrames == null) impactFrames = LoadImpactFrames();
+        if (impactFrames == null) return;
+
+        position.z -= 0.05f;
 
         var effect = new GameObject("Battle Blood Impact");
         effect.transform.position = position;
-        effect.transform.localScale = Vector3.one * Random.Range(0.9f, 1.12f);
+        effect.transform.localScale = Vector3.one * Mathf.Max(0.1f, scale);
 
         var renderer = effect.AddComponent<SpriteRenderer>();
         renderer.sprite = impactFrames[0];

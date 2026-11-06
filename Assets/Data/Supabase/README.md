@@ -107,3 +107,24 @@ session queues failed inventory uploads and retries them periodically, and
 when the app regains focus; pending local inventory is sent once Supabase is
 reachable again. The question bank is read-only game content, so it refreshes
 from Supabase rather than uploading player-side edits.
+
+### Current CARDS catalog
+
+`current_cards_seed.sql` imports the 60 assets in `Assets/Data/Cards/CARDS`
+(20 Warrior, 20 Archer, 20 Mage). Regenerate it from the project root with
+`node Tools/export-gameplay-cards.mjs`, then run it in Supabase SQL Editor.
+`current_cards_export.json` is the readable export of the same records.
+
+The import upserts by the asset GUID in `game_card_key`, preserving row UUIDs,
+existing image URLs, other catalog rows and player inventories. Filter the
+`cards` table by `source_pack = CARDS` to see the active catalog. Class,
+question bounds, damage settings, VFX selection and icon GUID/fileID are
+included. `card_definition` preserves the full serialized Unity effect graph,
+including targeting, status stacks, repeated hits and damage caps.
+
+Icons remain bundled Unity assets; this import records their references and
+does not upload images to Storage or invent public image URLs. The game still
+executes the local CARDS assets; storing the effect graph in Supabase does not
+add runtime deserialization of arbitrary database effects. Cloud inventory
+exports resolve legacy IDs to current CARDS keys and combine owned quantities
+so they match the imported rows.

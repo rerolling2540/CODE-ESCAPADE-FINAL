@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterInventory : MonoBehaviour
 {
-    private const int CurrentStarterCardsVersion = 3;
+    private const int CurrentStarterCardsVersion = 4;
     private const int AdminResourceBalance = 1000000;
     private static CharacterInventory activeInstance;
     public static event Action InventoryChanged;
@@ -45,19 +45,21 @@ public class CharacterInventory : MonoBehaviour
         SaveSlots.ProfileChanged += HandleSaveProfileChanged;
         loadedSlot = SaveSlots.Active;
         starterHero = SelectedHero.Resolve(starterHero);
+        foreach (var entry in catalog)
+            if (entry != null) entry.card = GameplayCardCatalog.Resolve(entry.card);
         var sharedCatalog = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
         if (sharedCatalog != null)
             foreach (var entry in sharedCatalog.cards)
                 if (entry != null && entry.card != null && !string.IsNullOrEmpty(entry.id) &&
-                    !catalog.Exists(e => e != null && e.card == entry.card))
+                    !catalog.Exists(e => e != null && e.id == entry.id))
                     catalog.Add(new CatalogEntry { id = entry.id, card = entry.card });
         foreach (var card in Resources.LoadAll<CardData>("ChestCards"))
-            if (!catalog.Exists(e => e != null && e.card == card))
-                catalog.Add(new CatalogEntry { id = "chest." + card.name, card = card });
+            if (!catalog.Exists(e => e != null && e.id == "chest." + card.name))
+                catalog.Add(new CatalogEntry { id = "chest." + card.name, card = GameplayCardCatalog.Resolve(card) });
         var merchant = SyntaxMerchantCatalog.Load();
         if (merchant != null)
             foreach (var offer in merchant.offers)
-                if (offer != null && offer.kind == MerchantItemKind.Card && offer.card != null && !string.IsNullOrEmpty(offer.cardId) && !catalog.Exists(e => e != null && e.card == offer.card))
+                if (offer != null && offer.kind == MerchantItemKind.Card && offer.card != null && !string.IsNullOrEmpty(offer.cardId) && !catalog.Exists(e => e != null && e.id == offer.cardId))
                     catalog.Add(new CatalogEntry { id = offer.cardId, card = offer.card });
         SaveSlots.MigrateLegacy();
         bool loaded = false;
@@ -92,7 +94,7 @@ public class CharacterInventory : MonoBehaviour
                     var entry = catalog.Find(e => e != null && e.card == card && !string.IsNullOrEmpty(e.id));
                     if (card == null || entry == null) { complete = false; continue; }
                     // Repair older saves once, preserving owned copies and all earned rewards.
-                    if ((!loaded || !data.cards.Exists(s => s.id == entry.id)) && !AddCardInternal(card, 1))
+                    if ((!loaded || !OwnedCopyCounts(data).ContainsKey(GameplayCardCatalog.Resolve(card))) && !AddCardInternal(card, 1))
                         complete = false;
                 }
             if (complete)
@@ -158,12 +160,13 @@ public class CharacterInventory : MonoBehaviour
         InventoryChanged?.Invoke();
     }
 
-    public CardData GetCard(string id) => catalog.Find(e => e != null && e.id == id)?.card;
+    public CardData GetCard(string id) => GameplayCardCatalog.Resolve(catalog.Find(e => e != null && e.id == id)?.card);
     public int GetLevel(string id) => CardRefinementRules.Level(data.cards.Find(s => s.id == id)?.level ?? 1);
     public int GetQuantity(string id) => Mathf.Max(0, data.cards.Find(s => s.id == id)?.quantity ?? 0);
 
     static string SharedId(CardData card)
     {
+        card = GameplayCardCatalog.Resolve(card);
         if (card == null) return null;
         if (Array.Exists(Resources.LoadAll<CardData>("ChestCards"), c => c == card)) return "chest." + card.name;
         string id=Resources.Load<InventoryCardCatalog>("InventoryCardCatalog")?.cards.Find(e => e != null && e.card == card)?.id;
@@ -177,7 +180,14 @@ public class CharacterInventory : MonoBehaviour
         try
         {
             var saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey));
-            return CardRefinementRules.Level(saved?.cards?.Find(s => s != null && s.id == id)?.level ?? 1);
+            int bestLevel = 1;
+            var shared = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
+            if (saved?.cards != null && shared != null)
+                foreach (var stack in saved.cards)
+                    if (stack != null && shared.cards.Exists(e => e != null && e.id == stack.id &&
+                        GameplayCardCatalog.Resolve(e.card) == GameplayCardCatalog.Resolve(card)))
+                        bestLevel = Mathf.Max(bestLevel, stack.level);
+            return CardRefinementRules.Level(bestLevel);
         }
         catch (ArgumentException) { return 1; }
     }
@@ -284,13 +294,13 @@ public class CharacterInventory : MonoBehaviour
                 if (saved == null)
                 {
                     Debug.LogError("The saved card inventory is empty or invalid. Using this hero's starter deck for this battle without overwriting the save.");
-                    return starterDeck != null ? new List<CardData>(starterDeck.FindAll(card => card != null)) : new List<CardData>();
+                    return starterDeck != null ? new List<CardData>(starterDeck.FindAll(card => GameplayCardCatalog.Resolve(card) != null).ConvertAll(GameplayCardCatalog.Resolve)) : new List<CardData>();
                 }
             }
             catch (ArgumentException)
             {
                 Debug.LogError("The saved card inventory could not be read. Using this hero's starter deck for this battle without overwriting the save.");
-                return starterDeck != null ? new List<CardData>(starterDeck.FindAll(card => card != null)) : new List<CardData>();
+                return starterDeck != null ? new List<CardData>(starterDeck.FindAll(card => GameplayCardCatalog.Resolve(card) != null).ConvertAll(GameplayCardCatalog.Resolve)) : new List<CardData>();
             }
         }
 
@@ -314,8 +324,7 @@ public class CharacterInventory : MonoBehaviour
                         continue;
                     }
 
-                    Stack owned = saved.cards.Find(stack => stack != null && stack.id == id);
-                    if (owned == null)
+                    if (!OwnedCopyCounts(saved).ContainsKey(GameplayCardCatalog.Resolve(card)))
                         saved.cards.Add(new Stack { id = id, quantity = 1, level = 1 });
                 }
             }
@@ -332,25 +341,58 @@ public class CharacterInventory : MonoBehaviour
 
         if (saved.cards == null) return new List<CardData>();
         var deck = new List<CardData>();
-        // Ownership controls playable copies, including purchased cards and consumed duplicates.
-        var available=new Dictionary<string,CardData>();
-        if (starterDeck != null)
-            foreach(var card in starterDeck)if(card!=null){string id=SharedId(card);if(!string.IsNullOrEmpty(id))available[id]=card;}
-        var catalog = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
-        if (catalog != null && catalog.cards != null)
-            foreach (var entry in catalog.cards)
-                if (entry != null && entry.card != null && !string.IsNullOrWhiteSpace(entry.id)) available[entry.id] = entry.card;
-        foreach(var card in Resources.LoadAll<CardData>("ChestCards"))available["chest."+card.name]=card;
-        var merchant=SyntaxMerchantCatalog.Load();
-        if(merchant!=null)foreach(var offer in merchant.offers)
-            if(offer!=null&&offer.kind==MerchantItemKind.Card&&offer.card!=null&&offer.AvailableFor(PlayerPrefs.GetInt("SelectedCharacter",0)))available[offer.cardId]=offer.card;
-        foreach(var pair in available)
+        // Build from owned stacks once; catalog aliases never add playable copies.
+        foreach (var pair in OwnedCopyCounts(saved))
         {
-            var stack=saved.cards.Find(s=>s!=null&&s.id==pair.Key);
-            int count=stack!=null?Mathf.Max(0,stack.quantity):0;
-            for(int i=0;i<count;i++)deck.Add(pair.Value);
+            if (!GameplayCardCatalog.ForCurrentHero(pair.Key)) continue;
+            for (int i = 0; i < pair.Value; i++) deck.Add(pair.Key);
         }
         return deck;
+    }
+
+    private static Dictionary<CardData, int> OwnedCopyCounts(SaveData saved)
+    {
+        var result = new Dictionary<CardData, int>();
+        if (saved?.cards == null) return result;
+        var shared = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
+        if (shared == null) return result;
+        var byId = new Dictionary<string, CardData>();
+        foreach (var entry in shared.cards)
+        {
+            if (entry == null || string.IsNullOrWhiteSpace(entry.id)) continue;
+            var card = GameplayCardCatalog.Resolve(entry.card);
+            if (card != null) byId[entry.id] = card;
+        }
+        // Repeated rows with the same inventory key are the same stack,
+        // not extra ownership. Different owned stack IDs retain their quantities.
+        var uniqueStacks = new Dictionary<string, int>();
+        foreach (var stack in saved.cards)
+        {
+            if (stack == null || string.IsNullOrWhiteSpace(stack.id) || stack.quantity <= 0) continue;
+            if (!uniqueStacks.TryGetValue(stack.id, out int previous) || stack.quantity > previous)
+                uniqueStacks[stack.id] = stack.quantity;
+        }
+        foreach (var stack in uniqueStacks)
+        {
+            if (!byId.TryGetValue(stack.Key, out var card)) continue;
+            result.TryGetValue(card, out int quantity);
+            result[card] = (int)Math.Min(int.MaxValue, (long)quantity + stack.Value);
+        }
+        return result;
+    }
+
+    public static bool TryReadOwnedCopyCounts(out Dictionary<CardData, int> copies)
+    {
+        copies = new Dictionary<CardData, int>();
+        if (!PlayerPrefs.HasKey(SaveKey)) return false;
+        try
+        {
+            var saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(SaveKey));
+            if (saved?.cards == null) return false;
+            copies = OwnedCopyCounts(saved);
+            return true;
+        }
+        catch (ArgumentException) { return false; }
     }
 
     public static List<CloudCardStack> ReadSavedCards(int slot)
@@ -362,9 +404,20 @@ public class CharacterInventory : MonoBehaviour
             var saved = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(key));
             var result = new List<CloudCardStack>();
             if (saved?.cards == null) return result;
-            foreach (var stack in saved.cards)
-                if (stack != null && !string.IsNullOrWhiteSpace(stack.id) && stack.quantity > 0)
-                    result.Add(new CloudCardStack { card_key = stack.id, quantity = stack.quantity, level = CardRefinementRules.Level(stack.level) });
+            var shared = Resources.Load<InventoryCardCatalog>("InventoryCardCatalog");
+            // The current database catalog uses the CARDS asset GUIDs. Keep
+            // older local IDs readable, but send one owned stack per current key.
+            foreach (var owned in OwnedCopyCounts(saved))
+            {
+                string cardKey = GameplayCardCatalog.PrimaryId(owned.Key);
+                if (string.IsNullOrWhiteSpace(cardKey)) continue;
+                int level = 1;
+                foreach (var stack in saved.cards)
+                    if (stack != null && shared != null && shared.cards.Exists(entry => entry != null &&
+                        entry.id == stack.id && GameplayCardCatalog.Resolve(entry.card) == owned.Key))
+                        level = Mathf.Max(level, CardRefinementRules.Level(stack.level));
+                result.Add(new CloudCardStack { card_key = cardKey, quantity = owned.Value, level = level });
+            }
             return result;
         }
         catch (ArgumentException) { return new List<CloudCardStack>(); }
@@ -430,7 +483,7 @@ public class CharacterInventory : MonoBehaviour
         if (inventoryCatalog != null && inventoryCatalog.cards != null)
         {
             foreach (var entry in inventoryCatalog.cards)
-                if (entry != null && entry.card != null && warriorCards.Contains(entry.card) && !string.IsNullOrWhiteSpace(entry.id))
+                if (entry != null && entry.card != null && warriorCards.Contains(entry.card) && entry.id == GameplayCardCatalog.PrimaryId(entry.card))
                     warriorInventory[entry.id] = entry.card;
         }
 
@@ -517,6 +570,7 @@ public class CharacterInventory : MonoBehaviour
 
     bool AddCardInternal(CardData card, int amount)
     {
+        card = GameplayCardCatalog.Resolve(card);
         if (card == null || amount <= 0) return false;
         var entry = catalog.Find(e => e != null && e.card == card);
         if (entry == null || string.IsNullOrEmpty(entry.id)) return false;
@@ -535,6 +589,7 @@ public class CharacterInventory : MonoBehaviour
 
     public bool RemoveCard(CardData card, int amount = 1)
     {
+        card = GameplayCardCatalog.Resolve(card);
         var entry = catalog.Find(e => e != null && e.card == card);
         var stack = entry == null ? null : data.cards.Find(s => s.id == entry.id);
         if (amount <= 0 || stack == null || stack.quantity < amount) return false;

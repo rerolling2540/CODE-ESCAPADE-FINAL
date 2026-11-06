@@ -512,6 +512,9 @@ public sealed class BattleSettingsMenu : MonoBehaviour
     public void OpenSettings()
     {
         if (panel == null || panel.activeSelf) return;
+        // Restore the source card before visibility snapshots are captured.
+        CardViewHoverSystem.Instance?.Hide();
+        SettingsUiVisibility.EnsureInstance();
         previousTimeScale = Time.timeScale;
         settingsPausedBattle = true;
         panel.SetActive(true);

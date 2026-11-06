@@ -273,6 +273,16 @@ public class CombatantView : MonoBehaviour
 
     public IEnumerator PlayAttackAnimation()
     {
+        return PlayAttackAnimationWithRelease(0f, null);
+    }
+
+    public IEnumerator PlayChargedBowAttack(System.Action onRelease)
+    {
+        return PlayAttackAnimationWithRelease(1.5f, onRelease);
+    }
+
+    private IEnumerator PlayAttackAnimationWithRelease(float drawHold, System.Action onRelease)
+    {
         if (!battleAnimationReady || CurrentHealth <= 0 || attacking) yield break;
         attacking = true;
         try
@@ -285,16 +295,28 @@ public class CombatantView : MonoBehaviour
                     // Keep hovering casters at their current height during the cast.
                     SetBattleFrame(attackFrames[i], 1f, hovering ? Mathf.Sin(idleClock * 2f) * 0.12f : 0f);
                     OnAttackFrame(i, attackFrames.Length);
+                    // ElfBasicAtk001BGR-Sheet-export_2 is the fully drawn bow
+                    // pose. Release the special projectile on the following pose.
+                    int releaseFrame = Mathf.Min(3, attackFrames.Length - 1);
+                    if (i == releaseFrame) onRelease?.Invoke();
                     // Preserve the default swing timing unless the hero supplies
                     // weapon-specific draw, release and recovery durations.
                     float timing = i == 0 ? 1.4f : i == attackFrames.Length - 1 ? 1.5f : 0.8f;
                     float duration = attackFrameDurations != null && i < attackFrameDurations.Length &&
                         attackFrameDurations[i] > 0f ? attackFrameDurations[i] : timing / battleFrameRate;
-                    yield return new WaitForSeconds(duration);
+                    if (drawHold > 0f)
+                    {
+                        if (i == Mathf.Min(2, attackFrames.Length - 1))
+                            duration += drawHold;
+                        yield return new WaitForSecondsRealtime(duration);
+                    }
+                    else yield return new WaitForSeconds(duration);
                 }
             }
             else
             {
+                if (drawHold > 0f) yield return new WaitForSecondsRealtime(drawHold);
+                onRelease?.Invoke();
                 // Existing combatants without a sheet still have an attack pose.
                 spriteRenderer.transform.localScale = new Vector3(visualScale.x * 1.08f, visualScale.y * 0.96f, visualScale.z);
                 yield return new WaitForSeconds(0.25f);
@@ -786,8 +808,6 @@ public class CombatantView : MonoBehaviour
         if (healthDamage > 0)
         {
             ShowDamageIndicator(healthDamage);
-            if (this is HeroView || this is EnemyView)
-                BattleHudMedieval.GainEpFromDamage();
         }
         if (CurrentHealth <= 0 && !deathQueued && this is EnemyView enemy && ActionSystem.Instance != null)
         {

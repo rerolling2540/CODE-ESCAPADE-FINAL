@@ -1,0 +1,130 @@
+# Active gameplay cards
+
+The 60 CardData assets in this folder are the active source for inventory, class libraries, starting decks and battle. Editing these assets changes gameplay directly. Universal Cards is currently empty.
+
+Starting decks:
+- Warrior: Heavy Slash, Rending Strike, Double Slash, Iron Guard, Battle Cry
+- Archer: Wind Arrow, Double Shot, Poison Arrow, Evasive Roll, Eagle Eye
+- Mage: Fireball, Arcane Missile, Ice Spear, Mana Shield, Healing Light
+
+Older saved inventory IDs are kept as aliases in InventoryCardCatalog. Old CardData references resolve through GameplayCardCatalog to these assets. No legacy assets or saved inventories were deleted.
+
+Legacy reference mappings:
+- Data/Cards/Playable Class Cards/Archer - CSharp/Arrow Rain.asset → Data/Cards/CARDS/Archer Cards/Arrow Rain.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Arrowfall.asset → Data/Cards/CARDS/Archer Cards/Arrow Rain.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Briar Trap.asset → Data/Cards/CARDS/Archer Cards/Poison Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Crescent Volley.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Crosswind.asset → Data/Cards/CARDS/Archer Cards/Evasive Roll.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Disarming Shaft.asset → Data/Cards/CARDS/Archer Cards/Frost Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Echo Shot.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Falcon Dive.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Field Dressing.asset → Data/Cards/CARDS/Archer Cards/Camouflage.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Frost Volley.asset → Data/Cards/CARDS/Archer Cards/Frost Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Greenstring.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Heart Pierce.asset → Data/Cards/CARDS/Archer Cards/Arrow Rain.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Hunter's Focus.asset → Data/Cards/CARDS/Archer Cards/Hunter's Focus.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Ice Tip.asset → Data/Cards/CARDS/Archer Cards/Frost Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Leafstorm.asset → Data/Cards/CARDS/Archer Cards/Arrow Rain.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Luminous Mark.asset → Data/Cards/CARDS/Archer Cards/Piercing Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Moonlit Shot.asset → Data/Cards/CARDS/Archer Cards/Camouflage.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Needle Shot.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Piercing Line.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Piercing Shot.asset → Data/Cards/CARDS/Archer Cards/Piercing Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Pinning Arrow.asset → Data/Cards/CARDS/Archer Cards/Frost Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Precision Shot.asset → Data/Cards/CARDS/Archer Cards/Sniper Shot.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Quick Draw.asset → Data/Cards/CARDS/Archer Cards/Rapid Shot.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Quick Volley.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Ricochet Shot.asset → Data/Cards/CARDS/Archer Cards/Double Shot.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Scattershot.asset → Data/Cards/CARDS/Archer Cards/Arrow Rain.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Shadow Step.asset → Data/Cards/CARDS/Archer Cards/Evasive Roll.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Split Fletching.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Stillwater Aim.asset → Data/Cards/CARDS/Archer Cards/Evasive Roll.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Targeting Lens.asset → Data/Cards/CARDS/Archer Cards/Piercing Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Thunder Fletch.asset → Data/Cards/CARDS/Archer Cards/Flaming Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Tidal Arrow.asset → Data/Cards/CARDS/Archer Cards/Piercing Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Verdant Arrow.asset → Data/Cards/CARDS/Archer Cards/Wind Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Vinebound Bolt.asset → Data/Cards/CARDS/Archer Cards/Poison Arrow.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Wind Thread.asset → Data/Cards/CARDS/Archer Cards/Rapid Shot.asset
+- Data/Cards/Playable Class Cards/Archer - CSharp/Winter Snare.asset → Data/Cards/CARDS/Archer Cards/Frost Arrow.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Arcane Bolt.asset → Data/Cards/CARDS/Mage Cards/Arcane Missile.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Arcane Matrix.asset → Data/Cards/CARDS/Mage Cards/Arcane Missile.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Arcane Surge.asset → Data/Cards/CARDS/Mage Cards/Dark Pulse.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Astral Compass.asset → Data/Cards/CARDS/Mage Cards/Time Warp.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Beam Cascade.asset → Data/Cards/CARDS/Mage Cards/Fireball.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Binary Ward.asset → Data/Cards/CARDS/Mage Cards/Mana Shield.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Blizzard Script.asset → Data/Cards/CARDS/Mage Cards/Fireball.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Chain Spark.asset → Data/Cards/CARDS/Mage Cards/Arcane Missile.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Comet Array.asset → Data/Cards/CARDS/Mage Cards/Arcane Explosion.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Conjure Familiar.asset → Data/Cards/CARDS/Mage Cards/Mana Shield.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Crystal Lance.asset → Data/Cards/CARDS/Mage Cards/Magic Amplification.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Ember Orb.asset → Data/Cards/CARDS/Mage Cards/Fireball.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Encrypted Grimoire.asset → Data/Cards/CARDS/Mage Cards/Healing Light.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Fireball.asset → Data/Cards/CARDS/Mage Cards/Fireball.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Forest Memory.asset → Data/Cards/CARDS/Mage Cards/Healing Light.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Fractal Flame.asset → Data/Cards/CARDS/Mage Cards/Fireball.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Frostfire.asset → Data/Cards/CARDS/Mage Cards/Fireball.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Glacier Pin.asset → Data/Cards/CARDS/Mage Cards/Ice Spear.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Growth Formula.asset → Data/Cards/CARDS/Mage Cards/Mana Shield.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Minor Restoration.asset → Data/Cards/CARDS/Mage Cards/Healing Light.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Nightshade Pact.asset → Data/Cards/CARDS/Mage Cards/Poison Mist.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Plague Script.asset → Data/Cards/CARDS/Mage Cards/Poison Mist.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Portal Step.asset → Data/Cards/CARDS/Mage Cards/Mana Shield.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Radiant Ward.asset → Data/Cards/CARDS/Mage Cards/Mana Shield.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Root Sigil.asset → Data/Cards/CARDS/Mage Cards/Poison Mist.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Rune Bolt.asset → Data/Cards/CARDS/Mage Cards/Arcane Missile.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Rune Compiler.asset → Data/Cards/CARDS/Mage Cards/Arcane Missile.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Starwell.asset → Data/Cards/CARDS/Mage Cards/Arcane Missile.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Temporal Loop.asset → Data/Cards/CARDS/Mage Cards/Time Warp.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Thunder Glyph.asset → Data/Cards/CARDS/Mage Cards/Ice Spear.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Viridian Mist.asset → Data/Cards/CARDS/Mage Cards/Poison Mist.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Void Prism.asset → Data/Cards/CARDS/Mage Cards/Poison Mist.asset
+- Data/Cards/Playable Class Cards/Mage - Python/Winter Spirit.asset → Data/Cards/CARDS/Mage Cards/Ice Spear.asset
+- Data/Cards/Playable Class Cards/UniversalCards/Armor Up.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/UniversalCards/Draw.asset → Data/Cards/CARDS/Mage Cards/Time Warp.asset
+- Data/Cards/Playable Class Cards/UniversalCards/Healing Aura.asset → Data/Cards/CARDS/Mage Cards/Healing Light.asset
+- Data/Cards/Playable Class Cards/UniversalCards/Second Wind.asset → Data/Cards/CARDS/Mage Cards/Healing Light.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Ashen Reversal.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Battle Focus.asset → Data/Cards/CARDS/Warrior Cards/Battle Cry.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Battle Rhythm.asset → Data/Cards/CARDS/Warrior Cards/Battle Cry.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Blade Flourish.asset → Data/Cards/CARDS/Warrior Cards/Heavy Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Blazing Edge.asset → Data/Cards/CARDS/Warrior Cards/Flame Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Blood Price.asset → Data/Cards/CARDS/Warrior Cards/Frost Blade.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Breaker Stance.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Cinder Cut.asset → Data/Cards/CARDS/Warrior Cards/Flame Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Claw Slash.asset → Data/Cards/CARDS/Warrior Cards/Heavy Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Cleave.asset → Data/Cards/CARDS/Warrior Cards/Whirlwind.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Counter Pattern.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Crimson Parry.asset → Data/Cards/CARDS/Warrior Cards/Blood Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Crippling Blow.asset → Data/Cards/CARDS/Warrior Cards/Flame Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Ember Cleave.asset → Data/Cards/CARDS/Warrior Cards/Flame Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Forge Temper.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Furnace Heart.asset → Data/Cards/CARDS/Warrior Cards/Flame Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Granite Guard.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Guarded Strike.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Heavy Strike.asset → Data/Cards/CARDS/Warrior Cards/Heavy Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Infinite Slash.asset → Data/Cards/CARDS/Warrior Cards/Wuju Style.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Iron Fist.asset → Data/Cards/CARDS/Warrior Cards/Blood Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Iron Guard.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Iron Stance.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Last Bastion.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Last Stand.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Lionheart.asset → Data/Cards/CARDS/Warrior Cards/Shield Wall.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Rallying Cry.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Relentless March.asset → Data/Cards/CARDS/Warrior Cards/Heavy Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Seismic Step.asset → Data/Cards/CARDS/Warrior Cards/Frost Blade.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Shield Splitter.asset → Data/Cards/CARDS/Warrior Cards/Blood Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Shield Wall.asset → Data/Cards/CARDS/Warrior Cards/Shield Wall.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Storm Hammer.asset → Data/Cards/CARDS/Warrior Cards/Frost Blade.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Sundering Blow.asset → Data/Cards/CARDS/Warrior Cards/Blood Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Sundering Rush.asset → Data/Cards/CARDS/Warrior Cards/Blood Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Titan's Descent.asset → Data/Cards/CARDS/Warrior Cards/Shield Wall.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/War Drum.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Warden's Mark.asset → Data/Cards/CARDS/Warrior Cards/Blood Slash.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Warrior Oath.asset → Data/Cards/CARDS/Warrior Cards/Iron Guard.asset
+- Data/Cards/Playable Class Cards/Warrior - Java/Whirlwind.asset → Data/Cards/CARDS/Warrior Cards/Whirlwind.asset
+- Resources/ChestCards/Hollow Tempest.asset → Data/Cards/CARDS/Mage Cards/Blizzard.asset
+- Resources/ChestCards/Trailblazer's Insight.asset → Data/Cards/CARDS/Archer Cards/Eagle Eye.asset
+- Resources/ChestCards/Warden's Aegis.asset → Data/Cards/CARDS/Warrior Cards/Shield Wall.asset
+- Resources/MerchantCards/Arcane Tempest.asset → Data/Cards/CARDS/Mage Cards/Arcane Explosion.asset
+- Resources/MerchantCards/Runic Cleave.asset → Data/Cards/CARDS/Warrior Cards/Earthbreaker.asset
+- Resources/MerchantCards/Storm Volley.asset → Data/Cards/CARDS/Archer Cards/Arrow Rain.asset

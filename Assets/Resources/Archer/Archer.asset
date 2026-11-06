@@ -15,11 +15,11 @@ MonoBehaviour:
   <Image>k__BackingField: {fileID: 8825357171166241873, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
   <Health>k__BackingField: 44
   <Deck>k__BackingField:
-  - {fileID: 11400000, guid: c0040000000000000000000000000004, type: 2}
-  - {fileID: 11400000, guid: c0030000000000000000000000000003, type: 2}
-  - {fileID: 11400000, guid: 831451ed55fb384468dd7c7b07521312, type: 2}
-  - {fileID: 11400000, guid: 1725032973d00d54e9f4a9bdd0aab211, type: 2}
-  - {fileID: 11400000, guid: 632aebffcbd6c0f42acd79eb887af739, type: 2}
+  - {fileID: 11400000, guid: 2cfe196d458d400a87a14e7b1962c602, type: 2}
+  - {fileID: 11400000, guid: 3f0c28ece4e74649928a58d6a9430e50, type: 2}
+  - {fileID: 11400000, guid: 26365157b2124276b174b8f3c032d76d, type: 2}
+  - {fileID: 11400000, guid: 0409ba13c22f48af8d182d22d3a3e3d0, type: 2}
+  - {fileID: 11400000, guid: d4496ba00760425facb38ec03e8c00f6, type: 2}
   idleFrames:
   - {fileID: 8825357171166241873, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}
   - {fileID: -2304725672977259091, guid: 21c92447cdf4f4544808ca474a18a02c, type: 3}

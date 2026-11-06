@@ -6,6 +6,7 @@ public class EndTurnButtonUI : MonoBehaviour
     {
         if (QuestionUI.IsQuestionActive || EncounterBattleReturn.BattleEnded || BattleTutorialGuide.BlocksInput || ActionSystem.Instance.IsPerforming) return;
         if (BattleTutorialGuide.ExplainEndTurn(() => { if (this != null) OnClick(); })) return;
+        BattleHudMedieval.GainEpFromTurnEnd();
         EnemyTurnGA enemyTurnGA = new();
         ActionSystem.Instance.Perform(enemyTurnGA, BattleSettingsMenu.AdvanceTurnCount);
     }

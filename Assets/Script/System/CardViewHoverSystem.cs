@@ -8,6 +8,7 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
     [SerializeField, Min(1f)] private float previewScaleFactor = 1.05f;
     private Vector3 originalHoverScale = Vector3.one;
     private Card shownCard;
+    private CardView sourceCardView;
 
     protected override void Awake()
     {
@@ -15,9 +16,22 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
         if (cardViewHover != null) originalHoverScale = cardViewHover.transform.localScale;
     }
 
-    public void Show(Card card, Vector3 position)
+    void LateUpdate()
     {
+        if (MatchSetupSystem.StarfallCutsceneActive && shownCard != null) Hide();
+    }
+
+    public void Show(Card card, Vector3 position, CardView source = null)
+    {
+        if (MatchSetupSystem.StarfallCutsceneActive || GameControlsGuide.GameplayOverlayHidden)
+        {
+            source?.RestoreHoverVisual();
+            Hide();
+            return;
+        }
         if (card == null || cardViewHover == null) return;
+        if (sourceCardView != source) sourceCardView?.RestoreHoverVisual();
+        sourceCardView = source;
         if (shownCard != card || !cardViewHover.gameObject.activeSelf)
             BattleAudio.Play(BattleSound.CardHover);
         shownCard = card;
@@ -36,6 +50,8 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
     public void Hide()
     {
         shownCard = null;
+        sourceCardView?.RestoreHoverVisual();
+        sourceCardView = null;
         if (cardViewHover == null) return;
         cardViewHover.gameObject.SetActive(false);
     }

@@ -90,11 +90,8 @@ public sealed class ElectricalTrapSwitch2D : MonoBehaviour
     public bool TryInteract()
     {
         if (!CanInteract()) return false;
-        var questions=QuestionSystem.Instance!=null?QuestionSystem.Instance.GetQuestionsForCurrentPlayer():null;
-        if(questions==null||questions.Length==0)questions=puzzleQuestions;
-        if(questions==null||questions.Length==0)return false;
         asking=true;
-        DoorJavaQuestionPanel.Show(questions,()=>{
+        DoorJavaQuestionPanel.Show(()=>{
             if(this==null)return;
             asking=false;solved=true;SetPowered(false);
             var saved=SaveSlots.Read(SaveSlots.Active)??new SaveSlots.Record{character=PlayerPrefs.GetInt("SelectedCharacter",0)};

@@ -38,6 +38,8 @@ public static class EnemyMapBalanceChecks
         var final=EnemyMapBalance.Resolve(sentinel,"Forest of Dawn");
         check(final.health==190&&final.experience*2==280&&final.gold*2==100,"Two-sentinel reward mismatch");
         var boss=enemies.Single(e=>e.name=="Scene 3 Flying Demon");
+        var finalBoss=enemies.Single(e=>e.name=="Forest of Dawn Final Boss");
+        check(finalBoss.progressionRank==EnemyProgressionRank.Boss&&EnemyMapBalance.Resolve(finalBoss,"Forest of Dawn").health==2415,"Final boss rank or health regressed");
         check(EnemyMapBalance.Resolve(boss,"Shadowroot Depths").health>EnemyMapBalance.Resolve(enemies.Single(e=>e.name=="Forest Demon"),"Shadowroot Depths").health*2,"Boss is no stronger than normal enemy");
         var dataType=typeof(CharacterInventory).GetNestedType("SaveData",BindingFlags.NonPublic);
         var grant=typeof(CharacterInventory).GetMethod("ApplyEncounterGold",BindingFlags.NonPublic|BindingFlags.Static);

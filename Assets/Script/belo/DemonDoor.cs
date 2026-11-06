@@ -33,8 +33,7 @@ public sealed class DemonDoor : MonoBehaviour
         interaction.entryPrompt = "[E] Enter door";
         interaction.unavailablePrompt = "";
         interaction.playEntrySound = false;
-        interaction.AddRoute(() => isActiveAndEnabled && !entering && !asking &&
-            HasQuestions(), AskQuestion);
+        interaction.AddRoute(() => isActiveAndEnabled && !entering && !asking, AskQuestion);
     }
 
     void Update()
@@ -47,21 +46,12 @@ public sealed class DemonDoor : MonoBehaviour
     void AskQuestion(Transform player)
     {
         asking = true;
-        var questions = QuestionSystem.Instance != null
-            ? QuestionSystem.Instance.GetQuestionsForCurrentPlayer()
-            : System.Array.Empty<MultipleChoiceQuestionData>();
-        if (questions.Length == 0)
-            questions = entranceQuestions != null && System.Array.Exists(entranceQuestions, q => q != null)
-                ? entranceQuestions : new[] { entranceQuestion };
-        DoorJavaQuestionPanel.Show(questions, () =>
+        DoorJavaQuestionPanel.Show(() =>
         {
             asking = false;
             if (this != null) StartCoroutine(Enter());
         }, () => { if (this != null) asking = false; });
     }
-
-    bool HasQuestions() => entranceQuestion != null ||
-        (entranceQuestions != null && System.Array.Exists(entranceQuestions, q => q != null));
 
     void SetFrame(Sprite frame)
     {

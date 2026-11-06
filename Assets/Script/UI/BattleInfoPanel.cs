@@ -140,11 +140,13 @@ public sealed class BattleInfoPanel : MonoBehaviour
     private void OnEnable()
     {
         CharacterInventory.InventoryChanged += HandleInventoryChanged;
+        QuestionPerformanceTracker.HistoryChanged += RefreshLearningReport;
     }
 
     private void OnDisable()
     {
         CharacterInventory.InventoryChanged -= HandleInventoryChanged;
+        QuestionPerformanceTracker.HistoryChanged -= RefreshLearningReport;
     }
 
     private void HandleInventoryChanged()
@@ -337,9 +339,30 @@ public sealed class BattleInfoPanel : MonoBehaviour
             new EnemyDetailStat("QUESTS COMPLETED", PlayerAdventureStats.CompletedQuests(saved) + " / " + PlayerAdventureStats.AvailableQuests, enemyRewardIcon, "QUEST", new Color(0.75f, 0.57f, 0.12f)),
             new EnemyDetailStat("BEST ANSWER STREAK", answers.bestStreak.ToString(), enemyRewardIcon, "BEST", new Color(0.75f, 0.57f, 0.12f))
         });
+        CreateInfoHeading(list, "LEARNING PROGRESSION");
+        learningReportText=CreateEnemyText("Character Learning Report",list,"",19f,FontStyles.Normal);
+        learningReportText.richText=false;
+        learningReportLayout=learningReportText.gameObject.AddComponent<LayoutElement>();
+        RefreshLearningReport();
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(list);
         ResizeInfoListContent(list);
+    }
+
+    private TMP_Text learningReportText;
+    private LayoutElement learningReportLayout;
+
+    private void RefreshLearningReport()
+    {
+        if(learningReportText==null||learningReportLayout==null||selectedTab!=0)return;
+        int index=Mathf.Clamp(PlayerPrefs.GetInt("SelectedCharacter",0),0,2);
+        learningReportText.text=QuestionPerformanceTracker.BuildReport(MainMenuSaveSlots.CurrentUserId,
+            CharacterAlmanac.LanguageForCharacter(index),SaveSlots.Active);
+        float width=bodyViewport!=null?Mathf.Max(200f,bodyViewport.rect.width-56f):620f;
+        learningReportLayout.minHeight=learningReportLayout.preferredHeight=
+            learningReportText.GetPreferredValues(learningReportText.text,width,float.PositiveInfinity).y+16f;
+        var list=learningReportText.transform.parent as RectTransform;
+        if(list!=null)ResizeInfoListContent(list);
     }
 
     private void CreateInfoHeading(Transform parent, string label)

@@ -1228,7 +1228,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeleportPortal
   destination: {fileID: 65362032}
   requiredDefeatedEncounters: 18
-  hideUntilUnlocked: 1
+  hideUntilUnlocked: 0
   countAllDefeatedEnemies: 0
 --- !u!4 &88646811
 Transform:

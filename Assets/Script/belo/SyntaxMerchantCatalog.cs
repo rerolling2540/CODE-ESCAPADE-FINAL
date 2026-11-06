@@ -20,6 +20,8 @@ public sealed class SyntaxMerchantCatalog : ScriptableObject
         public string cardId;
         public string cosmeticTitle;
         public Color titleColor=Color.white;
+        public Sprite[] cosmeticFrames;
+        [Min(1f)] public float cosmeticFramesPerSecond=12f;
         public bool AvailableFor(int character) => hero < 0 || hero == character;
     }
     public List<Offer> offers=new List<Offer>();

@@ -21,6 +21,7 @@ public sealed class SyntaxMerchantUI : MonoBehaviour
     private float previousTimeScale;
     private TMP_FontAsset font;
     private Material material;
+    private SyntaxMerchantCatalog.Offer previewCosmetic;
     private static readonly Color Gold=new Color(1f,.86f,.54f),Ink=new Color(.17f,.085f,.03f);
 
     public static void Show(CharacterInventory cards,SyntaxMerchantNPC owner)
@@ -36,6 +37,8 @@ public sealed class SyntaxMerchantUI : MonoBehaviour
     void Update()
     {
         if(!opened)return;
+        if(previewCosmetic?.cosmeticFrames!=null&&previewCosmetic.cosmeticFrames.Length>0)
+            art.sprite=previewCosmetic.cosmeticFrames[Mathf.FloorToInt(Time.unscaledTime*Mathf.Max(1,previewCosmetic.cosmeticFramesPerSecond))%previewCosmetic.cosmeticFrames.Length];
         if(inventory==null||merchant==null||!merchant.isActiveAndEnabled||SaveSlots.Active!=slot){Close();return;}
         if(Time.frameCount!=openedFrame&&Input.GetKeyDown(KeyCode.Escape)){if(confirming)Cancel();else Close();}
     }
@@ -86,7 +89,7 @@ public sealed class SyntaxMerchantUI : MonoBehaviour
     }
     void Render(string result=null)
     {
-        art.enabled=false;recycle.interactable=false;cancel.interactable=confirming;
+        previewCosmetic=null;art.enabled=false;recycle.interactable=false;cancel.interactable=confirming;
         bool trade=selection!=null&&selection.StartsWith("trade:");
         recycle.gameObject.SetActive(trade&&!confirming);cancel.gameObject.SetActive(confirming);
         ((RectTransform)primary.transform).sizeDelta=new Vector2(confirming?544:trade?360:686,48);
@@ -119,10 +122,13 @@ public sealed class SyntaxMerchantUI : MonoBehaviour
             }
             if(offer!=null&&offer.kind==MerchantItemKind.CosmeticTitle&&inventory.OwnsCosmetic(offer.id))
             {bool equipped=inventory.EquippedCosmetic==offer.id;caption=equipped?"Hide title":"Equip title";price.text=equipped?"Owned · Currently equipped":"Owned · Equip at no cost";}
+            if(offer!=null&&offer.kind==MerchantItemKind.CosmeticTitle&&offer.cosmeticFrames!=null&&offer.cosmeticFrames.Length>0)
+            {previewCosmetic=offer;foreach(var frame in offer.cosmeticFrames)if(frame!=null)frame.texture.filterMode=FilterMode.Point;art.sprite=offer.cosmeticFrames[0];art.enabled=true;}
         }
         bool ready=Ready(confirming&&pendingRecycle,out string reason);primary.interactable=ready;
         primaryCaption.text=confirming?"Confirm "+(pendingRecycle?"recycling":"transaction"):caption;
         message.text=result??(confirming?"Confirm this exchange? The resources shown will be spent immediately.":reason);
+        if(!ready&&previewCosmetic!=null&&result==null)message.text+=" Trade spare cards for Library Tokens in Trade cards.";
         message.color=ready||result!=null?Ink:new Color(.52f,.13f,.07f);
     }
     void Act(bool recycling)
@@ -165,7 +171,7 @@ public sealed class SyntaxMerchantUI : MonoBehaviour
         recycle=MakeButton("Recycle Spare Card",body.transform,"Recycle (+3 scraps)",()=>Act(true));Bottom(recycle.gameObject,396,72,312,48);
         cancel=MakeButton("Cancel Transaction",body.transform,"Cancel",Cancel);Bottom(cancel.gameObject,580,72,128,48);
         message=Label("Market Message",body.transform,"",18,Ink);var mr=(RectTransform)message.transform;mr.anchorMin=Vector2.zero;mr.anchorMax=new Vector2(1,0);mr.offsetMin=new Vector2(22,10);mr.offsetMax=new Vector2(-22,62);
-        var footer=Label("Market Rules",frame.transform,"Scroll lists and descriptions to read more. Trades keep your last copy and refinement. Purchases join the battle deck.",17,Gold);var fr=(RectTransform)footer.transform;fr.anchorMin=Vector2.zero;fr.anchorMax=new Vector2(1,0);fr.offsetMin=new Vector2(26,10);fr.offsetMax=new Vector2(-26,52);
+        var footer=Label("Market Rules",frame.transform,"Trades keep your last copy and refinement. Card purchases join the battle deck. Scholar cosmetics are visual only.",17,Gold);var fr=(RectTransform)footer.transform;fr.anchorMin=Vector2.zero;fr.anchorMax=new Vector2(1,0);fr.offsetMin=new Vector2(26,10);fr.offsetMax=new Vector2(-26,52);
         overlay.SetActive(false);
     }
     void ApplyFont(TMP_Text t){if(font!=null)t.font=font;if(material!=null)t.fontSharedMaterial=material;}

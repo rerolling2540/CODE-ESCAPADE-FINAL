@@ -1095,17 +1095,6 @@ public class EncounterBattleReturn : MonoBehaviour
 
     public void ReturnToLobby() => Return();
 
-    void OnGUI()
-    {
-        if (GameControlsGuide.GameplayOverlayHidden) return;
-        if (returning) return;
-        if (BattleEnded)
-        {
-            BattleUITheme.DrawResultPanel(new Rect(Screen.width / 2f - 240, Screen.height / 2f - 65, 480, 130),
-                victory ? "VICTORY  +"+awardedExperience+" XP / +"+awardedGold+" gold\nLevel "+PlayerProgression.Level+" / Returning from battle..." : "DEFEAT\nReturning from battle...");
-        }
-    }
-
     void OnDestroy() { BattleEnded = false; }
 }
 

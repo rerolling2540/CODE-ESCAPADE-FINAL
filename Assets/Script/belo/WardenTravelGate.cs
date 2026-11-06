@@ -11,5 +11,5 @@ public sealed class WardenTravelGate : MonoBehaviour
         portal.entryPrompt="[E] Travel to "+destinationScene;
         portal.AddRoute(()=>!finalRoute||WardenQuest.Chapter(SaveSlots.Read(SaveSlots.Active))>=5,player=>{PortalArrivalPoint.Prepare(destinationScene,arrivalId);SceneTransitionFader.Load(destinationScene);});
     }
-    void Update(){var p=GetComponent<PortalInteraction>();if(p!=null)p.unavailablePrompt=finalRoute&&WardenQuest.Chapter(SaveSlots.Read(SaveSlots.Active))<5?"Complete the elf's Map 4 chapter to enter the final trial.":"";}
+    void Update(){var p=GetComponent<PortalInteraction>();if(p!=null)p.unavailablePrompt=finalRoute&&WardenQuest.Chapter(SaveSlots.Read(SaveSlots.Active))<5?"Complete the elf's Frostbound Passage chapter to enter the final trial.":"";}
 }

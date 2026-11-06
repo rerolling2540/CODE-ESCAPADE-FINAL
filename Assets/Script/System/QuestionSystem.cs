@@ -174,11 +174,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
 
     public static QuestionData SelectForCurrentPlayer(IEnumerable<QuestionData> pool, Card playedCard = null, string avoidId = null)
     {
-        string language = CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
-        var player = FindFirstObjectByType<PlayerStats>();
-        if (player != null && player.HeroClass != null)
-            language = player.HeroClass.LanguageClass == HeroLanguageClass.CSharp ? "csharp" :
-                player.HeroClass.LanguageClass == HeroLanguageClass.Python ? "python" : "java";
+        string language = CurrentPlayerLanguage;
         var card = playedCard?.CardData;
         var available = (pool ?? Array.Empty<QuestionData>()).Where(q => q != null).ToList();
         // Scene-authored legacy doors may only contain Java questions. Use the matching bundled language instead.
@@ -204,6 +200,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
             question.difficulty = row.difficulty; question.minLevel = row.min_level; question.maxLevel = row.max_level;
             question.questionText = row.prompt; question.codeSnippet = row.code_snippet;
             question.options = row.choices; question.correctAnswerIndex = row.correct_index; question.timeLimitInSeconds = 25f;
+            QuestionCurriculum.Normalize(question);
             bundledQuestions.Add(question);
         }
         return bundledQuestions;
@@ -320,6 +317,7 @@ public class QuestionSystem : Singleton<QuestionSystem>
                 asset.options = row.choices;
                 asset.correctAnswerIndex = row.correct_index;
                 asset.timeLimitInSeconds = 25f;
+                QuestionCurriculum.Normalize(asset);
                 parsedQuestions.Add(asset);
             }
 
@@ -348,17 +346,10 @@ public class QuestionSystem : Singleton<QuestionSystem>
     [Serializable]
     private sealed class QuestionRows { public QuestionRow[] items; }
 
-    private string GetPlayerLanguage()
-    {
-        PlayerStats player = FindFirstObjectByType<PlayerStats>();
-        if (player == null || player.HeroClass == null) return CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
-        switch (player.HeroClass.LanguageClass)
-        {
-            case HeroLanguageClass.CSharp: return "csharp";
-            case HeroLanguageClass.Python: return "python";
-            default: return "java";
-        }
-    }
+    // The selected save's hero determines language. A scene's shared combat-stat
+    // asset can be Java even when the player chose the Archer or Mage.
+    public static string CurrentPlayerLanguage => CharacterAlmanac.LanguageForCharacter(PlayerPrefs.GetInt("SelectedCharacter", 0));
+    private string GetPlayerLanguage() => CurrentPlayerLanguage;
 
     private int GetPlayerLevel()
     {

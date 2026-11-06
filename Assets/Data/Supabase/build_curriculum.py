@@ -5,7 +5,7 @@ import contextlib, io, json, pathlib, random, sys
 
 ROOT=pathlib.Path(__file__).resolve().parents[3]
 TOPICS=['output','syntax','types','variables','operators','strings','comparisons','conditionals','loops','arrays','methods','objects','collections','exceptions','algorithms','recursion']
-LEVELS=[1,1,1,2,2,3,3,4,5,6,8,10,12,14,16,18]
+LEVELS=[1,1,1,2,2,3,6,7,8,10,12,14,16,16,16,18]
 BASE=dict(zip(TOPICS,LEVELS))
 TIERS={'easy':TOPICS[:11],'medium':[t for t in TOPICS[:11] if t not in ('syntax','types')],'hard':['operators','strings','conditionals','loops','arrays','methods']}
 old=json.loads(pathlib.Path(sys.argv[1]).read_text(encoding='utf-8-sig'))
@@ -127,6 +127,12 @@ for source in old:
  row['min_level']=level(row['topic'],row['difficulty']);row['max_level']=None;row['curriculum_order']=TOPICS.index(row['topic'])+1 if row['topic'] in TOPICS else 99
  metadata.append(row)
 combined=metadata+rows
+for row in combined:
+ index=TOPICS.index(row['topic']) if row['topic'] in TOPICS else 0
+ tier=max(['easy','medium','hard'].index(row['difficulty']),2 if index>=12 else 1 if index>=6 else 0)
+ row['difficulty']=['easy','medium','hard'][tier]
+ row['min_level']=level(row['topic'],row['difficulty'])
+ row['max_level']=None
 assert len({r['id'] for r in combined})==len(combined)
 combined.sort(key=lambda r:(r['language'],r['curriculum_order'],['easy','medium','hard'].index(r['difficulty']),r['id']))
 (ROOT/'Assets/Resources/QuestionBanks/StarterQuestions.json').write_text(json.dumps(combined,ensure_ascii=False,indent=2)+'\n',encoding='utf8')

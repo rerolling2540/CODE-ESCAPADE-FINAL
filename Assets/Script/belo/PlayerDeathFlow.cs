@@ -188,6 +188,8 @@ public sealed class PlayerDeathFlow : MonoBehaviour
         string destination = useCheckpoint ? saved.scene : animations.villageScene;
         Vector3 position = useCheckpoint ? saved.position : animations.villagePosition;
         if (!Application.CanStreamedLevelBeLoaded(destination)) { returning = false; return; }
+        // Save the penalty together with restored health; the returning guard blocks double clicks.
+        PlayerProgression.ApplyRevivalPenalty(saved);
         saved.scene = destination;
         saved.position = position;
         saved.hasPosition = true;
@@ -240,7 +242,8 @@ public sealed class PlayerDeathFlow : MonoBehaviour
         string reason = cause == PlayerDamageCause.Trap ? "A trap claimed your life." :
             cause == PlayerDamageCause.Poison ? "The poison claimed your life." :
             cause == PlayerDamageCause.Lightning ? "Lightning struck you down." : "Your journey isn't over.";
-        return reason + "\nReturn to safety with your health fully restored.";
+        int cost=PlayerProgression.RevivalExperienceCost(PlayerProgression.Experience);
+        return reason + "\nRevive with full health. Cost: "+cost+" XP (10% of current XP).";
     }
 
     static RectTransform Box(string name, Transform parent, Vector2 position, Vector2 size, Color color)

@@ -16,7 +16,7 @@ public sealed class HuntQuestNPC : MonoBehaviour, INPCDialogueProvider
             offer.options=new[]{new DialogueOption{optionText="Accept: "+c.title,nextDialogue=accepted,onSelected=()=>HuntQuestProgress.Accept(giver,stage)},new DialogueOption{optionText="Not yet"}};return offer;
         }
         var root=host.Node(c.story,HuntQuestProgress.Ready(save,giver)?"Your contract is complete. Claim "+HuntQuestProgress.Reward(c)+".":c.target+": "+HuntQuestProgress.Count(save,giver,stage)+" / "+c.required+". "+c.advice);
-        var help=host.Node(c.advice,"Only victorious battles against the listed targets count. Different encounters count once each, even if Scene 3 respawns them on a later visit. Earlier victories in this save count too.","Your quest reward is extra to normal battle XP. Gold buys supplies from the syntax merchant; low-logic scraps support card refinement. Library tokens can be spent at the merchant.");
+        var help=host.Node(c.advice,"Only victorious battles against the listed targets count. Different encounters count once each, even if Shadowroot Depths respawns them on a later visit. Earlier victories in this save count too.","Your quest reward is extra to normal battle XP. Gold buys supplies from the syntax merchant; low-logic scraps support card refinement. Library tokens can be spent at the merchant.");
         help.options=new[]{new DialogueOption{optionText="Back to my contract",nextDialogue=root}};
         root.options=HuntQuestProgress.Ready(save,giver)?new[]{new DialogueOption{optionText="Claim XP and rewards",onSelected=()=>{
             bool paid=HuntQuestProgress.Claim(giver,stage);

@@ -7,7 +7,17 @@ using UnityEngine;
 public static class QuestionCurriculum
 {
     public static readonly string[] OrderedTopics={"output","syntax","types","variables","operators","strings","comparisons","conditionals","loops","arrays","methods","objects","collections","exceptions","algorithms","recursion"};
-    private static readonly int[] TopicLevels={1,1,1,2,2,3,3,4,5,6,8,10,12,14,16,18};
+    private static readonly int[] TopicLevels={1,1,1,2,2,3,6,7,8,10,12,14,16,16,16,18};
+    public static int MinimumTier(string topic)=>Order(topic)>=12&&Order(topic)<16?3:Order(topic)>=6&&Order(topic)<12?2:1;
+    public static int EffectiveTier(QuestionData question)=>Math.Max(Tier(question.difficulty),MinimumTier(Topic(question)));
+    public static void Normalize(QuestionData question)
+    {
+        question.topic=Topic(question);
+        question.difficulty=Difficulty(EffectiveTier(question));
+        int tier=EffectiveTier(question);
+        question.minLevel=Math.Max(Math.Max(question.minLevel,MinimumLevel(question.topic)),tier>=3?16:tier==2?6:1);
+        if(question.maxLevel>0&&question.maxLevel<question.minLevel)question.maxLevel=0;
+    }
     public static int Order(string topic){int index=Array.IndexOf(OrderedTopics,Topic(topic));return index<0?99:index;}
     public static int MinimumLevel(string topic){int index=Order(topic);return index<TopicLevels.Length?TopicLevels[index]:1;}
     [Serializable] private sealed class Lessons { public Lesson[] items; }

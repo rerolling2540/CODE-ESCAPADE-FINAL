@@ -17,21 +17,29 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
     private bool open;
     private bool trapPuzzle;
     private bool portalPuzzle;
-    private TMP_Text titleLabel, cancelLabel;
+    private TMP_Text titleLabel, cancelLabel, contextLabel;
     public static bool IsOpen => instance != null && instance.open;
     private ExplorationHUD[] hiddenHuds;
+    private CanvasGroup visibility;
+    private int openedSlot,openedHero;
+
+    public static void Show(Action onAccepted,Action onCancelled,bool forTrap=false,bool forPortal=false)
+    {
+        Show(WorldQuestionBank.GetQuestions(),onAccepted,onCancelled,forTrap,forPortal);
+    }
 
     public static void Show(MultipleChoiceQuestionData[] data, Action onAccepted, Action onCancelled, bool forTrap = false, bool forPortal = false)
     {
-        if (IsOpen) { onCancelled?.Invoke(); return; }
+        if (IsOpen||GameControlsGuide.SettingsOpen) { onCancelled?.Invoke(); return; }
         var pool = data == null ? Array.Empty<MultipleChoiceQuestionData>() : Array.FindAll(data, q => q != null);
         if (pool.Length == 0) { onCancelled?.Invoke(); return; }
         if (instance == null) Create();
         instance.questionPool = pool;
         instance.trapPuzzle=forTrap;
         instance.portalPuzzle = forPortal;
-        instance.titleLabel.text = forPortal ? "PORTAL CODE CHALLENGE" : "THE DEMON'S CODE CHALLENGE";
-        instance.cancelLabel.text = forPortal ? "Leave portal [Esc]" : "Leave door [Esc]";
+        instance.titleLabel.text = forPortal ? "PORTAL CODE CHALLENGE" : forTrap ? "ELECTRIC TRAP CODE CHALLENGE" : "THE DEMON'S CODE CHALLENGE";
+        instance.cancelLabel.text = forPortal ? "Leave portal [Esc]" : forTrap ? "Leave trap [Esc]" : "Leave door [Esc]";
+        instance.openedSlot=SaveSlots.Active;instance.openedHero=PlayerPrefs.GetInt("SelectedCharacter",0);
         instance.accepted = onAccepted;
         instance.cancelled = onCancelled;
         instance.previousTimeScale = Time.timeScale;
@@ -52,10 +60,18 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
             avoidId: question != null ? QuestionCurriculum.Id(question) : null) as MultipleChoiceQuestionData;
         if (selected == null) { Cancel(); return; }
         question = selected;
-        currentAttemptId = QuestionPerformanceTracker.Begin(question, portalPuzzle ? "portal" : "door",
+        currentAttemptId = QuestionPerformanceTracker.Begin(question, portalPuzzle ? "portal" : trapPuzzle ? "trap" : "door",
             QuestionCurriculum.Language(question), QuestionCurriculum.Topic(question));
+        DisplayQuestion(question,message);
+    }
+
+    private void DisplayQuestion(MultipleChoiceQuestionData selected,string message)
+    {
+        question=selected;
         questionLabel.text = question.questionText;
         codeLabel.text = question.codeSnippet;
+        string tier=question.difficulty=="hard"?"Advanced":question.difficulty=="medium"?"Intermediate":"Beginner";
+        contextLabel.text=CharacterAlmanac.LanguageName(question.language)+"  ·  Level "+QuestionPerformanceTracker.GetCurrentPlayerLevel()+"  ·  "+tier+"  ·  "+question.topic.Replace('_',' ');
         feedback.text = message;
         for (int i = 0; i < 4; i++)
         {
@@ -68,7 +84,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
 
     public void SelectAnswer(int index)
     {
-        if (!open || question == null) return;
+        if (!open || question == null || GameControlsGuide.SettingsOpen) return;
         BattleAudio.Play(BattleSound.AnswerSelect);
         if (!question.CheckAnswer(index))
         {
@@ -103,7 +119,9 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
 
     void Update()
     {
-        if (open && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Cancel();
+        if(visibility!=null){bool visible=!GameControlsGuide.SettingsOpen;visibility.alpha=visible?1:0;visibility.interactable=visibility.blocksRaycasts=visible;}
+        if(open&&(openedSlot!=SaveSlots.Active||openedHero!=PlayerPrefs.GetInt("SelectedCharacter",0))){Cancel();return;}
+        if (open && !GameControlsGuide.SettingsOpen && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) Cancel();
     }
 
     void Close()
@@ -133,10 +151,11 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
 
     static void Create()
     {
-        var root = new GameObject("Demon Door Java Question", typeof(RectTransform), typeof(Canvas),
-            typeof(UnityEngine.UI.CanvasScaler), typeof(UnityEngine.UI.GraphicRaycaster));
+        var root = new GameObject("World Code Challenge", typeof(RectTransform), typeof(Canvas),
+            typeof(UnityEngine.UI.CanvasScaler), typeof(UnityEngine.UI.GraphicRaycaster),typeof(CanvasGroup));
         root.SetActive(false);
         instance = root.AddComponent<DoorJavaQuestionPanel>();
+        instance.visibility=root.GetComponent<CanvasGroup>();
         var canvas = root.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 2000;
@@ -146,24 +165,30 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         scaler.matchWidthOrHeight = 0.5f;
         var shade = Box("Modal Backdrop", root.transform, Vector2.zero, new Vector2(1280, 720), new Color(0, 0, 0, 0.78f));
         shade.anchorMin = Vector2.zero; shade.anchorMax = Vector2.one; shade.sizeDelta = Vector2.zero;
-        var panel = Box("Question Panel", root.transform, Vector2.zero, new Vector2(960, 600), new Color(0.13f, 0.085f, 0.06f));
+        var panel = Box("Question Panel", root.transform, Vector2.zero, new Vector2(960, 660), new Color(0.13f, 0.085f, 0.06f));
         var border = panel.gameObject.AddComponent<UnityEngine.UI.Outline>();
         border.effectColor = new Color(0.73f, 0.52f, 0.22f); border.effectDistance = new Vector2(3, -3);
-        instance.titleLabel = Label("Title", panel, new Vector2(0, 248), new Vector2(850, 46), "THE DEMON'S CODE CHALLENGE", 30);
-        instance.questionLabel = Label("Question", panel, new Vector2(0, 174), new Vector2(850, 84), "", 26);
-        var code = Box("Code", panel, new Vector2(0, 85), new Vector2(840, 70), new Color(0.035f, 0.03f, 0.025f));
-        instance.codeLabel = Label("Java Code", code, Vector2.zero, new Vector2(800, 62), "", 27);
+        instance.titleLabel = Label("Title", panel, new Vector2(0, 284), new Vector2(850, 42), "THE DEMON'S CODE CHALLENGE", 29);
+        instance.contextLabel=Label("Language and progression",panel,new Vector2(0,246),new Vector2(850,26),"",19);
+        instance.questionLabel = Label("Question", panel, new Vector2(0, 196), new Vector2(850, 66), "", 25);
+        instance.questionLabel.enableAutoSizing=true;instance.questionLabel.fontSizeMin=18;instance.questionLabel.fontSizeMax=25;
+        var code = Box("Code", panel, new Vector2(0, 64), new Vector2(840, 176), new Color(0.035f, 0.03f, 0.025f));
+        instance.codeLabel = Label("Program Code", code, Vector2.zero, new Vector2(808, 166), "", 23);
+        instance.codeLabel.enableAutoSizing=true;instance.codeLabel.fontSizeMin=12;instance.codeLabel.fontSizeMax=23;
+        instance.codeLabel.textWrappingMode=TextWrappingModes.NoWrap;
+        instance.codeLabel.alignment=TextAlignmentOptions.MidlineLeft;
         for (int i = 0; i < 4; i++)
         {
             int choice = i;
-            Vector2 position = new Vector2(i % 2 == 0 ? -215 : 215, i < 2 ? -8 : -82);
-            var button = Button("Answer " + (char)('A' + i), panel, position, new Vector2(410, 60), "");
+            Vector2 position = new Vector2(i % 2 == 0 ? -215 : 215, i < 2 ? -74 : -177);
+            var button = Button("Answer " + (char)('A' + i), panel, position, new Vector2(410, 96), "");
             instance.answers[i] = button;
             instance.answerLabels[i] = button.GetComponentInChildren<TMP_Text>();
             button.onClick.AddListener(() => instance.SelectAnswer(choice));
         }
-        instance.feedback = Label("Feedback", panel, new Vector2(0, -169), new Vector2(840, 78), "", 22);
-        var cancelButton = Button("Cancel", panel, new Vector2(0, -250), new Vector2(260, 48), "Leave door [Esc]");
+        instance.feedback = Label("Feedback", panel, new Vector2(0, -249), new Vector2(840, 36), "", 20);
+        instance.feedback.enableAutoSizing=true;instance.feedback.fontSizeMin=14;instance.feedback.fontSizeMax=20;
+        var cancelButton = Button("Cancel", panel, new Vector2(0, -299), new Vector2(280, 42), "Leave door [Esc]");
         cancelButton.onClick.AddListener(instance.Cancel);
         instance.cancelLabel = cancelButton.GetComponentInChildren<TMP_Text>();
         if (UnityEngine.EventSystems.EventSystem.current == null)
@@ -194,6 +219,7 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         var label = item.GetComponent<TextMeshProUGUI>();
         label.font = TMP_Settings.defaultFontAsset;
         label.text = text; label.fontSize = fontSize;
+        label.richText=false;
         label.alignment = TextAlignmentOptions.Center;
         label.color = new Color(1f, 0.9f, 0.68f); label.raycastTarget = false;
         return label;
@@ -207,7 +233,8 @@ public sealed class DoorJavaQuestionPanel : MonoBehaviour
         colors.highlightedColor = new Color(1.3f, 1.2f, 0.85f);
         colors.selectedColor = colors.highlightedColor;
         button.colors = colors;
-        Label("Text", rect, Vector2.zero, size - new Vector2(20, 4), text, 24);
+        var textLabel=Label("Text", rect, Vector2.zero, size - new Vector2(20, 4), text, 23);
+        textLabel.enableAutoSizing=true;textLabel.fontSizeMin=14;textLabel.fontSizeMax=23;
         return button;
     }
 }

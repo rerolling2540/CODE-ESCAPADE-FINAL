@@ -3,6 +3,14 @@ using System.Collections.Generic;
 /// <summary>Compatibility for scene references stored before the exploration maps were renamed.</summary>
 public static class MapSceneNames
 {
+    /// <summary>Display-only compatibility for dialogue assets written before map renaming.</summary>
+    public static string DisplayText(string text)
+    {
+        if(string.IsNullOrEmpty(text))return text;
+        return System.Text.RegularExpressions.Regex.Replace(text,@"\b(?:scene|map)\s*([2-5])\b",match=>
+            new[]{"Whispering Hollow","Shadowroot Depths","Frostbound Passage","Forest of Dawn"}[int.Parse(match.Groups[1].Value)-2],
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    }
     public static string Resolve(string scene)
     {
         switch (scene)
